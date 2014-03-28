@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+
+    <!--
+      $QUERY - запрос который фильтрануть
+    -->
+    <query type="filtering"><![CDATA[
+    SELECT fltrngwrpr.*
+     FROM ( $QUERY ) fltrngwrpr
+      $WHERECLAUSE
+    ]]></query>
+
+    <!--
+      $QUERY - запрос который сортирнуть
+    -->
+    <query type="sorting"><![CDATA[
+    SELECT srtngwrpr.*
+     FROM ( $QUERY ) srtngwrpr
+      $ORDERBYCLAUSE
+    ]]></query>
+
+
+    <!--
+      $QUERY - запрос который небходимо разбить на страницы (т.е. иметь возможность
+                запросить :PAGING_COUNT зaписей с :PAGING_OFFSET )
+      :PAGING_COUNT   - количество записей которые необходимо загрузить
+      :PAGING_OFFSET  - количество пропущенных записей до первой загруженной
+      :PAGING_LAST    - последняя запись которую нужно загрузить
+    -->
+    <query type="paging"><![CDATA[
+    SELECT * FROM (
+        SELECT pgngwrpr.*, ROWNUM rnum$pgng
+          FROM ( $QUERY ) pgngwrpr
+    ) WHERE (rnum$pgng > /*$PAGING_OFFSET*/) AND (rnum$pgng <= /*$PAGING_LAST*/)
+    ]]></query>
+</queries>

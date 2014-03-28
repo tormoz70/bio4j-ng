@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0"
+	localization="OSGI-INF/metatype/metatype">
+	<OCD id="processing.service.config" name="%processing.service.label"
+		description="%processing.service.description">
+		<AD id="processing.service.config.connectURI" type="String"
+			default="" name="%processing.connectURI.label" description="%processing.connectURI.description"
+			cardinality="0" />
+		<AD id="processing.service.config.user" type="String"
+			default="" name="%processing.username.label" description="%processing.username.description"
+			cardinality="0" />
+		<AD id="processing.service.config.password" type="String"
+			default="" name="%processing.userpassword.label" description="%processing.userpassword.description"
+			cardinality="0" />
+        <AD id="processing.service.config.maxPoolSize" type="String"
+            default="0" name="%processing.maxPoolSize.label" description="%processing.maxPoolSize.description"
+            cardinality="0" />
+        <AD id="processing.service.config.driver.name" type="String"
+            default="0" name="%processing.driver.name.label" description="processing.driver.name.description"
+            cardinality="0" />
+	</OCD>
+	<Designate pid="processing.service.config">
+		<Object ocdref="processing.service.config" />
+	</Designate>
+</metatype:MetaData>

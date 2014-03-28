@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>server-platform-stack</artifactId>
+        <groupId>ru.bio4j.server</groupId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>bundle</packaging>
+
+    <artifactId>processing-service</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>Bio4j Processing service</Bundle-Name>
+                        <Bundle-Vendor>bio4j.ru</Bundle-Vendor>
+                        <Bundle-Category>bio4j</Bundle-Category>
+                        <Bundle-Description>Glue service</Bundle-Description>
+                        <Export-Package>ru.bio4j.service.processing.*</Export-Package>
+                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+                        <Import-Package>
+                            org.apache.tomcat.jdbc.pool;resolution:="optional",
+                            org.apache.felix.ipojo.architecture;resolution:="optional",
+                            org.apache.felix.ipojo;resolution:="optional",*
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>ipojo-bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.bio4j.commons</groupId>
+            <artifactId>utils</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.commons</groupId>
+            <artifactId>transport-model</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.bio4j.server</groupId>
+            <artifactId>common-service</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.server</groupId>
+            <artifactId>sql-service</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.server</groupId>
+            <artifactId>content-resolver-service</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.server</groupId>
+            <artifactId>ehcache-service</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+         <!--Test -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${org.hsqldb.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

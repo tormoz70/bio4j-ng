@@ -1,0 +1,27 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# eclipse files
+.classpath
+.project
+
+# IntelliJ
+*.iml
+*.iws
+*.ipr
+
+# paths
+.metadata/
+.settings/
+.idea/
+target/
+test-output/
+out/
+felix-cache/
+/run.bat
+/build.bat
+

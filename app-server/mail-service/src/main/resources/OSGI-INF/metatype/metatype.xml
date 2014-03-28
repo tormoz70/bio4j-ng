@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0"
+	localization="OSGI-INF/metatype/metatype">
+	<OCD id="mail.service.config" name="%mail.service.label"
+		description="%mail.service.description">
+		<AD id="mail.service.config.host" type="String"
+			default="" name="%server.host.label" description="%server.host.description"
+			cardinality="0" />
+		<AD id="mail.service.config.port" type="Integer"
+			default="" name="%server.port.label" description="%server.port.description"
+			cardinality="0" />
+		<AD id="mail.service.config.user" type="String"
+			default="" name="%server.username.label" description="%server.username.description"
+			cardinality="0" />
+		<AD id="mail.service.config.password" type="String"
+			default="" name="%server.userpassword.label" description="%server.userpassword.description"
+			cardinality="0" />
+		<AD id="mail.service.config.whom.to.send" type="String"
+			default="" name="%server.whom.to.send.label" description="%server.whom.to.send.description"
+			cardinality="0" />
+	</OCD>
+	<Designate pid="mail.service.config">
+		<Object ocdref="mail.service.config" />
+	</Designate>
+</metatype:MetaData>

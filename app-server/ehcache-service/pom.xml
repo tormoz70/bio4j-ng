@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>ru.bio4j.server</groupId>
+		<artifactId>server-platform-stack</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>ehcache-service</artifactId>
+	<packaging>bundle</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Name>Bio4j EhCache Integration Service</Bundle-Name>
+						<Bundle-Vendor>bio4j.ru</Bundle-Vendor>
+                        <Bundle-Category>bio4j</Bundle-Category>
+						<Bundle-Description>EhCache Integration Service</Bundle-Description>
+						<Import-Package>
+                            org.hibernate*;resolution:="optional",
+                            ru.bio4j.*;resolution:="optional",
+                            sun.misc*;resolution:="optional",
+                            org.bson.*;resolution:="mandatory",*
+                        </Import-Package>
+						<Export-Package>ru.bio4j.service.ehcache</Export-Package>
+						<Embed-Dependency>artifactId=|ehcache-core;scope=compile|runtime</Embed-Dependency>
+						<Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
+						<Bundle-Activator>ru.bio4j.service.ehcache.activator.CacheServiceBundleActivator</Bundle-Activator>
+                        <Include-Resource>{maven-resources}</Include-Resource>
+                        <remoteOBR />
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+
+        <dependency>
+            <groupId>ru.bio4j.commons</groupId>
+            <artifactId>utils</artifactId>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>ru.bio4j.server</groupId>
+			<artifactId>common-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ru.bio4j.server</groupId>
+			<artifactId>monitor-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+            <scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0" localization="OSGI-INF/metatype/metatype">
+   <OCD id="message.service.config" name="%message.service.label" description="%message.service.description">
+      <AD id="jms.host" type="String" default="host" name="%jms.host.label" description="%jms.host.description" cardinality="0"/>
+      <AD id="jms.port" type="Integer" default="17676" name="%jms.port.label" description="%jms.port.description" cardinality="0"/>
+      <AD id="jms.username" type="String" default="OSGi" name="%jms.username.label" description="%jms.username.description" cardinality="0"/>
+      <AD id="jms.password" type="String" default="OSGi" name="%jms.password.label" description="%jms.password.description" cardinality="0"/>
+      <AD id="rabbitmq.service.host" type="String" default="127.0.0.1" name="%rabbitmq.host.label" description="%rabbitmq.host.description" cardinality="0"/>
+      <AD id="rabbitmq.service.port" type="Integer" default="5672" name="%rabbitmq.port.label" description="%rabbitmq.port.description" cardinality="0"/>
+      <AD id="rabbitmq.service.username" type="String" default="guest" name="%rabbitmq.username.label" description="%rabbitmq.username.description" cardinality="0"/>
+      <AD id="rabbitmq.service.password" type="String" default="guest" name="%rabbitmq.password.label" description="%rabbitmq.password.description" cardinality="0"/>
+   </OCD>
+   <Designate pid="message.service.config">
+      <Object ocdref="message.service.config"/>
+   </Designate>
+</metatype:MetaData>
