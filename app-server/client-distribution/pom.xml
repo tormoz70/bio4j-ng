@@ -1,18 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>ru.bio4j.client</groupId>
+    
+	<parent>
+		<groupId>ru.bio4j.server</groupId>
+		<artifactId>server-platform-stack</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+
+    <artifactId>client-distribution</artifactId>
+    
     <packaging>war</packaging>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Bio4j Client For ExtJS</name>
-    <artifactId>bio4j-client-extjs</artifactId>
 
     <properties>
-
         <logbackVersion>1.1.1</logbackVersion>
         <shiroVerion>1.2.2</shiroVerion>
         <slf4jVersion>1.7.6</slf4jVersion>
-
     </properties>
 
     <dependencies>

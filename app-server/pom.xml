@@ -22,6 +22,7 @@
         <!-- Distribution -->
         <module>as-distribution</module>
         <module>login-service</module>
+        <module>client-distribution</module>
     </modules>
 
     <properties>
