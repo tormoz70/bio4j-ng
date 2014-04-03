@@ -1,7 +1,7 @@
 package org.example.filter;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+//import org.apache.shiro.SecurityUtils;
+//import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +23,10 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.debug("Do filter for request: {}", request);
 
-        Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser.isAuthenticated()) {
-
-        }
+//        Subject currentUser = SecurityUtils.getSubject();
+//        if (currentUser.isAuthenticated()) {
+//
+//        }
 
         chain.doFilter(request, response);
     }

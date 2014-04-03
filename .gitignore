@@ -22,6 +22,5 @@ target/
 test-output/
 out/
 felix-cache/
-/run.bat
-/build.bat
+runner/
 

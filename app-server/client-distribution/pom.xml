@@ -16,7 +16,6 @@
         <!--<logbackVersion>1.1.1</logbackVersion>-->
         <shiroVerion>1.2.2</shiroVerion>
         <!--<slf4jVersion>1.7.6</slf4jVersion>-->
-        <osgi_R4_version>1.0</osgi_R4_version>
         <felix.jetty.version>2.2.3</felix.jetty.version>
     </properties>
 
@@ -38,21 +37,90 @@
                     <!--<scanIntervalSeconds>3</scanIntervalSeconds>-->
                 <!--</configuration>-->
             <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.felix</groupId>-->
+                <!--<artifactId>maven-bundle-plugin</artifactId>-->
+                <!--<extensions>true</extensions>-->
+                <!--<configuration>-->
+                    <!--<instructions>-->
+                        <!--<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>-->
+                        <!--<Bundle-Name>Bio4j WebClient Service</Bundle-Name>-->
+                        <!--<Bundle-Vendor>bio4j.RU</Bundle-Vendor>-->
+                        <!--<Bundle-Category>bio4j</Bundle-Category>-->
+                        <!--<Bundle-Description>WebClient services</Bundle-Description>-->
+                        <!--<Bundle-Activator>org.example.Activator</Bundle-Activator>-->
+                        <!--<supportedProjectTypes>-->
+                            <!--<supportedProjectType>war</supportedProjectType>-->
+                            <!--<supportedProjectType>bundle</supportedProjectType>-->
+                            <!--<supportedProjectType>jar</supportedProjectType>-->
+                        <!--</supportedProjectTypes>-->
+                        <!--<Export-Package />-->
+                        <!--<Web-ContextPath>/bio</Web-ContextPath>-->
+                        <!--<remoteOBR />-->
+                    <!--</instructions>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>bundle-manifest</id>-->
+                        <!--<phase>process-classes</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>manifest</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>war</supportedProjectType>
+                        <supportedProjectType>bundle</supportedProjectType>
+                        <supportedProjectType>jar</supportedProjectType>
+                    </supportedProjectTypes>
                     <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>Bio4j WebClient Service</Bundle-Name>
+                        <Bundle-Vendor>bio4j.RU</Bundle-Vendor>
+                        <Bundle-Category>bio4j</Bundle-Category>
+                        <Bundle-Description>WebClient services</Bundle-Description>
+                        <Bundle-Activator>org.example.Activator</Bundle-Activator>
                         <Bundle-Activator>org.example.Activator</Bundle-Activator>
                         <Web-ContextPath>/bio</Web-ContextPath>
+                        <!-- By default, we don't export anything -->
+                        <Export-Package />
                     </instructions>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.ops4j</groupId>
+                <artifactId>maven-pax-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <provision>
+                        <param>-platform=felix</param>
+                        <param>-profiles=compendium,web,war,log</param>
+                        <param>-log=debug</param>
+                    </provision>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <!--  Need to use this plugin to build war files -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
                 <configuration>
                     <archive>
                         <!--&lt;!&ndash; add bundle plugin generated manifest to the war &ndash;&gt;-->
@@ -86,20 +154,13 @@
 
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi_R4_core</artifactId>
-            <version>${osgi_R4_version}</version>
+            <artifactId>org.osgi.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi_R4_compendium</artifactId>
-            <version>${osgi_R4_version}</version>
+            <artifactId>org.osgi.compendium</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.http.jetty</artifactId>
@@ -122,23 +183,23 @@
         </dependency>
 
         <!-- Security -->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <version>${shiroVerion}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-core</artifactId>-->
+            <!--<version>${shiroVerion}</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-web</artifactId>
-            <version>${shiroVerion}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-web</artifactId>-->
+            <!--<version>${shiroVerion}</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-cas</artifactId>
-            <version>${shiroVerion}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-cas</artifactId>-->
+            <!--<version>${shiroVerion}</version>-->
+        <!--</dependency>-->
 
         <!--Logging-->
         <dependency>
