@@ -180,14 +180,6 @@
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.basedir}/bundle</outputDirectory>
 								</artifactItem>
-                                <artifactItem>
-                                    <groupId>ru.bio4j.server</groupId>
-                                    <artifactId>remote-api-service</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.basedir}/bundle</outputDirectory>
-                                </artifactItem>
 								<artifactItem>
 									<groupId>ru.bio4j.server</groupId>
 									<artifactId>message-service</artifactId>
@@ -251,6 +243,24 @@
                                     <artifactId>transport-model</artifactId>
                                     <version>${bio4j.common.version}</version>
                                     <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.basedir}/bundle</outputDirectory>
+                                </artifactItem>
+
+                                <!--<artifactItem>-->
+                                    <!--<groupId>ru.bio4j.server</groupId>-->
+                                    <!--<artifactId>remote-api-service</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${project.basedir}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+
+                                <artifactItem>
+                                    <groupId>ru.bio4j.server</groupId>
+                                    <artifactId>client-distribution</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/bundle</outputDirectory>
                                 </artifactItem>

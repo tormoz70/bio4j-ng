@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.bio4j.server</groupId>
-    <artifactId>server-platform-stack</artifactId>
+    <artifactId>server-platform</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -19,15 +19,15 @@
         <module>content-resolver-service</module>
         <!-- Special services -->
         <module>remote-api-service</module>
-        <!-- Distribution -->
-        <module>as-distribution</module>
         <module>login-service</module>
         <module>client-distribution</module>
+        <!-- Distribution -->
+        <module>as-distribution</module>
     </modules>
 
     <properties>
         <!-- Main settings -->
-        <project.Organization.Name>Bio4j platform</project.Organization.Name>
+        <project.Organization.Name>Bio4j Co</project.Organization.Name>
         <project.Description>Bio4j platform</project.Description>
 
         <bio4j.common.version>0.6-SNAPSHOT</bio4j.common.version>
@@ -61,8 +61,9 @@
 		<!-- JSON Stuff -->
 		<json.version>20090211</json.version>
 		<!-- Services -->
-		<jersey.version>2.5</jersey.version>
+        <!--<jersey.version>2.5</jersey.version>-->
 		<jaxb.xml.bind.version>2.2.11</jaxb.xml.bind.version>
+        <!--<javax_servlet_version>3.0-Preview</javax_servlet_version>-->
 		<!-- JMS stuff -->
 		<glassfish.jms.version>3.1.1</glassfish.jms.version>
 		<sun.messaging.version>4.5.1</sun.messaging.version>
@@ -242,7 +243,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${release-plugin-version}</version>
                 <configuration>
-                    <tagNameFormat>server-platform-stack-v@{project.version}</tagNameFormat>
+                    <tagNameFormat>server-platform-v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
@@ -253,6 +254,18 @@
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>2.4.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <supportedProjectTypes>
+                            <supportedProjectType>war</supportedProjectType>
+                            <supportedProjectType>bundle</supportedProjectType>
+                            <supportedProjectType>jar</supportedProjectType>
+                        </supportedProjectTypes>
+                        <instructions>
+                        - <!--  By default, we don't export anything  -->
+                            <Export-Package />
+                        </instructions>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -264,7 +277,6 @@
                     <artifactId>org.apache.felix.dependencymanager.annotation</artifactId>
                     <version>${osgi.dependencymanager.annotation.version}</version>
                 </plugin>
-
             </plugins>
         </pluginManagement>
 
@@ -374,6 +386,7 @@
 				<!--<artifactId>jersey-servlet</artifactId>-->
 				<!--<version>${jersey.version}</version>-->
 			<!--</dependency>-->
+            <!--
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-common</artifactId>
@@ -394,6 +407,7 @@
                 <artifactId>jersey-container-servlet-core</artifactId>
                 <version>2.5.1</version>
             </dependency>
+            -->
 
 
             <!-- JAXB -->
@@ -540,11 +554,11 @@
 
 
             <!-- Security -->
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-core</artifactId>
-                <version>1.2.2</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.apache.shiro</groupId>-->
+                <!--<artifactId>shiro-core</artifactId>-->
+                <!--<version>1.2.2</version>-->
+            <!--</dependency>-->
 
 
 			<!-- Testing -->

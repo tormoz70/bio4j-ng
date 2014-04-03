@@ -13,12 +13,100 @@
     <packaging>war</packaging>
 
     <properties>
-        <logbackVersion>1.1.1</logbackVersion>
+        <!--<logbackVersion>1.1.1</logbackVersion>-->
         <shiroVerion>1.2.2</shiroVerion>
-        <slf4jVersion>1.7.6</slf4jVersion>
+        <!--<slf4jVersion>1.7.6</slf4jVersion>-->
+        <osgi_R4_version>1.0</osgi_R4_version>
+        <felix.jetty.version>2.2.3</felix.jetty.version>
     </properties>
 
+    <build>
+        <finalName>webapp</finalName>
+        <plugins>
+            <!--<plugin>-->
+                <!--<groupId>org.mortbay.jetty</groupId>-->
+                <!--<artifactId>jetty-maven-plugin</artifactId>-->
+                <!--<version>8.1.9.v20130131</version>-->
+                <!--&lt;!&ndash;  == Jetty 9 NOTICE == &ndash;&gt;-->
+                <!--&lt;!&ndash; groupId is changed to "org.eclipse.jetty" from Jetty 9! &ndash;&gt;-->
+                <!--&lt;!&ndash; Update <version> to latest available at http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.eclipse.jetty%22%20AND%20a%3A%22jetty-maven-plugin%22 &ndash;&gt;-->
+                <!--<configuration>-->
+                    <!--<webAppConfig>-->
+                        <!--<contextPath>/</contextPath>-->
+                        <!--<defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>-->
+                    <!--</webAppConfig>-->
+                    <!--<scanIntervalSeconds>3</scanIntervalSeconds>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>org.example.Activator</Bundle-Activator>
+                        <Web-ContextPath>/bio</Web-ContextPath>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--  Need to use this plugin to build war files -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <archive>
+                        <!--&lt;!&ndash; add bundle plugin generated manifest to the war &ndash;&gt;-->
+                        <manifestFile>
+                            ${project.build.outputDirectory}/META-INF/MANIFEST.MF
+                        </manifestFile>
+                        <!--&lt;!&ndash; For some reason, adding Bundle-ClassPath in maven-bundle-plugin-->
+                            <!--confuses that plugin and it generates wrong Import-Package, etc. So, we generate-->
+                            <!--it here.&ndash;&gt;-->
+                        <manifestEntries>
+                            <Bundle-ClassPath>WEB-INF/classes/</Bundle-ClassPath>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.felix</groupId>-->
+                <!--<artifactId>maven-ipojo-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>ipojo-bundle</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
+        </plugins>
+    </build>
     <dependencies>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi_R4_core</artifactId>
+            <version>${osgi_R4_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi_R4_compendium</artifactId>
+            <version>${osgi_R4_version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.http.jetty</artifactId>
+            <version>${felix.jetty.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -52,74 +140,12 @@
             <version>${shiroVerion}</version>
         </dependency>
 
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.opensaml</groupId>
-            <artifactId>opensaml</artifactId>
-            <version>2.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.santuario</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>1.5.6</version>
-        </dependency>
-
         <!--Logging-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4jVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logbackVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logbackVersion}</version>
-        </dependency>
-
-        <!--Test-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
-    <build>
-        <!--<finalName>webapptest</finalName>-->
-        <plugins>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>8.1.9.v20130131</version>
-                <!--  == Jetty 9 NOTICE == -->
-                <!-- groupId is changed to "org.eclipse.jetty" from Jetty 9! -->
-                <!-- Update <version> to latest available at http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.eclipse.jetty%22%20AND%20a%3A%22jetty-maven-plugin%22 -->
-                <configuration>
-                    <webAppConfig>
-                        <contextPath>/</contextPath>
-                        <defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>
-                    </webAppConfig>
-                    <scanIntervalSeconds>3</scanIntervalSeconds>
-                </configuration>
 
-            </plugin>
-        </plugins>
-    </build>
 </project>

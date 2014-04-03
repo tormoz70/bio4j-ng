@@ -14,6 +14,10 @@
         <servlet-class>org.example.BioForwardServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>tst</servlet-name>
+        <servlet-class>org.example.SimpleServlet</servlet-class>
+    </servlet>
+    <servlet>
         <!-- Override init parameter to avoid nasty -->
         <!-- file locking issue on windows.         -->
         <servlet-name>default</servlet-name>
@@ -32,6 +36,10 @@
     <servlet-mapping>
         <servlet-name>biosrv</servlet-name>
         <url-pattern>/biosrv</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>tst</servlet-name>
+        <url-pattern>/tst</url-pattern>
     </servlet-mapping>
 
     <!--<filter-mapping>-->

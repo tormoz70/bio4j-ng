@@ -19,6 +19,7 @@
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 				<include>*.jar</include>
+                <include>*.war</include>
 			</includes>
 		</fileSet>
 		<fileSet>
