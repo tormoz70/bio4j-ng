@@ -221,14 +221,14 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/bundle</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>ru.bio4j.server</groupId>
-                                    <artifactId>login-service</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.basedir}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>ru.bio4j.server</groupId>-->
+                                    <!--<artifactId>login-service</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${project.basedir}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
 
                                 <artifactItem>
                                     <groupId>ru.bio4j.commons</groupId>
@@ -546,6 +546,38 @@
                                     <groupId>org.ops4j.pax.web</groupId>
                                     <artifactId>pax-web-jetty-bundle</artifactId>
                                     <version>${ops4j.pax.web.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.basedir}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-deployer</artifactId>
+                                    <version>${ops4j.pax.web.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.basedir}/bundle</outputDirectory>
+                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.ops4j.pax.web</groupId>-->
+                                    <!--<artifactId>samples</artifactId>-->
+                                    <!--<version>${ops4j.pax.web.version}</version>-->
+                                    <!--<type>pom</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${project.basedir}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <artifactItem>
+                                    <groupId>org.apache.xbean</groupId>
+                                    <artifactId>xbean-finder-shaded</artifactId>
+                                    <version>3.16</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.basedir}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xbean</groupId>
+                                    <artifactId>xbean-asm4-shaded</artifactId>
+                                    <version>3.16</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/bundle</outputDirectory>

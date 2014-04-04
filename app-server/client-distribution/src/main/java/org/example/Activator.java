@@ -14,10 +14,12 @@ public class Activator implements BundleActivator {
     @Override
     public void start(BundleContext bundleContext) throws Exception {
         LOG.debug("start!");
+        System.out.println("start!");
     }
 
     @Override
     public void stop(BundleContext bundleContext) throws Exception {
         LOG.debug("stop!");
+        System.out.println("stop!");
     }
 }

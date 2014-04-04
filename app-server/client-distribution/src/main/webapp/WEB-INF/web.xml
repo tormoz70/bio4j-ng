@@ -5,26 +5,17 @@
     <display-name>Archetype Created Web Application</display-name>
     
     <!--Listeners-->
-    <listener>
-        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
-    </listener>
+    <!--<listener>-->
+        <!--<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>-->
+    <!--</listener>-->
     <!--Filters-->
-    <servlet>
-        <servlet-name>biosrv</servlet-name>
-        <servlet-class>org.example.BioForwardServlet</servlet-class>
-    </servlet>
+    <!--<servlet>-->
+        <!--<servlet-name>biosrv</servlet-name>-->
+        <!--<servlet-class>org.example.BioForwardServlet</servlet-class>-->
+    <!--</servlet>-->
     <servlet>
         <servlet-name>tst</servlet-name>
         <servlet-class>org.example.SimpleServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <!-- Override init parameter to avoid nasty -->
-        <!-- file locking issue on windows.         -->
-        <servlet-name>default</servlet-name>
-        <init-param>
-            <param-name>useFileMappedBuffer</param-name>
-            <param-value>false</param-value>
-        </init-param>
     </servlet>
 
     <!--Filters-->
@@ -33,10 +24,10 @@
         <!--<filter-class>org.example.filter.SecurityFilter</filter-class>-->
     <!--</filter>-->
     <!--Mapping-->
-    <servlet-mapping>
-        <servlet-name>biosrv</servlet-name>
-        <url-pattern>/biosrv</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>biosrv</servlet-name>-->
+        <!--<url-pattern>/biosrv</url-pattern>-->
+    <!--</servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>tst</servlet-name>
         <url-pattern>/tst</url-pattern>
