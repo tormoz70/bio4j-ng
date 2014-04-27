@@ -84,7 +84,7 @@
         <!--</content>-->
         <!--<content>-->
             <!--<source>src/main/filtered-resources/my-features.xml</source>-->
-            <!--<outputDirectory>/system/ru/bio4j/smp/camel-example-osgi-rmi/${project.version}</outputDirectory>-->
+            <!--<outputDirectory>/system/ru/bio4j/ng/camel-example-osgi-rmi/${project.version}</outputDirectory>-->
             <!--<destName>camel-example-osgi-rmi-${project.version}-features.xml</destName>-->
             <!--<fileMode>0644</fileMode>-->
             <!--<lineEnding>unix</lineEnding>-->
