@@ -270,14 +270,14 @@
                                     <!--<overWrite>true</overWrite>-->
                                     <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
                                 <!--</artifactItem>-->
-                                <!--<artifactItem>-->
-                                    <!--<groupId>org.slf4j</groupId>-->
-                                    <!--<artifactId>slf4j-api</artifactId>-->
-                                    <!--<version>${slf4j.version}</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
+                                <artifactItem>
+                                    <groupId>org.slf4j</groupId>
+                                    <artifactId>slf4j-api</artifactId>
+                                    <version>${slf4j.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
                                 <!--<artifactItem>-->
                                     <!--<groupId>org.slf4j</groupId>-->
                                     <!--<artifactId>slf4j-log4j12</artifactId>-->
@@ -287,39 +287,48 @@
                                     <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
                                 <!--</artifactItem>-->
 
-                                <artifactItem>
-                                    <groupId>org.ops4j.pax.logging</groupId>
-                                    <artifactId>pax-logging-service</artifactId>
-                                    <version>${pax.logging.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.ops4j.pax.logging</groupId>
-                                    <artifactId>pax-logging-api</artifactId>
-                                    <version>${pax.logging.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.ops4j.pax.logging</groupId>-->
+                                    <!--<artifactId>pax-logging-service</artifactId>-->
+                                    <!--<version>${pax.logging.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.ops4j.pax.logging</groupId>-->
+                                    <!--<artifactId>pax-logging-api</artifactId>-->
+                                    <!--<version>${pax.logging.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
 
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-classic</artifactId>
+                                    <version>${logback.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-core</artifactId>
+                                    <version>${logback.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
                                 <!--<artifactItem>-->
-                                    <!--<groupId>ch.qos.logback</groupId>-->
-                                    <!--<artifactId>logback-classic</artifactId>-->
-                                    <!--<version>${logback.version}</version>-->
+                                    <!--<groupId>janino</groupId>-->
+                                    <!--<artifactId>janino</artifactId>-->
+                                    <!--<version>${janino.version}</version>-->
                                     <!--<type>jar</type>-->
                                     <!--<overWrite>true</overWrite>-->
                                     <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
                                 <!--</artifactItem>-->
-                                <!--<artifactItem>-->
-                                    <!--<groupId>ch.qos.logback</groupId>-->
-                                    <!--<artifactId>logback-core</artifactId>-->
-                                    <!--<version>${logback.version}</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
+
 
                                 <!-- Bio4j -->
                                 <artifactItem>

@@ -24,13 +24,15 @@ import ru.bio4j.ng.model.transport.jstore.BioResponseJStore;
 
 import java.sql.Connection;
 import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Properties;
 
 import static org.osgi.framework.Constants.SERVICE_RANKING;
 import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
 
 
 
-@Component(managedservice="crud-handler.config")
+@Component(managedservice="crud.handler.config")
 @Instantiate
 @Provides(specifications = DataProvider.class,
         properties = {@StaticServiceProperty(name = SERVICE_RANKING, value = PROCESSING_SERVICE_RANK_IPOJO, type = "java.lang.Integer")})
@@ -98,15 +100,24 @@ public class DataProviderImpl implements DataProvider, ManagedService {
         if(sqlContextConfig == null)
             sqlContextConfig = new SQLContextConfig();
 
+        LOG.debug("config is "+conf.getClass());
+        Properties c = (Properties)conf;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Config {\n");
+        for(String k : c.stringPropertyNames())
+            sb.append(String.format("  - %s : %s;\n", k, c.getProperty(k)));
+        sb.append("}\n");
+        LOG.debug(sb.toString());
+
         if(!conf.isEmpty()) {
-            LOG.debug("config is not empty...");
+            LOG.debug("Config is not empty...");
             try {
                 Utl.applyValuesToBean(conf, sqlContextConfig);
             } catch (ApplyValuesToBeanException e) {
                 throw new ConfigurationException(e.getField(), e.getMessage());
             }
         }
-        LOG.debug("Appling config to sqlContextConfig done.");
+        LOG.debug("Apling config to sqlContextConfig done.");
     }
 
     public void setContentResolver(FileContentResolver contentResolver) {
@@ -116,8 +127,12 @@ public class DataProviderImpl implements DataProvider, ManagedService {
     @Validate
     public void start() throws Exception {
         LOG.debug("Starting...");
-        LOG.debug("Creating SQLContext (poolName:{})...", sqlContextConfig.getPoolName());
-        sqlContext = SQLContextFactory.create(sqlContextConfig);
+        if(sqlContextConfig.getPoolName() == null)
+            throw new IllegalArgumentException("SQL Context is not inited!");
+        if(sqlContext == null) {
+            LOG.debug("Creating SQLContext (poolName:{})...", sqlContextConfig.getPoolName());
+            sqlContext = SQLContextFactory.create(sqlContextConfig);
+        }
         Wrappers.getInstance().init("oracle");
         LOG.debug("Started");
     }
@@ -129,5 +144,9 @@ public class DataProviderImpl implements DataProvider, ManagedService {
 
     public void setDbProxy(DbProxy dbProxy) {
         this.dbProxy = dbProxy;
+    }
+
+    public void setSqlContext(SQLContext sqlContext) {
+        this.sqlContext = sqlContext;
     }
 }

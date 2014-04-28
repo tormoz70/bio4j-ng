@@ -15,7 +15,7 @@ import java.util.Hashtable;
 public class RestManagerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestManagerService.class);
-    private static final String SERVLET_SERVICE_PATH = "/bio4j-spi";
+    private static final String SERVLET_SERVICE_PATH = "/hello";
 
     private DataProvider dataProvider;
     private HttpService httpService;
@@ -24,17 +24,17 @@ public class RestManagerService {
     public void start() throws Exception {
         if (httpService != null) {
             LOG.debug("Registering \"hello\"-servlet...");
-            httpService.registerServlet("/hello", new HelloWorld(), null, null);
-            LOG.info("Servlet Registered");
+            httpService.registerServlet(SERVLET_SERVICE_PATH, new HelloWorld(this), null, null);
+            LOG.info("Servlet registered");
         }
     }
 
     @Invalidate
     protected void stop() throws Exception {
         if (httpService != null) {
-            LOG.debug("Unregistering Jersey servlet");
+            LOG.debug("Unregistering servlet");
             httpService.unregister(SERVLET_SERVICE_PATH);
-            LOG.info("Jersey servlet Unregistered");
+            LOG.info("Servlet unregistered");
         }
     }
 
@@ -46,5 +46,9 @@ public class RestManagerService {
     @Bind
     public void setDataProvider(DataProvider dataProvider) {
         this.dataProvider = dataProvider;
+    }
+
+    public DataProvider getDataProvider() {
+        return dataProvider;
     }
 }
