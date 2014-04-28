@@ -28,7 +28,6 @@
         </plugins>
     </build>
     <dependencies>
-
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils-core</artifactId>

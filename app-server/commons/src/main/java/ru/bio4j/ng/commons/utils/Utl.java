@@ -2,16 +2,21 @@ package ru.bio4j.ng.commons.utils;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.util.Dictionary;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.converter.Converter;
 
 import static ru.bio4j.ng.commons.utils.Strings.*;
 
 public class Utl {
+    private static final Logger LOG = LoggerFactory.getLogger(Utl.class);
 
 
     /**
@@ -203,6 +208,30 @@ public class Utl {
         }
         out.append(tab + "}");
         return out.toString();
+    }
+
+    public static void applyValuesToBean(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
+        if(vals == null)
+            throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
+        if(bean == null)
+            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+        Class<?> type = bean.getClass();
+        LOG.debug("Starting appling values to bean {}", bean);
+        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+            String fldName = fld.getName();
+            Object valStr = vals.get(fldName);
+            if(valStr != null){
+                try {
+                    LOG.debug(String.format("Tring to set value %s to field %s (%s)...", valStr, fldName, fld.getType()));
+                    Object val = Converter.toType(valStr, fld.getType());
+                    fld.setAccessible(true);
+                    fld.set(bean, val);
+                    LOG.debug("done.");
+                } catch (Exception e) {
+                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valStr, e.getMessage()));
+                }
+            }
+        }
     }
 
     public static <T> boolean arrayContains(T[] array, T item) {

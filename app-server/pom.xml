@@ -12,6 +12,10 @@
         <module>t-model</module>
         <module>commons</module>
         <module>s-api</module>
+        <module>db-api</module>
+        <module>doa</module>
+        <module>crud-handler</module>
+        <module>remote-api</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
@@ -31,12 +35,14 @@
         <!-- OSGi -->
         <osgi.core.version>4.3.1</osgi.core.version>
         <osgi.compendium.version>4.3.1</osgi.compendium.version>
-        <osgi.ipojo.version>1.11.1</osgi.ipojo.version>
+        <osgi.ipojo.version>1.11.2</osgi.ipojo.version>
         <!-- Testing -->
         <testng.version>6.7</testng.version>
         <!-- <mockito.version>1.9.0</mockito.version> -->
         <!-- Logger -->
-        <slf4j.version>1.6.4</slf4j.version>
+        <!--<slf4j.version>1.6.4</slf4j.version>-->
+        <slf4j.version>1.7.6</slf4j.version>
+        <pax.logging.version>1.7.2</pax.logging.version>
         <logback.version>1.0.1</logback.version>
         <!-- maven plugin -->
         <bundle-plugin-version>2.4.0</bundle-plugin-version>
@@ -46,7 +52,7 @@
         <remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>
         <compiler-plugin-version>3.1</compiler-plugin-version>
         <release-plugin-version>2.4.1</release-plugin-version>
-        <!-- Others -->
+
 	</properties>
 
     <build>
@@ -100,6 +106,18 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${deploy-plugin-version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-ipojo-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>ipojo-bundle</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
@@ -134,30 +152,43 @@
             </dependency>
 
 			<!-- Logging stuff -->
+            <!--<dependency>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-api</artifactId>-->
+                <!--<version>${slf4j.version}</version>-->
+                <!--<scope>provided</scope>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-log4j12</artifactId>-->
+                <!--<version>${slf4j.version}</version>-->
+                <!--<scope>test</scope>-->
+            <!--</dependency>-->
+
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-service</artifactId>
+                <version>${pax.logging.version}</version>
+                <scope>provided</scope>
             </dependency>
-			<!--<dependency>-->
-				<!--<groupId>org.slf4j</groupId>-->
-				<!--<artifactId>slf4j-api</artifactId>-->
-				<!--<version>${slf4j.version}</version>-->
-			<!--</dependency>-->
+
 			<!--<dependency>-->
 				<!--<groupId>ch.qos.logback</groupId>-->
 				<!--<artifactId>logback-classic</artifactId>-->
 				<!--<version>${logback.version}</version>-->
+                <!--<scope>provided</scope>-->
 			<!--</dependency>-->
 			<!--<dependency>-->
 				<!--<groupId>ch.qos.logback</groupId>-->
 				<!--<artifactId>logback-core</artifactId>-->
 				<!--<version>${logback.version}</version>-->
+                <!--<scope>provided</scope>-->
 			<!--</dependency>-->
 			<!-- Other stuff -->
 
@@ -182,6 +213,16 @@
                 <artifactId>bio4j-ng-sapi</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-dbapi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-doa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
 
         </dependencies>
@@ -189,16 +230,34 @@
 
     <dependencies>
         <!-- Testing -->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-api</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-service</artifactId>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>ch.qos.logback</groupId>-->
+            <!--<artifactId>logback-classic</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>ch.qos.logback</groupId>-->
+            <!--<artifactId>logback-core</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

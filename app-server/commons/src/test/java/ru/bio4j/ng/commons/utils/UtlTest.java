@@ -6,6 +6,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.regex.Matcher;
 
 public class UtlTest {
@@ -73,4 +76,27 @@ public class UtlTest {
         Assert.assertEquals("D:\\jdev\\workspace\\bio4j-ng\\as-distribution\\target\\as-distribution-2.0-SNAPSHOT\\as-distribution-2.0-SNAPSHOT\\content\\", path);
 
     }
+
+    public static class TestConfig {
+        private String poolName;
+
+        public String getPoolName() {
+            return poolName;
+        }
+
+        public void setPoolName(String poolName) {
+            this.poolName = poolName;
+        }
+    }
+
+    @Test
+    public void applyValuesToBeanTest() throws Exception {
+        final String expctd = "ru.bio4j.ng.doa.connectionPool.main";
+        Dictionary d = new Hashtable();
+        d.put("poolName", expctd);
+        TestConfig c = new TestConfig();
+        Utl.applyValuesToBean(d, c);
+        Assert.assertEquals(c.getPoolName(), expctd);
+    }
+
 }

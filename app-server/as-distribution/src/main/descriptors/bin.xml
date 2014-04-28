@@ -20,7 +20,7 @@
                 <!--<exclude>etc/users.properties</exclude>-->
                 <!--<exclude>etc/org.apache.karaf.features.cfg</exclude>-->
                 <!--<exclude>etc/org.apache.karaf.management.cfg</exclude>-->
-                <!--<exclude>etc/org.ops4j.pax.logging.cfg</exclude>-->
+                <!--<exclude>etc/log4j-killed.properties</exclude>-->
                 <!--<exclude>etc/org.apache.activemq.webconsole.cfg</exclude>-->
                 <!--<exclude>etc/org.apache.activemq.server-default.cfg</exclude>-->
                 <!--<exclude>activemq.xml</exclude>-->

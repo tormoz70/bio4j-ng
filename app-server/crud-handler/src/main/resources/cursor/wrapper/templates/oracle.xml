@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <!--
+      $QUERY - запрос который фильтрануть
+    -->
+    <template type="filtering"><![CDATA[
+    SELECT fltrng$wrpr.*
+     FROM ( ${QUERY_PLACEHOLDER} ) fltrng$wrpr
+      ${WHERECLAUSE_PLACEHOLDER}
+    ]]></template>
+
+    <!--
+      $QUERY - запрос который сортирнуть
+    -->
+    <template type="sorting"><![CDATA[
+    SELECT srtng$wrpr.*
+     FROM ( ${QUERY_PLACEHOLDER} ) srtng$wrpr
+      ${ORDERBYCLAUSE_PLACEHOLDER}
+    ]]></template>
+
+
+    <!--
+      $QUERY - запрос который небходимо разбить на страницы (т.е. иметь возможность
+                запросить :PAGING_COUNT зaписей с :PAGING_OFFSET )
+      :PAGING_COUNT   - количество записей которые необходимо загрузить
+      :PAGING_OFFSET  - количество пропущенных записей до первой загруженной
+      :PAGING_LAST    - последняя запись которую нужно загрузить
+    -->
+    <template type="paging"><![CDATA[
+    SELECT * FROM (
+        SELECT pgng$wrpr.*, ROWNUM rnum$pgng
+          FROM ( ${QUERY_PLACEHOLDER} ) pgng$wrpr
+    ) WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)
+    ]]></template>
+</templates>
