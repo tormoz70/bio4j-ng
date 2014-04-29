@@ -9,7 +9,17 @@ package ru.bio4j.ng.database.api;
  */
 public class SQLConnectionPoolConfig {
 
+    public String getPoolName() {
+        return poolName;
+    }
+
+    public void setPoolName(String poolName) {
+        this.poolName = poolName;
+    }
+
     public static class Builder {
+        private String poolName;
+        private String dbDriverName;
         private String dbConnectionUrl;
         private String dbConnectionUsr;
         private String dbConnectionPwd;
@@ -18,6 +28,15 @@ public class SQLConnectionPoolConfig {
         private int connectionWaitTimeout = 5;
         private int initialPoolSize = 5;
         private String currentSchema = null;
+
+        public Builder poolName(String poolName) {
+            this.poolName = poolName;
+            return this;
+        }
+        public Builder dbDriverName(String dbDriverName) {
+            this.dbDriverName = dbDriverName;
+            return this;
+        }
 
         public Builder dbConnectionUrl(String value) {
             this.dbConnectionUrl = value;
@@ -90,12 +109,22 @@ public class SQLConnectionPoolConfig {
         public String getCurrentSchema() {
             return currentSchema;
         }
+
+        public String getDbDriverName() {
+            return dbDriverName;
+        }
+
+        public String getPoolName() {
+            return poolName;
+        }
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
+    private String poolName;
+    private String dbDriverName;
     private String dbConnectionUrl;
     private String dbConnectionUsr;
     private String dbConnectionPwd;
@@ -106,6 +135,8 @@ public class SQLConnectionPoolConfig {
     private String currentSchema = null;
 
     private SQLConnectionPoolConfig(Builder builder) {
+        this.poolName = builder.getPoolName();
+        this.dbDriverName = builder.getDbDriverName();
         this.dbConnectionUrl = builder.getDbConnectionUrl();
         this.dbConnectionUsr = builder.getDbConnectionUsr();
         this.dbConnectionPwd = builder.getDbConnectionPwd();
@@ -114,6 +145,10 @@ public class SQLConnectionPoolConfig {
         this.connectionWaitTimeout = builder.getConnectionWaitTimeout();
         this.initialPoolSize = builder.getInitialPoolSize();
         this.currentSchema = builder.getCurrentSchema();
+    }
+
+    public String getDbDriverName() {
+        return dbDriverName;
     }
 
     public String getDbConnectionUrl() {
@@ -178,6 +213,10 @@ public class SQLConnectionPoolConfig {
 
     public void setCurrentSchema(String currentSchema) {
         this.currentSchema = currentSchema;
+    }
+
+    public void setDbDriverName(String dbDriverName) {
+        this.dbDriverName = dbDriverName;
     }
 
 }

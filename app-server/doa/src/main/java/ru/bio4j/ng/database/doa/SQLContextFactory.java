@@ -10,8 +10,9 @@ import ru.bio4j.ng.database.doa.impl.OraContext;
  */
 public class SQLContextFactory {
     public static SQLContext create(SQLContextConfig config) throws Exception {
-//        "ru.bio4j.ng.doa.connectionPool.main"
-        return OraContext.create(config.getPoolName(), SQLConnectionPoolConfig.builder()
+        return OraContext.create(SQLConnectionPoolConfig.builder()
+                .poolName(config.getPoolName())
+                .dbDriverName(config.getDbDriverName())
                 .dbConnectionUrl(config.getDbConnectionUrl())
                 .dbConnectionUsr(config.getDbConnectionUsr())
                 .dbConnectionPwd(config.getDbConnectionPwd())

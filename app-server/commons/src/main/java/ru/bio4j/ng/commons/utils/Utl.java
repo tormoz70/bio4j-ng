@@ -216,17 +216,17 @@ public class Utl {
         if(bean == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> type = bean.getClass();
-        LOG.debug("Starting appling values to bean {}", bean);
+//        LOG.debug("Starting appling values to bean {}", bean);
         for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
             String fldName = fld.getName();
             Object valStr = vals.get(fldName);
             if(valStr != null){
                 try {
-                    LOG.debug(String.format("Tring to set value %s to field %s (%s)...", valStr, fldName, fld.getType()));
+//                    LOG.debug(String.format("Tring to set value %s to field %s (%s)...", valStr, fldName, fld.getType()));
                     Object val = Converter.toType(valStr, fld.getType());
                     fld.setAccessible(true);
                     fld.set(bean, val);
-                    LOG.debug("done.");
+//                    LOG.debug("done.");
                 } catch (Exception e) {
                     throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valStr, e.getMessage()));
                 }

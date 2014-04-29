@@ -22,9 +22,8 @@ public abstract class OraCommand <T extends SQLCommandBase> implements SQLComman
     public static final int ORAERRCODE_USER_BREAKED = 1013; // {"ORA-01013: пользователем запрошена отмена текущей операции"}
 	protected List<Param> params = null;
     protected int timeout = 60;
-    protected OracleConnection connection = null;
-    protected OraclePreparedStatement preparedStatement = null;
-//    protected OracleResultSet resultSet = null;
+    protected Connection connection = null;
+    protected PreparedStatement preparedStatement = null;
     protected String preparedSQL = null;
 
     protected SQLWrapper sqlWrapper;
@@ -82,7 +81,7 @@ public abstract class OraCommand <T extends SQLCommandBase> implements SQLComman
     }
 
 	public T init(Connection conn, List<Param> params, int timeout) throws SQLException {
-		this.connection = (OracleConnection)conn;
+		this.connection = conn;
 		this.timeout = timeout;
 		this.params = params;
         this.prepareStatement();
@@ -160,29 +159,6 @@ public abstract class OraCommand <T extends SQLCommandBase> implements SQLComman
 
     protected void resetCommand() throws SQLException {
     }
-
-
-
-//	@SuppressWarnings("unchecked")
-//    @Override
-//	public <T> T execScalar(Class<T> clazz, Params params){
-//        return (T)this.processStatement(params, new DelegateSQLAction<T>() {
-//            @Override
-//            public T execute() throws SQLException {
-//                final OraCommand self = OraCommand.this;
-//                try(OracleResultSet resultSet = (OracleResultSet)self.preparedStatement.executeQuery()) {
-//                    if(resultSet.next())
-//                        return (T)resultSet.getObject(1);
-//                }
-//                return null;
-//            }
-//        });
-//	}
-//
-//    @Override
-//    public <T> T execScalar(Class<T> clazz){
-//        return this.execScalar(clazz, null);
-//    }
 
 	@Override
 	public void cancel() throws SQLException {

@@ -1,19 +1,14 @@
 package ru.bio4j.ng.database.doa.impl;
 
-import oracle.jdbc.OracleResultSet;
-import oracle.jdbc.OracleResultSetMetaData;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.Field;
 import ru.bio4j.ng.database.api.SQLReader;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.sql.Clob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +19,12 @@ public class OraReader implements SQLReader {
     public static final int FETCH_ROW_LIMIT = 10*10^6; // Максимальное кол-во записей, которое может вернуть запрос к БД (10 млн)
 
     private long currentFetchedRowPosition = 0L;
-    private OracleResultSet resultSet;
+    private ResultSet resultSet;
     private List<Field> fields;
     private List<Object> rowValues;
 
     public OraReader(ResultSet resultSet) {
-        this.resultSet = (OracleResultSet)resultSet;
+        this.resultSet = resultSet;
     }
 
     private static String readClob(Clob clob) throws Exception {
@@ -56,13 +51,13 @@ public class OraReader implements SQLReader {
             throw new IllegalArgumentException("ResultSet must be defined!");
         if(resultSet.next()){
             if(this.fields == null) {
-                OracleResultSetMetaData metadata = (OracleResultSetMetaData)resultSet.getMetaData();
-                this.rowValues = new ArrayList<Object>(metadata.getColumnCount());
+                ResultSetMetaData metadata = resultSet.getMetaData();
+                this.rowValues = new ArrayList<>(metadata.getColumnCount());
                 for (int i = 0; i < metadata.getColumnCount(); i++)
                     this.rowValues.add(null);
 
                 this.fields = new ArrayList<>();
-                for (int i = 1; i < metadata.getColumnCount(); i++) {
+                for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     Class<?> type = null;
                     try {
                         type = getClass().getClassLoader().loadClass(metadata.getColumnClassName(i));
@@ -78,10 +73,8 @@ public class OraReader implements SQLReader {
             for (Field field : this.fields) {
                 int valueIndex = field.getId() - 1;
                 Object value;
-                if(field.getType() == oracle.jdbc.OracleClob.class){
+                if(field.getSqlType() == Types.CLOB){
                     value = readClob(resultSet.getClob(field.getId()));
-//                } else if(field.getType() == oracle.jdbc.OracleBlob.class){
-//                    value = resultSet.getBytes(field.getId());
                 } else
                     value = resultSet.getObject(field.getId());
                 this.rowValues.set(valueIndex, value);
@@ -114,12 +107,12 @@ public class OraReader implements SQLReader {
 
     @Override
     public boolean isDBNull(String fieldName) {
-        throw new NotImplementedException();
+        throw new IllegalArgumentException("Not implemented");
     }
 
     @Override
     public boolean isDBNull(int fieldId) {
-        throw new NotImplementedException();
+        throw new IllegalArgumentException("Not implemented");
     }
 
     private final String EXMSG_FieldNotFound = "Поле %s не найдено!";

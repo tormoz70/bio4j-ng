@@ -15,7 +15,6 @@
         <!-- oracle -->
         <ojdbc6.version>12.1.0</ojdbc6.version>
         <oucp.version>12.1.0</oucp.version>
-
     </properties>
     <build>
         <plugins>
@@ -25,21 +24,17 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            !com.sun.security.*,
-                            !sun.security.*,
-                            !sun.reflect.*,
-                            !oracle.dms.*,
-                            !oracle.i18n.*,
-                            !oracle.ons.*,
-                            !oracle.security.*,
-                            !oracle.xdb.*,
-                            !oracle.xml.*,
-                            !javax.resource.*,
-                            !org.objectweb.*,
-                            *
-                        </Import-Package>
-                        <Embed-Dependency>ojdbc6;oucp</Embed-Dependency>
+                            com.sun.security.*;resolution:="optional",
+                            sun.security.*;resolution:="optional",
+                            sun.reflect.generics.*;resolution:="optional",
+                            javax.*;resolution:="optional",
+                            oracle.*;resolution:="optional",
+                            org.objectweb.*;resolution:="optional",
+                            *</Import-Package>
+                        <!--<Embed-Dependency>ojdbc6,oucp</Embed-Dependency>-->
+                        <Embed-Dependency>*;scope=compile</Embed-Dependency>
                         <Export-Package>ru.bio4j.ng.database.doa</Export-Package>
+                        <remoteOBR />
                     </instructions>
                 </configuration>
             </plugin>
@@ -54,20 +49,33 @@
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${ojdbc6.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>oucp</artifactId>
-            <version>${oucp.version}</version>
-            <scope>provided</scope>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>${tomcat-jdbc.version}</version>
+            <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-juli</artifactId>
+            <version>${tomcat-juli.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.oracle</groupId>-->
+            <!--<artifactId>oucp</artifactId>-->
+            <!--<version>${oucp.version}</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
 
     	<dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dbapi</artifactId>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
     	<dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>

@@ -23,6 +23,7 @@ import java.util.List;
 
 public class SQLFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest.class);
+    private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
     private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.32:1521:EKBDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
     //private static final String testDBUrl = "jdbc:oracle:thin:@https://databasetrial0901-rugivcmkrftrial07058.db.em1.oraclecloudapps.com/apex:1521:databasetrial0901";
@@ -33,12 +34,13 @@ public class SQLFactoryTest {
 
     @BeforeTest
     public static void setUpClass() throws Exception {
-        context = OraContext.create("TEST-CONN-POOL",
+        context = OraContext.create(
                 SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL")
+                        .dbDriverName(testDBDriverName)
                         .dbConnectionUrl(testDBUrl)
                         .dbConnectionUsr(testDBUsr)
                         .dbConnectionPwd(testDBPwd)
-                                //.currentSchema("GIVCAPI")
                         .build()
         );
         try {
@@ -90,7 +92,7 @@ public class SQLFactoryTest {
 
     @Test
     public void testCreateSQLConnectionPool() throws Exception {
-        LOG.debug(Utl.buildBeanStateInfo(context.getStat(), null, null));
+//        LOG.debug(Utl.buildBeanStateInfo(context.getStat(), null, null));
         context.execBatch(new SQLActionScalar<Object>() {
             @Override
             public Object exec(SQLContext context, Connection conn) throws Exception {

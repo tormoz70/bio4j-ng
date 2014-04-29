@@ -24,6 +24,8 @@ public class HelloWorld extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOG.debug("Request recived (Method:GET)...");
         String userName = null;
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
         try {
             userName = this.owner.getDataProvider().getData("tes");
             response.getWriter().append("OK. UserName: " + userName);

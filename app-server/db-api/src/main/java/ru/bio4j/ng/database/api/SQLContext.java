@@ -13,7 +13,7 @@ public interface SQLContext {
     <C, R> R execSQLAtomic(final Connection conn, final SQLAction<C, R> action, final C context) throws Exception;
     <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> action) throws Exception;
 
-    SQLConnectionPoolStat getStat();
+//    SQLConnectionPoolStat getStat();
     void addAfterEvent(SQLConnectionAfterEvent e);
     void clearAfterEvents();
 

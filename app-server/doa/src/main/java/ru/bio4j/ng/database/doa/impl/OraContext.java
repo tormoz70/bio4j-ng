@@ -4,25 +4,28 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
-import oracle.ucp.jdbc.PoolDataSource;
-import oracle.ucp.jdbc.PoolDataSourceImpl;
+//import oracle.ucp.jdbc.PoolDataSource;
+//import oracle.ucp.jdbc.PoolDataSourceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 
 public class OraContext implements SQLContext {
     private static final Logger LOG = LoggerFactory.getLogger(OraContext.class);
 
-    private PoolDataSource cpool;
+    private DataSource cpool;
 
     private final List<SQLConnectionAfterEvent> afterEvents = new ArrayList<>();
     private final List<SQLConnectionAfterEvent> innerAfterEvents = new ArrayList<>();
 
     private final SQLConnectionPoolConfig config;
 
-    private OraContext(PoolDataSource cpool, SQLConnectionPoolConfig config) {
+    private OraContext(DataSource cpool, SQLConnectionPoolConfig config) {
         this.cpool = cpool;
         this.config = config;
         if(this.config.getCurrentSchema() != null) {
@@ -64,23 +67,17 @@ public class OraContext implements SQLContext {
         }
     }
 
-    public static SQLContext create(String poolName, SQLConnectionPoolConfig config) throws SQLException {
+    public static SQLContext create(SQLConnectionPoolConfig config) throws SQLException {
         LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
-
-        PoolDataSource pool = new PoolDataSourceImpl();
-        pool.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
-        pool.setURL(config.getDbConnectionUrl());
-        pool.setConnectionProperty("autoCommit", "false");
-
-        pool.setUser(config.getDbConnectionUsr());
-        pool.setPassword(config.getDbConnectionPwd());
-        pool.setConnectionPoolName(poolName);
-        pool.setMinPoolSize(config.getMinPoolSize());
-        pool.setMaxPoolSize(config.getMaxPoolSize());
-        pool.setConnectionWaitTimeout(config.getConnectionWaitTimeout());
-        pool.setInitialPoolSize(config.getInitialPoolSize());
-
-        return new OraContext(pool, config);
+        final PoolProperties properties = new PoolProperties();
+        properties.setMaxActive(config.getMaxPoolSize());
+        properties.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+        properties.setUrl(config.getDbConnectionUrl());
+        properties.setUsername(config.getDbConnectionUsr());
+        properties.setPassword(config.getDbConnectionPwd());
+        properties.setCommitOnReturn(false);
+        DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(properties);
+        return new OraContext(dataSource, config);
     }
 
     public void Close(){
@@ -215,20 +212,21 @@ public class OraContext implements SQLContext {
         }, null);
     }
 
-    @Override
-    public SQLConnectionPoolStat getStat(){
-        return new SQLConnectionPoolStat(
-            this.cpool.getConnectionPoolName(), this.cpool.getMinPoolSize(), this.cpool.getMaxPoolSize(), this.cpool.getConnectionWaitTimeout(), this.cpool.getInitialPoolSize(),
-            this.cpool.getStatistics().getTotalConnectionsCount(), this.cpool.getStatistics().getAvailableConnectionsCount(), this.cpool.getStatistics().getBorrowedConnectionsCount(),
-            this.cpool.getStatistics().getAverageBorrowedConnectionsCount(), this.cpool.getStatistics().getPeakConnectionsCount(), this.cpool.getStatistics().getRemainingPoolCapacityCount(),
-            this.cpool.getStatistics().getLabeledConnectionsCount(), this.cpool.getStatistics().getConnectionsCreatedCount(), this.cpool.getStatistics().getConnectionsClosedCount(),
-            this.cpool.getStatistics().getAverageConnectionWaitTime(), this.cpool.getStatistics().getPeakConnectionWaitTime(), this.cpool.getStatistics().getAbandonedConnectionsCount(),
-            this.cpool.getStatistics().getPendingRequestsCount(), this.cpool.getStatistics().getCumulativeConnectionWaitTime(), this.cpool.getStatistics().getCumulativeConnectionBorrowedCount(),
-            this.cpool.getStatistics().getCumulativeConnectionUseTime(), this.cpool.getStatistics().getCumulativeConnectionReturnedCount(), this.cpool.getStatistics().getCumulativeSuccessfulConnectionWaitTime(),
-            this.cpool.getStatistics().getCumulativeSuccessfulConnectionWaitCount(), this.cpool.getStatistics().getCumulativeFailedConnectionWaitTime(),
-            this.cpool.getStatistics().getCumulativeFailedConnectionWaitCount()
-        );
-    }
+//    @Override
+//    public SQLConnectionPoolStat getStat(){
+//        return new SQLConnectionPoolStat(
+//            this.cpool.getConnectionPoolName(), this.cpool.getMinPoolSize(), this.cpool.getMaxPoolSize(), this.cpool.getConnectionWaitTimeout(), this.cpool.getInitialPoolSize(),
+//            this.cpool.getStatistics().getTotalConnectionsCount(), this.cpool.getStatistics().getAvailableConnectionsCount(), this.cpool.getStatistics().getBorrowedConnectionsCount(),
+//            this.cpool.getStatistics().getAverageBorrowedConnectionsCount(), this.cpool.getStatistics().getPeakConnectionsCount(), this.cpool.getStatistics().getRemainingPoolCapacityCount(),
+//            this.cpool.getStatistics().getLabeledConnectionsCount(), this.cpool.getStatistics().getConnectionsCreatedCount(), this.cpool.getStatistics().getConnectionsClosedCount(),
+//            this.cpool.getStatistics().getAverageConnectionWaitTime(), this.cpool.getStatistics().getPeakConnectionWaitTime(), this.cpool.getStatistics().getAbandonedConnectionsCount(),
+//            this.cpool.getStatistics().getPendingRequestsCount(), this.cpool.getStatistics().getCumulativeConnectionWaitTime(), this.cpool.getStatistics().getCumulativeConnectionBorrowedCount(),
+//            this.cpool.getStatistics().getCumulativeConnectionUseTime(), this.cpool.getStatistics().getCumulativeConnectionReturnedCount(), this.cpool.getStatistics().getCumulativeSuccessfulConnectionWaitTime(),
+//            this.cpool.getStatistics().getCumulativeSuccessfulConnectionWaitCount(), this.cpool.getStatistics().getCumulativeFailedConnectionWaitTime(),
+//            this.cpool.getStatistics().getCumulativeFailedConnectionWaitCount()
+//        );
+//        return null;
+//    }
 
     @Override
     public SQLCursor CreateCursor(){

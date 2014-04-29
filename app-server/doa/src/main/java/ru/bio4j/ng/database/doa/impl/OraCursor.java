@@ -39,7 +39,7 @@ public class OraCursor extends OraCommand<SQLCursor> implements SQLCursor {
     @Override
 	protected void prepareStatement() throws SQLException {
         this.preparedSQL = (this.sqlWrapper != null) ? this.sqlWrapper.prepare(this.sql) : this.sql;
-        this.preparedStatement = (OraclePreparedStatement)this.connection.prepareStatement(this.preparedSQL, ResultSet.TYPE_FORWARD_ONLY);
+        this.preparedStatement = this.connection.prepareStatement(this.preparedSQL, ResultSet.TYPE_FORWARD_ONLY);
         this.preparedStatement.setQueryTimeout(this.timeout);
 	}
 

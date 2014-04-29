@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.doa.impl;
 
+//import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OraclePreparedStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

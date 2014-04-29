@@ -6,6 +6,7 @@ import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.CursorParser;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
@@ -28,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import static org.osgi.framework.Constants.SERVICE_RANKING;
+import static ru.bio4j.ng.commons.utils.Strings.*;
 import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
 
 
@@ -82,11 +84,16 @@ public class DataProviderImpl implements DataProvider, ManagedService {
             @Override
             public String exec(SQLContext context, Connection conn) throws Exception {
                 StringBuilder rslt = new StringBuilder();
+                LOG.debug("Opening cursor...");
                 try(SQLCursor c = context.CreateCursor()
                     .init(conn, "select username from user_users", null)
                     .open()) {
-                    while (c.reader().read())
-                        rslt.append(c.reader().getField("username")+";");
+                    LOG.debug("Cursor opened...");
+                    while (c.reader().read()){
+                        LOG.debug("Reading field USERNAME...");
+                        String s = c.reader().getValue("USERNAME", String.class);
+                        rslt.append(s+";");
+                    }
                 }
                 return rslt.toString();
             }
@@ -97,8 +104,15 @@ public class DataProviderImpl implements DataProvider, ManagedService {
     public synchronized void updated(Dictionary conf) throws ConfigurationException {
         LOG.debug("About appling config to sqlContextConfig...");
         // Здесь получаем конфигурацию
-        if(sqlContextConfig == null)
+        if(sqlContextConfig == null) {
             sqlContextConfig = new SQLContextConfig();
+//            sqlContextConfig.setPoolName("ru.bio4j.ng.doa.connectionPool.main");
+//            sqlContextConfig.setDbConnectionUrl("jdbc:oracle:thin:@192.168.50.32:1521:EKBDB");
+//            sqlContextConfig.setDbConnectionUsr("GIVCAS");
+//            sqlContextConfig.setDbConnectionPwd("qwe");
+//            sqlContextConfig.setConnectionWaitTimeout(15);
+
+        }
 
         LOG.debug("config is "+conf.getClass());
         Properties c = (Properties)conf;
@@ -118,6 +132,21 @@ public class DataProviderImpl implements DataProvider, ManagedService {
             }
         }
         LOG.debug("Apling config to sqlContextConfig done.");
+
+        if(isNullOrEmpty(sqlContextConfig.getPoolName())){
+            LOG.debug("SQLContextConfig bp empty. Wating...");
+            return;
+        }
+
+        if(sqlContext == null) {
+            LOG.debug("Creating SQLContext (poolName:{})...", sqlContextConfig.getPoolName());
+            try {
+                sqlContext = SQLContextFactory.create(sqlContextConfig);
+            } catch (Exception e) {
+                LOG.error("Error while creating SQLContext!", e);
+            }
+        }
+
     }
 
     public void setContentResolver(FileContentResolver contentResolver) {
@@ -127,12 +156,6 @@ public class DataProviderImpl implements DataProvider, ManagedService {
     @Validate
     public void start() throws Exception {
         LOG.debug("Starting...");
-        if(sqlContextConfig.getPoolName() == null)
-            throw new IllegalArgumentException("SQL Context is not inited!");
-        if(sqlContext == null) {
-            LOG.debug("Creating SQLContext (poolName:{})...", sqlContextConfig.getPoolName());
-            sqlContext = SQLContextFactory.create(sqlContextConfig);
-        }
         Wrappers.getInstance().init("oracle");
         LOG.debug("Started");
     }

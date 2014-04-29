@@ -36,7 +36,7 @@ public class OraStoredProc extends OraCommand<SQLStoredProc> implements SQLStore
 	protected void prepareStatement() throws SQLException {
         this.preparedSQL = OraUtils.detectStoredProcParamsAuto(this.storedProcName, this.connection);
         this.preparedSQL = "{call " + this.preparedSQL + "}";
-        this.preparedStatement = (OracleCallableStatement)this.connection.prepareCall(this.preparedSQL);
+        this.preparedStatement = this.connection.prepareCall(this.preparedSQL);
         this.preparedStatement.setQueryTimeout(this.timeout);
 	}
 	

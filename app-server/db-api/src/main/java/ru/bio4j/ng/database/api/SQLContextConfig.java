@@ -6,6 +6,7 @@ package ru.bio4j.ng.database.api;
 public class SQLContextConfig {
 
     private String poolName;
+    private String dbDriverName;
     private String dbConnectionUrl;
     private String dbConnectionUsr;
     private String dbConnectionPwd;
@@ -85,5 +86,13 @@ public class SQLContextConfig {
 
     public void setPoolName(String poolName) {
         this.poolName = poolName;
+    }
+
+    public String getDbDriverName() {
+        return dbDriverName;
+    }
+
+    public void setDbDriverName(String dbDriverName) {
+        this.dbDriverName = dbDriverName;
     }
 }
