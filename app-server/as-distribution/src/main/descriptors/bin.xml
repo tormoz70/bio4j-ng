@@ -48,6 +48,7 @@
             <directory>${distr.base}</directory>
             <includes>
                 <include>bundle/*</include>
+                <include>${distr.bundles}/*</include>
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>
@@ -55,7 +56,7 @@
         <fileSet>
             <directory>src/main/distribution</directory>
             <excludes>
-                <!--<exclude>**/conf/*</exclude>-->
+                <exclude>**/conf/*</exclude>
             </excludes>
             <outputDirectory>/</outputDirectory>
             <fileMode>0644</fileMode>

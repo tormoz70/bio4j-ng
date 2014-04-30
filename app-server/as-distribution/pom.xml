@@ -15,6 +15,7 @@
         <distribution.ext>zip</distribution.ext>
         <!--<distribution.ext>tar.gz</distribution.ext>-->
         <distr.base>target/dependencies</distr.base>
+        <distr.bundles>install</distr.bundles>
 
         <felix.framework.version>4.2.1</felix.framework.version>
         <felix.eventadmin>1.3.2</felix.eventadmin>
@@ -33,8 +34,8 @@
         <commons.io.version>1.4</commons.io.version>
         <commons.fileupload.version>1.2.2</commons.fileupload.version>
 
-        <ojdbc6.version>12.1.0</ojdbc6.version>
-        <oucp.version>12.1.0</oucp.version>
+        <!--<ojdbc6.version>12.1.0</ojdbc6.version>-->
+        <!--<oucp.version>12.1.0</oucp.version>-->
 
         <log4j.version>1.2.17</log4j.version>
     </properties>
@@ -48,15 +49,15 @@
     <!--</dependencies>-->
 
     <build>
-        <!--<resources>-->
-            <!--<resource>-->
-                <!--<directory>src/main/distribution/conf</directory>-->
-                <!--<filtering>true</filtering>-->
-                <!--<includes>-->
-                    <!--<include>**/*</include>-->
-                <!--</includes>-->
-            <!--</resource>-->
-        <!--</resources>-->
+        <resources>
+            <resource>
+                <directory>src/main/distribution/conf</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -243,24 +244,6 @@
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
 
-                                <!--ojdbc-->
-                                <!--<artifactItem>-->
-                                    <!--<groupId>com.oracle</groupId>-->
-                                    <!--<artifactId>oucp-bnd</artifactId>-->
-                                    <!--<version>${oucp.version}</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
-                                <!--<artifactItem>-->
-                                    <!--<groupId>com.oracle</groupId>-->
-                                    <!--<artifactId>ojdbc6-bnd</artifactId>-->
-                                    <!--<version>${ojdbc6.version}</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
-
                                 <!--log4j-->
                                 <!--<artifactItem>-->
                                     <!--<groupId>log4j</groupId>-->
@@ -270,14 +253,14 @@
                                     <!--<overWrite>true</overWrite>-->
                                     <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
                                 <!--</artifactItem>-->
-                                <artifactItem>
-                                    <groupId>org.slf4j</groupId>
-                                    <artifactId>slf4j-api</artifactId>
-                                    <version>${slf4j.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.slf4j</groupId>-->
+                                    <!--<artifactId>slf4j-api</artifactId>-->
+                                    <!--<version>${slf4j.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <!--<artifactItem>-->
                                     <!--<groupId>org.slf4j</groupId>-->
                                     <!--<artifactId>slf4j-log4j12</artifactId>-->
@@ -287,46 +270,46 @@
                                     <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
                                 <!--</artifactItem>-->
 
-                                <!--<artifactItem>-->
-                                    <!--<groupId>org.ops4j.pax.logging</groupId>-->
-                                    <!--<artifactId>pax-logging-service</artifactId>-->
-                                    <!--<version>${pax.logging.version}</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
-                                <!--<artifactItem>-->
-                                    <!--<groupId>org.ops4j.pax.logging</groupId>-->
-                                    <!--<artifactId>pax-logging-api</artifactId>-->
-                                    <!--<version>${pax.logging.version}</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.logging</groupId>
+                                    <artifactId>pax-logging-service</artifactId>
+                                    <version>${pax.logging.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.logging</groupId>
+                                    <artifactId>pax-logging-api</artifactId>
+                                    <version>${pax.logging.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
 
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-classic</artifactId>
-                                    <version>${logback.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-core</artifactId>
-                                    <version>${logback.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>ch.qos.logback</groupId>-->
+                                    <!--<artifactId>logback-classic</artifactId>-->
+                                    <!--<version>${logback.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>ch.qos.logback</groupId>-->
+                                    <!--<artifactId>logback-core</artifactId>-->
+                                    <!--<version>${logback.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <!--<artifactItem>-->
                                     <!--<groupId>janino</groupId>-->
                                     <!--<artifactId>janino</artifactId>-->
                                     <!--<version>${janino.version}</version>-->
                                     <!--<type>jar</type>-->
                                     <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
                                 <!--</artifactItem>-->
 
 
@@ -337,7 +320,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -345,7 +328,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -353,7 +336,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -361,7 +344,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -369,7 +352,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -377,7 +360,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -385,7 +368,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -393,7 +376,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
 
                             </artifactItems>

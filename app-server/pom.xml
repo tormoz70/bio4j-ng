@@ -37,8 +37,6 @@
         <osgi.compendium.version>4.3.1</osgi.compendium.version>
         <osgi.ipojo.version>1.11.2</osgi.ipojo.version>
 
-        <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
-        <tomcat-juli.version>8.0.3</tomcat-juli.version>
         <!-- Testing -->
         <testng.version>6.7</testng.version>
         <!-- <mockito.version>1.9.0</mockito.version> -->
@@ -156,12 +154,12 @@
             </dependency>
 
 			<!-- Logging stuff -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>provided</scope>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.slf4j</groupId>-->
+                <!--<artifactId>slf4j-api</artifactId>-->
+                <!--<version>${slf4j.version}</version>-->
+                <!--<scope>provided</scope>-->
+            <!--</dependency>-->
             <!--<dependency>-->
                 <!--<groupId>org.slf4j</groupId>-->
                 <!--<artifactId>slf4j-log4j12</artifactId>-->
@@ -169,44 +167,38 @@
                 <!--<scope>test</scope>-->
             <!--</dependency>-->
 
-            <!--<dependency>-->
-                <!--<groupId>org.ops4j.pax.logging</groupId>-->
-                <!--<artifactId>pax-logging-api</artifactId>-->
-                <!--<version>${pax.logging.version}</version>-->
-                <!--<scope>provided</scope>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.ops4j.pax.logging</groupId>-->
-                <!--<artifactId>pax-logging-service</artifactId>-->
-                <!--<version>${pax.logging.version}</version>-->
-                <!--<scope>provided</scope>-->
-            <!--</dependency>-->
-
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
-                <scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>${logback.version}</version>
-                <scope>provided</scope>
-			</dependency>
             <dependency>
-                <groupId>janino</groupId>
-                <artifactId>janino</artifactId>
-                <version>${janino.version}</version>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-service</artifactId>
+                <version>${pax.logging.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+			<!--<dependency>-->
+				<!--<groupId>ch.qos.logback</groupId>-->
+				<!--<artifactId>logback-classic</artifactId>-->
+				<!--<version>${logback.version}</version>-->
+                <!--<scope>provided</scope>-->
+			<!--</dependency>-->
+			<!--<dependency>-->
+				<!--<groupId>ch.qos.logback</groupId>-->
+				<!--<artifactId>logback-core</artifactId>-->
+				<!--<version>${logback.version}</version>-->
+                <!--<scope>provided</scope>-->
+			<!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>janino</groupId>-->
+                <!--<artifactId>janino</artifactId>-->
+                <!--<version>${janino.version}</version>-->
+                <!--<scope>provided</scope>-->
+            <!--</dependency>-->
 			<!-- Other stuff -->
-
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-jdbc</artifactId>
-                <version>${tomcat-jdbc.version}</version>
-            </dependency>
 
             <!--bio4j-->
             <dependency>
@@ -246,35 +238,35 @@
 
     <dependencies>
         <!-- Testing -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-api</artifactId>-->
+        <!--</dependency>-->
         <!--<dependency>-->
             <!--<groupId>org.slf4j</groupId>-->
             <!--<artifactId>slf4j-log4j12</artifactId>-->
         <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.ops4j.pax.logging</groupId>-->
-            <!--<artifactId>pax-logging-api</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.ops4j.pax.logging</groupId>-->
-            <!--<artifactId>pax-logging-service</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-service</artifactId>
+        </dependency>
 
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>janino</groupId>
-            <artifactId>janino</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>ch.qos.logback</groupId>-->
+            <!--<artifactId>logback-classic</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>ch.qos.logback</groupId>-->
+            <!--<artifactId>logback-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>janino</groupId>-->
+            <!--<artifactId>janino</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.testng</groupId>

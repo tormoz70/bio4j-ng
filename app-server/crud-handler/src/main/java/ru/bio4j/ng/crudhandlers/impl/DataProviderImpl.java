@@ -106,22 +106,7 @@ public class DataProviderImpl implements DataProvider, ManagedService {
         // Здесь получаем конфигурацию
         if(sqlContextConfig == null) {
             sqlContextConfig = new SQLContextConfig();
-//            sqlContextConfig.setPoolName("ru.bio4j.ng.doa.connectionPool.main");
-//            sqlContextConfig.setDbConnectionUrl("jdbc:oracle:thin:@192.168.50.32:1521:EKBDB");
-//            sqlContextConfig.setDbConnectionUsr("GIVCAS");
-//            sqlContextConfig.setDbConnectionPwd("qwe");
-//            sqlContextConfig.setConnectionWaitTimeout(15);
-
         }
-
-        LOG.debug("config is "+conf.getClass());
-        Properties c = (Properties)conf;
-        StringBuilder sb = new StringBuilder();
-        sb.append("Config {\n");
-        for(String k : c.stringPropertyNames())
-            sb.append(String.format("  - %s : %s;\n", k, c.getProperty(k)));
-        sb.append("}\n");
-        LOG.debug(sb.toString());
 
         if(!conf.isEmpty()) {
             LOG.debug("Config is not empty...");
@@ -130,8 +115,8 @@ public class DataProviderImpl implements DataProvider, ManagedService {
             } catch (ApplyValuesToBeanException e) {
                 throw new ConfigurationException(e.getField(), e.getMessage());
             }
+            LOG.debug("Apling config to sqlContextConfig done.");
         }
-        LOG.debug("Apling config to sqlContextConfig done.");
 
         if(isNullOrEmpty(sqlContextConfig.getPoolName())){
             LOG.debug("SQLContextConfig bp empty. Wating...");
@@ -145,6 +130,8 @@ public class DataProviderImpl implements DataProvider, ManagedService {
             } catch (Exception e) {
                 LOG.error("Error while creating SQLContext!", e);
             }
+        } else {
+
         }
 
     }
