@@ -116,7 +116,7 @@ public class DataProviderImpl implements DataProvider, ManagedService {
 
     }
 
-//    @Bind
+    @Bind
     public void setContentResolver(FileContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }

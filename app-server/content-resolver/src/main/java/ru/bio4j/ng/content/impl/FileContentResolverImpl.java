@@ -95,7 +95,7 @@ public class FileContentResolverImpl implements FileContentResolver, FileListene
         cacheService.remove(CacheName.QUERY, extractName(code).getRight());
     }
 
-//    @Bind
+    @Bind
     public void setCacheService(CacheService cacheService) {
         this.cacheService = cacheService;
     }

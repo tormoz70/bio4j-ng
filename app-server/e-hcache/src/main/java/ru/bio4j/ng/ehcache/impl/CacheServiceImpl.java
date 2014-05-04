@@ -239,10 +239,14 @@ public class CacheServiceImpl implements CacheService, ManagedService {
     public void doStart() throws Exception {
         LOG.debug("Starting...");
         try {
+            if(config == null) {
+                LOG.debug("Config is not inited! Wating...");
+                return;
+            }
             createCacheConfiguration();
             this.cacheManager = CacheManager.create(serviceConfiguration);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error on configuring Ehcache!", e);
         }
         LOG.debug("Started.");
     }
@@ -257,6 +261,12 @@ public class CacheServiceImpl implements CacheService, ManagedService {
     public void updated(Dictionary<String, ?> stringDictionary) throws ConfigurationException {
         configurator.update(stringDictionary);
         config = configurator.getConfig();
+        try {
+            doStop();
+            doStart();
+        } catch (Exception e) {
+            LOG.error("Error on restarting service!", e);
+        }
     }
 
 //    public void setConfig(CacheServiceConfig config) {
