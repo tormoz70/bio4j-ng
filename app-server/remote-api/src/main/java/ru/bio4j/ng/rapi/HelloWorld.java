@@ -15,8 +15,8 @@ import java.io.IOException;
 public class HelloWorld extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(HelloWorld.class);
 
-    private RestManagerService owner;
-    public HelloWorld(RestManagerService owner) {
+    private RemoteAPIService owner;
+    public HelloWorld(RemoteAPIService owner) {
         this.owner = owner;
     }
 

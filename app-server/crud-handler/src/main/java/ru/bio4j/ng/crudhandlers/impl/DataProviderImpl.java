@@ -5,9 +5,6 @@ import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.CursorParser;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
@@ -16,35 +13,30 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
-import ru.bio4j.ng.service.api.Cursor;
-import ru.bio4j.ng.service.api.DataProvider;
-import ru.bio4j.ng.service.api.DbProxy;
-import ru.bio4j.ng.service.api.FileContentResolver;
+import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.model.transport.jstore.BioResponseJStore;
 
 import java.sql.Connection;
 import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.Properties;
-
-import static org.osgi.framework.Constants.SERVICE_RANKING;
 import static ru.bio4j.ng.commons.utils.Strings.*;
+import static org.osgi.framework.Constants.SERVICE_RANKING;
 import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
 
 
 
-@Component(managedservice="crud.handler.config")
+@Component(managedservice="bio4j.crud.handler.config")
 @Instantiate
-@Provides(specifications = DataProvider.class,
-        properties = {@StaticServiceProperty(name = SERVICE_RANKING, value = PROCESSING_SERVICE_RANK_IPOJO, type = "java.lang.Integer")})
+@Provides(specifications = DataProvider.class)
+//        properties = {@StaticServiceProperty(name = SERVICE_RANKING, value = PROCESSING_SERVICE_RANK_IPOJO, type = "java.lang.Integer")})
 public class DataProviderImpl implements DataProvider, ManagedService {
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderImpl.class);
 
     private FileContentResolver contentResolver;
     private DbProxy dbProxy;
-    private SQLContextConfig sqlContextConfig;
+//    private SQLContextConfig sqlContextConfig;
     private SQLContext sqlContext;
+    private Configurator<SQLContextConfig> configurator = new Configurator<>(SQLContextConfig.class);
 
     private void wrapCursor(Cursor cursor) throws Exception {
         Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
@@ -102,31 +94,19 @@ public class DataProviderImpl implements DataProvider, ManagedService {
 
     @Updated
     public synchronized void updated(Dictionary conf) throws ConfigurationException {
-        LOG.debug("About appling config to sqlContextConfig...");
-        // Здесь получаем конфигурацию
-        if(sqlContextConfig == null) {
-            sqlContextConfig = new SQLContextConfig();
-        }
+        LOG.debug("Updating config...");
 
-        if(!conf.isEmpty()) {
-            LOG.debug("Config is not empty...");
-            try {
-                Utl.applyValuesToBean(conf, sqlContextConfig);
-            } catch (ApplyValuesToBeanException e) {
-                throw new ConfigurationException(e.getField(), e.getMessage());
-            }
-            LOG.debug("Apling config to sqlContextConfig done.");
-        }
+        configurator.update(conf);
 
-        if(isNullOrEmpty(sqlContextConfig.getPoolName())){
+        if(isNullOrEmpty(configurator.getConfig().getPoolName())){
             LOG.debug("SQLContextConfig bp empty. Wating...");
             return;
         }
 
         if(sqlContext == null) {
-            LOG.debug("Creating SQLContext (poolName:{})...", sqlContextConfig.getPoolName());
+            LOG.debug("Creating SQLContext (poolName:{})...", configurator.getConfig().getPoolName());
             try {
-                sqlContext = SQLContextFactory.create(sqlContextConfig);
+                sqlContext = SQLContextFactory.create(configurator.getConfig());
             } catch (Exception e) {
                 LOG.error("Error while creating SQLContext!", e);
             }
@@ -136,6 +116,7 @@ public class DataProviderImpl implements DataProvider, ManagedService {
 
     }
 
+//    @Bind
     public void setContentResolver(FileContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }
@@ -151,12 +132,4 @@ public class DataProviderImpl implements DataProvider, ManagedService {
     public void stop() throws Exception {
     }
 
-
-    public void setDbProxy(DbProxy dbProxy) {
-        this.dbProxy = dbProxy;
-    }
-
-    public void setSqlContext(SQLContext sqlContext) {
-        this.sqlContext = sqlContext;
-    }
 }

@@ -2,6 +2,10 @@ package ru.bio4j.ng.commons.utils;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Dictionary;
 
 import javax.xml.bind.JAXBContext;
@@ -12,6 +16,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.Types;
 
 import static ru.bio4j.ng.commons.utils.Strings.*;
 
@@ -260,6 +265,33 @@ public class Utl {
     public static String normalizePath(String path) {
         return normalizePath(path, (char)0);
     }
+
+    // хз пока не получилось...
+//    public static Class<?> getTypeParams(Object obj) {
+//        if(obj == null)
+//            throw new IllegalArgumentException("Param obj cannot be null!!");
+//        Class<?> clazz = obj.getClass();
+//        TypeVariable<?>[] params = clazz.getTypeParameters();
+//        if(params.length > 0) {
+//            TypeVariable<?> paramFirst = params[0];
+//            GenericDeclaration gd = paramFirst.getGenericDeclaration();
+//            String pname = paramFirst.getName();
+//            for(java.lang.reflect.Field fld : clazz.getDeclaredFields()) {
+//                if(pname.equals("" + fld.getGenericType())) {
+//                    fld.setAccessible(true);
+//                    Object fldVal;
+//                    try {
+//                        fldVal=fld.get(obj);
+//                    } catch(IllegalAccessException e) {
+//                        fldVal=null;
+//                    }
+//                    return (fldVal != null) ? fldVal.getClass() : null;
+//                }
+//            }
+//            return null;
+//        }
+//        return null;
+//    }
 
 }
 

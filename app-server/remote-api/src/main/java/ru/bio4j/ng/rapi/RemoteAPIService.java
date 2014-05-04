@@ -6,15 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.DataProvider;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 @Component
 @Provides
 @Instantiate
-public class RestManagerService {
+public class RemoteAPIService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestManagerService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteAPIService.class);
     private static final String SERVLET_SERVICE_PATH = "/hello";
 
     private DataProvider dataProvider;

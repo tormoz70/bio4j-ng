@@ -16,6 +16,8 @@
         <module>doa</module>
         <module>crud-handler</module>
         <module>remote-api</module>
+        <module>e-hcache</module>
+        <module>content-resolver</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
@@ -46,6 +48,10 @@
         <pax.logging.version>1.7.2</pax.logging.version>
         <logback.version>1.0.1</logback.version>
         <janino.version>2.5.10</janino.version>
+
+        <!-- Others -->
+        <json.version>1.0.0</json.version>
+
         <!-- maven plugin -->
         <bundle-plugin-version>2.4.0</bundle-plugin-version>
         <deploy-plugin-version>2.7</deploy-plugin-version>
@@ -154,19 +160,6 @@
             </dependency>
 
 			<!-- Logging stuff -->
-            <!--<dependency>-->
-                <!--<groupId>org.slf4j</groupId>-->
-                <!--<artifactId>slf4j-api</artifactId>-->
-                <!--<version>${slf4j.version}</version>-->
-                <!--<scope>provided</scope>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.slf4j</groupId>-->
-                <!--<artifactId>slf4j-log4j12</artifactId>-->
-                <!--<version>${slf4j.version}</version>-->
-                <!--<scope>test</scope>-->
-            <!--</dependency>-->
-
             <dependency>
                 <groupId>org.ops4j.pax.logging</groupId>
                 <artifactId>pax-logging-api</artifactId>
@@ -179,26 +172,14 @@
                 <version>${pax.logging.version}</version>
                 <scope>provided</scope>
             </dependency>
-
-			<!--<dependency>-->
-				<!--<groupId>ch.qos.logback</groupId>-->
-				<!--<artifactId>logback-classic</artifactId>-->
-				<!--<version>${logback.version}</version>-->
-                <!--<scope>provided</scope>-->
-			<!--</dependency>-->
-			<!--<dependency>-->
-				<!--<groupId>ch.qos.logback</groupId>-->
-				<!--<artifactId>logback-core</artifactId>-->
-				<!--<version>${logback.version}</version>-->
-                <!--<scope>provided</scope>-->
-			<!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>janino</groupId>-->
-                <!--<artifactId>janino</artifactId>-->
-                <!--<version>${janino.version}</version>-->
-                <!--<scope>provided</scope>-->
-            <!--</dependency>-->
 			<!-- Other stuff -->
+
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
             <!--bio4j-->
             <dependency>
@@ -231,6 +212,11 @@
                 <artifactId>bio4j-ng-doa</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-ehcache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
 
         </dependencies>
@@ -238,14 +224,6 @@
 
     <dependencies>
         <!-- Testing -->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-api</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-log4j12</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-api</artifactId>
@@ -254,19 +232,6 @@
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-service</artifactId>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-classic</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-core</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>janino</groupId>-->
-            <!--<artifactId>janino</artifactId>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.testng</groupId>

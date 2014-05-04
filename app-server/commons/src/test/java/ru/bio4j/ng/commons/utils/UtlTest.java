@@ -99,4 +99,9 @@ public class UtlTest {
         Assert.assertEquals(c.getPoolName(), expctd);
     }
 
+    @Test(enabled = false)
+    public void getTypeParamsTest() throws Exception {
+        TestGeneric<TestGenericBean> t = new TestGeneric<>();
+        Assert.assertEquals(t.getparamType(), TestGenericBean.class);
+    }
 }

@@ -8,10 +8,12 @@
         <artifactId>app-server</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>bio4j-ng-sapi</artifactId>
+
+    <artifactId>bio4j-ng-content</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Service API</name>
-    <description>API all framework services</description>
+    <name>Bio Content Resolver Service</name>
+    <description>Service for loading info object descriptions</description>
+
     <build>
         <plugins>
             <plugin>
@@ -20,8 +22,11 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
@@ -29,12 +34,17 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-tmodel</artifactId>
+            <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-ehcache</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

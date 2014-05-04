@@ -1,0 +1,34 @@
+<ehcache name="Bio4jCacheService" updateCheck="false">
+
+    <!-- diskStore path="cache-data"/ -->
+
+    <defaultCache maxElementsInMemory="10000" eternal="false"
+                  timeToLiveSeconds="0"
+                  overflowToDisk="false"
+                  diskPersistent="false"
+                  memoryStoreEvictionPolicy="FIFO"
+                  statistics="false"/>
+
+    <cache eternal="false" name="objectMap"
+           maxElementsInMemory="100"
+           overflowToDisk="false"
+           diskPersistent="false"
+           timeToIdleSeconds="86400"
+           memoryStoreEvictionPolicy="LRU"
+           statistics="false"/>
+
+    <cache eternal="false" name="query"
+           maxElementsInMemory="1000000"
+           overflowToDisk="false"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+           statistics="false"/>
+
+    <cache eternal="false" name="content"
+           maxElementsInMemory="1000000"
+           overflowToDisk="false"
+           diskPersistent="false"
+           memoryStoreEvictionPolicy="LRU"
+           statistics="false"/>
+
+</ehcache>
