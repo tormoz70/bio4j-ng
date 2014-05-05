@@ -14,7 +14,9 @@ public class RemoteAPIService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteAPIService.class);
     private static final String SERVLET_SERVICE_PATH = "/hello";
 
+    @Requires
     private DataProvider dataProvider;
+    @Requires
     private HttpService httpService;
 
     @Validate
@@ -33,16 +35,6 @@ public class RemoteAPIService {
             httpService.unregister(SERVLET_SERVICE_PATH);
             LOG.info("Servlet unregistered");
         }
-    }
-
-    @Bind
-    public void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
-    }
-
-    @Bind
-    public void setDataProvider(DataProvider dataProvider) {
-        this.dataProvider = dataProvider;
     }
 
     public DataProvider getDataProvider() {

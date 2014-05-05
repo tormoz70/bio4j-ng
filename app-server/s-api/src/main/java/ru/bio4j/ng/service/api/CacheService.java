@@ -3,7 +3,7 @@ package ru.bio4j.ng.service.api;
 import java.io.Serializable;
 import java.util.List;
 
-public interface CacheService {
+public interface CacheService extends BioService {
 
 	<Key extends Serializable, T extends Serializable> void put(CacheName cacheName, Key key, T value);
 	<Key extends Serializable, T extends Serializable> void put(CacheName cacheName, Key key, T value, boolean notifyListeners);

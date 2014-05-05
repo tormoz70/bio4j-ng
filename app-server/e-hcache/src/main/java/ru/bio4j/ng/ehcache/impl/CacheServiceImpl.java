@@ -8,28 +8,29 @@ import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.ConfigurationFactory;
 import net.sf.ehcache.config.DiskStoreConfiguration;
 import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.handlers.event.Publishes;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.service.api.CacheEventListener;
+import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.ehcache.util.CacheEventListenerWrapper;
 import ru.bio4j.ng.ehcache.util.CacheUtil;
-import ru.bio4j.ng.service.api.CacheName;
-import ru.bio4j.ng.service.api.CacheService;
-import ru.bio4j.ng.service.api.Configurator;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Dictionary;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 @Component
 @Instantiate
 @Provides(specifications = CacheService.class)
-public class CacheServiceImpl implements CacheService, ManagedService {
+public class CacheServiceImpl extends BioServiceBase implements CacheService {
 
 	private static Logger LOG = LoggerFactory.getLogger(CacheService.class);
 
@@ -239,12 +240,14 @@ public class CacheServiceImpl implements CacheService, ManagedService {
     public void doStart() throws Exception {
         LOG.debug("Starting...");
         try {
-            if(config == null) {
+            if(config == null || isNullOrEmpty(config.getCachePersistentPath())) {
                 LOG.debug("Config is not inited! Wating...");
                 return;
             }
+            LOG.debug("Config is not null. Create CacheConfiguration...");
             createCacheConfiguration();
             this.cacheManager = CacheManager.create(serviceConfiguration);
+            this.redy = true;
         } catch (Exception e) {
             LOG.error("Error on configuring Ehcache!", e);
         }
@@ -253,17 +256,26 @@ public class CacheServiceImpl implements CacheService, ManagedService {
 
     @Invalidate
     public void doStop() throws Exception {
+        this.redy = false;
         LOG.debug("Stoping...");
         LOG.debug("Stoped.");
     }
 
-    @Override
+    @Requires
+    private EventAdmin eventAdmin;
+
+    @Updated
     public void updated(Dictionary<String, ?> stringDictionary) throws ConfigurationException {
+        LOG.debug("Updating...");
         configurator.update(stringDictionary);
         config = configurator.getConfig();
         try {
             doStop();
             doStart();
+            LOG.debug("Updated...");
+            LOG.debug("Sending event...");
+            eventAdmin.sendEvent(new Event("ehcache-updated", new HashMap<String, Object>()));
+            LOG.debug("Event sent.");
         } catch (Exception e) {
             LOG.error("Error on restarting service!", e);
         }
@@ -273,4 +285,5 @@ public class CacheServiceImpl implements CacheService, ManagedService {
 //
 //        this.config = config;
 //    }
+
 }

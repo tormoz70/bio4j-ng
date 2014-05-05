@@ -20,16 +20,15 @@ import ru.bio4j.ng.model.transport.jstore.BioResponseJStore;
 import java.sql.Connection;
 import java.util.Dictionary;
 import static ru.bio4j.ng.commons.utils.Strings.*;
-import static org.osgi.framework.Constants.SERVICE_RANKING;
-import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
+//import static org.osgi.framework.Constants.SERVICE_RANKING;
+//import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
 
 
 
 @Component(managedservice="bio4j.crud.handler.config")
 @Instantiate
 @Provides(specifications = DataProvider.class)
-//        properties = {@StaticServiceProperty(name = SERVICE_RANKING, value = PROCESSING_SERVICE_RANK_IPOJO, type = "java.lang.Integer")})
-public class DataProviderImpl implements DataProvider, ManagedService {
+public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderImpl.class);
 
     private FileContentResolver contentResolver;

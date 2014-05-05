@@ -1,18 +1,17 @@
 package ru.bio4j.ng.content.impl;
 
 import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
+import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.collections.Pair;
-import ru.bio4j.ng.service.api.CacheName;
-import ru.bio4j.ng.service.api.CacheService;
+import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileLoader;
 import ru.bio4j.ng.content.io.FileWatcher;
-import ru.bio4j.ng.service.api.Configurator;
-import ru.bio4j.ng.service.api.FileContentResolver;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,20 +27,20 @@ import static ru.bio4j.ng.content.impl.QueryExtractor.extractName;
 import static ru.bio4j.ng.content.impl.QueryExtractor.loadQueries;
 import static ru.bio4j.ng.content.io.FileLoader.buildCode;
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
-import static org.osgi.framework.Constants.SERVICE_RANKING;
-import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
+//import static org.osgi.framework.Constants.SERVICE_RANKING;
+//import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
 
 @Component(managedservice="bio4j.content.resolver.config")
 @Instantiate
 @Provides(specifications = FileContentResolver.class)
-//        properties = {@StaticServiceProperty(name = SERVICE_RANKING, value = PROCESSING_SERVICE_RANK_IPOJO, type = "java.lang.Integer")})
-public class FileContentResolverImpl implements FileContentResolver, FileListener, ManagedService {
+public class FileContentResolverImpl extends BioServiceBase implements FileContentResolver, FileListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileContentResolverImpl.class);
 
     private Configurator<FileContentResolverConfig> configurator = new Configurator<>(FileContentResolverConfig.class);
     private volatile FileWatcher fileWatcher;
 
+    @Requires
     private CacheService cacheService;
 
 //    public synchronized void updated(Dictionary conf) {
@@ -95,14 +94,19 @@ public class FileContentResolverImpl implements FileContentResolver, FileListene
         cacheService.remove(CacheName.QUERY, extractName(code).getRight());
     }
 
-    @Bind
-    public void setCacheService(CacheService cacheService) {
-        this.cacheService = cacheService;
-    }
+//    @Bind
+//    public void setCacheService(CacheService cacheService) {
+//        this.cacheService = cacheService;
+//    }
 
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
+        if(!cacheService.isRedy()){
+            LOG.debug("CacheService is not redy! Wating...");
+            return;
+        }
+
         try {
             readVersion();
             final String path = configurator.getConfig().getPath();
@@ -111,6 +115,7 @@ public class FileContentResolverImpl implements FileContentResolver, FileListene
             fileWatcher = new FileWatcher(contentPath, true);
             fileWatcher.addListener(this);
             fileWatcher.start();
+            this.redy = true;
         } catch (IOException e) {
             LOG.error("Can't watch dirs", e);
         }
@@ -119,6 +124,7 @@ public class FileContentResolverImpl implements FileContentResolver, FileListene
 
     @Invalidate
     public void doStop() throws Exception {
+        this.redy = false;
         LOG.debug("Stoping...");
         if (fileWatcher != null) {
             try {
@@ -171,4 +177,12 @@ public class FileContentResolverImpl implements FileContentResolver, FileListene
 
     }
 
+    @Subscriber(
+            name="content.resolver.subscriber",
+            topics="ehcache-updated")
+    public void receive(Event e) {
+        LOG.debug("CacheService updated!!!");
+        // Event received
+        // Do something with the event
+    }
 }
