@@ -1,12 +1,13 @@
 package ru.bio4j.ng.rapi;
 
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.service.http.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.DataProvider;
 
-@Component
+@Component//(immediate = true)
 @Provides
 @Instantiate
 public class RemoteAPIService {
@@ -18,6 +19,8 @@ public class RemoteAPIService {
     private DataProvider dataProvider;
     @Requires
     private HttpService httpService;
+    @Requires
+    private EventAdmin eventAdmin;
 
     @Validate
     public void start() throws Exception {
@@ -39,5 +42,9 @@ public class RemoteAPIService {
 
     public DataProvider getDataProvider() {
         return dataProvider;
+    }
+
+    public EventAdmin getEventAdmin() {
+        return eventAdmin;
     }
 }

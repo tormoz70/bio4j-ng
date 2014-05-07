@@ -18,6 +18,7 @@
         <module>remote-api</module>
         <module>e-hcache</module>
         <module>content-resolver</module>
+        <module>config</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>

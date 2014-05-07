@@ -1,10 +1,13 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
+import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.CursorParser;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
@@ -25,17 +28,16 @@ import static ru.bio4j.ng.commons.utils.Strings.*;
 
 
 
-@Component(managedservice="bio4j.crud.handler.config")
+@Component
 @Instantiate
 @Provides(specifications = DataProvider.class)
 public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderImpl.class);
 
+    @Requires
     private FileContentResolver contentResolver;
     private DbProxy dbProxy;
-//    private SQLContextConfig sqlContextConfig;
     private SQLContext sqlContext;
-    private Configurator<SQLContextConfig> configurator = new Configurator<>(SQLContextConfig.class);
 
     private void wrapCursor(Cursor cursor) throws Exception {
         Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
@@ -91,21 +93,57 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         });
     }
 
-    @Updated
-    public synchronized void updated(Dictionary conf) throws ConfigurationException {
-        LOG.debug("Updating config...");
+//    @Updated
+//    public void updated(Dictionary<String, ?> confDictionary) throws ConfigurationException {
+//        LOG.debug("Updating config...");
+//
+//        configurator.update(confDictionary);
+//
+////        if(isNullOrEmpty(configurator.getConfig().getPoolName())){
+////            LOG.debug("SQLContextConfig bp empty. Wating...");
+////            return;
+////        }
+//        if(!configurator.isUpdated()) {
+//            LOG.info("Config is not loaded! Waiting...");
+//            return;
+//        }
+//
+//        if(sqlContext == null) {
+//            LOG.debug("Creating SQLContext (poolName:{})...", configurator.getConfig().getPoolName());
+//            try {
+//                sqlContext = SQLContextFactory.create(configurator.getConfig());
+//            } catch (Exception e) {
+//                LOG.error("Error while creating SQLContext!", e);
+//            }
+//        } else {
+//
+//        }
+//
+//    }
 
-        configurator.update(conf);
+//    @Bind
+//    public void setContentResolver(FileContentResolver contentResolver) {
+//        this.contentResolver = contentResolver;
+//    }
 
-        if(isNullOrEmpty(configurator.getConfig().getPoolName())){
-            LOG.debug("SQLContextConfig bp empty. Wating...");
+    @Requires
+    private ConfigProvider configProvider;
+
+    @Validate
+    public void start() throws Exception {
+        LOG.debug("Starting...");
+
+        if(!configProvider.configIsRedy()) {
+            LOG.info("Config is not redy! Waiting...");
             return;
         }
 
         if(sqlContext == null) {
-            LOG.debug("Creating SQLContext (poolName:{})...", configurator.getConfig().getPoolName());
+            LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
             try {
-                sqlContext = SQLContextFactory.create(configurator.getConfig());
+                SQLContextConfig cfg = new SQLContextConfig();
+                Utl.applyValuesToBean(configProvider.getConfig(), cfg);
+                sqlContext = SQLContextFactory.create(cfg);
             } catch (Exception e) {
                 LOG.error("Error while creating SQLContext!", e);
             }
@@ -113,22 +151,25 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
         }
 
-    }
-
-    @Bind
-    public void setContentResolver(FileContentResolver contentResolver) {
-        this.contentResolver = contentResolver;
-    }
-
-    @Validate
-    public void start() throws Exception {
-        LOG.debug("Starting...");
         Wrappers.getInstance().init("oracle");
+        this.redy = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void stop() throws Exception {
+        this.redy = false;
+        LOG.debug("Stoping...");
+        LOG.debug("Stoped.");
+    }
+
+    @Subscriber(
+            name="crud.handler.subscriber",
+            topics="bio-config-updated")
+    public void receive(Event e) throws Exception {
+        LOG.debug("Config updated event recived!!!");
+        stop();
+        start();
     }
 
 }

@@ -176,6 +176,14 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
+                                    <artifactId>org.apache.felix.ipojo.handler.eventadmin</artifactId>
+                                    <version>${osgi.ipojo.event.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.gogo.shell</artifactId>
                                     <version>${felix.gogo.version}</version>
                                     <type>jar</type>
@@ -252,14 +260,14 @@
 
                                 <!-- Bio4j -->
 
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.ipojo.handler.eventadmin</artifactId>
-                                    <version>${osgi.ipojo.event.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.felix</groupId>-->
+                                    <!--<artifactId>org.apache.felix.ipojo.handler.eventadmin</artifactId>-->
+                                    <!--<version>${osgi.ipojo.event.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
 
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -304,6 +312,14 @@
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-doa</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-config</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>

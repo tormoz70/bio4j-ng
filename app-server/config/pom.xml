@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>ru.bio4j.ng</groupId>
         <artifactId>app-server</artifactId>
+        <groupId>ru.bio4j.ng</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-content</artifactId>
+    <artifactId>bio4j-ng-config</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Content Resolver Service</name>
-    <description>Service for loading info object descriptions</description>
+    <name>Bio Config Service</name>
+    <description>Service provides config data</description>
 
     <build>
         <plugins>
@@ -26,15 +26,8 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
@@ -43,7 +36,6 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-sapi</artifactId>
@@ -54,11 +46,7 @@
             <artifactId>bio4j-ng-commons</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-ehcache</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
     </dependencies>
 
 </project>

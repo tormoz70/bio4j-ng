@@ -12,7 +12,7 @@ public class SQLContextFactory {
     public static SQLContext create(SQLContextConfig config) throws Exception {
         return OraContext.create(SQLConnectionPoolConfig.builder()
                 .poolName(config.getPoolName())
-                .dbDriverName(config.getDbDriverName())
+                .dbDriverName(config.getDriverName())
                 .dbConnectionUrl(config.getDbConnectionUrl())
                 .dbConnectionUsr(config.getDbConnectionUsr())
                 .dbConnectionPwd(config.getDbConnectionPwd())

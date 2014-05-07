@@ -1,5 +1,6 @@
 package ru.bio4j.ng.rapi;
 
+import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by ayrat on 28.04.14.
@@ -30,6 +32,11 @@ public class HelloWorld extends HttpServlet {
             userName = this.owner.getDataProvider().getData("tes");
             response.getWriter().append("OK. UserName: " + userName);
             LOG.debug("Request processed (Method:GET). UserName: " + userName);
+
+//            LOG.debug("Sending event...");
+//            owner.getEventAdmin().sendEvent(new Event("ehcache-updated", new HashMap<String, Object>()));
+//            LOG.debug("Event sent.");
+
         } catch (Exception e) {
             response.getWriter().append("Err: " + e.toString());
             LOG.debug("Request processed (Method:GET). Err: " + e.toString());

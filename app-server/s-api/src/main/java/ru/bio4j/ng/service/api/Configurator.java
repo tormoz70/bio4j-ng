@@ -17,10 +17,13 @@ public class Configurator<T> {
 
     private Class<?> beanType;
     private T configBean;
+    private boolean updated;
 
     public Configurator(Class<?> beanType) {
         this.beanType = beanType;
     }
+
+
 
     public void update(Dictionary conf) throws ConfigurationException {
 //        if(this.beanType == null) {
@@ -48,7 +51,7 @@ public class Configurator<T> {
         if(!conf.isEmpty()) {
             LOG.debug("Config dictionary is not empty...");
             try {
-                Utl.applyValuesToBean(conf, configBean);
+                updated = Utl.applyValuesToBean(conf, configBean);
             } catch (ApplyValuesToBeanException e) {
                 throw new ConfigurationException(e.getField(), e.getMessage());
             }
@@ -59,5 +62,9 @@ public class Configurator<T> {
 
     public  T getConfig() {
         return this.configBean;
+    }
+
+    public boolean isUpdated() {
+        return updated;
     }
 }

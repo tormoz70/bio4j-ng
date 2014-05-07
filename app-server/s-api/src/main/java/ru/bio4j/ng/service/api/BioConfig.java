@@ -1,20 +1,52 @@
-package ru.bio4j.ng.database.api;
+package ru.bio4j.ng.service.api;
 
-/**
- * Created by ayrat on 22.04.14.
- */
-public class SQLContextConfig {
+import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.commons.utils.Utl;
 
+public class BioConfig {
+    @Prop(name = "ehcache.persistent.path")
+    private String cachePersistentPath = null;
+
+    @Prop(name = "content.resolver.path")
+    private String contentResolverPath = null;
+
+    @Prop(name = "crud.pool.name")
     private String poolName;
+    @Prop(name = "crud.driver.name")
     private String driverName;
+    @Prop(name = "crud.connection.url")
     private String dbConnectionUrl;
+    @Prop(name = "crud.connection.usr")
     private String dbConnectionUsr;
+    @Prop(name = "crud.connection.pwd")
     private String dbConnectionPwd;
+    @Prop(name = "crud.min.pool.size")
     private int minPoolSize = 2;
+    @Prop(name = "crud.max.pool.size")
     private int maxPoolSize = 10;
+    @Prop(name = "crud.connection.wait.timeout")
     private int connectionWaitTimeout = 5;
+    @Prop(name = "crud.initial.pool.size")
     private int initialPoolSize = 5;
+    @Prop(name = "crud.current.schema")
     private String currentSchema = null;
+
+
+    public String getCachePersistentPath() {
+        return Utl.normalizePath(cachePersistentPath);
+    }
+
+    public void setCachePersistentPath(String cachePersistentPath) {
+        this.cachePersistentPath = cachePersistentPath;
+    }
+
+    public String getContentResolverPath() {
+        return contentResolverPath;
+    }
+
+    public void setContentResolverPath(String contentResolverPath) {
+        this.contentResolverPath = contentResolverPath;
+    }
 
     public String getDbConnectionUrl() {
         return dbConnectionUrl;
@@ -95,4 +127,5 @@ public class SQLContextConfig {
     public void setDriverName(String driverName) {
         this.driverName = driverName;
     }
+
 }

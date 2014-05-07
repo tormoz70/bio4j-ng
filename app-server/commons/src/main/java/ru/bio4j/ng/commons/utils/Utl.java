@@ -2,10 +2,7 @@ package ru.bio4j.ng.commons.utils;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.GenericDeclaration;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.Dictionary;
 
 import javax.xml.bind.JAXBContext;
@@ -13,10 +10,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.felix.ipojo.annotations.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.commons.types.Prop;
 
 import static ru.bio4j.ng.commons.utils.Strings.*;
 
@@ -161,6 +160,15 @@ public class Utl {
 		return null;
 	}
 
+    public static <T extends Annotation> T findAnnotation(Class<T> annotationType, Field field) {
+        for (Annotation annotation : field.getDeclaredAnnotations()) {
+            Class<?> atype = annotation.annotationType();
+            if(typesIsAssignable(atype, annotationType))
+                return (T)annotation;
+        }
+        return null;
+    }
+
 
 	/**
 	 * @param packageName
@@ -215,7 +223,8 @@ public class Utl {
         return out.toString();
     }
 
-    public static void applyValuesToBean(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBean(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
+        boolean result = false;
         if(vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
         if(bean == null)
@@ -223,17 +232,59 @@ public class Utl {
         Class<?> type = bean.getClass();
         for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
             String fldName = fld.getName();
+            Prop p = findAnnotation(Prop.class, fld);
+            if(p != null)
+                fldName = p.name();
             Object valStr = vals.get(fldName);
             if(valStr != null){
                 try {
                     Object val = Converter.toType(valStr, fld.getType());
                     fld.setAccessible(true);
                     fld.set(bean, val);
+                    if(!result) result = true;
                 } catch (Exception e) {
                     throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valStr, e.getMessage()));
                 }
             }
         }
+        return result;
+    }
+
+    private static Field findFieldOfBean(Class<?> type, String fieldName) {
+        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+            if(fld.getName().equals(fieldName))
+                return fld;
+        }
+        return null;
+    }
+
+    public static boolean applyValuesToBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
+        boolean result = false;
+        if(srcBean == null)
+            throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
+        if(bean == null)
+            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+        Class<?> srcType = srcBean.getClass();
+        Class<?> type = bean.getClass();
+        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+            String fldName = fld.getName();
+            Field srcFld = findFieldOfBean(srcType, fldName);
+            if(srcFld == null)
+                continue;
+            try {
+                srcFld.setAccessible(true);
+                Object valStr = srcFld.get(srcBean);
+                if(valStr != null){
+                    Object val = Converter.toType(valStr, fld.getType());
+                    fld.setAccessible(true);
+                    fld.set(bean, val);
+                    result = true;
+                }
+            } catch (Exception e) {
+                throw new ApplyValuesToBeanException(fldName, String.format("Can't set value to field. Msg: %s", e.getMessage()));
+            }
+        }
+        return result;
     }
 
     public static <T> boolean arrayContains(T[] array, T item) {

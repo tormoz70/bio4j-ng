@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
+import ru.bio4j.ng.commons.types.Prop;
 
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 
@@ -77,7 +77,20 @@ public class UtlTest {
 
     }
 
-    public static class TestConfig {
+    public static class TestConfig1 {
+        @Prop(name = "pool.name")
+        private String poolName;
+
+        public String getPoolName() {
+            return poolName;
+        }
+
+        public void setPoolName(String poolName) {
+            this.poolName = poolName;
+        }
+    }
+    public static class TestConfig2 {
+        @Prop(name = "pool.name")
         private String poolName;
 
         public String getPoolName() {
@@ -90,13 +103,21 @@ public class UtlTest {
     }
 
     @Test
-    public void applyValuesToBeanTest() throws Exception {
+    public void applyValuesToBeanTest1() throws Exception {
         final String expctd = "ru.bio4j.ng.doa.connectionPool.main";
         Dictionary d = new Hashtable();
-        d.put("poolName", expctd);
-        TestConfig c = new TestConfig();
+        d.put("pool.name", expctd);
+        TestConfig1 c = new TestConfig1();
         Utl.applyValuesToBean(d, c);
         Assert.assertEquals(c.getPoolName(), expctd);
+    }
+    @Test
+    public void applyValuesToBeanTest2() throws Exception {
+        TestConfig1 c1 = new TestConfig1();
+        c1.setPoolName("ru.bio4j.ng.doa.connectionPool.main");
+        TestConfig2 c2 = new TestConfig2();
+        Utl.applyValuesToBean(c1, c2);
+        Assert.assertEquals(c2.getPoolName(), c1.getPoolName());
     }
 
     @Test(enabled = false)

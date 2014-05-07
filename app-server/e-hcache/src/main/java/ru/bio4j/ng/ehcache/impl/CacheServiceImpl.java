@@ -9,6 +9,7 @@ import net.sf.ehcache.config.ConfigurationFactory;
 import net.sf.ehcache.config.DiskStoreConfiguration;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Publishes;
+import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.Event;
@@ -19,6 +20,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.ehcache.util.CacheEventListenerWrapper;
 import ru.bio4j.ng.ehcache.util.CacheUtil;
+import sun.security.krb5.Config;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -35,10 +37,6 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
 	private static Logger LOG = LoggerFactory.getLogger(CacheService.class);
 
     private final static String CACHE_CONFIG_FILE = "ehcache-config.xml";
-//    private final static String CACHE_PERSISTENT_PATH = "cache-persistent";
-
-    private Configurator<CacheServiceConfig> configurator = new Configurator<>(CacheServiceConfig.class);
-
 
 	private final Map<CacheEventListener, CacheEventListenerWrapper> listeners = new ConcurrentHashMap<>();
 
@@ -226,9 +224,12 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
         serviceConfiguration.diskStore(createDiskStoreConfiguration());
     }
 
-    private CacheServiceConfig config;
+    @Requires
+    private ConfigProvider configProvider;
+
+//    private CacheServiceConfig config;
     private DiskStoreConfiguration createDiskStoreConfiguration() {
-        String cachePath = config.getCachePersistentPath(); // + CACHE_PERSISTENT_PATH;
+        String cachePath = configProvider.getConfig().getCachePersistentPath(); // + CACHE_PERSISTENT_PATH;
         LOG.debug("Cache path is {}", cachePath);
         DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
         diskStoreConfiguration.setPath(cachePath);
@@ -239,12 +240,14 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
+
+        if(!configProvider.configIsRedy()) {
+            LOG.info("Config is not redy! Waiting...");
+            return;
+        }
+
         try {
-            if(config == null || isNullOrEmpty(config.getCachePersistentPath())) {
-                LOG.debug("Config is not inited! Wating...");
-                return;
-            }
-            LOG.debug("Config is not null. Create CacheConfiguration...");
+            LOG.debug("Config is not null. Loading CacheConfiguration...");
             createCacheConfiguration();
             this.cacheManager = CacheManager.create(serviceConfiguration);
             this.redy = true;
@@ -261,29 +264,13 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
         LOG.debug("Stoped.");
     }
 
-    @Requires
-    private EventAdmin eventAdmin;
-
-    @Updated
-    public void updated(Dictionary<String, ?> stringDictionary) throws ConfigurationException {
-        LOG.debug("Updating...");
-        configurator.update(stringDictionary);
-        config = configurator.getConfig();
-        try {
-            doStop();
-            doStart();
-            LOG.debug("Updated...");
-            LOG.debug("Sending event...");
-            eventAdmin.sendEvent(new Event("ehcache-updated", new HashMap<String, Object>()));
-            LOG.debug("Event sent.");
-        } catch (Exception e) {
-            LOG.error("Error on restarting service!", e);
-        }
+    @Subscriber(
+            name="ehcache.subscriber",
+            topics="bio-config-updated")
+    public void receive(Event e) throws Exception {
+        LOG.debug("Config updated event recived!!!");
+        doStop();
+        doStart();
     }
-
-//    public void setConfig(CacheServiceConfig config) {
-//
-//        this.config = config;
-//    }
 
 }
