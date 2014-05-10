@@ -97,8 +97,8 @@ public class FileContentResolverImpl extends BioServiceBase implements FileConte
 
     @Invalidate
     public void doStop() throws Exception {
-        this.redy = false;
         LOG.debug("Stoping...");
+        this.redy = false;
         if (fileWatcher != null) {
             try {
                 fileWatcher.removeListener(this);

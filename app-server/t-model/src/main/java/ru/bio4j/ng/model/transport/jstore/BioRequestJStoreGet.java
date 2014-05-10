@@ -1,11 +1,12 @@
 package ru.bio4j.ng.model.transport.jstore;
 
+import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
 /**
  * Запрос на получение данных в JStoreClient
  */
-public class BioRequestJStoreGet extends BioRequestJStore {
+public class BioRequestJStoreGet extends BioRequest {
 
     /**
      * Начальная позиция
@@ -28,10 +29,10 @@ public class BioRequestJStoreGet extends BioRequestJStore {
     private Expression filter;
 
     /**
-     * Параметры для запросов GET если надо установить курсор в нужную позицию
+     * Значение первичного ключа для запросов GET(с разбиением по страницам) если надо установить курсор в нужную позицию
      * Примечание: необходимо использовать в сочетании с offset
      */
-    private Expression location;
+    private Object location;
 
 
     public int getOffset() {
@@ -64,6 +65,14 @@ public class BioRequestJStoreGet extends BioRequestJStore {
 
     public void setFilter(Expression filter) {
         this.filter = filter;
+    }
+
+    public Object getLocation() {
+        return location;
+    }
+
+    public void setLocation(Object location) {
+        this.location = location;
     }
 }
 

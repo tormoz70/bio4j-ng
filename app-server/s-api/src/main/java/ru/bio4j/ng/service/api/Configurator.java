@@ -5,13 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Utl;
-
-import java.lang.reflect.Type;
 import java.util.Dictionary;
 
-/**
- * Created by ayrat on 04.05.14.
- */
 public class Configurator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
 
@@ -26,16 +21,6 @@ public class Configurator<T> {
 
 
     public void update(Dictionary conf) throws ConfigurationException {
-//        if(this.beanType == null) {
-//            LOG.debug("About detecting beanType ...");
-//            Type[] typeParams = Utl.getTypeParams(getClass());
-//            if(typeParams.length == 0)
-//                throw new ConfigurationException("*", "Cannot detect type parameter!");
-//            beanType = (Class)typeParams[0];
-//            beanType = Utl.getTypeParams(getClass());
-//            LOG.debug("BeanType detected: {}...", beanType);
-//        }
-
         LOG.debug("About updating config to {}...", beanType);
         // Здесь получаем конфигурацию
         if(configBean == null) {

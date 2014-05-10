@@ -9,30 +9,44 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-rapi</artifactId>
+    <artifactId>bio4j-ng-rapi-rmi</artifactId>
     <packaging>bundle</packaging>
     <name>Bio Remote API</name>
-    <description>API for access from remote apps</description>
+    <description>Remote API of framework</description>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-tmodel</artifactId>
-            <scope>provided</scope>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-commons</artifactId>
+            <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-rapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

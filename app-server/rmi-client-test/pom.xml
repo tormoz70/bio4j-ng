@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>app-server</artifactId>
+        <groupId>ru.bio4j.ng</groupId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>rmi-client-test</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-rapi</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-commons</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-tmodel</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Allows the example to be run via 'mvn compile exec:java' -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>ru.bio4j.ng.rapi.rmi.test.HelloClient</mainClass>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <commandlineArgs></commandlineArgs>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

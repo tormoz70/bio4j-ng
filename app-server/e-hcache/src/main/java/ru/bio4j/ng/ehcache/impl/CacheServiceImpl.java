@@ -227,9 +227,8 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
     @Requires
     private ConfigProvider configProvider;
 
-//    private CacheServiceConfig config;
     private DiskStoreConfiguration createDiskStoreConfiguration() {
-        String cachePath = configProvider.getConfig().getCachePersistentPath(); // + CACHE_PERSISTENT_PATH;
+        String cachePath = configProvider.getConfig().getCachePersistentPath();
         LOG.debug("Cache path is {}", cachePath);
         DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
         diskStoreConfiguration.setPath(cachePath);
@@ -259,8 +258,8 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
 
     @Invalidate
     public void doStop() throws Exception {
-        this.redy = false;
         LOG.debug("Stoping...");
+        this.redy = false;
         LOG.debug("Stoped.");
     }
 

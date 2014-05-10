@@ -15,13 +15,18 @@
         <module>db-api</module>
         <module>doa</module>
         <module>crud-handler</module>
-        <module>remote-api</module>
+        <module>remote-api-http</module>
         <module>e-hcache</module>
         <module>content-resolver</module>
         <module>config</module>
+        <module>router</module>
+        <module>remote-api-rmi</module>
+        <module>remote-api</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
+
+        <module>rmi-client-test</module>
     </modules>
 
     <properties>
@@ -223,6 +228,16 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bio4j-ng-ehcache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-crudhandler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-rapi</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

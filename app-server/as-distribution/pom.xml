@@ -335,14 +335,6 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-rapi</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-ehcache</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
@@ -352,6 +344,38 @@
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-content</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-router</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-rapi</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-rapi-http</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-rapi-rmi</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>

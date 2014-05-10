@@ -2,11 +2,10 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.CursorParser;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
@@ -16,15 +15,11 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
+import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
-import ru.bio4j.ng.model.transport.jstore.BioResponseJStore;
 
 import java.sql.Connection;
-import java.util.Dictionary;
-import static ru.bio4j.ng.commons.utils.Strings.*;
-//import static org.osgi.framework.Constants.SERVICE_RANKING;
-//import static ru.bio4j.ng.service.api.ServiceConstants.PROCESSING_SERVICE_RANK_IPOJO;
 
 
 
@@ -36,7 +31,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Requires
     private FileContentResolver contentResolver;
-    private DbProxy dbProxy;
     private SQLContext sqlContext;
 
     private void wrapCursor(Cursor cursor) throws Exception {
@@ -45,7 +39,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
     }
 
-    private BioResponseJStore processRequest(BioRequestJStoreGet request, String sql) throws Exception {
+    private BioResponse processCursor(Cursor cursor) {
+        return null;
+    }
+
+    private BioResponse processRequest(BioRequestJStoreGet request, String sql) throws Exception {
         LOG.debug("Now process sql: {}", sql);
         Cursor cursor = CursorParser.pars(request.getBioCode(), sql);
         cursor.setOffset(request.getOffset());
@@ -54,25 +52,27 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         cursor.setSort(request.getSort());
         cursor.setParams(request.getBioParams());
         wrapCursor(cursor);
-        BioResponseJStore response = dbProxy.processCursor(cursor);
+        BioResponse response = processCursor(cursor);
         return response;
     }
 
-//    public String getData(final String json) throws Exception {
-//        LOG.debug("GetData...");
+    @Override
+    public BioResponse getData(final BioRequestJStoreGet bioRequest) throws Exception {
+        LOG.debug("GetData...");
 //        BioRequestJStoreGet bioRequest = Jsons.decode(json, BioRequestJStoreGet.class);
 //        if(bioRequest != null){
-//            String sql = contentResolver.getQueryContent(bioRequest.getBioCode());
-//            if(!Strings.isNullOrEmpty(sql)) {
-//                BioResponseJStore response = processRequest(bioRequest, sql);
-//                LOG.debug("GetData - returning response...");
-//                return Jsons.encode(response);
-//            }
+            String sql = contentResolver.getQueryContent(bioRequest.getBioCode());
+            if(!Strings.isNullOrEmpty(sql)) {
+                BioResponse response = processRequest(bioRequest, sql);
+                LOG.debug("GetData - returning response...");
+                return response;
+            }
 //        }
-//        return null;
-//    }
+        return null;
+    }
 
-    public String getData(final String json) throws Exception {
+    @Override
+    public String getDataTest() throws Exception {
         return sqlContext.execBatch(new SQLActionScalar<String>() {
             @Override
             public String exec(SQLContext context, Connection conn) throws Exception {
@@ -93,44 +93,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         });
     }
 
-//    @Updated
-//    public void updated(Dictionary<String, ?> confDictionary) throws ConfigurationException {
-//        LOG.debug("Updating config...");
-//
-//        configurator.update(confDictionary);
-//
-////        if(isNullOrEmpty(configurator.getConfig().getPoolName())){
-////            LOG.debug("SQLContextConfig bp empty. Wating...");
-////            return;
-////        }
-//        if(!configurator.isUpdated()) {
-//            LOG.info("Config is not loaded! Waiting...");
-//            return;
-//        }
-//
-//        if(sqlContext == null) {
-//            LOG.debug("Creating SQLContext (poolName:{})...", configurator.getConfig().getPoolName());
-//            try {
-//                sqlContext = SQLContextFactory.create(configurator.getConfig());
-//            } catch (Exception e) {
-//                LOG.error("Error while creating SQLContext!", e);
-//            }
-//        } else {
-//
-//        }
-//
-//    }
-
-//    @Bind
-//    public void setContentResolver(FileContentResolver contentResolver) {
-//        this.contentResolver = contentResolver;
-//    }
-
     @Requires
     private ConfigProvider configProvider;
 
     @Validate
-    public void start() throws Exception {
+    public void doStart() throws Exception {
         LOG.debug("Starting...");
 
         if(!configProvider.configIsRedy()) {
@@ -157,9 +124,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     @Invalidate
-    public void stop() throws Exception {
-        this.redy = false;
+    public void doStop() throws Exception {
         LOG.debug("Stoping...");
+        this.redy = false;
         LOG.debug("Stoped.");
     }
 
@@ -168,8 +135,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             topics="bio-config-updated")
     public void receive(Event e) throws Exception {
         LOG.debug("Config updated event recived!!!");
-        stop();
-        start();
+        doStop();
+        doStart();
     }
 
 }
