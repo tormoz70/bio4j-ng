@@ -8,6 +8,7 @@
 
     <modules>
         <!-- Common services -->
+        <module>security-filter-dependency</module>
         <module>flexjson</module>
         <module>t-model</module>
         <module>commons</module>
@@ -22,6 +23,7 @@
         <module>router</module>
         <module>remote-api-rmi</module>
         <module>remote-api</module>
+        <module>jetty-wab-sample</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
@@ -58,6 +60,9 @@
 
         <!-- Others -->
         <json.version>1.0.0</json.version>
+        <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
+        <shiro.verion>1.2.2</shiro.verion>
+        <opensaml.verion>2.6.0</opensaml.verion>
 
         <!-- maven plugin -->
         <bundle-plugin-version>2.4.0</bundle-plugin-version>
@@ -67,6 +72,7 @@
         <remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>
         <compiler-plugin-version>3.1</compiler-plugin-version>
         <release-plugin-version>2.4.1</release-plugin-version>
+
 
 	</properties>
 
@@ -171,6 +177,11 @@
                 <version>${osgi.ipojo.event.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
+            </dependency>
 
 			<!-- Logging stuff -->
             <dependency>
@@ -195,6 +206,11 @@
             </dependency>
 
             <!--bio4j-->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>security-filter-dependency</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>flexjson</artifactId>

@@ -23,20 +23,16 @@ public class RemoteAPIService {
     private DataProvider dataProvider;
     @Requires
     private BioRouter router;
-    private HttpContext httpContext;
 
     @Validate
     public void doStart() throws Exception {
         if (httpService != null) {
-            httpService.
-            httpContext = httpService.createDefaultHttpContext();
-
             LOG.debug("Registering \"{}\"-servlet...", HELLO_SERVLET_PATH);
-            httpService.registerServlet(HELLO_SERVLET_PATH, new HelloWorld(this), null, httpContext);
+            httpService.registerServlet(HELLO_SERVLET_PATH, new HelloWorld(this), null, null);
             LOG.info("Servlet \"{}\" registered.", HELLO_SERVLET_PATH);
 
             LOG.debug("Registering \"{}\"-servlet...", BIO_SERVLET_PATH);
-            httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(this), null, httpContext);
+            httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(this), null, null);
             LOG.info("Servlet \"{}\" registered.", BIO_SERVLET_PATH);
         }
     }

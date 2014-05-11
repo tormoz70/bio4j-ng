@@ -105,7 +105,7 @@ public class FileContentResolverImpl extends BioServiceBase implements FileConte
                 fileWatcher.interrupt();
                 fileWatcher.join();
             } catch (InterruptedException e) {
-                LOG.error("thread is interrupted", e);
+                LOG.debug("thread is interrupted", e);
                 Thread.currentThread().interrupt();
             }
         }

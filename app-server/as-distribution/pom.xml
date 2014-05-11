@@ -34,6 +34,13 @@
         <commons.fileupload.version>1.2.2</commons.fileupload.version>
 
         <log4j.version>1.2.17</log4j.version>
+
+        <pax.jetty.version>9.0.7.v20131107</pax.jetty.version>
+        <pax.http.version>4.0.0-SNAPSHOT</pax.http.version>
+        <pax.url.version>1.4.2</pax.url.version>
+        <pax.swissbox.version>1.7.0</pax.swissbox.version>
+        <ops4j.base.version>1.4.0</ops4j.base.version>
+        <biz.aQute.bnd.version>2.1.0</biz.aQute.bnd.version>
     </properties>
 
     <build>
@@ -110,14 +117,14 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.http.jetty</artifactId>
-                                    <version>${felix.jetty.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.felix</groupId>-->
+                                    <!--<artifactId>org.apache.felix.http.jetty</artifactId>-->
+                                    <!--<version>${felix.jetty.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.metatype</artifactId>
@@ -134,14 +141,14 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.ipojo.webconsole</artifactId>
-                                    <version>${ipojo.webconsole.verion}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.felix</groupId>-->
+                                    <!--<artifactId>org.apache.felix.ipojo.webconsole</artifactId>-->
+                                    <!--<version>${ipojo.webconsole.verion}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.shell.remote</artifactId>
@@ -150,14 +157,14 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.felix</groupId>
-                                    <artifactId>org.apache.felix.webconsole</artifactId>
-                                    <version>${felix.webconsole.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.felix</groupId>-->
+                                    <!--<artifactId>org.apache.felix.webconsole</artifactId>-->
+                                    <!--<version>${felix.webconsole.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
                                     <artifactId>org.apache.felix.ipojo</artifactId>
@@ -239,6 +246,14 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>javax.servlet</groupId>-->
+                                    <!--<artifactId>javax.servlet-api</artifactId>-->
+                                    <!--<version>${javax.servlet-api.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
 
                                 <!-- logging -->
                                 <artifactItem>
@@ -258,16 +273,484 @@
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
 
-                                <!-- Bio4j -->
+<!-- ********************************************************************************************************** -->
+                                <!--pax-web-->
+
+                                <artifactItem>
+                                    <groupId>org.apache.servicemix.specs</groupId>
+                                    <artifactId>org.apache.servicemix.specs.activation-api-1.1</artifactId>
+                                    <version>1.9.0</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-servlet_3.0_spec</artifactId>
+                                    <version>1.0</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>javax.mail</groupId>
+                                    <artifactId>mail</artifactId>
+                                    <version>1.4.4</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-jaspic_1.0_spec</artifactId>
+                                    <version>1.1</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                                    <version>1.1.1</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.geronimo.specs</groupId>
+                                    <artifactId>geronimo-annotation_1.1_spec</artifactId>
+                                    <version>1.0.1</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.asm</artifactId>
+                                    <version>3.3_2</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>org.ow2.asm</groupId>
+                                    <artifactId>asm-all</artifactId>
+                                    <version>4.1</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xbean</groupId>
+                                    <artifactId>xbean-bundleutils</artifactId>
+                                    <version>3.16</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xbean</groupId>
+                                    <artifactId>xbean-asm4-shaded</artifactId>
+                                    <version>3.16</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xbean</groupId>
+                                    <artifactId>xbean-reflect</artifactId>
+                                    <version>3.16</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xbean</groupId>
+                                    <artifactId>xbean-finder</artifactId>
+                                    <version>3.16</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>org.eclipse.jdt.core.compiler</groupId>
+                                    <artifactId>ecj</artifactId>
+                                    <version>4.2.2</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-annotations</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-continuation</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-http</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-io</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-jaspi</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-jmx</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-jndi</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-plus</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-rewrite</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-security</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-server</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-servlet</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-util</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-util-ajax</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-webapp</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-jaas</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-xml</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty.websocket</groupId>
+                                    <artifactId>websocket-server</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty.websocket</groupId>
+                                    <artifactId>websocket-servlet</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty.websocket</groupId>
+                                    <artifactId>websocket-common</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty.websocket</groupId>
+                                    <artifactId>websocket-api</artifactId>
+                                    <version>${pax.jetty.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-api</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-spi</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-runtime</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-jetty</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-jsp</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-extender-whiteboard</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-extender-war</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.web</groupId>
+                                    <artifactId>pax-web-deployer</artifactId>
+                                    <version>${pax.http.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.url</groupId>
+                                    <artifactId>pax-url-war</artifactId>
+                                    <version>${pax.url.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.url</groupId>
+                                    <artifactId>pax-url-commons</artifactId>
+                                    <version>${pax.url.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.swissbox</groupId>
+                                    <artifactId>pax-swissbox-bnd</artifactId>
+                                    <version>${pax.swissbox.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.pax.swissbox</groupId>
+                                    <artifactId>pax-swissbox-property</artifactId>
+                                    <version>${pax.swissbox.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.base</groupId>
+                                    <artifactId>ops4j-base-net</artifactId>
+                                    <version>${ops4j.base.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.base</groupId>
+                                    <artifactId>ops4j-base-lang</artifactId>
+                                    <version>${ops4j.base.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.base</groupId>
+                                    <artifactId>ops4j-base-monitors</artifactId>
+                                    <version>${ops4j.base.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ops4j.base</groupId>
+                                    <artifactId>ops4j-base-util-property</artifactId>
+                                    <version>${ops4j.base.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>biz.aQute.bnd</groupId>
+                                    <artifactId>bndlib</artifactId>
+                                    <version>${biz.aQute.bnd.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
 
                                 <!--<artifactItem>-->
-                                    <!--<groupId>org.apache.felix</groupId>-->
-                                    <!--<artifactId>org.apache.felix.ipojo.handler.eventadmin</artifactId>-->
-                                    <!--<version>${osgi.ipojo.event.version}</version>-->
+                                    <!--<groupId>org.apache.shiro</groupId>-->
+                                    <!--<artifactId>shiro-core</artifactId>-->
+                                    <!--<version>${shiro.verion}</version>-->
                                     <!--<type>jar</type>-->
                                     <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
                                 <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.shiro</groupId>-->
+                                    <!--<artifactId>shiro-web</artifactId>-->
+                                    <!--<version>${shiro.verion}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.shiro</groupId>-->
+                                    <!--<artifactId>shiro-cas</artifactId>-->
+                                    <!--<version>${shiro.verion}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.servicemix.bundles</groupId>-->
+                                    <!--<artifactId>org.apache.servicemix.bundles.opensaml</artifactId>-->
+                                    <!--<version>2.4.1_1</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.jasig.cas</groupId>-->
+                                    <!--<artifactId>com.springsource.org.jasig.cas.client</artifactId>-->
+                                    <!--<version>3.1.12</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+
+
+<!-- ********************************************************************************************************** -->
+                                <!-- Bio4j -->
+
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>security-filter-dependency</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
+                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.velocity</groupId>-->
+                                    <!--<artifactId>velocity</artifactId>-->
+                                    <!--<version>1.7</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+
 
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -380,6 +863,14 @@
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>jetty-wab-sample</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/webapps</outputDirectory>
                                 </artifactItem>
 
                             </artifactItems>

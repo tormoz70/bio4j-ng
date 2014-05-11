@@ -49,6 +49,7 @@
             <includes>
                 <include>bundle/*</include>
                 <include>${distr.bundles}/*</include>
+                <include>webapps/*</include>
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>

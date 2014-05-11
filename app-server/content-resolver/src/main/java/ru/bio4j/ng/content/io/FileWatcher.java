@@ -83,11 +83,24 @@ public class FileWatcher extends Thread {
         this.trace = true;
     }
 
+    @Override
+    public void interrupt() {
+        if(watcher != null)
+            try {
+                watcher.close();
+            } catch (IOException e) {
+                LOG.error("Error while closing WatchService!", e);
+            }
+        super.interrupt();
+    }
+
     public void processEvents() {
 
         WatchKey key;
         try {
             key = watcher.take();
+        } catch (ClosedWatchServiceException x) {
+            return;
         } catch (InterruptedException x) {
             return;
         }
