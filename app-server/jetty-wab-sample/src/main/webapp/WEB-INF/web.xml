@@ -2,9 +2,6 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
 	<display-name>Archetype Created Web Application</display-name>
-    <listener>
-        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
-    </listener>
 	<servlet>
 		<servlet-name>HelloServlet</servlet-name>
 		<servlet-class>org.example.HelloServlet</servlet-class>
@@ -13,6 +10,14 @@
     <filter>
         <filter-name>security</filter-name>
         <filter-class>org.example.filter.SecurityFilter</filter-class>
+        <init-param>
+            <param-name>staticSecurityManagerEnabled</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>error_page</param-name>
+            <param-value>error.jsp</param-value>
+        </init-param>
     </filter>
 
 	<servlet-mapping>

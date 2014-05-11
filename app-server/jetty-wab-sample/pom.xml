@@ -31,9 +31,9 @@
                         <!--<Bundle-Activator>org.example.Activator</Bundle-Activator>-->
                         <Web-ContextPath>/bio</Web-ContextPath>
                         <!-- By default, we don't export anything -->
-                        <!--<Import-Package>*,-->
-                            <!--org.apache.shiro.web.env;version="[1.2,2)"-->
-                        <!--</Import-Package>-->
+                        <Import-Package>*,
+                            org.apache.shiro.web.env;version="[1.2,2)"
+                        </Import-Package>
                         <Export-Package/>
                     </instructions>
                 </configuration>
@@ -108,24 +108,24 @@
         <!--</dependency>-->
 
         <!-- Security -->
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <version>${shiro.verion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-web</artifactId>
-            <version>${shiro.verion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-cas</artifactId>
-            <version>${shiro.verion}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-core</artifactId>-->
+            <!--<version>${shiro.verion}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-web</artifactId>-->
+            <!--<version>${shiro.verion}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.shiro</groupId>-->
+            <!--<artifactId>shiro-cas</artifactId>-->
+            <!--<version>${shiro.verion}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -134,11 +134,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>${project.groupId}</groupId>-->
-            <!--<artifactId>security-filter-dependency</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>security-filter-dependency</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!--<dependency>-->
             <!--<groupId>commons-logging</groupId>-->

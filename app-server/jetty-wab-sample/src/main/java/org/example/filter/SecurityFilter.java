@@ -6,6 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -14,25 +17,55 @@ import java.io.IOException;
  */
 public class SecurityFilter implements Filter {
 
-    private final static Logger log = LoggerFactory.getLogger(SecurityFilter.class);
+    private final static Logger LOG = LoggerFactory.getLogger(SecurityFilter.class);
+
+    private String errorPage;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        LOG.debug("init...");
+        if (filterConfig != null) {
+            errorPage = filterConfig.getInitParameter("error_page");
+            LOG.debug("errorPage - {}.", errorPage);
+        }
+        LOG.debug("init - done.");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.debug("Do filter for request: {}", request);
+        LOG.debug("Do filter for request: {}", request);
 
-        Subject currentUser = SecurityUtils.getSubject();
-        if (currentUser.isAuthenticated()) {
+        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+        String servletPath = req.getServletPath();
 
+        // Allow access to login functionality.
+        if (servletPath.equals("/login"))
+        {
+            chain.doFilter(req, resp);
+            return;
+        }
+        // Allow access to news feed.
+        if (servletPath.equals("/news.rss")) {
+            chain.doFilter(req, resp);
+            return;
+        }
+        // All other functionality requires authentication.
+        HttpSession session = req.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId != null)
+        {
+            // User is logged in.
+            chain.doFilter(req, resp);
+            return;
         }
 
-        chain.doFilter(request, response);
+        // Request is not authorized.
+        resp.sendRedirect("login");
     }
 
     @Override
     public void destroy() {
-        log.debug("Trying destroy");
+        LOG.debug("Trying destroy");
     }
 }

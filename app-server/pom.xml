@@ -262,7 +262,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Testing -->
         <dependency>
             <groupId>org.ops4j.pax.logging</groupId>
             <artifactId>pax-logging-api</artifactId>
@@ -272,6 +271,7 @@
             <artifactId>pax-logging-service</artifactId>
         </dependency>
 
+        <!-- Testing -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

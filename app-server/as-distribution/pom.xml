@@ -689,30 +689,30 @@
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
 
-                                <artifactItem>
-                                    <groupId>org.apache.shiro</groupId>
-                                    <artifactId>shiro-core</artifactId>
-                                    <version>${shiro.verion}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.shiro</groupId>
-                                    <artifactId>shiro-web</artifactId>
-                                    <version>${shiro.verion}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.shiro</groupId>
-                                    <artifactId>shiro-cas</artifactId>
-                                    <version>${shiro.verion}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.shiro</groupId>-->
+                                    <!--<artifactId>shiro-core</artifactId>-->
+                                    <!--<version>${shiro.verion}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.shiro</groupId>-->
+                                    <!--<artifactId>shiro-web</artifactId>-->
+                                    <!--<version>${shiro.verion}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.shiro</groupId>-->
+                                    <!--<artifactId>shiro-cas</artifactId>-->
+                                    <!--<version>${shiro.verion}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <!--<artifactItem>-->
                                     <!--<groupId>org.apache.servicemix.bundles</groupId>-->
                                     <!--<artifactId>org.apache.servicemix.bundles.opensaml</artifactId>-->
