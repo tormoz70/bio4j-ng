@@ -1,0 +1,59 @@
+<configuration scan="true">
+
+    <property name="LOG_PATTERN"
+              value="%date{dd.MM.yyyy HH:mm:ss.SSS}|%-4relative|%thread|%-5level|%logger{35} - %msg%n"/>
+    <property name="REMOTE_SERVER_HOST" value="127.0.0.1"/>
+    <property name="REMOTE_SERVER_PORT" value="60098"/>
+    <property name="ERROR_NOTIFICATION_TO" value="vbochenin@gmail.com"/>
+    <property name="SMTP_HOST" value="smtp.gmail.com"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>../logs/bio4j-client.log</file>
+        <append>false</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>../logs/bio4j-client.log-%d{yyyy-MM-dd}.zip</FileNamePattern>
+            <maxHistory>21</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <!--
+    <appender name="SERVER" class="ch.qos.logback.classic.net.SocketAppender">
+        <remoteHost>${REMOTE_SERVER_HOST}</remoteHost>
+        <port>${REMOTE_SERVER_PORT}</port>
+    </appender>
+
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <from>bio4j-client-${HOSTNAME}</from>
+        <smtpHost>${SMTP_HOST}</smtpHost>
+        <to>${ERROR_NOTIFICATION_TO}</to>
+        <subject>FAILED: %logger{20}</subject>
+        <encoder>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+        <layout class="ch.qos.logback.classic.html.HTMLLayout"/>
+    </appender>
+    -->
+
+    <logger name="org.example" level="DEBUG">
+        <appender-ref ref="FILE"/>
+        <!--<appender-ref ref="EMAIL" />-->
+    </logger>
+
+    <logger name="com.kamagames.myfriends.dao.mapper" level="TRACE"/>
+
+    <root level="ERROR">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -287,7 +287,7 @@
                                 <artifactItem>
                                     <groupId>org.apache.geronimo.specs</groupId>
                                     <artifactId>geronimo-servlet_3.0_spec</artifactId>
-                                    <version>1.0</version>
+                                    <version>${geronimo-servlet_3.0_spec.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
@@ -688,6 +688,22 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>javax.servlet</groupId>-->
+                                    <!--<artifactId>javax.servlet-api</artifactId>-->
+                                    <!--<version>${javax.servlet-api.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>javax.servlet.jsp</groupId>-->
+                                    <!--<artifactId>javax.servlet.jsp-api</artifactId>-->
+                                    <!--<version>${javax.jsp-api.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
 
                                 <!--<artifactItem>-->
                                     <!--<groupId>org.apache.shiro</groupId>-->
@@ -880,9 +896,19 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
+
+                                <!--wars-->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>jetty-wab-sample</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/webapps</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-client-extjs</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>

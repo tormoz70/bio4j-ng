@@ -21,22 +21,6 @@
                 <configuration>
                     <!--<unpackBundle>true</unpackBundle>-->
                     <instructions>
-                        <!--org.apache.shiro.*;resolution:="optional",-->
-                        <!--org.jasig.cas.client.*;resolution:="optional",-->
-                        <!--<Import-Package>-->
-                            <!--org.apache.commons.*;resolution:="optional",-->
-                            <!--org.apache.velocity.*;resolution:="optional",-->
-                            <!--org.apache.xml.*;resolution:="optional",-->
-                            <!--org.apache.xpath.*;resolution:="optional",-->
-                            <!--org.apache.log.*;resolution:="optional",-->
-                            <!--org.bouncycastle.util.encoders.*;resolution:="optional",-->
-                            <!--org.joda.time.*;resolution:="optional",-->
-                            <!--net.jcip.annotations.*;resolution:="optional",-->
-                            <!--org.bouncycastle.*;resolution:="optional",-->
-                            <!--org.owasp.esapi.*;resolution:="optional",-->
-                            <!--org.opensaml.*;resolution:="optional",-->
-                            <!--org.slf4j.*;resolution:="optional",-->
-                            <!--*</Import-Package>-->
                         <Import-Package>
                             antlr.*;resolution:="optional",
                             junit;resolution:="optional",
@@ -70,33 +54,10 @@
                             *</Import-Package>
                         <Embed-Dependency>*;scope=compile</Embed-Dependency>
                         <Export-Package>*</Export-Package>
-                        <!--<Export-Package>-->
-                            <!--org.apache.shiro,-->
-                            <!--org.apache.shiro.web,-->
-                            <!--org.apache.shiro.web.env,-->
-                            <!--org.apache.shiro.subject-->
-                        <!--</Export-Package>-->
-                        <!--<_exportcontents>org.apache.shiro.*</_exportcontents>-->
                         <!--<Embed-Transitive>true</Embed-Transitive>-->
                     </instructions>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.felix</groupId>-->
-                <!--<artifactId>maven-bundle-plugin</artifactId>-->
-                <!--<extensions>true</extensions>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>wrap-my-dependency</id>-->
-                        <!--<goals>-->
-                            <!--<goal>wrap</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<wrapImportPackage>*</wrapImportPackage>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
         </plugins>
     </build>
 
@@ -155,30 +116,5 @@
             <version>0.9.4</version>
             <scope>compile</scope>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.ops4j.pax.logging</groupId>-->
-            <!--<artifactId>pax-logging-api</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.ops4j.pax.logging</groupId>-->
-            <!--<artifactId>pax-logging-service</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>bsh</groupId>-->
-            <!--<artifactId>bsh</artifactId>-->
-            <!--<version>2.0b4</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>xom</groupId>-->
-            <!--<artifactId>xom</artifactId>-->
-            <!--<version>1.2.5</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
-
     </dependencies>
 </project>

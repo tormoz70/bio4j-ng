@@ -1,23 +1,22 @@
 package ru.bio4j.ng.commons.utils;
 
-import java.io.*;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.Dictionary;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.felix.ipojo.annotations.Property;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Prop;
 
-import static ru.bio4j.ng.commons.utils.Strings.*;
+import javax.servlet.ServletContext;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Dictionary;
+
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class Utl {
     private static final Logger LOG = LoggerFactory.getLogger(Utl.class);
@@ -343,6 +342,14 @@ public class Utl {
 //        }
 //        return null;
 //    }
+
+    public static <T> T getService(ServletContext servletContext, Class<T> serviceInterface) {
+        BundleContext bundleContext = (BundleContext) servletContext.getAttribute("osgi-bundlecontext");
+        if (bundleContext == null)
+            throw new IllegalStateException("osgi-bundlecontext not registered");
+
+        return (T)bundleContext.getService(bundleContext.getServiceReference(serviceInterface));
+    }
 
 }
 

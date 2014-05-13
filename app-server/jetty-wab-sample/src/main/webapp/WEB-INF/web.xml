@@ -4,12 +4,12 @@
 	<display-name>Archetype Created Web Application</display-name>
 	<servlet>
 		<servlet-name>HelloServlet</servlet-name>
-		<servlet-class>org.example.HelloServlet</servlet-class>
+		<servlet-class>ru.bio4j.ng.client.extjs.HelloServlet</servlet-class>
         <!--<async-supported>true</async-supported>-->
 	</servlet>
     <filter>
         <filter-name>security</filter-name>
-        <filter-class>org.example.filter.SecurityFilter</filter-class>
+        <filter-class>ru.bio4j.ng.client.extjs.filter.SecurityFilter</filter-class>
         <init-param>
             <param-name>staticSecurityManagerEnabled</param-name>
             <param-value>true</param-value>

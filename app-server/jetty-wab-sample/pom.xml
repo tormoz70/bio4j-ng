@@ -15,25 +15,19 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
-                    <supportedProjectTypes>
-                        <supportedProjectType>war</supportedProjectType>
-                        <supportedProjectType>bundle</supportedProjectType>
-                        <supportedProjectType>jar</supportedProjectType>
-                    </supportedProjectTypes>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Bundle-Name>Bio4j WebClient Service</Bundle-Name>
-                        <Bundle-Vendor>bio4j.RU</Bundle-Vendor>
+                        <Bundle-Name>Bio4j WebClient Test-service</Bundle-Name>
+                        <Bundle-Vendor>bio4j.ru</Bundle-Vendor>
                         <Bundle-Category>bio4j</Bundle-Category>
-                        <Bundle-Description>WebClient services</Bundle-Description>
+                        <Bundle-Description>WebClient Test-service</Bundle-Description>
                         <!--<Bundle-Activator>org.example.Activator</Bundle-Activator>-->
-                        <Web-ContextPath>/bio</Web-ContextPath>
+                        <Web-ContextPath>/biotest</Web-ContextPath>
+                        <!--<Import-Package>*,-->
+                            <!--org.apache.shiro.web.env;version="[1.2,2)"-->
+                        <!--</Import-Package>-->
                         <!-- By default, we don't export anything -->
-                        <Import-Package>*,
-                            org.apache.shiro.web.env;version="[1.2,2)"
-                        </Import-Package>
                         <Export-Package/>
                     </instructions>
                 </configuration>
@@ -68,31 +62,23 @@
                 </configuration>
             </plugin>
 
+            <!--<plugin>-->
+                <!--<groupId>org.apache.felix</groupId>-->
+                <!--<artifactId>maven-ipojo-plugin</artifactId>-->
+            <!--</plugin>-->
+
         </plugins>
     </build>
 
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.felix</groupId>-->
+            <!--<artifactId>org.apache.felix.ipojo.annotations</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>servlet-api</artifactId>-->
-            <!--<version>3.0-alpha-1</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>javax.servlet-api</artifactId>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
 
         <!--<dependency>-->
             <!--<groupId>javax.servlet</groupId>-->
@@ -107,85 +93,34 @@
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
-        <!-- Security -->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.shiro</groupId>-->
-            <!--<artifactId>shiro-core</artifactId>-->
-            <!--<version>${shiro.verion}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.shiro</groupId>-->
-            <!--<artifactId>shiro-web</artifactId>-->
-            <!--<version>${shiro.verion}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.shiro</groupId>-->
-            <!--<artifactId>shiro-cas</artifactId>-->
-            <!--<version>${shiro.verion}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            <version>1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet</groupId>-->
+            <!--<artifactId>javax.servlet-api</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>security-filter-dependency</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>security-filter-dependency</artifactId>
+            <artifactId>bio4j-ng-sapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-commons</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>commons-logging</groupId>-->
-            <!--<artifactId>commons-logging</artifactId>-->
-            <!--<version>1.1.1</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>commons-codec</groupId>-->
-            <!--<artifactId>commons-codec</artifactId>-->
-            <!--<version>1.9</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.opensaml</groupId>-->
-            <!--<artifactId>opensaml</artifactId>-->
-            <!--<version>${opensaml.verion}</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.santuario</groupId>-->
-            <!--<artifactId>xmlsec</artifactId>-->
-            <!--<version>1.5.6</version>-->
-        <!--</dependency>-->
-
-        <!--Logging-->
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>slf4j-api</artifactId>-->
-            <!--<version>${slf4jVersion}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-classic</artifactId>-->
-            <!--<version>${logbackVersion}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>ch.qos.logback</groupId>-->
-            <!--<artifactId>logback-core</artifactId>-->
-            <!--<version>${logbackVersion}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>javax.servlet</groupId>-->
-        <!--<artifactId>jsp-api</artifactId>-->
-        <!--<version>2.0</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
     </dependencies>
 </project>

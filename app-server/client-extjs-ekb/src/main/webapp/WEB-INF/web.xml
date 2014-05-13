@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+    <display-name>Archetype Created Web Application</display-name>
+    
+    <!--Listeners-->
+    <!--<listener>-->
+        <!--<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>-->
+    <!--</listener>-->
+    <!--Filters-->
+    <servlet>
+        <servlet-name>biosrv</servlet-name>
+        <servlet-class>ru.bio4j.ng.client.extjs.BioServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <!-- Override init parameter to avoid nasty -->
+        <!-- file locking issue on windows.         -->
+        <servlet-name>default</servlet-name>
+        <init-param>
+            <param-name>useFileMappedBuffer</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </servlet>
+
+    <!--Filters-->
+    <!--<filter>-->
+        <!--<filter-name>security</filter-name>-->
+        <!--<filter-class>ru.bio4j.ng.client.extjs.filter.SecurityFilter</filter-class>-->
+    <!--</filter>-->
+    <!--Mapping-->
+    <servlet-mapping>
+        <servlet-name>biosrv</servlet-name>
+        <url-pattern>/biosrv</url-pattern>
+    </servlet-mapping>
+
+    <!--<filter-mapping>-->
+        <!--<filter-name>security</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
+</web-app>
