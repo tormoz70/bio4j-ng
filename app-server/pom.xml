@@ -75,6 +75,7 @@
         <remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>
         <compiler-plugin-version>3.1</compiler-plugin-version>
         <release-plugin-version>2.4.1</release-plugin-version>
+        <war-plugi-nversion>2.4</war-plugi-nversion>
 
 
 	</properties>
@@ -141,7 +142,11 @@
                         </execution>
                     </executions>
                 </plugin>
-
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${war-plugi-nversion}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

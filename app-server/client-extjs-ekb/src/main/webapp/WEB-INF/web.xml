@@ -13,14 +13,10 @@
         <servlet-name>biosrv</servlet-name>
         <servlet-class>ru.bio4j.ng.client.extjs.BioServlet</servlet-class>
     </servlet>
+
     <servlet>
-        <!-- Override init parameter to avoid nasty -->
-        <!-- file locking issue on windows.         -->
-        <servlet-name>default</servlet-name>
-        <init-param>
-            <param-name>useFileMappedBuffer</param-name>
-            <param-value>false</param-value>
-        </init-param>
+        <servlet-name>biosrvfwd</servlet-name>
+        <servlet-class>ru.bio4j.ng.client.extjs.ForwardServlet</servlet-class>
     </servlet>
 
     <!--Filters-->
@@ -32,6 +28,11 @@
     <servlet-mapping>
         <servlet-name>biosrv</servlet-name>
         <url-pattern>/biosrv</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>biosrvfwd</servlet-name>
+        <url-pattern>/biosrvfwd</url-pattern>
     </servlet-mapping>
 
     <!--<filter-mapping>-->

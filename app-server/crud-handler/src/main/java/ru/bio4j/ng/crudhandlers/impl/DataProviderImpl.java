@@ -10,10 +10,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.CursorParser;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
-import ru.bio4j.ng.database.api.SQLActionScalar;
-import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLContextConfig;
-import ru.bio4j.ng.database.api.SQLCursor;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.service.api.*;
@@ -33,14 +30,48 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private FileContentResolver contentResolver;
     private SQLContext sqlContext;
 
+    private BioResponse processCursorAsSelectable(Cursor cursor) throws Exception {
+//        response.setBioCode(cursor.getBioCode());
+        LOG.debug("Try exec batch!!!");
+        BioResponse response = sqlContext.execBatch(new SQLAction<Cursor, BioResponse>() {
+            @Override
+            public BioResponse exec(SQLContext context, Connection conn, Cursor cur) throws Exception {
+                final BioResponse result = new BioResponse();
+                result.setBioCode(cur.getBioCode());
+                LOG.debug("Try open Cursor!!!");
+                try(SQLCursor c = context.CreateCursor()
+                        .init(conn, cur.getPreparedSql(), cur.getParams()).open();){
+                    LOG.debug("Cursor opened!!!");
+                    if(c.reader().read()){
+                        LOG.debug("FirstRec readed!!!");
+//                        dummysum += c.getValue("DM", Double.class);
+                    }
+                }
+                return result;
+            }
+        }, cursor);
+        return response;
+    }
+
+    private BioResponse processCursorAsExecutable(Cursor cursor) {
+        return null;
+    }
+
+    public BioResponse processCursor(Cursor cursor) throws Exception {
+        BioResponse response = null;
+        if(cursor.getType() == Cursor.Type.SELECT)
+            response = processCursorAsSelectable(cursor);
+        if(cursor.getType() == Cursor.Type.EXEC)
+            response = processCursorAsExecutable(cursor);
+        if (response == null)
+            response = new BioResponse();
+        return response;
+    }
+
     private void wrapCursor(Cursor cursor) throws Exception {
         Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
         Wrappers.wrapRequest(cursor, WrapQueryType.SORTING);
         Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
-    }
-
-    private BioResponse processCursor(Cursor cursor) {
-        return null;
     }
 
     private BioResponse processRequest(BioRequestJStoreGet request, String sql) throws Exception {
@@ -59,15 +90,14 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     @Override
     public BioResponse getData(final BioRequestJStoreGet bioRequest) throws Exception {
         LOG.debug("GetData...");
-//        BioRequestJStoreGet bioRequest = Jsons.decode(json, BioRequestJStoreGet.class);
-//        if(bioRequest != null){
-            String sql = contentResolver.getQueryContent(bioRequest.getBioCode());
-            if(!Strings.isNullOrEmpty(sql)) {
-                BioResponse response = processRequest(bioRequest, sql);
-                LOG.debug("GetData - returning response...");
-                return response;
-            }
-//        }
+        LOG.debug("Loading sql by code (bioCode:{})...", bioRequest.getBioCode());
+        String sql = contentResolver.getQueryContent(bioRequest.getBioCode());
+        LOG.debug("SQL loaded.");
+        if(!Strings.isNullOrEmpty(sql)) {
+            BioResponse response = processRequest(bioRequest, sql);
+            LOG.debug("GetData - returning response...");
+            return response;
+        }
         return null;
     }
 

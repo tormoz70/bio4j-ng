@@ -1,19 +1,19 @@
 package ru.bio4j.ng.client.extjs;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by ayrat on 13.05.14.
- */
-public class ForwardServlet {
-    public static void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+public class ForwardServlet extends HttpServlet {
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //String destinationServer = "http://vps-nexus-bio4j.cloud.tilaa.com:9090/bio4j-spi/test/sproc";
-        String destinationServer = "http://localhost:9090/bio4j-spi/test/sproc";
+        String qs = request.getQueryString();
+        String destinationServer = "http://localhost:9090/biosrvapi"+((qs == null || qs.length() == 0) ? "" : "?"+qs);
         String destination = destinationServer; //request.getParameter("p");
 
         URL url = new URL(destination);
@@ -55,7 +55,7 @@ public class ForwardServlet {
                         out.close();
                 }
             } else {
-                response.getWriter().println(String.format("Error on forward server: [%d] - %s", connection.getResponseCode(), connection.getResponseMessage()));
+                response.getWriter().println(String.format("Error on forwarded server: [%d] - %s", connection.getResponseCode(), connection.getResponseMessage()));
             }
         } catch (Exception e) {
             response.getWriter().println(String.format("Error while forwarding. Error: %s", e.toString()));

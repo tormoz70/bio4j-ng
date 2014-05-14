@@ -15,7 +15,7 @@ public class RemoteAPIService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteAPIService.class);
     private static final String HELLO_SERVLET_PATH = "/hello";
-    private static final String BIO_SERVLET_PATH = "/biosrv";
+    private static final String BIO_SERVLET_PATH = "/biosrvapi";
 
     @Requires
     private HttpService httpService;

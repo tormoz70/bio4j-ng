@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <div id="bd">
-        <div id="code-load" style="display:none;">
+        <div style="display:none;">
             <script type="text/javascript" src="bservices.js"></script>
             <script type="text/javascript" src="init.js"></script>
         </div>

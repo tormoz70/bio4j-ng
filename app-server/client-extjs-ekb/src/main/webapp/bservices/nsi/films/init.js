@@ -1,14 +1,17 @@
 Ext.Loader.setConfig({enabled: true});
-//Ext.Loader.setPath('Ext.ux', '../../../ux/');
+Ext.Loader.setPath('Ext.ux', '../../../ux');
 //Ext.Loader.setPath('Ekb.grid', './');
-Ext.Loader.setPath('Ekb.form', './');
+Ext.Loader.setPath('Ekb.form', '.');
 Ext.require([
-//    'Ext.ux.PreviewPlugin'
-//    'Ekb.form.FilmDetails'
+    'Ext.ux.PreviewPlugin',
+    'Ekb.form.FilmDetails'
 ]);
+
+//alert("Required loaded!");
 
 Ext.onReady(function () {
 
+//    alert("Redy!!!");
     Ext.ns('Ekb');
 
     Ext.tip.QuickTipManager.init();
@@ -17,13 +20,13 @@ Ext.onReady(function () {
         id: 'ekb-films-grid',
         title: 'Default Tab',
         storeCfg: {
-            bioCode:'film.list',
+            bioCode:'ekbp.film.list',
             autoLoad: true
         },
         tbar: Ext.create('Ext.toolbar.Toolbar', {
             items: [
                 {
-                    text: 'Редактировать',
+                    text: 'Детали',
                     scope: this,
                     handler: function () {
                         var grd = Ext.getCmp('ekb-films-grid');
@@ -34,11 +37,11 @@ Ext.onReady(function () {
                             width: 800,
                             //x: 50,
                             //y: 50,
-                            title: 'Редактировать предмет антиквариата',
+                            title: 'Детальная информация по фильму',
                             closable: true,
                             plain: true,
-                            layout: 'fit',
-                            items: Ext.create('Ekb.form.FilmDetails', {bioOwnerGrid:grd})
+                            layout: 'fit'
+                            //items: Ext.create('Ekb.form.FilmDetails', {bioOwnerGrid:grd})
                         });
                         win2.show();
                     }
@@ -65,7 +68,7 @@ Ext.onReady(function () {
                     {
                         xtype: "panel",
                         frame: true,
-                        html: '<a href="http://ekinobilet.ru" id="logo"><img src="../../../shared/images/logo_gr.png" alt="Bio4j"/></a>'
+                        html: '<a href="http://ekinobilet.ru" id="logo"><img height="50" width="80" src="../../../shared/images/logo_gr.png" alt="КИНОБИЛЕТ"/></a>'
                     }
                 ]
             },
