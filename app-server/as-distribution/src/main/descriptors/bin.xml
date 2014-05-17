@@ -9,31 +9,6 @@
 
     <fileSets>
 
-        <!-- Expanded Karaf Standard Distribution -->
-        <!--<fileSet>-->
-            <!--<directory>target/dependencies/apache-karaf-${karaf.version}</directory>-->
-            <!--<outputDirectory>/</outputDirectory>-->
-            <!--<excludes>-->
-                <!--<exclude>**/demos/**</exclude>-->
-                <!--<exclude>bin/**</exclude>-->
-                <!--<exclude>etc/system.properties</exclude>-->
-                <!--<exclude>etc/users.properties</exclude>-->
-                <!--<exclude>etc/org.apache.karaf.features.cfg</exclude>-->
-                <!--<exclude>etc/org.apache.karaf.management.cfg</exclude>-->
-                <!--<exclude>etc/log4j-killed.properties</exclude>-->
-                <!--<exclude>etc/org.apache.activemq.webconsole.cfg</exclude>-->
-                <!--<exclude>etc/org.apache.activemq.server-default.cfg</exclude>-->
-                <!--<exclude>activemq.xml</exclude>-->
-                <!--<exclude>LICENSE</exclude>-->
-                <!--<exclude>NOTICE</exclude>-->
-                <!--<exclude>README</exclude>-->
-                <!--<exclude>RELEASE-NOTES</exclude>-->
-                <!--<exclude>karaf-manual*.html</exclude>-->
-                <!--<exclude>karaf-manual*.pdf</exclude>-->
-            <!--</excludes>-->
-        <!--</fileSet>-->
-
-        <!-- Copy over bin/* separately to get the correct content mode -->
         <fileSet>
             <directory>${distr.base}</directory>
             <outputDirectory>/</outputDirectory>
@@ -68,11 +43,6 @@
             <!--<lineEnding>unix</lineEnding>-->
             <fileMode>0644</fileMode>
         </fileSet>
-
-        <!--<fileSet>-->
-            <!--<directory>target/features-repo</directory>-->
-            <!--<outputDirectory>/system</outputDirectory>-->
-        <!--</fileSet>-->
 
     </fileSets>
 

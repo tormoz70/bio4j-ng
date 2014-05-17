@@ -11,4 +11,9 @@ public class SQLExceptionExt extends java.sql.SQLException {
     public int getErrorCode() {
         return sqlErrorCode;
     }
+
+    @Override
+    public String getMessage() {
+        return String.format("%s\nCause: %s", super.getMessage(), getCause().getMessage());
+    }
 }

@@ -11,6 +11,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.doa.impl.OraContext;
+import ru.bio4j.ng.database.doa.impl.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -347,4 +348,23 @@ public class SQLFactoryTest {
 //        }
 //    }
 
+    @Test
+    public void sqlExceptionExtTest() {
+        List<Param> params = new ArrayList<>();
+        params.add(Param.builder()
+                .name("qwe")
+                .value(123)
+                .build()
+        );
+        StringBuilder sb = new StringBuilder();
+        sb.append("{OraCommand.Params(before exec): {\n");
+        for (Param p : params)
+            sb.append("\t"+p.toString()+",\n");
+        sb.append("}}");
+
+        SQLException e = new SQLException("QWE-TEST");
+        SQLExceptionExt r = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
+        String msg = r.getMessage();
+        LOG.debug(msg);
+    }
 }

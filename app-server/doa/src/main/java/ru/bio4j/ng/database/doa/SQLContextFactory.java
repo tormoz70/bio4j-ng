@@ -9,8 +9,11 @@ import ru.bio4j.ng.database.doa.impl.OraContext;
  * Created by ayrat on 25.04.14.
  */
 public class SQLContextFactory {
+    public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {
+        return OraContext.create(config);
+    }
     public static SQLContext create(SQLContextConfig config) throws Exception {
-        return OraContext.create(SQLConnectionPoolConfig.builder()
+        return create(SQLConnectionPoolConfig.builder()
                 .poolName(config.getPoolName())
                 .dbDriverName(config.getDriverName())
                 .dbConnectionUrl(config.getDbConnectionUrl())

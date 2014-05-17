@@ -25,6 +25,7 @@
         <module>remote-api</module>
         <module>jetty-wab-sample</module>
         <module>client-extjs-ekb</module>
+        <module>module-ekb</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
