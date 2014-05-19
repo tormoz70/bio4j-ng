@@ -2,7 +2,7 @@ package ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination;
 
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.AbstractWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapperType;
-import ru.bio4j.ng.service.api.Cursor;
+import ru.bio4j.ng.service.api.BioCursor;
 
 import static ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType.PAGING;
 
@@ -48,8 +48,8 @@ public class PaginationWrapper extends AbstractWrapper {
      * @return "Обернутый" запрос
      */
     @Override
-    public Cursor wrap(Cursor cursor) throws Exception {
-        if((cursor.getWrapMode() & Cursor.WrapMode.PAGING.code()) == Cursor.WrapMode.PAGING.code()) {
+    public BioCursor wrap(BioCursor cursor) throws Exception {
+        if((cursor.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
             cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix);
         }
         int pageSize = cursor.getPageSize();

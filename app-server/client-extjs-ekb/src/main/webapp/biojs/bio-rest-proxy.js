@@ -23,6 +23,7 @@ Ext.define('Bio.data.RestProxy', {
 //            query:{value: "SAL%", type: 'string'}
 //        };
         request['jsonData'] = Bio.request.store.GetData.jsonData({
+            bioModuleKey: store.bioModuleKey,
             bioCode: store.bioCode,
             bioParams: params,
             offset: offset,

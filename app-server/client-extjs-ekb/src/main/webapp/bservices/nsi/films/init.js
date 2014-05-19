@@ -20,7 +20,8 @@ Ext.onReady(function () {
         id: 'ekb-films-grid',
         title: 'Default Tab',
         storeCfg: {
-            bioCode:'ekbp.film.list',
+            bioModuleKey:'ekbp',
+            bioCode:'cabinet.film-registry',
             autoLoad: true
         },
         tbar: Ext.create('Ext.toolbar.Toolbar', {

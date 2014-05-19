@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.filtering.FilteringWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.sorting.SortingWrapper;
-import ru.bio4j.ng.service.api.Cursor;
+import ru.bio4j.ng.service.api.BioCursor;
 
 import java.sql.SQLException;
 import java.util.EnumMap;
@@ -33,7 +33,7 @@ public class Wrappers {
      * @throws java.sql.SQLException
      * @title "Оборачивает" SQL запрос для возможности фильтрации
      */
-    public static Cursor wrapRequest(final Cursor cursor, final WrapQueryType wrapQueryType) throws Exception {
+    public static BioCursor wrapRequest(final BioCursor cursor, final WrapQueryType wrapQueryType) throws Exception {
         Wrapper w = getWrapper(wrapQueryType);
         return w.wrap(cursor);
     }

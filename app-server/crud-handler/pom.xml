@@ -39,26 +39,37 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-sapi</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-module-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-doa</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dbapi</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>${project.groupId}</groupId>-->
             <!--<artifactId>bio4j-ng-content</artifactId>-->
+            <!--<scope>provided</scope>-->
         <!--</dependency>-->
     </dependencies>
 

@@ -3,7 +3,7 @@ package ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.filtering;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.AbstractWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapperType;
-import ru.bio4j.ng.service.api.Cursor;
+import ru.bio4j.ng.service.api.BioCursor;
 
 import static ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType.FILTERING;
 
@@ -48,8 +48,8 @@ public class FilteringWrapper extends AbstractWrapper {
      * @return "Обернутый" запрос
      */
     @Override
-    public Cursor wrap(Cursor cursor) throws Exception {
-        if((cursor.getWrapMode() & Cursor.WrapMode.FILTER.code()) == Cursor.WrapMode.FILTER.code()) {
+    public BioCursor wrap(BioCursor cursor) throws Exception {
+        if((cursor.getWrapMode() & BioCursor.WrapMode.FILTER.code()) == BioCursor.WrapMode.FILTER.code()) {
             String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", cursor.getFilter());
             cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
         }

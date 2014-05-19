@@ -3,7 +3,7 @@ package ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.sorting;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.AbstractWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapperType;
-import ru.bio4j.ng.service.api.Cursor;
+import ru.bio4j.ng.service.api.BioCursor;
 
 import static ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType.SORTING;
 
@@ -49,8 +49,8 @@ public class SortingWrapper extends AbstractWrapper {
      * @return "Обернутый" запрос
      */
     @Override
-    public Cursor wrap(Cursor cursor) throws Exception {
-        if((cursor.getWrapMode() & Cursor.WrapMode.SORT.code()) == Cursor.WrapMode.SORT.code()) {
+    public BioCursor wrap(BioCursor cursor) throws Exception {
+        if((cursor.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
             String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", cursor.getSort());
             cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY "+orderbySql));
         }

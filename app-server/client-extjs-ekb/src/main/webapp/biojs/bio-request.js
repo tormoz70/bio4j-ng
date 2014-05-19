@@ -2,7 +2,11 @@ Ext.namespace("Bio.request.store");
 Ext.define('Bio.request.store.GetData', {
     singleton:true,
     config: {
-        '@class': 'ru.bio4j.model.transport.jstore.BioRequestJStoreGet',
+
+        /**
+         * Код модуля
+         */
+        bioModuleKey: '',
 
         /**
          * Код запрашиваемого инф. объекта. Фактически - это путь к файлу описания метаданных запроса

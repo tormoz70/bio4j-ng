@@ -14,6 +14,7 @@
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>bin/*</include>
+                <include>lib/*</include>
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>

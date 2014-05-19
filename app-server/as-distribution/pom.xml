@@ -41,6 +41,9 @@
         <pax.swissbox.version>1.7.0</pax.swissbox.version>
         <ops4j.base.version>1.4.0</ops4j.base.version>
         <biz.aQute.bnd.version>2.1.0</biz.aQute.bnd.version>
+
+        <xalan.version>2.7.1</xalan.version>
+
     </properties>
 
     <build>
@@ -76,6 +79,32 @@
                                     <outputDirectory>${distr.base}/bin</outputDirectory>
                                     <destFileName>felix.jar</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>xalan</groupId>
+                                    <artifactId>xalan</artifactId>
+                                    <version>${xalan.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xerces</groupId>
+                                    <artifactId>xerces</artifactId>
+                                    <version>2.4.0</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xml-apis</groupId>
+                                    <artifactId>xml-apis</artifactId>
+                                    <version>2.0.2</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/lib</outputDirectory>
+                                </artifactItem>
+
+
 
                                 <artifactItem>
                                     <groupId>org.apache.felix</groupId>
@@ -247,9 +276,17 @@
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
                                 <!--<artifactItem>-->
-                                    <!--<groupId>javax.servlet</groupId>-->
-                                    <!--<artifactId>javax.servlet-api</artifactId>-->
-                                    <!--<version>${javax.servlet-api.version}</version>-->
+                                    <!--<groupId>xalan</groupId>-->
+                                    <!--<artifactId>xalan</artifactId>-->
+                                    <!--<version>${xalan.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.apache.servicemix.bundles</groupId>-->
+                                    <!--<artifactId>org.apache.servicemix.bundles.xalan</artifactId>-->
+                                    <!--<version>${servicemix.xalan.version}</version>-->
                                     <!--<type>jar</type>-->
                                     <!--<overWrite>true</overWrite>-->
                                     <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
@@ -768,21 +805,12 @@
 
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>security-filter-dependency</artifactId>
+                                    <artifactId>dependency-security-filter</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
-                                <!--<artifactItem>-->
-                                    <!--<groupId>org.apache.velocity</groupId>-->
-                                    <!--<artifactId>velocity</artifactId>-->
-                                    <!--<version>1.7</version>-->
-                                    <!--<type>jar</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.base}/bundle</outputDirectory>-->
-                                <!--</artifactItem>-->
-
 
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -790,8 +818,9 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                    <outputDirectory>${distr.base}/bundle</outputDirectory>
                                 </artifactItem>
+
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-tmodel</artifactId>
@@ -848,22 +877,22 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-ehcache</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-content</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-ehcache</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-content</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-router</artifactId>
@@ -897,6 +926,32 @@
                                     <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
 
+                                <!--modules-->
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-module-api</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-module-commons</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-module-ekb</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+
                                 <!--wars-->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
@@ -908,7 +963,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs</artifactId>
+                                    <artifactId>bio4j-ng-client-extjs-ekb</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
@@ -936,6 +991,25 @@
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
                             <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="deploy xsd schemas to web server">
+                                <copy todir="d:/www/bio4j.ru/biodef-repo">
+                                    <fileset dir="src/main/biodef" includes="**/*" />
+                                </copy>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

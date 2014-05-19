@@ -1,7 +1,6 @@
 package ru.bio4j.ng.model.transport;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +18,11 @@ public class BioRequest {
 
     /** Логин в виде username/password */
     private String login;
+
+    /**
+     * Код запрашиваемого bio-модуля
+     */
+    private String bioModuleKey;
 
     /**
      * Код запрашиваемого инф. объекта. Фактически - это путь к файлу описания метаданных запроса
@@ -49,6 +53,14 @@ public class BioRequest {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getBioModuleKey() {
+        return bioModuleKey;
+    }
+
+    public void setBioModuleKey(String bioModuleKey) {
+        this.bioModuleKey = bioModuleKey;
     }
 
     public String getBioCode() {

@@ -1,6 +1,6 @@
 package ru.bio4j.ng.crudhandlers.impl.cursor.wrappers;
 
-import ru.bio4j.ng.service.api.Cursor;
+import ru.bio4j.ng.service.api.BioCursor;
 
 /**
  * @title Интерфейс обертки запросов
@@ -12,5 +12,5 @@ public interface Wrapper{
      * @param cursor
      * @return Обернутый запрос
      */
-    Cursor wrap(Cursor cursor) throws Exception;
+    BioCursor wrap(BioCursor cursor) throws Exception;
 }

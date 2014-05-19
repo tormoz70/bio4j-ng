@@ -8,7 +8,7 @@
 
     <modules>
         <!-- Common services -->
-        <module>security-filter-dependency</module>
+        <module>dependency-security-filter</module>
         <module>flexjson</module>
         <module>t-model</module>
         <module>commons</module>
@@ -23,14 +23,17 @@
         <module>router</module>
         <module>remote-api-rmi</module>
         <module>remote-api</module>
-        <module>jetty-wab-sample</module>
+        <module>test-jetty-wab-sample</module>
         <module>client-extjs-ekb</module>
+        <!--bio-modules-->
+        <module>module-api</module>
+        <module>module-commons</module>
         <module>module-ekb</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
 
-        <module>rmi-client-test</module>
+        <module>test-rmi-client</module>
     </modules>
 
     <properties>
@@ -76,8 +79,8 @@
         <remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>
         <compiler-plugin-version>3.1</compiler-plugin-version>
         <release-plugin-version>2.4.1</release-plugin-version>
-        <war-plugi-nversion>2.4</war-plugi-nversion>
-
+        <war-plugi-version>2.4</war-plugi-version>
+        <antrun-plugin-version>1.7</antrun-plugin-version>
 
 	</properties>
 
@@ -146,7 +149,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>${war-plugi-nversion}</version>
+                    <version>${war-plugi-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${antrun-plugin-version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -227,7 +235,7 @@
             <!--bio4j-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>security-filter-dependency</artifactId>
+                <artifactId>dependency-security-filter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -273,6 +281,16 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bio4j-ng-rapi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-module-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-module-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

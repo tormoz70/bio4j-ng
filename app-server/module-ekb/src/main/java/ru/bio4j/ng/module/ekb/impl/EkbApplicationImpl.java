@@ -1,0 +1,40 @@
+package ru.bio4j.ng.module.ekb.impl;
+
+import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.module.api.BioModule;
+import ru.bio4j.ng.module.commons.BioModuleBase;
+import ru.bio4j.ng.module.commons.CursorParser;
+import ru.bio4j.ng.module.ekb.EkbApplication;
+import ru.bio4j.ng.service.api.BioCursor;
+
+import java.io.IOException;
+
+@Component
+@Instantiate
+@Provides(specifications = BioModule.class,
+        properties = {@StaticServiceProperty(
+                name = "bioModuleKey",
+                value = "ekbp",
+                type = "java.lang.String"
+        )})
+public class EkbApplicationImpl extends BioModuleBase {
+    private static final Logger LOG = LoggerFactory.getLogger(EkbApplicationImpl.class);
+
+    @Context
+    private BundleContext bundleContext;
+
+    @Override
+    protected BundleContext bundleContext() {
+        return bundleContext;
+    }
+
+    @Override
+    public String getDescription() {
+        return "E-Kinobilet application";
+    }
+
+}

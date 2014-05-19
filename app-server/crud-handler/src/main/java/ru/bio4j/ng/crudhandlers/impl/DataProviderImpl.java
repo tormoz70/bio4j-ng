@@ -2,22 +2,28 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.crudhandlers.impl.cursor.CursorParser;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioResponse;
-import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
+import ru.bio4j.ng.module.api.BioModule;
+import ru.bio4j.ng.module.api.BioModuleHelper;
+import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.BioServiceBase;
+import ru.bio4j.ng.service.api.ConfigProvider;
+import ru.bio4j.ng.service.api.DataProvider;
 
 import java.sql.Connection;
-
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Component
@@ -26,16 +32,27 @@ import java.sql.Connection;
 public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DataProviderImpl.class);
 
-    @Requires
-    private FileContentResolver contentResolver;
+    @Context
+    private BundleContext bundleContext;
+//    @Requires
+//    private FileContentResolver contentResolver;
     private SQLContext sqlContext;
 
-    private BioResponse processCursorAsSelectable(Cursor cursor) throws Exception {
-//        response.setBioCode(cursor.getBioCode());
+    private Map<String, BioModule> modules = new HashMap<>();
+    private BioModule getModule(String key) throws Exception {
+        BioModule rslt = modules.get(key);
+        if(rslt == null) {
+            rslt = BioModuleHelper.lookupService(bundleContext, key);
+            modules.put(key, rslt);
+        }
+        return rslt;
+    }
+
+    private BioResponse processCursorAsSelectable(BioCursor cursor) throws Exception {
         LOG.debug("Try exec batch!!!");
-        BioResponse response = sqlContext.execBatch(new SQLAction<Cursor, BioResponse>() {
+        BioResponse response = sqlContext.execBatch(new SQLAction<BioCursor, BioResponse>() {
             @Override
-            public BioResponse exec(SQLContext context, Connection conn, Cursor cur) throws Exception {
+            public BioResponse exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
                 final BioResponse result = new BioResponse();
                 result.setBioCode(cur.getBioCode());
                 LOG.debug("Try open Cursor!!!");
@@ -53,35 +70,31 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return response;
     }
 
-    private BioResponse processCursorAsExecutable(Cursor cursor) {
+    private BioResponse processCursorAsExecutable(BioCursor cursor) {
         return null;
     }
 
-    public BioResponse processCursor(Cursor cursor) throws Exception {
+    public BioResponse processCursor(BioCursor cursor) throws Exception {
         BioResponse response = null;
-        if(cursor.getType() == Cursor.Type.SELECT)
+        if(cursor.getType() == BioCursor.Type.SELECT)
             response = processCursorAsSelectable(cursor);
-        if(cursor.getType() == Cursor.Type.EXEC)
+        if(cursor.getType() == BioCursor.Type.EXEC)
             response = processCursorAsExecutable(cursor);
         if (response == null)
             response = new BioResponse();
         return response;
     }
 
-    private void wrapCursor(Cursor cursor) throws Exception {
+    private void wrapCursor(BioCursor cursor) throws Exception {
         Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
         Wrappers.wrapRequest(cursor, WrapQueryType.SORTING);
         Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
     }
 
-    private BioResponse processRequest(BioRequestJStoreGet request, String sql) throws Exception {
-        LOG.debug("Now process sql: {}", sql);
-        Cursor cursor = CursorParser.pars(request.getBioCode(), sql);
-        cursor.setOffset(request.getOffset());
-        cursor.setPageSize(request.getPagesize());
-        cursor.setFilter(request.getFilter());
-        cursor.setSort(request.getSort());
-        cursor.setParams(request.getBioParams());
+    private BioResponse processRequest(BioRequestJStoreGet request) throws Exception {
+        LOG.debug("Now processing request to module \"{}\"...", request.getBioModuleKey());
+        BioModule module = getModule(request.getBioModuleKey());
+        BioCursor cursor = module.getCursor(request);
         wrapCursor(cursor);
         BioResponse response = processCursor(cursor);
         return response;
@@ -90,15 +103,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     @Override
     public BioResponse getData(final BioRequestJStoreGet bioRequest) throws Exception {
         LOG.debug("GetData...");
-        LOG.debug("Loading sql by code (bioCode:{})...", bioRequest.getBioCode());
-        String sql = contentResolver.getQueryContent(bioRequest.getBioCode());
-        LOG.debug("SQL loaded.");
-        if(!Strings.isNullOrEmpty(sql)) {
-            BioResponse response = processRequest(bioRequest, sql);
-            LOG.debug("GetData - returning response...");
-            return response;
-        }
-        return null;
+        BioResponse response = processRequest(bioRequest);
+        LOG.debug("GetData - returning response...");
+        return response;
     }
 
     @Override

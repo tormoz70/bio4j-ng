@@ -343,6 +343,7 @@ public class Utl {
 //        return null;
 //    }
 
+
     public static <T> T getService(ServletContext servletContext, Class<T> serviceInterface) {
         BundleContext bundleContext = (BundleContext) servletContext.getAttribute("osgi-bundlecontext");
         if (bundleContext == null)
