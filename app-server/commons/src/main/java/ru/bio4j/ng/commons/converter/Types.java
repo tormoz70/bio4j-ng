@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.converter;
 
 import ru.bio4j.ng.commons.utils.Strings;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -185,4 +186,26 @@ public class Types {
 		return new Date(Long.MAX_VALUE);
 	}
 
+    public static Boolean parsBoolean(String value) {
+        return !Strings.isNullOrEmpty(value) ||
+                value.toLowerCase().equals("true") ||
+                value.toLowerCase().equals("t") ||
+                value.toLowerCase().equals("1") ||
+                value.toLowerCase().equals("yes") ||
+                value.toLowerCase().equals("y");
+    }
+
+    public static <T> T parsEnum(String value, Class<T> type) {
+        if(!type.isEnum())
+            throw new IllegalArgumentException("Parameter type mast be instance of Enum!");
+        Field[] flds = type.getDeclaredFields();
+        for(Field f : flds)
+            if(f.getName().equals(value))
+                try {
+                    return (T)f.get(type);
+                } catch (IllegalAccessException e) {
+                    return null;
+                }
+        return null;
+    }
 }

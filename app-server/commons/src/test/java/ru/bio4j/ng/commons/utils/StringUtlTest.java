@@ -61,4 +61,23 @@ public class StringUtlTest {
         Assert.assertEquals(s, "asd fgh");
     }
 
+    @Test(enabled = true)
+    public void getFirstItemTest() throws Exception {
+        String list1 = "qwe1/qwe2";
+        Assert.assertEquals(Strings.getFirstItem(list1, "/"), "qwe1");
+        String list2 = "qwe1";
+        Assert.assertEquals(Strings.getFirstItem(list2, "/"), "qwe1");
+        String list3 = "";
+        Assert.assertEquals(Strings.getFirstItem(list3, "/"), "");
+    }
+    @Test(enabled = true)
+    public void cutFirstItemTest() throws Exception {
+        String list1 = "qwe1/qwe2/qwe3";
+        Assert.assertEquals(Strings.cutFirstItem(list1, "/"), "qwe2/qwe3");
+        String list2 = "qwe1";
+        Assert.assertEquals(Strings.cutFirstItem(list2, "/"), null);
+        String list3 = "";
+        Assert.assertEquals(Strings.cutFirstItem(list3, "/"), null);
+    }
+
 }

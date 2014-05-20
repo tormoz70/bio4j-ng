@@ -61,9 +61,9 @@
                     </xs:annotation>
                     <xs:simpleType>
                       <xs:restriction base="xs:NMTOKEN">
-                        <xs:enumeration value="Input"/>
-                        <xs:enumeration value="Output"/>
-                        <xs:enumeration value="InputOutput"/>
+                        <xs:enumeration value="IN"/>
+                        <xs:enumeration value="OUT"/>
+                        <xs:enumeration value="INOUT"/>
                         <!--<xs:enumeration value="ReturnValue"/>-->
                       </xs:restriction>
                     </xs:simpleType>

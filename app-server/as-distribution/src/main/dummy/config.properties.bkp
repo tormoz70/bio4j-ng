@@ -3,6 +3,7 @@ org.osgi.framework.system.packages.extra=com.sun.mirror.apt,com.sun.mirror.decla
     com.sun.mirror.util, \
     com.sun.crypto.provider, \
     com.sun.net.ssl.internal.ssl, \
+    com.sun.org.apache.xerces.internal.parsers, \
     com.sun.org.apache.xerces.internal.util, \
     com.sun.org.apache.xerces.internal.xni.parser, \
     sun.io, \
@@ -19,6 +20,7 @@ org.osgi.framework.system.packages.extra=com.sun.mirror.apt,com.sun.mirror.decla
     org.w3c.dom.ranges, \
     org.w3c.dom.views, \
     org.w3c.dom.xpath, \
+    com.sun.org.apache.xml.internal, \
     com.sun.xml.internal.bind, \
     com.sun.net.ssl
 

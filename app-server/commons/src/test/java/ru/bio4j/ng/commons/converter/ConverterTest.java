@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.converter;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.model.transport.Param;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -174,4 +175,10 @@ public class ConverterTest {
         }
     }
 
+    @Test(enabled=true)
+    public void stringToEnum() throws Exception {
+        String instr = "OUT";
+        Param.Direction dir = Converter.toType(instr, Param.Direction.class);
+        Assert.assertTrue(dir == Param.Direction.OUT);
+    }
 }

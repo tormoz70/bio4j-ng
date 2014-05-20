@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
 public class JsonUtlTest {
 
@@ -53,4 +54,10 @@ public class JsonUtlTest {
 		Assert.assertEquals(this.testBox.getPackets()[0].getApples()[1].getWheight(), restored.getPackets()[0].getApples()[1].getWheight());
 	}
 
+    @Test(enabled = true)
+    public void b_decode1() throws Exception {
+        final String requestBody = "{\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pagesize\":25}";
+        BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
+        System.out.println(Utl.buildBeanStateInfo(request, "Request", "  "));
+    }
 }

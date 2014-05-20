@@ -79,6 +79,24 @@ public class Strings {
 		return split(str, new String[] { delimiter });
 	}
 
+    public static String getFirstItem(String list, String delimiter) {
+        if(isNullOrEmpty(list))
+            return list;
+        int posOfFirstDelimeter = list.indexOf(delimiter);
+        if(posOfFirstDelimeter == -1)
+            return list;
+        return list.substring(0, posOfFirstDelimeter);
+    }
+
+    public static String cutFirstItem(String list, String delimiter) {
+        if(isNullOrEmpty(list))
+            return null;
+        int posOfFirstDelimeter = list.indexOf(delimiter);
+        if(posOfFirstDelimeter == -1)
+            return null;
+        return list.substring(posOfFirstDelimeter+1);
+    }
+
 	/**
 	 * Сравнивает две строки
 	 * @param str1 - строка 1

@@ -34,7 +34,7 @@ public class StringHandler extends TypeHandlerBase implements TypeHandler<String
         if (Types.typeIsDate(targetTypeWrapped))
             return (T) Types.date2Date(Types.parsDate(value), targetTypeWrapped);
         else if (targetTypeWrapped == Boolean.class)
-            return (T) value;
+            return (T) Types.parsBoolean(value);
         else if (Types.typeIsNumber(targetTypeWrapped))
             return (T) Types.string2Number(value, targetTypeWrapped);
         else if (targetTypeWrapped == String.class)
@@ -43,6 +43,8 @@ public class StringHandler extends TypeHandlerBase implements TypeHandler<String
             return (T) value;
         else if (targetTypeWrapped == byte[].class)
             return (T) value.getBytes();
+        else if (targetTypeWrapped.isEnum())
+            return (T) Types.parsEnum(value, targetTypeWrapped);
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
 }

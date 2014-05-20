@@ -3,6 +3,12 @@ package ru.bio4j.ng.module.commons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Doms;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.commons.utils.Regexs;
@@ -199,15 +205,51 @@ public class CursorParser {
         parsHints(cursor);
         return cursor;
     }
+
+    private static void overrideParamsFromXml(final BioCursor cursor, final Document document) throws Exception {
+        Element sqlElem = Doms.findElem(document, "/cursor/SQL");
+        NodeList paramNodes = sqlElem.getElementsByTagName("param");
+        try(Paramus p = Paramus.set(cursor.getParams());) {
+            for(int i=0; i<paramNodes.getLength(); i++) {
+                Element paramElem = (Element)paramNodes.item(i);
+                String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
+                MetaType paramType = Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class);
+                Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);;
+                Param param = p.getParam(paramName, true);
+                if(param == null) {
+                    param = Param.builder()
+                            .name(paramName)
+                            .type(paramType)
+                            .direction(paramDir)
+                            .build();
+                    p.add(param);
+                } else {
+                    param.setType(paramType);
+                    param.setDirection(paramDir);
+                }
+            }
+        }
+    }
+
+    private static void overrideColsFromXml(final BioCursor cursor, final Document document) throws Exception {
+
+    }
+
     public static BioCursor pars(final String bioCode, final Document document) throws Exception {
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xPath = factory.newXPath();
-        String sql = xPath.evaluate("/cursor/SQL/text/text()", document);
+//        XPathFactory factory = XPathFactory.newInstance();
+//        XPath xPath = factory.newXPath();
+        Element sqlTextElem = Doms.findElem(document, "/cursor/SQL/text");
+        String sql = sqlTextElem.getTextContent();
+
         BioCursor cursor = new BioCursor(bioCode, sql);
         parsParams(cursor);
         parsCols(cursor);
         parsHints(cursor);
+        // TODO тут надо сделать overload параметров курсора из XML
+        overrideParamsFromXml(cursor, document);
+        overrideColsFromXml(cursor, document);
 
+        LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;
     }
 }

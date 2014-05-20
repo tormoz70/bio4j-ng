@@ -53,7 +53,11 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.CRUD_DATA_GET, new BioRouteHandler() {
                     @Override
                     public void handle(String requestType, String requestBody, Callback callback) throws Exception {
+                        LOG.debug("Processing {} request...", BioRoute.CRUD_DATA_GET);
+                        LOG.debug("Lets try to decode {} from json: \n{}", BioRequestJStoreGet.class.getName(), requestBody);
                         BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
+                        LOG.debug("BioRequestJStoreGet object restored.");
+//                        request.setOrigJson(requestBody);
                         BioResponse response = dataProvider.getData(request);
                         processCallback(response, callback);
                     }

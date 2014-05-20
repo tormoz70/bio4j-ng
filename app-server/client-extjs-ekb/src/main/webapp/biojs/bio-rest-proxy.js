@@ -17,7 +17,7 @@ Ext.define('Bio.data.RestProxy', {
         request.url = "/ekb/biosrvfwd";
         request.method = 'POST';
         var offset = ((operation.page - 1) * operation.limit);
-        var params = Ext.apply({}, store.bioParams);
+        var params = store.bioParams;
 //        params = Ext.apply(params, operation.params);
 //        params = {
 //            query:{value: "SAL%", type: 'string'}

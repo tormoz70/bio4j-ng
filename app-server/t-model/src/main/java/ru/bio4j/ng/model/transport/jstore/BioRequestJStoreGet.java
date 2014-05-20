@@ -34,6 +34,7 @@ public class BioRequestJStoreGet extends BioRequest {
      */
     private Object location;
 
+    private String origJson;
 
     public int getOffset() {
         return offset;
@@ -73,6 +74,14 @@ public class BioRequestJStoreGet extends BioRequest {
 
     public void setLocation(Object location) {
         this.location = location;
+    }
+
+    public String getOrigJson() {
+        return origJson;
+    }
+
+    public void setOrigJson(String origJson) {
+        this.origJson = origJson;
     }
 }
 
