@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.lang.reflect.*;
+import java.util.regex.Pattern;
 
 public class ObjectBinder {
 
@@ -123,13 +124,17 @@ public class ObjectBinder {
         return result;
     }
 
+    private boolean valueIsEmptyObject(Object value) {
+        return (value instanceof HashMap && ((HashMap) value).size() == 0);
+    }
+
     public Object bindIntoObject(Map jsonOwner, Object target, Type targetType) {
         try {
             objectStack.add( target );
             BeanAnalyzer analyzer = BeanAnalyzer.analyze( target.getClass() );
             for( BeanProperty descriptor : analyzer.getProperties() ) {
                 Object value = findFieldInJson( jsonOwner, descriptor );
-                if( value != null ) {
+                if( value != null && !valueIsEmptyObject(value) ) {
                     currentPath.enqueue( descriptor.getName() );
                     Method setMethod = descriptor.getWriteMethod();
                     if( setMethod != null ) {
@@ -196,6 +201,14 @@ public class ObjectBinder {
         }
     }
 
+    private boolean targetTypeIsDate(String value){
+        //"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+        String regex = "^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}[T][012]\\d{1}[:][012345]\\d{1}[:][012345]\\d{1}[.]\\d{3}[+-]\\d{4}$";
+        int flags = Pattern.CASE_INSENSITIVE;
+        Pattern pattern = Pattern.compile(regex, flags);
+        return pattern.matcher(value).matches();
+
+    }
 
     private Class findClassName( Object map, Class targetType ) throws JSONException {
         if( !pathFactories.containsKey( currentPath ) ) {
@@ -203,7 +216,10 @@ public class ObjectBinder {
             if( mostSpecificType == null ) {
                 return map.getClass();
             } else {
-                return mostSpecificType;
+                if(mostSpecificType == Object.class) {
+                    return (map == null) ? Object.class : ((map.getClass() == String.class && targetTypeIsDate((String)map)) ? Date.class : map.getClass());
+                } else
+                    return mostSpecificType;
             }
         } else {
             return null;
