@@ -22,6 +22,16 @@ Ext.onReady(function () {
         storeCfg: {
             bioModuleKey:'ekbp',
             bioCode:'cabinet.film-registry',
+            bioParams:[
+                {
+                    name:"prm1",
+                    value:"qwe"
+                },
+                {
+                    name:"prm2",
+                    value:"asd"
+                }
+            ],
             autoLoad: true
         },
         tbar: Ext.create('Ext.toolbar.Toolbar', {

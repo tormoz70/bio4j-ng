@@ -1,13 +1,19 @@
 package ru.bio4j.ng.commons.utils;
 
-import junit.framework.Assert;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
+import java.util.Date;
+import java.util.TimeZone;
+
 public class JsonUtlTest {
+    private static final Logger LOG = LoggerFactory.getLogger(Utl.class);
 
 	private final TBox testBox = new TBox();
 
@@ -28,7 +34,7 @@ public class JsonUtlTest {
 	}
 
 	@Test(enabled = true)
-	public void a_encode() throws Exception {
+	public void aencode() throws Exception {
         TBox testBox = new TBox();
         testBox.setName("Test-Box");
 		String expected =
@@ -39,7 +45,7 @@ public class JsonUtlTest {
 	}
 
 	@Test(enabled = true)
-	public void b_decode() throws Exception {
+	public void bdecode() throws Exception {
 		String testJson = Jsons.encode(this.testBox);
 		TBox restored = Jsons.decode(testJson, TBox.class);
 		System.out.println("restored: " + restored);
@@ -55,9 +61,29 @@ public class JsonUtlTest {
 	}
 
     @Test(enabled = true)
-    public void b_decode1() throws Exception {
-        final String requestBody = "{\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pagesize\":25}";
+    public void bdecode1() throws Exception {
+        final String requestBody = "{"+
+                "\"bioParams\":[{\"name\":\"param1\",\"value\":\"123\"},"+
+                               "{\"name\":\"param2\",\"value\":null},"+
+                               "{\"name\":\"param3\",\"value\":123},"+
+                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.555+0300\"}"+
+                "],"+
+                "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pagesize\":26}";
         BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
-        System.out.println(Utl.buildBeanStateInfo(request, "Request", "  "));
+        LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
+
+        Date expectedDateTime = Types.parse("1970.03.02T18:43:56.555+0300", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
+        LOG.debug("expectedDateTime: {}", expectedDateTime);
+
+        TimeZone timeZone = TimeZone.getDefault();
+        int offset = timeZone.getOffset(expectedDateTime.getTime());
+        LOG.debug("TimeZone: {}, offset: {}", timeZone.getDisplayName(), offset/1000/3600);
+
+        try(Paramus p = Paramus.set(request.getBioParams())){
+            Assert.assertEquals(p.getParam("param1").getValue(), "123");
+            Assert.assertEquals(p.getParam("param2").getValue(), null);
+            Assert.assertEquals(p.getParam("param3").getValue(), 123);
+            Assert.assertEquals(p.getParam("param4").getValue(), expectedDateTime);
+        }
     }
 }

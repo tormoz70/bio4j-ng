@@ -14,7 +14,9 @@ import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.List;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -199,7 +201,20 @@ public class Utl {
 		if(isNullOrEmpty(path)) return null;
 		return path.endsWith(".class") ? path2pkg(path.replaceAll("\\.class$", "")) : null;
 	}
-	
+
+
+    private static void extractAllObjectFields(List<Field> fields, Class<?> type) {
+        for (Field field: type.getDeclaredFields())
+            fields.add(field);
+        if (type.getSuperclass() != null)
+            extractAllObjectFields(fields, type.getSuperclass());
+    }
+
+    public static List<Field> getAllObjectFields(Class<?> type) {
+        List<Field> fields = new ArrayList<>();
+        extractAllObjectFields(fields, type);
+        return fields;
+    }
 
     public static String buildBeanStateInfo(Object bean, String beanName, String tab) {
         if(tab == null) tab = "";
@@ -208,7 +223,7 @@ public class Utl {
         Class<?> type = bean.getClass();
         String bnName = isNullOrEmpty(beanName) ? type.getName() : beanName;
         out.append(String.format(tab + "%s {\n", bnName));
-        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             Object val;
             try {
                 fld.setAccessible(true);

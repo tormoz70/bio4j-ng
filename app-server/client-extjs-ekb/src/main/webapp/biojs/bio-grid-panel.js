@@ -27,6 +27,7 @@ Ext.define('Bio.grid.Panel', {
                 url: cfg.url,
                 bioModuleKey: cfg.bioModuleKey,
                 bioCode: cfg.bioCode,
+                bioParams: cfg.bioParams,
                 listeners: {
                     'metachange': function(store, meta) {
 
