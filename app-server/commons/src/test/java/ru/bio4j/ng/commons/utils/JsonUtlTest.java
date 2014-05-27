@@ -9,7 +9,11 @@ import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 public class JsonUtlTest {
@@ -19,6 +23,7 @@ public class JsonUtlTest {
 
 	@BeforeClass
 	private void setUp() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+04:00"));
 		this.testBox.setName("Test-Box");
 		this.testBox.setCreated(Types.parse("2012.12.20-15:11:24", "yyyy.MM.dd-HH:mm:ss"));
 		this.testBox.setVolume(123.05);
@@ -66,13 +71,13 @@ public class JsonUtlTest {
                 "\"bioParams\":[{\"name\":\"param1\",\"value\":\"123\"},"+
                                "{\"name\":\"param2\",\"value\":null},"+
                                "{\"name\":\"param3\",\"value\":123},"+
-                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.555+0300\"}"+
+                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.555+0400\"}"+
                 "],"+
                 "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pagesize\":26}";
         BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
         LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
-        Date expectedDateTime = Types.parse("1970.03.02T18:43:56.555+0300", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
+        Date expectedDateTime = Types.parse("1970.03.02T18:43:56.555+0400", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
         LOG.debug("expectedDateTime: {}", expectedDateTime);
 
         TimeZone timeZone = TimeZone.getDefault();
@@ -86,4 +91,21 @@ public class JsonUtlTest {
             Assert.assertEquals(p.getParam("param4").getValue(), expectedDateTime);
         }
     }
+
+    // -Duser.timezone=GMT+4
+    @Test(enabled = true)
+    public void bdecode2() throws Exception {
+        LOG.debug("test:");
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy.MM.dd'T'HH:mm:ss.SSS");
+        format1.setTimeZone(TimeZone.getTimeZone("GMT+04:00"));
+        Date d = format1.parse("1970.03.02T18:43:56.555");
+        LOG.debug("d:{}", d);
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(d);
+        LOG.debug("c1:{}, {}", c1.getTime(), c1.getTimeZone());
+        Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
+        c2.setTime(d);
+        LOG.debug("c2:{}, {}", c2.getTime(), c2.getTimeZone());
+    }
+
 }

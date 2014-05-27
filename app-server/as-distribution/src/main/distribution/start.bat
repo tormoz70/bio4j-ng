@@ -8,6 +8,7 @@
 -Dcom.sun.management.jmxremote.ssl=false ^
 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009 ^
 -Dgosh.args=--noi ^
+-Duser.timezone=GMT+4 ^
 -cp "bin/felix.jar;lib/*" ^
 org.apache.felix.main.Main ^
 => start.log

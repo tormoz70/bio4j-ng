@@ -201,13 +201,34 @@ public class ObjectBinder {
         }
     }
 
-    private boolean targetTypeIsDate(String value){
-        //"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-        String regex = "^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}[T][012]\\d{1}[:][012345]\\d{1}[:][012345]\\d{1}[.]\\d{3}[+-]\\d{4}$";
+    private static boolean valueMatchPattern(String value, String regexPattern){
         int flags = Pattern.CASE_INSENSITIVE;
-        Pattern pattern = Pattern.compile(regex, flags);
+        Pattern pattern = Pattern.compile(regexPattern, flags);
         return pattern.matcher(value).matches();
+    }
 
+    private static final List<String> datePatterns;
+    static
+    {
+        datePatterns = new ArrayList<>();
+        //"yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        datePatterns.add("^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}[T][012]\\d{1}[:][012345]\\d{1}[:][012345]\\d{1}[.]\\d{3}[+-]\\d{4}$");
+        //"yyyy-MM-dd'T'HH:mm:ss.SSS"
+        datePatterns.add("^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}[T][012]\\d{1}[:][012345]\\d{1}[:][012345]\\d{1}[.]\\d{3}$");
+        //"yyyy-MM-dd'T'HH:mm:ss"
+        datePatterns.add("^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}[T][012]\\d{1}[:][012345]\\d{1}[:][012345]\\d{1}$");
+        //"yyyy-MM-dd'T'HH:mm"
+        datePatterns.add("^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}[T][012]\\d{1}[:][012345]\\d{1}$");
+        //"yyyy-MM-dd"
+        datePatterns.add("^[012]\\d{3}[-][01]\\d{1}[-][0123]\\d{1}$");
+    };
+
+    private static boolean targetTypeIsDate(String value){
+
+        for(String p : datePatterns)
+            if(valueMatchPattern(value, p))
+                return true;
+        return false;
     }
 
     private Class findClassName( Object map, Class targetType ) throws JSONException {
