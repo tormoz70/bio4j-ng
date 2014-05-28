@@ -917,16 +917,16 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-rapi-rmi</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-rapi-rmi</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
 
-                                <!--modules-->
+                                <!--modules - commons -->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-module-api</artifactId>
@@ -943,13 +943,15 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
                                 </artifactItem>
+
+                                <!--modules - applications -->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-module-ekb</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                    <outputDirectory>${distr.base}/modules</outputDirectory>
                                 </artifactItem>
 
                                 <!--wars-->

@@ -26,6 +26,7 @@
                 <include>bundle/*</include>
                 <include>${distr.bundles}/*</include>
                 <include>webapps/*</include>
+                <include>modules/*</include>
             </includes>
             <outputDirectory>/</outputDirectory>
         </fileSet>

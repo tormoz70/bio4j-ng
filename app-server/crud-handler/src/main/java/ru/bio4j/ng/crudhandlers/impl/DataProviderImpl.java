@@ -34,9 +34,19 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Context
     private BundleContext bundleContext;
-//    @Requires
-//    private FileContentResolver contentResolver;
     private SQLContext globalSQLContext;
+
+    private SQLContext selectSQLContext(BioModule module) throws Exception {
+        LOG.debug("About selecting sqlContext...");
+        SQLContext ctx = module.getSQLContext();
+        if(ctx == null) {
+            LOG.debug("Local sqlContext not defined. Global sqlContext will be used.");
+            ctx = globalSQLContext;
+        } else
+            LOG.debug("Local sqlContext defined and will be used.");
+
+        return ctx;
+    }
 
     private Map<String, BioModule> modules = new HashMap<>();
     private BioModule getModule(String key) throws Exception {
@@ -50,8 +60,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private BioResponse processCursorAsSelectable(BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try exec batch!!!");
-        SQLContext ctx = module.getSQLContext();
-        if(ctx == null) ctx = globalSQLContext;
+        SQLContext ctx = selectSQLContext(module);
         BioResponse response = ctx.execBatch(new SQLAction<BioCursor, BioResponse>() {
             @Override
             public BioResponse exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {

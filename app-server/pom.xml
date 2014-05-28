@@ -17,13 +17,13 @@
         <module>doa</module>
         <module>crud-handler</module>
         <module>remote-api-http</module>
-        <module>e-hcache</module>
-        <module>content-resolver</module>
+        <!--<module>e-hcache</module>-->
+        <!--<module>content-resolver</module>-->
         <module>config</module>
         <module>router</module>
-        <module>remote-api-rmi</module>
+        <!--<module>remote-api-rmi</module>-->
         <module>remote-api</module>
-        <module>test-jetty-wab-sample</module>
+        <!--<module>test-jetty-wab-sample</module>-->
         <module>client-extjs-ekb</module>
         <!--bio-modules-->
         <module>module-api</module>
@@ -33,7 +33,7 @@
         <!-- Distribution -->
         <module>as-distribution</module>
 
-        <module>test-rmi-client</module>
+        <!--<module>test-rmi-client</module>-->
     </modules>
 
     <properties>

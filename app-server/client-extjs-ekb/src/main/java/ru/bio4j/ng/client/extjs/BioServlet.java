@@ -39,7 +39,7 @@ public class BioServlet extends HttpServlet {
         while ((line = reader.readLine()) != null)
             jb.append(line);
         String requestType = rqst.getParameter("rqt");
-        LOG.debug("Recived \"{}\" - request...", requestType);
+        LOG.debug("Recived-POST: \"{}\" - request...", requestType);
 
         try {
             router.route(requestType, jb.toString(), new BioRouter.Callback() {
@@ -49,7 +49,7 @@ public class BioServlet extends HttpServlet {
                 }
             });
         } catch (Exception e) {
-
+            LOG.error("Unexpected error while routing!", e);
         }
     }
 }
