@@ -3,10 +3,15 @@ package ru.bio4j.ng.module.commons;
 import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.api.SQLContextConfig;
+import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.module.api.BioModule;
+import ru.bio4j.ng.service.api.BioConfig;
 import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.Configurator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -59,5 +64,22 @@ public abstract class BioModuleBase implements BioModule {
             cursor.setParams(r.getBioParams());
         }
         return cursor;
+    }
+
+    private static final String SQL_CONTEXT_CONFIG_FILE_NAME = "sql-context.config";
+    private Configurator<SQLContextConfig> configurator = new Configurator<>(SQLContextConfig.class);
+    private SQLContext sqlContext = null;
+    private boolean localSQLContextIsInited = false;
+    public SQLContext getSQLContext() throws Exception {
+        if(sqlContext == null && !localSQLContextIsInited) {
+            localSQLContextIsInited = true;
+            BundleContext bundleContext = bundleContext();
+            InputStream inputStream = bundleContext.getBundle().getResource(SQL_CONTEXT_CONFIG_FILE_NAME).openStream();
+            if(inputStream != null) {
+                configurator.load(inputStream);
+                sqlContext = SQLContextFactory.create(configurator.getConfig());
+            }
+        }
+        return sqlContext;
     }
 }

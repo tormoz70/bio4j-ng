@@ -1,20 +1,33 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.commons.types.Prop;
+
 /**
  * Created by ayrat on 22.04.14.
  */
 public class SQLContextConfig {
 
+    @Prop(name = "crud.pool.name")
     private String poolName;
+    @Prop(name = "crud.driver.name")
     private String driverName;
+    @Prop(name = "crud.connection.url")
     private String dbConnectionUrl;
+    @Prop(name = "crud.connection.usr")
     private String dbConnectionUsr;
+    @Prop(name = "crud.connection.pwd")
     private String dbConnectionPwd;
+    @Prop(name = "crud.min.pool.size")
     private int minPoolSize = 2;
+    @Prop(name = "crud.max.pool.size")
     private int maxPoolSize = 10;
+    @Prop(name = "crud.connection.wait.timeout")
     private int connectionWaitTimeout = 5;
+    @Prop(name = "crud.initial.pool.size")
     private int initialPoolSize = 5;
+    @Prop(name = "crud.current.schema")
     private String currentSchema = null;
+
 
     public String getDbConnectionUrl() {
         return dbConnectionUrl;

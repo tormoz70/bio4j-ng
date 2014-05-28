@@ -4,14 +4,8 @@ import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.module.api.BioModule;
 import ru.bio4j.ng.module.commons.BioModuleBase;
-import ru.bio4j.ng.module.commons.CursorParser;
-import ru.bio4j.ng.module.ekb.EkbApplication;
-import ru.bio4j.ng.service.api.BioCursor;
-
-import java.io.IOException;
 
 @Component
 @Instantiate

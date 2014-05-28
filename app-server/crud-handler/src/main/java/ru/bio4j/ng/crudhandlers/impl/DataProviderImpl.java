@@ -36,7 +36,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private BundleContext bundleContext;
 //    @Requires
 //    private FileContentResolver contentResolver;
-    private SQLContext sqlContext;
+    private SQLContext globalSQLContext;
 
     private Map<String, BioModule> modules = new HashMap<>();
     private BioModule getModule(String key) throws Exception {
@@ -48,9 +48,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return rslt;
     }
 
-    private BioResponse processCursorAsSelectable(BioCursor cursor) throws Exception {
+    private BioResponse processCursorAsSelectable(BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try exec batch!!!");
-        BioResponse response = sqlContext.execBatch(new SQLAction<BioCursor, BioResponse>() {
+        SQLContext ctx = module.getSQLContext();
+        if(ctx == null) ctx = globalSQLContext;
+        BioResponse response = ctx.execBatch(new SQLAction<BioCursor, BioResponse>() {
             @Override
             public BioResponse exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
                 final BioResponse result = new BioResponse();
@@ -70,16 +72,16 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return response;
     }
 
-    private BioResponse processCursorAsExecutable(BioCursor cursor) {
+    private BioResponse processCursorAsExecutable(BioModule module, BioCursor cursor) {
         return null;
     }
 
-    public BioResponse processCursor(BioCursor cursor) throws Exception {
+    public BioResponse processCursor(BioModule module, BioCursor cursor) throws Exception {
         BioResponse response = null;
         if(cursor.getType() == BioCursor.Type.SELECT)
-            response = processCursorAsSelectable(cursor);
+            response = processCursorAsSelectable(module, cursor);
         if(cursor.getType() == BioCursor.Type.EXEC)
-            response = processCursorAsExecutable(cursor);
+            response = processCursorAsExecutable(module, cursor);
         if (response == null)
             response = new BioResponse();
         return response;
@@ -96,7 +98,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         BioModule module = getModule(request.getBioModuleKey());
         BioCursor cursor = module.getCursor(request);
         wrapCursor(cursor);
-        BioResponse response = processCursor(cursor);
+        BioResponse response = processCursor(module, cursor);
         return response;
     }
 
@@ -110,7 +112,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Override
     public String getDataTest() throws Exception {
-        return sqlContext.execBatch(new SQLActionScalar<String>() {
+        return globalSQLContext.execBatch(new SQLActionScalar<String>() {
             @Override
             public String exec(SQLContext context, Connection conn) throws Exception {
                 StringBuilder rslt = new StringBuilder();
@@ -142,12 +144,12 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             return;
         }
 
-        if(sqlContext == null) {
+        if(globalSQLContext == null) {
             LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
             try {
                 SQLContextConfig cfg = new SQLContextConfig();
                 Utl.applyValuesToBean(configProvider.getConfig(), cfg);
-                sqlContext = SQLContextFactory.create(cfg);
+                globalSQLContext = SQLContextFactory.create(cfg);
             } catch (Exception e) {
                 LOG.error("Error while creating SQLContext!", e);
             }

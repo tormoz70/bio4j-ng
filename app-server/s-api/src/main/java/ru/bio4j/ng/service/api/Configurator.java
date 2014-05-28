@@ -5,7 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Utl;
+
+import java.io.InputStream;
 import java.util.Dictionary;
+import java.util.Properties;
 
 public class Configurator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(Configurator.class);
@@ -43,6 +46,12 @@ public class Configurator<T> {
             LOG.debug("Apling config dictionary to {} done.", beanType);
         }
 
+    }
+
+    public void load(InputStream inputStream) throws Exception {
+        Properties prop = new Properties();
+        prop.load(inputStream);
+        update(prop);
     }
 
     public  T getConfig() {

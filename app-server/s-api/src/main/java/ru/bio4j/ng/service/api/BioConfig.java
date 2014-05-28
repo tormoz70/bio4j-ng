@@ -10,25 +10,25 @@ public class BioConfig {
     @Prop(name = "content.resolver.path")
     private String contentResolverPath = null;
 
-    @Prop(name = "crud.pool.name")
+    @Prop(name = "global.pool.name")
     private String poolName;
-    @Prop(name = "crud.driver.name")
+    @Prop(name = "global.driver.name")
     private String driverName;
-    @Prop(name = "crud.connection.url")
+    @Prop(name = "global.connection.url")
     private String dbConnectionUrl;
-    @Prop(name = "crud.connection.usr")
+    @Prop(name = "global.connection.usr")
     private String dbConnectionUsr;
-    @Prop(name = "crud.connection.pwd")
+    @Prop(name = "global.connection.pwd")
     private String dbConnectionPwd;
-    @Prop(name = "crud.min.pool.size")
+    @Prop(name = "global.min.pool.size")
     private int minPoolSize = 2;
-    @Prop(name = "crud.max.pool.size")
+    @Prop(name = "global.max.pool.size")
     private int maxPoolSize = 10;
-    @Prop(name = "crud.connection.wait.timeout")
+    @Prop(name = "global.connection.wait.timeout")
     private int connectionWaitTimeout = 5;
-    @Prop(name = "crud.initial.pool.size")
+    @Prop(name = "global.initial.pool.size")
     private int initialPoolSize = 5;
-    @Prop(name = "crud.current.schema")
+    @Prop(name = "global.current.schema")
     private String currentSchema = null;
 
 
