@@ -44,6 +44,7 @@ public class SQLFactoryTest {
                         .dbConnectionPwd(testDBPwd)
                         .build()
         );
+        if(true) return;
         try {
             context.execBatch(new SQLActionScalar<Object>() {
                 @Override
