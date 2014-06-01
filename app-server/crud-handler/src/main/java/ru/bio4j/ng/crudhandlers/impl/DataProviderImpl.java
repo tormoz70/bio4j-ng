@@ -13,6 +13,7 @@ import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioResponse;
+import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.module.api.BioModule;
 import ru.bio4j.ng.module.api.BioModuleHelper;

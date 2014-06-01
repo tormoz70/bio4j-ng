@@ -4,22 +4,61 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class SecurityFilter implements Filter {
 
     private final static Logger LOG = LoggerFactory.getLogger(SecurityFilter.class);
 
+    private String errorPage;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-    }
+        LOG.debug("init...");
+        if (filterConfig != null) {
+            errorPage = filterConfig.getInitParameter("error_page");
+            LOG.debug("errorPage - {}.", errorPage);
+        }
+        LOG.debug("init - done.");     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        LOG.debug("Do filter for request: {}", request);
+        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+        String servletPath = req.getServletPath();
+        HttpSession session = req.getSession();
 
-        chain.doFilter(request, response);
-    }
+        LOG.debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
+
+        chain.doFilter(req, resp);
+        if(true) return;
+
+
+        // Allow access to login functionality.
+        if (servletPath.equals("/login"))
+        {
+            chain.doFilter(req, resp);
+            return;
+        }
+        // Allow access to news feed.
+        if (servletPath.equals("/news.rss")) {
+            chain.doFilter(req, resp);
+            return;
+        }
+        // All other functionality requires authentication.
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId != null)
+        {
+            // User is logged in.
+            chain.doFilter(req, resp);
+            return;
+        }
+
+        // Request is not authorized.
+        resp.sendRedirect("login");     }
 
     @Override
     public void destroy() {

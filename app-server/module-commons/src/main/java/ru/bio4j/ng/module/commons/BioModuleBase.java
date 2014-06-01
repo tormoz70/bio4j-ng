@@ -50,11 +50,15 @@ public abstract class BioModuleBase implements BioModule {
 
     protected abstract BundleContext bundleContext();
 
+    @Override
+    public BioCursor getCursor(String bioCode) throws Exception {
+        BioCursor cursor = loadCursor(bundleContext(), bioCode);
+        return cursor;
+    }
 
     @Override
     public BioCursor getCursor(BioRequest request) throws Exception {
-        String bioCode = request.getBioCode();
-        BioCursor cursor = loadCursor(bundleContext(), bioCode);
+        BioCursor cursor = getCursor(request.getBioCode());
         if(request instanceof BioRequestJStoreGet) {
             final BioRequestJStoreGet r = (BioRequestJStoreGet)request;
             cursor.setOffset(r.getOffset());

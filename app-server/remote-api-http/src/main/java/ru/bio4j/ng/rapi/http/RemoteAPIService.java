@@ -32,7 +32,7 @@ public class RemoteAPIService {
             LOG.info("Servlet \"{}\" registered.", HELLO_SERVLET_PATH);
 
             LOG.debug("Registering \"{}\"-servlet...", BIO_SERVLET_PATH);
-            httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(this), null, null);
+            httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(router), null, null);
             LOG.info("Servlet \"{}\" registered.", BIO_SERVLET_PATH);
         }
     }
@@ -54,7 +54,7 @@ public class RemoteAPIService {
         return dataProvider;
     }
 
-    public BioRouter getRouter() {
-        return router;
-    }
+//    public BioRouter getRouter() {
+//        return router;
+//    }
 }

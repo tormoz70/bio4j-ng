@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public interface BioModule {
     String getDescription();
+    BioCursor getCursor(String bioCode) throws Exception;
     BioCursor getCursor(BioRequest request) throws Exception;
     SQLContext getSQLContext() throws Exception;
 }

@@ -16,6 +16,7 @@
         <module>db-api</module>
         <module>doa</module>
         <module>crud-handler</module>
+        <module>security-handler</module>
         <module>remote-api-http</module>
         <!--<module>e-hcache</module>-->
         <!--<module>content-resolver</module>-->
@@ -28,6 +29,8 @@
         <!--bio-modules-->
         <module>module-api</module>
         <module>module-commons</module>
+        <module>module-bio</module>
+
         <module>module-ekb</module>
         <!-- Special services -->
         <!-- Distribution -->
