@@ -1,6 +1,8 @@
 package ru.bio4j.ng.module.commons;
 
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLContext;
@@ -8,19 +10,16 @@ import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
-import ru.bio4j.ng.module.api.BioModule;
-import ru.bio4j.ng.service.api.BioConfig;
+import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.Configurator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 
 public abstract class BioModuleBase implements BioModule {
+    private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
 
     private static Document loadDocument(InputStream inputStream) throws Exception {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
@@ -32,8 +31,9 @@ public abstract class BioModuleBase implements BioModule {
 
     private static BioCursor loadCursor(BundleContext context, String bioCode) throws Exception {
         BioCursor cursor = null;
-        String path = "/"+bioCode.replace(".", "/");
-        InputStream inputStream = context.getBundle().getResource(path + ".xml").openStream();
+        String path = "/" + bioCode.replace(".", "/") + ".xml";
+        LOG.debug("Loading cursor spec from \"{}\"", path);
+        InputStream inputStream = context.getBundle().getResource(path).openStream();
         if(inputStream != null) {
             Document document = loadDocument(inputStream);
             cursor = CursorParser.pars(bioCode, document);

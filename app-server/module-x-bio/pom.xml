@@ -4,20 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>ru.bio4j.ng</groupId>
         <artifactId>app-server</artifactId>
+        <groupId>ru.bio4j.ng</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-
-    <artifactId>bio4j-ng-security-handler</artifactId>
+    <artifactId>bio4j-ng-module-bio</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Security Handler</name>
-    <description>Handles requests for security</description>
+    <name>BioAIM Bio</name>
+    <description>Service implements application module for Bio internals</description>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>*,ru.bio4j.ng.service.api</Import-Package>
+                    </instructions>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -35,10 +40,9 @@
             <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-sapi</artifactId>
+            <artifactId>bio4j-ng-tmodel</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -48,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-tmodel</artifactId>
+            <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -56,21 +60,6 @@
             <artifactId>bio4j-ng-module-commons</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-doa</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-dbapi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>${project.groupId}</groupId>-->
-            <!--<artifactId>bio4j-ng-content</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
     </dependencies>
 
 </project>

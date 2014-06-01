@@ -15,6 +15,7 @@
         <module>s-api</module>
         <module>db-api</module>
         <module>doa</module>
+        <module>sql-context</module>
         <module>crud-handler</module>
         <module>security-handler</module>
         <module>remote-api-http</module>
@@ -27,11 +28,11 @@
         <!--<module>test-jetty-wab-sample</module>-->
         <module>client-extjs-ekb</module>
         <!--bio-modules-->
-        <module>module-api</module>
         <module>module-commons</module>
-        <module>module-bio</module>
+        <module>module-provider</module>
+        <module>module-x-bio</module>
 
-        <module>module-ekb</module>
+        <module>module-x-ekb</module>
         <!-- Special services -->
         <!-- Distribution -->
         <module>as-distribution</module>
@@ -288,12 +289,22 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bio4j-ng-module-api</artifactId>
+                <artifactId>bio4j-ng-module-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bio4j-ng-module-commons</artifactId>
+                <artifactId>bio4j-ng-module-provider</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-security-handler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-sql-context</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

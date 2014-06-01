@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-module-api</artifactId>
+            <artifactId>bio4j-ng-module-commons</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

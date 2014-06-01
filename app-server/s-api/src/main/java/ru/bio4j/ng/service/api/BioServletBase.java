@@ -59,7 +59,7 @@ public class BioServletBase extends HttpServlet {
                 }
             });
         } catch (Exception e) {
-            LOG.error("Unexpected error while routing! Error: {}", e.toString());
+            LOG.error("Unexpected error while routing!", e);
         }
     }
 

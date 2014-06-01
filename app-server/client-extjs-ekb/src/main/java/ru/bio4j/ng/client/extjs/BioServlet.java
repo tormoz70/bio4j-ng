@@ -105,7 +105,7 @@ public class BioServlet extends BioServletBase {
                 response.getWriter().println(String.format("Error on forwarded server: [%d] - %s", connection.getResponseCode(), connection.getResponseMessage()));
             }
         } catch (Exception e) {
-            LOG.error("Unexpected error while forwarding! Error: {}", e.toString());
+            LOG.error("Unexpected error while forwarding!", e);
         }
     }
 

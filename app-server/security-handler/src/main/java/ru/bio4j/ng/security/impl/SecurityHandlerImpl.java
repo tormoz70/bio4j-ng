@@ -6,6 +6,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLActionScalar;
 import ru.bio4j.ng.database.api.SQLContext;
@@ -13,97 +14,68 @@ import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.module.api.BioModule;
-import ru.bio4j.ng.module.api.BioModuleHelper;
+import ru.bio4j.ng.module.commons.BioModuleHelper;
+import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.*;
 
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
+
 
 @Component
 @Instantiate
-@Provides(specifications = DataProvider.class)
+@Provides(specifications = SecurityHandler.class)
 public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityHandlerImpl.class);
 
     @Context
     private BundleContext bundleContext;
-    private SQLContext globalSQLContext;
 
-    private SQLContext selectSQLContext(BioModule module) throws Exception {
-        LOG.debug("About selecting sqlContext...");
-        SQLContext ctx = module.getSQLContext();
-        if(ctx == null) {
-            LOG.debug("Local sqlContext not defined. Global sqlContext will be used.");
-            ctx = globalSQLContext;
-        } else
-            LOG.debug("Local sqlContext defined and will be used.");
-
-        return ctx;
-    }
-
-    private Map<String, BioModule> modules = new HashMap<>();
-    private BioModule getModule(String key) throws Exception {
-        BioModule rslt = modules.get(key);
-        if(rslt == null) {
-            rslt = BioModuleHelper.lookupService(bundleContext, key);
-            modules.put(key, rslt);
-        }
-        return rslt;
-    }
+    @Requires
+    private ModuleProvider moduleProvider;
+    @Requires
+    private SQLContextProvider sqlContextProvider;
 
     @Override
-    public User getUser(String login) throws Exception {
-        BioModule module = getModule("bio");
-        BioCursor cursor = module.getCursor("get-user");
+    public User getUser(final String login) throws Exception {
+        if(isNullOrEmpty(login) || !login.equals("root/root"))
+            return null;
 
+        BioModule module = moduleProvider.getModule("bio");
+        BioCursor cursor = module.getCursor("get-user");
+        SQLContext globalSQLContext = sqlContextProvider.globalContext();
         return globalSQLContext.execBatch(new SQLActionScalar<User>() {
             @Override
             public User exec(SQLContext context, Connection conn) throws Exception {
-                User rslt = new User();
-                LOG.debug("Opening cursor...");
+                LOG.debug("User {} logging in...", login);
                 try(SQLCursor c = context.CreateCursor()
                         .init(conn, "select username from user_users", null)
                         .open()) {
-                    LOG.debug("Cursor opened...");
-                    while (c.reader().read()){
-                        LOG.debug("Reading field USERNAME...");
+                    if (c.reader().read()){
+                        LOG.debug("User found!");
                         String s = c.reader().getValue("USERNAME", String.class);
-//                        rslt.append(s+";");
+                        User usr = new User();
+                        usr.setUid("test-user-uid");
+                        usr.setLogin("root");
+                        usr.setFio("Test User FIO");
+                        usr.setRoles(new String[]{"*"});
+                        usr.setGrants(new String[] {"*"});
+                        LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
+                        return usr;
                     }
                 }
-                return rslt;
+                LOG.debug("User not found!");
+                return null;
             }
         });
     }
 
-    @Requires
-    private ConfigProvider configProvider;
-
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
-
-        if(!configProvider.configIsRedy()) {
-            LOG.info("Config is not redy! Waiting...");
-            return;
-        }
-
-        if(globalSQLContext == null) {
-            LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
-            try {
-                SQLContextConfig cfg = new SQLContextConfig();
-                Utl.applyValuesToBean(configProvider.getConfig(), cfg);
-                globalSQLContext = SQLContextFactory.create(cfg);
-            } catch (Exception e) {
-                LOG.error("Error while creating SQLContext!", e);
-            }
-        } else {
-
-        }
-
         this.redy = true;
         LOG.debug("Started");
     }
@@ -120,8 +92,8 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             topics="bio-config-updated")
     public void receive(Event e) throws Exception {
         LOG.debug("Config updated event recived!!!");
-        doStop();
-        doStart();
+//        doStop();
+//        doStart();
     }
 
 }

@@ -3,7 +3,6 @@ package ru.bio4j.ng.crudhandlers.impl;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +12,9 @@ import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.doa.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioResponse;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
-import ru.bio4j.ng.module.api.BioModule;
-import ru.bio4j.ng.module.api.BioModuleHelper;
-import ru.bio4j.ng.service.api.BioCursor;
-import ru.bio4j.ng.service.api.BioServiceBase;
-import ru.bio4j.ng.service.api.ConfigProvider;
-import ru.bio4j.ng.service.api.DataProvider;
+import ru.bio4j.ng.module.commons.BioModuleHelper;
+import ru.bio4j.ng.service.api.*;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -35,33 +29,16 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Context
     private BundleContext bundleContext;
-    private SQLContext globalSQLContext;
+//    private SQLContext globalSQLContext;
 
-    private SQLContext selectSQLContext(BioModule module) throws Exception {
-        LOG.debug("About selecting sqlContext...");
-        SQLContext ctx = module.getSQLContext();
-        if(ctx == null) {
-            LOG.debug("Local sqlContext not defined. Global sqlContext will be used.");
-            ctx = globalSQLContext;
-        } else
-            LOG.debug("Local sqlContext defined and will be used.");
-
-        return ctx;
-    }
-
-    private Map<String, BioModule> modules = new HashMap<>();
-    private BioModule getModule(String key) throws Exception {
-        BioModule rslt = modules.get(key);
-        if(rslt == null) {
-            rslt = BioModuleHelper.lookupService(bundleContext, key);
-            modules.put(key, rslt);
-        }
-        return rslt;
-    }
+    @Requires
+    private ModuleProvider moduleProvider;
+    @Requires
+    private SQLContextProvider sqlContextProvider;
 
     private BioResponse processCursorAsSelectable(BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try exec batch!!!");
-        SQLContext ctx = selectSQLContext(module);
+        SQLContext ctx = sqlContextProvider.selectContext(module);
         BioResponse response = ctx.execBatch(new SQLAction<BioCursor, BioResponse>() {
             @Override
             public BioResponse exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
@@ -105,7 +82,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private BioResponse processRequest(BioRequestJStoreGet request) throws Exception {
         LOG.debug("Now processing request to module \"{}\"...", request.getBioModuleKey());
-        BioModule module = getModule(request.getBioModuleKey());
+        BioModule module = moduleProvider.getModule(request.getBioModuleKey());
         BioCursor cursor = module.getCursor(request);
         wrapCursor(cursor);
         BioResponse response = processCursor(module, cursor);
@@ -122,6 +99,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Override
     public String getDataTest() throws Exception {
+        SQLContext globalSQLContext = sqlContextProvider.globalContext();
         return globalSQLContext.execBatch(new SQLActionScalar<String>() {
             @Override
             public String exec(SQLContext context, Connection conn) throws Exception {
@@ -142,31 +120,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         });
     }
 
-    @Requires
-    private ConfigProvider configProvider;
-
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
-
-        if(!configProvider.configIsRedy()) {
-            LOG.info("Config is not redy! Waiting...");
-            return;
-        }
-
-        if(globalSQLContext == null) {
-            LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
-            try {
-                SQLContextConfig cfg = new SQLContextConfig();
-                Utl.applyValuesToBean(configProvider.getConfig(), cfg);
-                globalSQLContext = SQLContextFactory.create(cfg);
-            } catch (Exception e) {
-                LOG.error("Error while creating SQLContext!", e);
-            }
-        } else {
-
-        }
-
         Wrappers.getInstance().init("oracle");
         this.redy = true;
         LOG.debug("Started");

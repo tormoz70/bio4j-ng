@@ -871,7 +871,23 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-sql-context</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-crudhandler</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-security-handler</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
@@ -929,7 +945,7 @@
                                 <!--modules - commons -->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-module-api</artifactId>
+                                    <artifactId>bio4j-ng-module-commons</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
@@ -937,7 +953,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-module-commons</artifactId>
+                                    <artifactId>bio4j-ng-module-provider</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
@@ -945,6 +961,14 @@
                                 </artifactItem>
 
                                 <!--modules - applications -->
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-module-bio</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/modules</outputDirectory>
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-module-ekb</artifactId>
