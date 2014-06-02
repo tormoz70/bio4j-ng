@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.types.LoginServletBase;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +16,7 @@ import java.io.IOException;
 /**
  * Created by ayrat on 01.06.14.
  */
-public class BioLogin extends HttpServlet {
+public class BioLogin extends LoginServletBase {
     private static final Logger LOG = LoggerFactory.getLogger(BioLogin.class);
 
     private final SecurityHandler securityHandler;
@@ -28,16 +29,14 @@ public class BioLogin extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final HttpServletRequest req = request;
         final HttpServletResponse resp = response;
-        String login = req.getParameter("login");
-        String passwd = req.getParameter("passwd");
         try {
-            User usr = securityHandler.getUser(login + "/" + passwd);
+            User usr = doLogin(req);
             if(usr != null){
                 String jsonData = Jsons.encode(usr);
                 resp.getWriter().append(jsonData);
             }
         } catch (Exception e) {
-            LOG.error("Unexpected error while logging in!", e);
+            LOG.error("Unexpected error while login (Level-0)!", e);
         }
 
     }

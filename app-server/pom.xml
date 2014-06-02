@@ -12,6 +12,7 @@
         <module>flexjson</module>
         <module>t-model</module>
         <module>commons</module>
+        <module>s-types</module>
         <module>s-api</module>
         <module>db-api</module>
         <module>doa</module>
@@ -255,6 +256,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bio4j-ng-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-stypes</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

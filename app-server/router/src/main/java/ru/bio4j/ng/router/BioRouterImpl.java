@@ -9,8 +9,8 @@ import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.service.api.BioRouter;
-import ru.bio4j.ng.service.api.BioServiceBase;
 import ru.bio4j.ng.service.api.DataProvider;
+import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.Arrays;
 import java.util.HashMap;

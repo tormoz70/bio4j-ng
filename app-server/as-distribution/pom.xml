@@ -839,6 +839,14 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-stypes</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.base}/${distr.bundles}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-sapi</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>

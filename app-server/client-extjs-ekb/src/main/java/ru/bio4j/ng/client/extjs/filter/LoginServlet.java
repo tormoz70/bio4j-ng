@@ -2,11 +2,14 @@ package ru.bio4j.ng.client.extjs.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.client.extjs.BioServlet;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.types.BioServletBase;
+import ru.bio4j.ng.service.types.LoginServletBase;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -19,7 +22,7 @@ import java.io.InputStream;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends LoginServletBase {
     protected final static Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
 
     protected String forwardURL = null;
@@ -27,18 +30,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException{
         super.init(servletConfig);
-        this.forwardURL = servletConfig.getInitParameter("forwardURL");
-    }
-
-    private SecurityHandler securityHandler;
-    private void initSecurityHandler(ServletContext servletContext) {
-        if(securityHandler == null) {
-            try {
-                securityHandler = Utl.getService(servletContext, SecurityHandler.class);
-            } catch (IllegalStateException e) {
-                securityHandler = null;
-            }
-        }
+        this.forwardURL = servletConfig.getInitParameter(BioServletBase.FORWARD_URL_PARAM_NAME);
     }
 
     @Override
@@ -46,32 +38,17 @@ public class LoginServlet extends HttpServlet {
         doPost(req, resp);
     }
 
-    private final static String CURRENT_USER_ATTR_NAME = "currentUsr";
-    private void storeCurrentUsrToSession(HttpServletRequest request, User usr) {
-        if(usr != null)
-            request.getSession().setAttribute(CURRENT_USER_ATTR_NAME, usr);
-        else
-            request.getSession().removeAttribute(CURRENT_USER_ATTR_NAME);
-    }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final HttpServletRequest req = request;
-        initSecurityHandler(this.getServletContext());
-        String login = req.getParameter("login");
-        String passwd = req.getParameter("passwd");
-        login = login + "/" + passwd;
-        if(securityHandler != null) {
-            try {
-                User usr = securityHandler.getUser(login);
-                storeCurrentUsrToSession(req, usr);
-            } catch (Exception e) {
-                LOG.error("Unexpected error while logging in!", e);
-            }
-        } else {
-            final String queryString = req.getQueryString();
-            final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
-            try {
+        try {
+            final HttpServletRequest req = request;
+            initSecurityHandler(this.getServletContext());
+            if(securityHandler != null) {
+                User user = doLogin(req);
+                storeCurrentUsrToSession(req, user);
+            } else {
+                final String queryString = req.getQueryString();
+                final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
                 Httpc.forwardRequest(destination, req, new Httpc.Callback() {
                     @Override
                     public void process(InputStream inputStream) throws Exception {
@@ -80,9 +57,9 @@ public class LoginServlet extends HttpServlet {
                         storeCurrentUsrToSession(req, usr);
                     }
                 });
-            } catch (Exception e) {
-                LOG.error("Unexpected error while forwarding login!", e);
             }
+        } catch (Exception e) {
+            LOG.error("Unexpected error while login (Level-1)!", e);
         }
     }
 }

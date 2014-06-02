@@ -2,6 +2,7 @@ package ru.bio4j.ng.client.extjs.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.User;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -49,8 +50,8 @@ public class SecurityFilter implements Filter {
             return;
         }
         // All other functionality requires authentication.
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId != null)
+        User user = (User) session.getAttribute(User.SESSION_ATTR_NAME);
+        if (user != null)
         {
             // User is logged in.
             chain.doFilter(req, resp);

@@ -4,12 +4,10 @@ import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.module.commons.BioModuleBase;
 import ru.bio4j.ng.module.commons.BioModuleHelper;
 import ru.bio4j.ng.service.api.BioModule;
-import ru.bio4j.ng.service.api.BioServiceBase;
 import ru.bio4j.ng.service.api.ModuleProvider;
+import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.HashMap;
 import java.util.Map;

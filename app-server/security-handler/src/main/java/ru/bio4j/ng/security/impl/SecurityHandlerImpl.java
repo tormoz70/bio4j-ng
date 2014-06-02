@@ -17,6 +17,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.module.commons.BioModuleHelper;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.*;
+import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.sql.Connection;
 import java.util.HashMap;

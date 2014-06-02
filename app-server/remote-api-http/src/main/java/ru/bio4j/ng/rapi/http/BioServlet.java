@@ -1,7 +1,7 @@
 package ru.bio4j.ng.rapi.http;
 
 import ru.bio4j.ng.service.api.BioRouter;
-import ru.bio4j.ng.service.api.BioServletBase;
+import ru.bio4j.ng.service.types.BioServletBase;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +21,11 @@ public class BioServlet extends BioServletBase {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRoute(request, response);
+        try {
+            doRoute(request, response);
+        } catch (Exception e) {
+            LOG.error("Unexpected server error (Level-0)!", e);
+        }
     }
 
 }
