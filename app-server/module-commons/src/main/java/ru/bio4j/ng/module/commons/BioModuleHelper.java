@@ -12,8 +12,7 @@ public class BioModuleHelper {
     public static BioModule lookupService(BundleContext context, String key) throws Exception {
         LOG.debug("Looking for module of type:{} by key:{}", BioModule.class.getName(), key);
         ServiceReference[] references;
-//        references = context.getAllServiceReferences(BioModule.class.getName(), "(bioModuleKey=" + key + ")");
-        references = context.getAllServiceReferences(BioModule.class.getName(), null);
+        references = context.getAllServiceReferences(BioModule.class.getName(), "(bioModuleKey=" + key + ")");
 
         if(references != null) {
             BioModule module = (BioModule) context.getService(references[0]);

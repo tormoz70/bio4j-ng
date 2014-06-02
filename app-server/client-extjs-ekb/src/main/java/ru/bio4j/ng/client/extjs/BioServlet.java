@@ -3,6 +3,7 @@ package ru.bio4j.ng.client.extjs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.BioServletBase;
@@ -62,48 +63,31 @@ public class BioServlet extends BioServletBase {
 
     private void doFwd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            final HttpServletResponse rsp = response;
             final String queryString = request.getQueryString();
-            final String method = request.getMethod();
-            final String destinationServer = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
-            final String destination = destinationServer; //request.getParameter("p");
+            final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
 
-            URL url = new URL(destination);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(method);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+            String jsonDataAsQueryParam = request.getParameter(JSON_DATA_PARAM_NAME);
+            StringBuilder jd = new StringBuilder();
+            if(!isNullOrEmpty(jsonDataAsQueryParam))
+                jd.append(jsonDataAsQueryParam);
+            else
+                Httpc.readDataFromRequest(request, jd);
 
-            if(method.equals("POST")) {
-                StringBuilder jsonData = new StringBuilder();
-                readDataFromRequest(request, jsonData);
-                byte[] data = jsonData.toString().getBytes();
-                connection.setRequestProperty("Content-Length", Integer.toString(data.length));
-                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                wr.writeBytes(jsonData.toString());
-                wr.flush();
-                wr.close();
-            }
-            if (connection.getResponseCode() == 200) {
-                InputStream is = connection.getInputStream();
-                OutputStream out = response.getOutputStream();
-                try {
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-                    while ((bytesRead = is.read(buffer)) != -1)
-                        out.write(buffer, 0, bytesRead);
-                    is.close();
-                    out.close();
-                } finally {
-                    if (is != null)
-                        is.close();
-                    if (out != null)
-                        out.close();
+            Httpc.requestJson(destination, jd.toString(), new Httpc.Callback() {
+                @Override
+                public void process(InputStream inputStream) throws IOException {
+                    OutputStream outputStream = rsp.getOutputStream();
+                    try {
+                        Httpc.forwardStream(inputStream, outputStream);
+                    } finally {
+                        if (outputStream != null)
+                            outputStream.close();
+                    }
+
                 }
-            } else {
-                response.getWriter().println(String.format("Error on forwarded server: [%d] - %s", connection.getResponseCode(), connection.getResponseMessage()));
-            }
+            });
+
         } catch (Exception e) {
             LOG.error("Unexpected error while forwarding!", e);
         }

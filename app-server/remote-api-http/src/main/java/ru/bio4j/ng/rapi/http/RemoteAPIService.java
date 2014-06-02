@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
+import ru.bio4j.ng.service.api.SecurityHandler;
 
 @Component
 //@Provides
@@ -16,6 +17,7 @@ public class RemoteAPIService {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteAPIService.class);
     private static final String HELLO_SERVLET_PATH = "/hello";
     private static final String BIO_SERVLET_PATH = "/biosrvapi";
+    private static final String BIO_LOGIN_SERVLET_PATH = "/biologin";
 
     @Requires
     private HttpService httpService;
@@ -23,6 +25,8 @@ public class RemoteAPIService {
     private DataProvider dataProvider;
     @Requires
     private BioRouter router;
+    @Requires
+    private SecurityHandler securityHandler;
 
     @Validate
     public void doStart() throws Exception {
@@ -34,6 +38,10 @@ public class RemoteAPIService {
             LOG.debug("Registering \"{}\"-servlet...", BIO_SERVLET_PATH);
             httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(router), null, null);
             LOG.info("Servlet \"{}\" registered.", BIO_SERVLET_PATH);
+
+            LOG.debug("Registering \"{}\"-servlet...", BIO_LOGIN_SERVLET_PATH);
+            httpService.registerServlet(BIO_LOGIN_SERVLET_PATH, new BioLogin(securityHandler), null, null);
+            LOG.info("Servlet \"{}\" registered.", BIO_LOGIN_SERVLET_PATH);
         }
     }
 
@@ -47,6 +55,10 @@ public class RemoteAPIService {
             LOG.debug("Unregistering \"{}\"-servlet...", BIO_SERVLET_PATH);
             httpService.unregister(BIO_SERVLET_PATH);
             LOG.info("Servlet \"{}\" unregistered.", BIO_SERVLET_PATH);
+
+            LOG.debug("Unregistering \"{}\"-servlet...", BIO_LOGIN_SERVLET_PATH);
+            httpService.unregister(BIO_LOGIN_SERVLET_PATH);
+            LOG.info("Servlet \"{}\" unregistered.", BIO_LOGIN_SERVLET_PATH);
         }
     }
 
@@ -54,7 +66,4 @@ public class RemoteAPIService {
         return dataProvider;
     }
 
-//    public BioRouter getRouter() {
-//        return router;
-//    }
 }

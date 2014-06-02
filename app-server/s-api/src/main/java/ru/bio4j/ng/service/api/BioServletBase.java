@@ -3,6 +3,7 @@ package ru.bio4j.ng.service.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Utl;
 
 import javax.servlet.ServletConfig;
@@ -24,15 +25,8 @@ public class BioServletBase extends HttpServlet {
         LOG = LoggerFactory.getLogger(getClass());
     }
 
-    private static final String REQUEST_TYPE_PARAM_NAME = "rqt";
-    private static final String JSON_DATA_PARAM_NAME = "jsonData";
-
-    protected static void readDataFromRequest(HttpServletRequest request, StringBuilder jd) throws IOException {
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null)
-            jd.append(line);
-    }
+    protected static final String REQUEST_TYPE_PARAM_NAME = "rqt";
+    protected static final String JSON_DATA_PARAM_NAME = "jsonData";
 
     protected void doRoute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -51,7 +45,7 @@ public class BioServletBase extends HttpServlet {
             if(!isNullOrEmpty(jsonDataAsQueryParam))
                 jd.append(jsonDataAsQueryParam);
             else
-                readDataFromRequest(request, jd);
+                Httpc.readDataFromRequest(request, jd);
             router.route(requestType, jd.toString(), new BioRouter.Callback() {
                 @Override
                 public void run(String responseBody) throws Exception {
