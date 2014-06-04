@@ -6,7 +6,9 @@ import ru.bio4j.ng.client.extjs.BioServlet;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.BioServletBase;
 import ru.bio4j.ng.service.types.LoginServletBase;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -42,19 +45,24 @@ public class LoginServlet extends LoginServletBase {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             final HttpServletRequest req = request;
+            final HttpServletResponse resp = response;
             initSecurityHandler(this.getServletContext());
             if(securityHandler != null) {
-                User user = doLogin(req);
-                storeCurrentUsrToSession(req, user);
+                BioRespBuilder.Login bresp = doLogin(req);
+                if(bresp.isSuccess())
+                    storeCurrentUsrToSession(req, bresp.getUser());
+                writeResponse(bresp, resp.getWriter());
             } else {
                 final String queryString = req.getQueryString();
                 final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
                 Httpc.forwardRequest(destination, req, new Httpc.Callback() {
                     @Override
                     public void process(InputStream inputStream) throws Exception {
-                        String jsonUsr = Utl.readStream(inputStream);
-                        User usr = Jsons.decode(jsonUsr, User.class);
-                        storeCurrentUsrToSession(req, usr);
+                        String brespJson = Utl.readStream(inputStream);
+                        BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
+                        if(bresp.isSuccess())
+                            storeCurrentUsrToSession(req, bresp.getUser());
+                        writeResponse(brespJson, resp.getWriter());
                     }
                 });
             }

@@ -6,20 +6,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.database.doa.SQLContextFactory;
-import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
-import ru.bio4j.ng.module.commons.BioModuleHelper;
 import ru.bio4j.ng.service.api.*;
+import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Component
@@ -37,14 +32,14 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     @Requires
     private SQLContextProvider sqlContextProvider;
 
-    private BioResponse processCursorAsSelectable(BioModule module, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectable(BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try exec batch!!!");
         SQLContext ctx = sqlContextProvider.selectContext(module);
-        BioResponse response = ctx.execBatch(new SQLAction<BioCursor, BioResponse>() {
+        BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
-            public BioResponse exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                final BioResponse result = new BioResponse();
-                result.setBioCode(cur.getBioCode());
+            public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                final BioRespBuilder.Data result = BioRespBuilder.create(BioRespBuilder.Data.class);
+                result.bioCode(cur.getBioCode());
                 LOG.debug("Try open Cursor!!!");
                 try(SQLCursor c = context.CreateCursor()
                         .init(conn, cur.getPreparedSql(), cur.getParams()).open();){
@@ -60,18 +55,18 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return response;
     }
 
-    private BioResponse processCursorAsExecutable(BioModule module, BioCursor cursor) {
+    private BioRespBuilder.Data processCursorAsExecutable(BioModule module, BioCursor cursor) {
         return null;
     }
 
-    public BioResponse processCursor(BioModule module, BioCursor cursor) throws Exception {
-        BioResponse response = null;
+    public BioRespBuilder.Data processCursor(BioModule module, BioCursor cursor) throws Exception {
+        BioRespBuilder.Data response = null;
         if(cursor.getType() == BioCursor.Type.SELECT)
             response = processCursorAsSelectable(module, cursor);
         if(cursor.getType() == BioCursor.Type.EXEC)
             response = processCursorAsExecutable(module, cursor);
         if (response == null)
-            response = new BioResponse();
+            response = BioRespBuilder.create(BioRespBuilder.Data.class);
         return response;
     }
 
@@ -81,19 +76,19 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
     }
 
-    private BioResponse processRequest(BioRequestJStoreGet request) throws Exception {
+    private BioRespBuilder.Data processRequest(BioRequestJStoreGet request) throws Exception {
         LOG.debug("Now processing request to module \"{}\"...", request.getBioModuleKey());
         BioModule module = moduleProvider.getModule(request.getBioModuleKey());
         BioCursor cursor = module.getCursor(request);
         wrapCursor(cursor);
-        BioResponse response = processCursor(module, cursor);
+        BioRespBuilder.Data response = processCursor(module, cursor);
         return response;
     }
 
     @Override
-    public BioResponse getData(final BioRequestJStoreGet bioRequest) throws Exception {
+    public BioRespBuilder.Data getData(final BioRequestJStoreGet bioRequest) throws Exception {
         LOG.debug("GetData...");
-        BioResponse response = processRequest(bioRequest);
+        BioRespBuilder.Data response = processRequest(bioRequest);
         LOG.debug("GetData - returning response...");
         return response;
     }

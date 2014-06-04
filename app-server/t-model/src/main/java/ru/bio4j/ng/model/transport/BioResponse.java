@@ -4,6 +4,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,6 +12,11 @@ import java.util.List;
  * Примечание: Теперь все запросы на сервер подразумеваются как "долгие процессы"
  */
 public class BioResponse {
+
+    /**
+     * Содержит данные пользователя, в ответ на запрос аутентификации
+     */
+    private User user;
 
     /**
      * Содержит true если все при обработке запроса не произошло ни каких ошибок
@@ -42,7 +48,7 @@ public class BioResponse {
 
 
     /**
-     * Пакет данных. В ответ на BioRequestJStoreGet
+     * Пакет данных. В ответ на BioRequestJStoreGet, BioRequestJStorePost
      */
     private StoreData packet;
 
@@ -118,6 +124,14 @@ public class BioResponse {
 
     public void setFilter(Expression filter) {
         this.filter = filter;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

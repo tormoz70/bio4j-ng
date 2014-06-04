@@ -6,13 +6,12 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
+import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,9 +26,9 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     @Requires
     private DataProvider dataProvider;
 
-    private static void  processCallback(BioResponse rsp, Callback callback) throws Exception {
+    private static void  processCallback(BioRespBuilder.Builder brsp, Callback callback) throws Exception {
         if(callback != null) {
-            String responseJson = Jsons.encode(rsp);
+            String responseJson = Jsons.encode(brsp.build());
             callback.run(responseJson);
         }
     }
@@ -44,9 +43,9 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.UNKNOWN, new BioRouteHandler() {
                     @Override
                     public void handle(String requestType, String requestBody, Callback callback) throws Exception {
-                        BioResponse rsp = new BioResponse();
-                        rsp.setExceptions(Arrays.asList(new Exception(String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType))));
-                        processCallback(rsp, callback);
+                        BioRespBuilder.AnError brsp = BioRespBuilder.create(BioRespBuilder.AnError.class);
+                        brsp.addError(new Exception(String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType)));
+                        processCallback(brsp, callback);
                     }
                 });
 
@@ -58,8 +57,8 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                         BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
                         LOG.debug("BioRequestJStoreGet object restored.");
 //                        request.setOrigJson(requestBody);
-                        BioResponse response = dataProvider.getData(request);
-                        processCallback(response, callback);
+                        BioRespBuilder.Data responseBuilder = dataProvider.getData(request);
+                        processCallback(responseBuilder, callback);
                     }
                 });
         }

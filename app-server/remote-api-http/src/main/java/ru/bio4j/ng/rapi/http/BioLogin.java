@@ -2,13 +2,11 @@ package ru.bio4j.ng.rapi.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.LoginServletBase;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,11 +28,8 @@ public class BioLogin extends LoginServletBase {
         final HttpServletRequest req = request;
         final HttpServletResponse resp = response;
         try {
-            User usr = doLogin(req);
-            if(usr != null){
-                String jsonData = Jsons.encode(usr);
-                resp.getWriter().append(jsonData);
-            }
+            BioRespBuilder.Login bresp = doLogin(req);
+            writeResponse(bresp, resp.getWriter());
         } catch (Exception e) {
             LOG.error("Unexpected error while login (Level-0)!", e);
         }

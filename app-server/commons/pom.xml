@@ -55,17 +55,6 @@
             <version>1.8.3</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>xalan</groupId>-->
-            <!--<artifactId>xalan</artifactId>-->
-            <!--<version>2.7.1</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>xerces</groupId>-->
-            <!--<artifactId>xercesImpl</artifactId>-->
-            <!--<version>2.11.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-servlet_3.0_spec</artifactId>
@@ -82,11 +71,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-commons</artifactId>
             <scope>provided</scope>
         </dependency>
 
