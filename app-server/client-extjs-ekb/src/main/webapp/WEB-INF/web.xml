@@ -49,4 +49,21 @@
         <filter-name>security</filter-name>
         <url-pattern>/biosrv</url-pattern>
     </filter-mapping>
+
+    <!-- Define a Security Constraint on this Application -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Biosrv Application</web-resource-name>
+            <url-pattern>/biosrv</url-pattern>
+        </web-resource-collection>
+        <!--<auth-constraint>-->
+            <!--<role-name>authenticateduser</role-name>-->
+        <!--</auth-constraint>-->
+    </security-constraint>
+
+    <!-- Define the Login Configuration for this Application -->
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>My Realm</realm-name>
+    </login-config>
 </web-app>
