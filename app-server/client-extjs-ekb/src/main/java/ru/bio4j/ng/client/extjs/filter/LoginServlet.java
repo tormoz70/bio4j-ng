@@ -6,6 +6,7 @@ import ru.bio4j.ng.client.extjs.BioServlet;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -49,8 +50,8 @@ public class LoginServlet extends LoginServletBase {
             initSecurityHandler(this.getServletContext());
             if(securityHandler != null) {
                 BioRespBuilder.Login bresp = doLogin(req);
-                if(bresp.isSuccess())
-                    storeCurrentUsrToSession(req, bresp.getUser());
+//                if(bresp.isSuccess())
+//                    storeCurrentUsrToSession(req, bresp.getUser());
                 writeResponse(bresp, resp.getWriter());
             } else {
                 final String queryString = req.getQueryString();
@@ -59,14 +60,15 @@ public class LoginServlet extends LoginServletBase {
                     @Override
                     public void process(InputStream inputStream) throws Exception {
                         String brespJson = Utl.readStream(inputStream);
-                        BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
-                        if(bresp.isSuccess())
-                            storeCurrentUsrToSession(req, bresp.getUser());
+//                        BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
+//                        if(bresp.isSuccess())
+//                            storeCurrentUsrToSession(req, bresp.getUser());
                         writeResponse(brespJson, resp.getWriter());
                     }
                 });
             }
         } catch (Exception e) {
+
             LOG.error("Unexpected error while login (Level-1)!", e);
         }
     }

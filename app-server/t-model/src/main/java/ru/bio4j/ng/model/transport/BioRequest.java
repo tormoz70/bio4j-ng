@@ -8,6 +8,12 @@ import java.util.List;
  */
 public class BioRequest {
 
+    /** UID пользователя
+     * Это может быть либо реальный UID пользователя,
+     * либо логин в формате <имя>/<пароль>
+     */
+    private String userUID;
+
     /** Параметры запроса.
      * Данные параметры передаются на сервер в виде параметров Http-запроса
      * При этом параметры, которые являются служебными параметрами
@@ -79,4 +85,11 @@ public class BioRequest {
         this.bioParams = bioParams;
     }
 
+    public String getUserUID() {
+        return userUID;
+    }
+
+    public void setUserUID(String userUID) {
+        this.userUID = userUID;
+    }
 }

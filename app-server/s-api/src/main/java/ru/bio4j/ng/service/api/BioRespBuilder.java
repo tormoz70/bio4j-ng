@@ -1,9 +1,8 @@
 package ru.bio4j.ng.service.api;
 
-import ru.bio4j.ng.model.transport.BioResponse;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.RmtStatePack;
-import ru.bio4j.ng.model.transport.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
@@ -12,19 +11,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BioRespBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(BioRespBuilder.class);
 
-    public static <T extends Builder> T create(Class<T> type) throws Exception {
-        return type.newInstance();
+    private static <T extends Builder> T create(Class<T> type) {
+        try {
+            return type.newInstance();
+        } catch (Exception e) {
+            LOG.error("Unexpected error creating {} of {}!", type.getName(), BioRespBuilder.class.getName(), e);
+            return null;
+        }
     }
 
-    public static abstract class Builder {
+    public static abstract class Builder <T extends Builder> {
+        protected List<BioError> exceptions;
         public abstract BioResponse build();
+
+        public T addError(BioError e) {
+            if(exceptions == null)
+                exceptions = new ArrayList<>();
+            exceptions.add(e);
+            return (T)this;
+        }
+
+
+        public List<BioError> getExceptions() {
+            return exceptions;
+        }
+
     }
 
-    public static class Login extends Builder {
+    public static class Login extends Builder<Login> {
         private boolean success;
         private User user;
-        private List<Exception> exceptions;
 
         public Login success(boolean value) {
             success = value;
@@ -33,13 +51,6 @@ public class BioRespBuilder {
 
         public Login user(User value) {
             user = value;
-            return this;
-        }
-
-        public Login addError(Exception e) {
-            if(exceptions == null)
-                exceptions = new ArrayList<>();
-            exceptions.add(e);
             return this;
         }
 
@@ -59,20 +70,12 @@ public class BioRespBuilder {
         public User getUser() {
             return user;
         }
-        public List<Exception> getExceptions() {
-            return exceptions;
-        }
+    }
+    public static Login login() {
+        return create(Login.class);
     }
 
-    public static class AnError extends Builder {
-        private List<Exception> exceptions;
-
-        public AnError addError(Exception e) {
-            if(exceptions == null)
-                exceptions = new ArrayList<>();
-            exceptions.add(e);
-            return this;
-        }
+    public static class AnError extends Builder<AnError> {
 
         @Override
         public BioResponse build() {
@@ -82,15 +85,14 @@ public class BioRespBuilder {
             return response;
         }
 
-        public List<Exception> getExceptions() {
-            return exceptions;
-        }
+    }
+    public static AnError anError() {
+        return create(AnError.class);
     }
 
-    public static class Data extends Builder {
+    public static class Data extends Builder<Data> {
 
         private boolean success;
-        private List<Exception> exceptions;
         private String bioCode;
         private List<Param> bioParams;
         private RmtStatePack rmtStatePack;
@@ -101,13 +103,6 @@ public class BioRespBuilder {
 
         public Data success(boolean value) {
             success = value;
-            return this;
-        }
-
-        public Data addError(Exception e) {
-            if(exceptions == null)
-                exceptions = new ArrayList<>();
-            exceptions.add(e);
             return this;
         }
 
@@ -154,10 +149,6 @@ public class BioRespBuilder {
             return response;
         }
 
-        public List<Exception> getExceptions() {
-            return exceptions;
-        }
-
         public boolean isSuccess() {
             return success;
         }
@@ -186,6 +177,9 @@ public class BioRespBuilder {
             return filter;
         }
 
+    }
+    public static Data data() {
+        return create(Data.class);
     }
 
 }

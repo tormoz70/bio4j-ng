@@ -38,7 +38,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
             public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                final BioRespBuilder.Data result = BioRespBuilder.create(BioRespBuilder.Data.class);
+                final BioRespBuilder.Data result = BioRespBuilder.data();
                 result.bioCode(cur.getBioCode());
                 LOG.debug("Try open Cursor!!!");
                 try(SQLCursor c = context.CreateCursor()
@@ -56,18 +56,15 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     private BioRespBuilder.Data processCursorAsExecutable(BioModule module, BioCursor cursor) {
-        return null;
+        return BioRespBuilder.data();
     }
 
     public BioRespBuilder.Data processCursor(BioModule module, BioCursor cursor) throws Exception {
-        BioRespBuilder.Data response = null;
         if(cursor.getType() == BioCursor.Type.SELECT)
-            response = processCursorAsSelectable(module, cursor);
+            return processCursorAsSelectable(module, cursor);
         if(cursor.getType() == BioCursor.Type.EXEC)
-            response = processCursorAsExecutable(module, cursor);
-        if (response == null)
-            response = BioRespBuilder.create(BioRespBuilder.Data.class);
-        return response;
+            return processCursorAsExecutable(module, cursor);
+        return BioRespBuilder.data();
     }
 
     private void wrapCursor(BioCursor cursor) throws Exception {
@@ -81,16 +78,17 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         BioModule module = moduleProvider.getModule(request.getBioModuleKey());
         BioCursor cursor = module.getCursor(request);
         wrapCursor(cursor);
-        BioRespBuilder.Data response = processCursor(module, cursor);
-        return response;
+        return processCursor(module, cursor);
     }
 
     @Override
     public BioRespBuilder.Data getData(final BioRequestJStoreGet bioRequest) throws Exception {
         LOG.debug("GetData...");
-        BioRespBuilder.Data response = processRequest(bioRequest);
-        LOG.debug("GetData - returning response...");
-        return response;
+        try {
+            return processRequest(bioRequest);
+        } finally {
+            LOG.debug("GetData - returning response...");
+        }
     }
 
     @Override

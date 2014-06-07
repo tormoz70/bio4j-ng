@@ -8,7 +8,9 @@ public class ExceptionTransformer extends AbstractTransformer {
 
 	public void transform(Object value) {
         JSONContext context = getContext();
-		String valueStr = new JSONSerializer().exclude("cause", "localizedMessage", "stackTraceDepth").include("stackTrace").serialize(value);
+		String valueStr = new JSONSerializer()
+                .exclude("cause", "localizedMessage", "stackTraceDepth","stackTrace")
+                .serialize(value);
 		context.write(valueStr);
 	}
 

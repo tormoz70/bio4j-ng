@@ -33,15 +33,15 @@ public class RemoteAPIService {
         if (httpService != null) {
             LOG.debug("Registering \"{}\"-servlet...", HELLO_SERVLET_PATH);
             httpService.registerServlet(HELLO_SERVLET_PATH, new HelloWorld(this), null, null);
-            LOG.info("Servlet \"{}\" registered.", HELLO_SERVLET_PATH);
+            LOG.info("Servlet \"{}\" registered. With this.", HELLO_SERVLET_PATH);
 
             LOG.debug("Registering \"{}\"-servlet...", BIO_SERVLET_PATH);
             httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(router), null, null);
-            LOG.info("Servlet \"{}\" registered.", BIO_SERVLET_PATH);
+            LOG.info("Servlet \"{}\" registered. With router:{}.", BIO_SERVLET_PATH, router);
 
             LOG.debug("Registering \"{}\"-servlet...", BIO_LOGIN_SERVLET_PATH);
             httpService.registerServlet(BIO_LOGIN_SERVLET_PATH, new BioLogin(securityHandler), null, null);
-            LOG.info("Servlet \"{}\" registered.", BIO_LOGIN_SERVLET_PATH);
+            LOG.info("Servlet \"{}\" registered. With securityHandler:{}.", BIO_LOGIN_SERVLET_PATH, securityHandler);
         }
     }
 

@@ -6,22 +6,17 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLActionScalar;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.api.SQLCursor;
-import ru.bio4j.ng.database.doa.SQLContextFactory;
+import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.module.commons.BioModuleHelper;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -43,7 +38,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     @Override
     public User getUser(final String login) throws Exception {
         if(isNullOrEmpty(login) || !login.equals("root/root"))
-            return null;
+            throw new BioError.Login.BadLogin();
 
         BioModule module = moduleProvider.getModule("bio");
         BioCursor cursor = module.getCursor("get-user");

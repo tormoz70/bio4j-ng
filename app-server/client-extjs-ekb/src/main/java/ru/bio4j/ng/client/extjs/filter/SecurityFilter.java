@@ -23,7 +23,8 @@ public class SecurityFilter implements Filter {
             errorPage = filterConfig.getInitParameter("error_page");
             LOG.debug("errorPage - {}.", errorPage);
         }
-        LOG.debug("init - done.");     }
+        LOG.debug("init - done.");
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -34,13 +35,12 @@ public class SecurityFilter implements Filter {
 
         LOG.debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
-        chain.doFilter(req, resp);
-        if(true) return;
+//        chain.doFilter(req, resp);
+//        if(true) return;
 
 
         // Allow access to login functionality.
-        if (servletPath.equals("/login"))
-        {
+        if (servletPath.equals("/login")) {
             chain.doFilter(req, resp);
             return;
         }
@@ -51,15 +51,15 @@ public class SecurityFilter implements Filter {
         }
         // All other functionality requires authentication.
         User user = (User) session.getAttribute(User.SESSION_ATTR_NAME);
-        if (user != null)
-        {
+        if (user != null) {
             // User is logged in.
             chain.doFilter(req, resp);
             return;
         }
 
         // Request is not authorized.
-        resp.sendRedirect("login");     }
+        resp.sendRedirect("login");
+    }
 
     @Override
     public void destroy() {

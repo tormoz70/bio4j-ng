@@ -104,6 +104,11 @@
                     <artifactId>bio4j-ng-tmodel</artifactId>
                     <scope>provided</scope>
                 </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>flexjson</artifactId>
+                    <scope>provided</scope>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -149,6 +154,11 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>bio4j-ng-tmodel</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>flexjson</artifactId>
                     <scope>compile</scope>
                 </dependency>
             </dependencies>

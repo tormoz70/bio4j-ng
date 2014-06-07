@@ -6,6 +6,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
@@ -43,22 +44,23 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.UNKNOWN, new BioRouteHandler() {
                     @Override
                     public void handle(String requestType, String requestBody, Callback callback) throws Exception {
-                        BioRespBuilder.AnError brsp = BioRespBuilder.create(BioRespBuilder.AnError.class);
-                        brsp.addError(new Exception(String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType)));
-                        processCallback(brsp, callback);
-                    }
+                    processCallback(
+                        BioRespBuilder.anError()
+                            .addError(new BioError.BadRequestType(requestType))
+                    , callback);
+                 }
                 });
 
             routeMap.put(BioRoute.CRUD_DATA_GET, new BioRouteHandler() {
                     @Override
                     public void handle(String requestType, String requestBody, Callback callback) throws Exception {
-                        LOG.debug("Processing {} request...", BioRoute.CRUD_DATA_GET);
-                        LOG.debug("Lets try to decode {} from json: \n{}", BioRequestJStoreGet.class.getName(), requestBody);
-                        BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
-                        LOG.debug("BioRequestJStoreGet object restored.");
+                    LOG.debug("Processing {} request...", BioRoute.CRUD_DATA_GET);
+                    LOG.debug("Lets try to decode {} from json: \n{}", BioRequestJStoreGet.class.getName(), requestBody);
+                    BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
+                    LOG.debug("BioRequestJStoreGet object restored.");
 //                        request.setOrigJson(requestBody);
-                        BioRespBuilder.Data responseBuilder = dataProvider.getData(request);
-                        processCallback(responseBuilder, callback);
+                    BioRespBuilder.Data responseBuilder = dataProvider.getData(request);
+                    processCallback(responseBuilder, callback);
                     }
                 });
         }

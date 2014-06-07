@@ -27,7 +27,7 @@ public class BioResponse {
      * Если на сервере произошди ошибки при обработке запроса, то здесь возвращается коллекция объектов содержащий ошибки
      * Их может быть много в общем случае
      */
-    private List<Exception> exceptions;
+    private List<BioError> exceptions;
 
     /**
      * Код информационного объекта
@@ -70,11 +70,11 @@ public class BioResponse {
         this.success = success;
     }
 
-    public List<Exception> getExceptions() {
+    public List<BioError> getExceptions() {
         return exceptions;
     }
 
-    public void setExceptions(List<Exception> exceptions) {
+    public void setExceptions(List<BioError> exceptions) {
         this.exceptions = exceptions;
     }
 
