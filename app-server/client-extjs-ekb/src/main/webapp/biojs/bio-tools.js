@@ -216,12 +216,12 @@ Bio.Tools = function(){
       return vResult;
     },
 
-		setIOPrm:function(pBioParams, vQParams){
+	setIOPrm:function(pBioParams, vQParams){
       var vBioParamsStr = (pBioParams)?((pBioParams instanceof String)?pBioParams:Ext.encode(pBioParams)):null;
       var vQPrms = {ioprm: vBioParamsStr};
       Ext.apply(vQPrms, vQParams);
 			return vQPrms;
-		},
+	},
 
     bldQPrms:function(pBioMsgType, pBioCD, pBioParams, pExtParams){
       var vQPrms = {mtp: pBioMsgType,
@@ -229,7 +229,7 @@ Bio.Tools = function(){
       Ext.apply(vQPrms, pExtParams)
       return Bio.Tools.setIOPrm(pBioParams, vQPrms);
     },
-    
+
     /**
      * @param {Object} pBioMsgType - тип запроса см. ini\regmsgs.xml.
      * @param {Object} pBioCD - код ИО.
@@ -237,13 +237,12 @@ Bio.Tools = function(){
      * @param {Object} pExtParams - дополнительные параметры запроса к серверу
      */
 
-    bldBioUrl:function(pBioMsgType, pBioCD, pBioParams, pExtParams){
-      var vQPrms = Bio.Tools.bldQPrms(pBioMsgType, pBioCD, pBioParams, pExtParams);
-      var vQPrmsStr = Bio.Tools.bldQStr(vQPrms);
-      
-  		return csSYS_APP_URL+"/srv.aspx"+((vQPrmsStr)?("?"+vQPrmsStr):"");
+    bldBioUrl:function(url, params){
+        var qprmsStr = Bio.Tools.bldQStr(params);
+
+  		return csSYS_APP_URL+url+((qprmsStr)?("?"+qprmsStr):"");
     },
-    
+
     bldAjaxCfg: function (pBioMsgType, pBioCD, pBioParams, pExtParams, pCallback, pScope){
       var vQPrms = Bio.Tools.bldQPrms(pBioMsgType, pBioCD, pBioParams, pExtParams);
       return {
@@ -272,7 +271,7 @@ Bio.Tools = function(){
     transaction: null,
     
     doOnLoadComponent:function(options, success, response){
-      Bio.Dlg.hideGWait(options.Container.getEl());
+      Bio.dlg.hideGWait(options.Container.getEl());
       this.transaction = null;
       if (success) {
         var vObjStr = response.responseText;
@@ -288,7 +287,7 @@ Bio.Tools = function(){
           if(options && options.DoOnLoad && options.DoOnLoad.fn)
             options.DoOnLoad.fn.createDelegate(options.DoOnLoad.scope)(vNewComp);
         } catch (e) {
-          Bio.Dlg.showMsg('Ошибка на сервере', e.message + "\n" + vObjStr);
+          Bio.dlg.showMsg('Ошибка на сервере', e.message + "\n" + vObjStr);
         }
       }
     },
@@ -308,7 +307,7 @@ Bio.Tools = function(){
       var vID = Bio.Tools.bldBioUrl(vMTP,pBioCode,pBioParams);
       var vItem = pContainer.items.find(function(c){if(c.id == vID) return c;});  
       if (!vItem) {
-        Bio.Dlg.showGWait("Загрузка...", pContainer.getEl());
+        Bio.dlg.showGWait("Загрузка...", pContainer.getEl());
         this.ajaxR(vMTP, pBioCode, pBioParams, pExtParams, {fn:this.doOnLoadComponent, scope:this}, {Container:pContainer, DoOnLoad:pDoOnLoad});
       }
     },

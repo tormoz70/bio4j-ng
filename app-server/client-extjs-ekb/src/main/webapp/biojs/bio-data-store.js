@@ -10,13 +10,10 @@ Ext.define('Bio.data.Store', {
 
     constructor: function(config) {
         var me = this;
-//        var url = config.url || "http://vps-nexus-bio4j.cloud.tilaa.com:9090/bio4j-spi/test/sproc";
-        var url = config.url || "http://localhost:9090/bio4j-spi/test/sproc";
         config = Ext.apply({
             model: 'Bio.data.Model',
             proxy: {
-                type: 'biorest',
-                url: url
+                type: 'biorest'
                 ,reader: {
                     type: 'biorest'
                 }

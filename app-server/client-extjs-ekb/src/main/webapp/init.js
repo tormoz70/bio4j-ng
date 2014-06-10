@@ -82,7 +82,7 @@ Ext.onReady(function() {
 
     }
 
-    Bio.Login.showDialog({
+    Bio.lgn.showDialog({
         scope:this,
         fn:doOnLoginOk
     }, true);

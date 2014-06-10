@@ -1,5 +1,5 @@
 Ext.namespace("Bio");
-Bio.Dlg = {
+Bio.dlg = {
     dialog: null,
 
     creDlgContent: function (pDlgTitle) {
@@ -35,7 +35,7 @@ Bio.Dlg = {
      */
 
     showMsg: function (pTitle, pText, pWidth, pHeight, pDoOnClosePrc) {
-        this.loginRSLT = null;
+        this.lastLoginResult = null;
         this.dialog = Bio.Tools.createWindow({
                 title: pTitle,
                 width: (pWidth) ? pWidth : 500,
