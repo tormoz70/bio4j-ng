@@ -1,7 +1,8 @@
 package ru.bio4j.ng.model.transport;
 
 public class User {
-    public final static String SESSION_ATTR_NAME = "currentUsr";
+    public final static String LOGIN_PARAM_NAME = "login";
+    public final static String SESSION_ATTR_NAME = "currentUsrUID";
 
     private String uid;
     private String login;

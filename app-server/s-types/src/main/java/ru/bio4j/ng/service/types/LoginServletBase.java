@@ -2,10 +2,7 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
@@ -13,10 +10,6 @@ import ru.bio4j.ng.service.api.SecurityHandler;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 
 public class LoginServletBase extends HttpServlet {
     protected final static Logger LOG = LoggerFactory.getLogger(LoginServletBase.class);
@@ -44,14 +37,9 @@ public class LoginServletBase extends HttpServlet {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        String login = request.getParameter("login");
-//        try {
-            brsp.user(securityHandler.getUser(login))
-                .success(brsp.getUser() != null);
-//        } catch (Exception e) {
-//            brsp.success(false)
-//                .addError(BioError.wrap(e));
-//        }
+        String login = request.getParameter(User.LOGIN_PARAM_NAME);
+        brsp.user(securityHandler.getUser(login))
+            .success(brsp.getUser() != null);
         return brsp;
     }
 }

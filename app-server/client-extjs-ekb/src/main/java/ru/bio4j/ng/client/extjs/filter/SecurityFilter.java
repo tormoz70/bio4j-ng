@@ -11,6 +11,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.BioServletBase;
+import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -51,7 +54,10 @@ public class SecurityFilter implements Filter {
         final HttpSession session = request.getSession();
         if (user != null) {
             session.setAttribute(User.SESSION_ATTR_NAME, user.getUid());
-            chain.doFilter(request, response);
+            Map<String, String[]> extraParams = new TreeMap<>();
+            extraParams.put(User.LOGIN_PARAM_NAME, new String[] {user.getUid()});
+            HttpServletRequest wrappedRequest = new BioWrappedRequest(request, extraParams);
+            chain.doFilter(wrappedRequest, response);
         } else
             BioServletBase.writeResponse(BioRespBuilder.anError().addError(new BioError.Login.BadLogin()), response);
 
@@ -80,7 +86,7 @@ public class SecurityFilter implements Filter {
 //            }
 
 
-            String login = req.getParameter("login");
+            String login = req.getParameter(User.LOGIN_PARAM_NAME);
             initSecurityHandler(req.getServletContext());
             if(securityHandler != null) {
                 User user = securityHandler.getUser(login);
