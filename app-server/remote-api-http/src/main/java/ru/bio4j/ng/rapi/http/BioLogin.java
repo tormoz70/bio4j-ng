@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.types.BioServletBase;
 import ru.bio4j.ng.service.types.LoginServletBase;
 
 import javax.servlet.ServletException;
@@ -28,10 +29,10 @@ public class BioLogin extends LoginServletBase {
         final HttpServletResponse resp = response;
         try {
             BioRespBuilder.Login bresp = doLogin(req);
-            writeResponse(bresp, resp.getWriter());
+            BioServletBase.writeResponse(bresp, resp);
         } catch (Exception e) {
-            writeResponse(BioRespBuilder.anError()
-                    .addError(BioError.wrap(e)), resp.getWriter());
+            BioServletBase.writeResponse(BioRespBuilder.anError()
+                    .addError(BioError.wrap(e)), resp);
             LOG.error("Unexpected error while login (Level-0)!", e);
         }
 

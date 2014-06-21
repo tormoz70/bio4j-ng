@@ -52,7 +52,7 @@ public class LoginServlet extends LoginServletBase {
                 BioRespBuilder.Login bresp = doLogin(req);
 //                if(bresp.isSuccess())
 //                    storeCurrentUsrToSession(req, bresp.getUser());
-                writeResponse(bresp, resp.getWriter());
+                BioServletBase.writeResponse(bresp, resp);
             } else {
                 final String queryString = req.getQueryString();
                 final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
@@ -63,7 +63,7 @@ public class LoginServlet extends LoginServletBase {
 //                        BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
 //                        if(bresp.isSuccess())
 //                            storeCurrentUsrToSession(req, bresp.getUser());
-                        writeResponse(brespJson, resp.getWriter());
+                        BioServletBase.writeResponse(brespJson, resp);
                     }
                 });
             }

@@ -240,7 +240,7 @@ Bio.Tools = function(){
     bldBioUrl:function(url, params){
         var qprmsStr = Bio.Tools.bldQStr(params);
 
-  		return csSYS_APP_URL+url+((qprmsStr)?("?"+qprmsStr):"");
+  		return Bio.app.APP_URL+url+((qprmsStr)?("?"+qprmsStr):"");
     },
 
     bldAjaxCfg: function (pBioMsgType, pBioCD, pBioParams, pExtParams, pCallback, pScope){

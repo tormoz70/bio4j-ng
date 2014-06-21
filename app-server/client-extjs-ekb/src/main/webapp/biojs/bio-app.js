@@ -1,16 +1,21 @@
 Ext.namespace("Bio");
+Ext.define('Bio.Application', {
+    extend: "Ext.util.Observable",
+    config: {
+        APP_URL: null,
+        APP_TITLE: null,
+        сurUsr: null
+    },
 
-Bio.Application = function (cfg) {
-    Ext.apply(this, cfg);
-    this.addEvents({
-        'ready': true,
-        'beforeunload': true
-    });
+    constructor: function(config) {
+        var me = this;
+        Ext.apply(me, config);
+        me.addEvents({
+            'ready': true,
+            'beforeunload': true
+        });
+    },
 
-    //Ext.onReady(this.initApp, this);
-};
-
-Ext.extend(Bio.Application, Ext.util.Observable, {
     isReady: false,
     startMenu: null,
 
@@ -39,12 +44,12 @@ Ext.extend(Bio.Application, Ext.util.Observable, {
     },
 
     /**
-     *
-     * @param {Object} e = {name:String,
-   *                      handler:function, 
-   *                      scope:Object, 
-   *                      options:Object}
-     */
+    *
+    * @param {Object} e = {name:String,
+    *                      handler:function,
+    *                      scope:Object,
+    *                      options:Object}
+    */
     regEvent: function (e) {
         if (e && e.name && e.handler) {
             if (!this.hasListener(e.name)) {
@@ -69,7 +74,7 @@ Ext.extend(Bio.Application, Ext.util.Observable, {
         if(this.myWaitMask != undefined)
             this.myWaitMask.hide();
     }
+
 });
 
 
-Bio.app = new Bio.Application({});

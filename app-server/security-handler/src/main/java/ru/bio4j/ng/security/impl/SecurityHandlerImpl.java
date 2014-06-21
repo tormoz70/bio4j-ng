@@ -17,6 +17,8 @@ import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.sql.Connection;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -35,9 +37,41 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     @Requires
     private SQLContextProvider sqlContextProvider;
 
+    private ConcurrentMap<String, User> onlineUsers = new ConcurrentHashMap<>();
+
+    private void storeUser(User user) throws Exception {
+        User existsUser = onlineUsers.get(user.getUid());
+        if(existsUser != null) {
+            Utl.applyValuesToBean(user, existsUser);
+            return;
+        }
+        onlineUsers.put(user.getUid(), user);
+    }
+
+    private User userIsOnline(String userUID) {
+        return onlineUsers.get(userUID);
+    }
+
+    private User removeUser(String userUID) {
+        return onlineUsers.remove(userUID);
+    }
+
     @Override
-    public User getUser(final String login) throws Exception {
-        if(isNullOrEmpty(login) || !login.equals("root/root"))
+    public User getUser(final String loginOrUid) throws Exception {
+        if(isNullOrEmpty(loginOrUid))
+            throw new BioError.Login.BadLogin();
+        final String uid = loginOrUid.contains("/") ? null : loginOrUid;
+        final String login = loginOrUid.contains("/") ? loginOrUid : null;
+
+        if(!isNullOrEmpty(uid)){
+            User onlineUser = userIsOnline(uid);
+            if(onlineUser != null){
+                LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", uid, onlineUser.getLogin());
+                return onlineUser;
+            }
+        }
+
+        if(!login.equals("root/root"))
             throw new BioError.Login.BadLogin();
 
         BioModule module = moduleProvider.getModule("bio");
@@ -46,25 +80,25 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         return globalSQLContext.execBatch(new SQLActionScalar<User>() {
             @Override
             public User exec(SQLContext context, Connection conn) throws Exception {
-                LOG.debug("User {} logging in...", login);
-                try(SQLCursor c = context.CreateCursor()
-                        .init(conn, "select username from user_users", null)
-                        .open()) {
-                    if (c.reader().read()){
-                        LOG.debug("User found!");
-                        String s = c.reader().getValue("USERNAME", String.class);
-                        User usr = new User();
-                        usr.setUid("test-user-uid");
-                        usr.setLogin("root");
-                        usr.setFio("Test User FIO");
-                        usr.setRoles(new String[]{"*"});
-                        usr.setGrants(new String[] {"*"});
-                        LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
-                        return usr;
-                    }
+            LOG.debug("User {} logging in...", login);
+            try(SQLCursor c = context.CreateCursor()
+                    .init(conn, "select username from user_users", null)
+                    .open()) {
+                if (c.reader().read()){
+                    LOG.debug("User found!");
+                    String s = c.reader().getValue("USERNAME", String.class);
+                    User usr = new User();
+                    usr.setUid("test-user-uid");
+                    usr.setLogin("root");
+                    usr.setFio("Test User FIO");
+                    usr.setRoles(new String[]{"*"});
+                    usr.setGrants(new String[] {"*"});
+                    LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
+                    return usr;
                 }
-                LOG.debug("User not found!");
-                return null;
+            }
+            LOG.debug("User not found!");
+            return null;
             }
         });
     }

@@ -10,6 +10,7 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
  */
 public enum BioRoute {
     UNKNOWN("unknown", null),
+    PING("ping", null),
     CRUD_DATA_GET("crud.dt.gt", BioRequestJStoreGet.class);
 
     private String alias;

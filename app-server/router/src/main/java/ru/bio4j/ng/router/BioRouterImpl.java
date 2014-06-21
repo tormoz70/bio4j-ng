@@ -51,6 +51,14 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                  }
                 });
 
+            routeMap.put(BioRoute.PING, new BioRouteHandler() {
+                @Override
+                public void handle(String requestType, String requestBody, Callback callback) throws Exception {
+                    BioRespBuilder.Data responseBuilder = BioRespBuilder.data();
+                    processCallback(responseBuilder, callback);
+                }
+            });
+
             routeMap.put(BioRoute.CRUD_DATA_GET, new BioRouteHandler() {
                     @Override
                     public void handle(String requestType, String requestBody, Callback callback) throws Exception {

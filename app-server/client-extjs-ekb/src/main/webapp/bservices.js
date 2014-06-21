@@ -1,5 +1,6 @@
-Ext.idbm = {
-    bservicesCatalog: [
+Ext.namespace('Ekb');
+Ekb.catalog = {
+    groups: [
         {
             "title": "Личный кабинет",
             "items": [

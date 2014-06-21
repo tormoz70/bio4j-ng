@@ -13,9 +13,8 @@ Ext.define('Bio.data.RestProxy', {
     buildRequest: function(operation) {
         var me = this;
         var store = me.store;
-        var request = me.callParent(arguments);
-//        request.url = "/ekb/biosrvfwd";
-        request.url = "/ekb/biosrv";
+        operation.url = Bio.Tools.bldBioUrl("/biosrv");
+        var request = me.callParent([operation]);
         request.method = 'POST';
         var offset = ((operation.page - 1) * operation.limit);
         var params = store.bioParams;

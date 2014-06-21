@@ -2,16 +2,26 @@ package ru.bio4j.ng.client.extjs.filter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Httpc;
+import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.types.BioServletBase;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.InputStream;
+
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class SecurityFilter implements Filter {
-
     private final static Logger LOG = LoggerFactory.getLogger(SecurityFilter.class);
 
     private String errorPage;
@@ -26,39 +36,79 @@ public class SecurityFilter implements Filter {
         LOG.debug("init - done.");
     }
 
+    protected SecurityHandler securityHandler;
+    protected void initSecurityHandler(ServletContext servletContext) {
+        if(securityHandler == null) {
+            try {
+                securityHandler = Utl.getService(servletContext, SecurityHandler.class);
+            } catch (IllegalStateException e) {
+                securityHandler = null;
+            }
+        }
+    }
+
+    private void checkUser(User user, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        final HttpSession session = request.getSession();
+        if (user != null) {
+            session.setAttribute(User.SESSION_ATTR_NAME, user.getUid());
+            chain.doFilter(request, response);
+        } else
+            BioServletBase.writeResponse(BioRespBuilder.anError().addError(new BioError.Login.BadLogin()), response);
+
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse resp = (HttpServletResponse) response;
-        HttpServletRequest req = (HttpServletRequest) request;
-        String servletPath = req.getServletPath();
-        HttpSession session = req.getSession();
+        final FilterChain chn = chain;
+        final HttpServletResponse resp = (HttpServletResponse) response;
+        final HttpServletRequest req = (HttpServletRequest) request;
+        final String servletPath = req.getServletPath();
+        final HttpSession session = req.getSession();
 
-        LOG.debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
+        try {
 
-//        chain.doFilter(req, resp);
-//        if(true) return;
+            LOG.debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
+
+    //        chain.doFilter(req, resp);
+    //        if(true) return;
 
 
-        // Allow access to login functionality.
-        if (servletPath.equals("/login")) {
-            chain.doFilter(req, resp);
-            return;
+//            // Allow access to all, except biosrv.
+//            if (!servletPath.equals("/biosrv")) {
+//                chain.doFilter(req, resp);
+//                return;
+//            }
+
+
+            String login = req.getParameter("login");
+            initSecurityHandler(req.getServletContext());
+            if(securityHandler != null) {
+                User user = securityHandler.getUser(login);
+                checkUser(user, req, resp, chn);
+            } else {
+                final String queryString = req.getQueryString();
+                final String destination = "login"+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
+                Httpc.forwardRequest(destination, req, new Httpc.Callback() {
+                    @Override
+                    public void process(InputStream inputStream) throws Exception {
+                        String brespJson = Utl.readStream(inputStream);
+                        BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
+                        if(bresp.isSuccess()) {
+                            User user = bresp.getUser();
+                            checkUser(user, req, resp, chn);
+                        } else {
+                            BioServletBase.writeResponse(BioRespBuilder.anError().addError(bresp.getException()), resp);
+                            LOG.error("An error while checking User!", bresp.getException());
+                        }
+                    }
+                });
+
+            }
+
+        } catch (Exception e) {
+            BioServletBase.writeResponse(BioRespBuilder.anError().addError(BioError.wrap(e)), resp);
+            LOG.error("Unexpected error while filtering (Level-1)!", e);
         }
-        // Allow access to news feed.
-        if (servletPath.equals("/news.rss")) {
-            chain.doFilter(req, resp);
-            return;
-        }
-        // All other functionality requires authentication.
-        User user = (User) session.getAttribute(User.SESSION_ATTR_NAME);
-        if (user != null) {
-            // User is logged in.
-            chain.doFilter(req, resp);
-            return;
-        }
-
-        // Request is not authorized.
-        resp.sendRedirect("login");
     }
 
     @Override

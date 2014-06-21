@@ -13,8 +13,10 @@ import ru.bio4j.ng.service.api.SecurityHandler;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class LoginServletBase extends HttpServlet {
     protected final static Logger LOG = LoggerFactory.getLogger(LoginServletBase.class);
@@ -30,38 +32,26 @@ public class LoginServletBase extends HttpServlet {
         }
     }
 
-    protected void storeCurrentUsrToSession(HttpServletRequest request, User usr) {
-        if(usr != null)
-            request.getSession().setAttribute(User.SESSION_ATTR_NAME, usr);
-        else
-            request.getSession().removeAttribute(User.SESSION_ATTR_NAME);
-    }
+//    protected void storeCurrentUsrToSession(HttpServletRequest request, User usr) {
+//        if(usr != null)
+//            request.getSession().setAttribute(User.SESSION_ATTR_NAME, usr);
+//        else
+//            request.getSession().removeAttribute(User.SESSION_ATTR_NAME);
+//    }
 
-    protected void writeResponse(String brespJson, PrintWriter writer) throws IOException {
-        writer.append(brespJson);
-    }
-
-    protected void writeResponse(BioResponse bresp, PrintWriter writer) throws IOException {
-        String brespJson = Jsons.encode(bresp);
-        writeResponse(brespJson, writer);
-    }
-
-    protected void writeResponse(BioRespBuilder.Builder bresp, PrintWriter writer) throws IOException {
-        writeResponse(bresp.build(), writer);
-    }
 
     protected BioRespBuilder.Login doLogin(HttpServletRequest request) throws Exception {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
         String login = request.getParameter("login");
-        try {
+//        try {
             brsp.user(securityHandler.getUser(login))
                 .success(brsp.getUser() != null);
-        } catch (Exception e) {
-            brsp.success(false)
-                .addError(BioError.wrap(e));
-        }
+//        } catch (Exception e) {
+//            brsp.success(false)
+//                .addError(BioError.wrap(e));
+//        }
         return brsp;
     }
 }

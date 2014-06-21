@@ -17,6 +17,7 @@ import ru.bio4j.ng.service.api.Configurator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.net.URL;
 
 public abstract class BioModuleBase implements BioModule {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
@@ -31,15 +32,18 @@ public abstract class BioModuleBase implements BioModule {
 
     private static BioCursor loadCursor(BundleContext context, String bioCode) throws Exception {
         BioCursor cursor = null;
-        String path = "/" + bioCode.replace(".", "/") + ".xml";
-        LOG.debug("Loading cursor spec from \"{}\"", path);
-        InputStream inputStream = context.getBundle().getResource(path).openStream();
-        if(inputStream != null) {
+        String path = "/" + bioCode.replace(".", "/");
+        URL url = context.getBundle().getResource(path + ".xml");
+        if(url != null) {
+            LOG.debug("Loading cursor spec from \"{}\"", path + ".xml");
+            InputStream inputStream = url.openStream();
             Document document = loadDocument(inputStream);
             cursor = CursorParser.pars(bioCode, document);
         } else {
-            inputStream = context.getBundle().getResource(path + ".sql").openStream();
-            if(inputStream != null) {
+            url = context.getBundle().getResource(path + ".sql");
+            if(url != null) {
+                LOG.debug("Loading cursor spec from \"{}\"", path + ".sql");
+                InputStream inputStream = url.openStream();
                 String sql = Utl.readStream(inputStream, "WINDOWS-1251");
                 cursor = CursorParser.pars(bioCode, sql);
             } else

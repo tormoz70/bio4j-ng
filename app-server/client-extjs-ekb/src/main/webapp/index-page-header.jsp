@@ -1,9 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="vars.jsp"%>
 <head>
-    <title>КИНОБИЛЕТ-М</title>
+    <title><%=APP_TITLE%></title>
     <meta http-equiv="CONTENT-TYPE" content="TEXT/HTML; CHARSET=UTF-8">
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/extjs/resources/css/ext-all.css"/>
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/welcome/css/extjs.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=APP_URL%>/<%=EXTJS_PATH%>/resources/css/ext-all.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=APP_URL%>/welcome/css/extjs.css"/>
     <style type="text/css">
 
         #loading-mask{
@@ -96,7 +97,7 @@
             padding-top:6px;
         }
         #root-container h2 div {
-            background:transparent url(extjs/resources/themes/images/default/grid/group-expand-sprite.gif) no-repeat 3px -47px;
+            background:transparent url(<%=EXTJS_PATH%>/resources/themes/images/default/grid/group-expand-sprite.gif) no-repeat 3px -47px;
             color:#3764a0;
             font:bold 11px Helvetica, Arial, sans-serif;
             padding:4px 4px 4px 17px;

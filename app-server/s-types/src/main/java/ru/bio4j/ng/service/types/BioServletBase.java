@@ -4,7 +4,10 @@ package ru.bio4j.ng.service.types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
+import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.BioResponse;
+import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.BioRouter;
 
 import javax.servlet.ServletConfig;
@@ -27,6 +30,26 @@ public class BioServletBase extends HttpServlet {
 
     public BioServletBase() {
         LOG = LoggerFactory.getLogger(getClass());
+    }
+
+    public static void writeResponse(String brespJson, HttpServletResponse response) throws IOException {
+        PrintWriter writer = response.getWriter();
+        writer.append(brespJson);
+    }
+
+    public static void writeResponse(BioResponse bresp, HttpServletResponse response) throws IOException {
+//        List<BioError> errs = bresp.getExceptions();
+//        BioError e = (errs != null && errs.size() > 0) ? errs.get(0) : null;
+//        if(e instanceof BioError.Login.BadLogin) {
+//            response.sendError(401);
+//            return;
+//        }
+        String brespJson = Jsons.encode(bresp);
+        writeResponse(brespJson, response);
+    }
+
+    public static void writeResponse(BioRespBuilder.Builder bresp, HttpServletResponse response) throws IOException {
+        writeResponse(bresp.build(), response);
     }
 
     protected static final String REQUEST_TYPE_PARAM_NAME = "rqt";

@@ -57,35 +57,41 @@ Ext.onReady(function() {
         }
     });
 
-    var catalog = Ext.idbm.bservicesCatalog;
+    var catalog = Ekb.catalog.groups;
 
     for (var i = 0, c; c = catalog[i]; i++) {
         c.id = 'bsrv-' + i;
     }
 
-    var doOnLoginOk = function(){
+    var doOnLogin = function(options, success, response){
 
-        var store = Ext.create('Ext.data.Store', {
-            fields     : ['id', 'title', 'items'],
-            data       : catalog
-        });
+        if(success === true) {
+            var store = Ext.create('Ext.data.Store', {
+                fields     : ['id', 'title', 'items'],
+                data       : catalog
+            });
 
-        Ext.create('Ekb.RootPanel', {
-            renderTo   : 'root-container',
-            store : store
-        });
+            Ext.create('Ekb.RootPanel', {
+                renderTo   : 'root-container',
+                store : store
+            });
 
-        var tpl = Ext.create('Ext.XTemplate',
-            '<tpl for="."><li><a href="#{id}">{title:stripTags}</a></li></tpl>'
-        );
-        tpl.overwrite('bservices-menu', catalog);
-
+            var tpl = Ext.create('Ext.XTemplate',
+                '<tpl for="."><li><a href="#{id}">{title:stripTags}</a></li></tpl>'
+            );
+            tpl.overwrite('bservices-menu', catalog);
+        }
     }
 
-    Bio.lgn.showDialog({
-        scope:this,
-        fn:doOnLoginOk
-    }, true);
+//    Bio.login.showDialog({
+//        scope: this,
+//        fn: doOnLogin
+//    });
+    Ext.Ajax.request({
+        url: Bio.Tools.bldBioUrl("/biosrv"),
+        params: {rqt: 'ping'},
+        callback:doOnLogin
+    });
 
 
     var bodyStyle = document.body.style,
@@ -95,7 +101,6 @@ Ext.onReady(function() {
         sideBoxEl = bodyEl.down('div.side-box'),
         leftColumnEl = bodyEl.down('div.left-column'),
         rightColumnEl = bodyEl.down('div.right-column');
-        //titleEl   = Ext.get('pagetitle');
 
     var doResize = function() {
         bodyStyle.overflow = 'hidden';

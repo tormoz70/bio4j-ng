@@ -73,6 +73,11 @@ public class BioResponse {
     public List<BioError> getExceptions() {
         return exceptions;
     }
+    public BioError getException() {
+        if(exceptions != null && exceptions.size() > 0)
+            return exceptions.get(0);
+        return null;
+    }
 
     public void setExceptions(List<BioError> exceptions) {
         this.exceptions = exceptions;
