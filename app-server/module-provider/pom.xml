@@ -10,7 +10,7 @@
     </parent>
     <artifactId>bio4j-ng-module-provider</artifactId>
     <packaging>bundle</packaging>
-    <name>BioAIM Privider</name>
+    <name>BioAIM Provider</name>
     <description>Service implements Bio module provider</description>
 
     <build>

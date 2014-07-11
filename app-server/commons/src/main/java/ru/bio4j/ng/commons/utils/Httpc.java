@@ -24,6 +24,10 @@ public class Httpc {
             outputStream.write(buffer, 0, bytesRead);
     }
 
+    public static void requestJson(String url, Callback callback) throws Exception {
+        requestJson(url, null, callback);
+    }
+
     public static void requestJson(String url, String jsonData, Callback callback) throws Exception {
         URL u = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) u.openConnection();
@@ -89,4 +93,10 @@ public class Httpc {
 
     }
 
+    public static String getQueryString(HttpServletRequest request) {
+        String queryString = null;
+        for(String pn : request.getParameterMap().keySet())
+            queryString = Strings.append(queryString, pn+"="+request.getParameterMap().get(pn)[0], "&");
+        return queryString;
+    }
 }

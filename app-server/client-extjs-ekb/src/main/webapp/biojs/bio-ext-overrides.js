@@ -17,20 +17,94 @@ Ext.override(Ext.data.Store, {
 
 Ext.override(Ext.data.Connection, {
 
+    request0 : function(options) {
+        options = options || {};
+        var me = this,
+            scope = options.scope || window,
+            username = options.username || me.username,
+            password = options.password || me.password || '',
+            async,
+            requestOptions,
+            request,
+            headers,
+            xhr;
+        if (me.fireEvent('beforerequest', me, options) !== false) {
+
+            requestOptions = me.setOptions(options, scope);
+
+            if (me.isFormUpload(options)) {
+                me.upload(options.form, requestOptions.url, requestOptions.data, options);
+                return null;
+            }
+
+
+            if (options.autoAbort || me.autoAbort) {
+                me.abort();
+            }
+
+
+            async = options.async !== false ? (options.async || me.async) : false;
+            xhr = me.openRequest(options, requestOptions, async, username, password);
+
+
+            if (!me.isXdr) {
+                headers = me.setupHeaders(xhr, options, requestOptions.data, requestOptions.params);
+            }
+
+
+            request = {
+                id: ++Ext.data.Connection.requestId,
+                xhr: xhr,
+                headers: headers,
+                options: options,
+                async: async,
+                binary: options.binary || me.binary,
+                timeout: setTimeout(function() {
+                    request.timedout = true;
+                    me.abort(request);
+                }, options.timeout || me.timeout)
+            };
+
+            me.requests[request.id] = request;
+            me.latestId = request.id;
+
+            if (async) {
+                if (!me.isXdr) {
+                    xhr.onreadystatechange = Ext.Function.bind(me.onStateChange, me, [request]);
+                }
+            }
+
+            if (me.isXdr) {
+                me.processXdrRequest(request, xhr);
+            }
+
+
+            xhr.send(requestOptions.data);
+            if (!async) {
+                return me.onComplete(request);
+            }
+            return request;
+        } else {
+            Ext.callback(options.callback, options.scope, [options, undefined, undefined]);
+            return null;
+        }
+    },
+
     request : function(options) {
         var me = this;
-        // get login from User object
-        // if !login then get login from login form...
-        if(options.url === "/login")
-            return this.callParent([options]);
-        else {
-            return Bio.login.getUser({
-                fn: function(user) {
-                    return this.callParent([options]);
-                },
-                scope: me
-            });
-        }
+        return Bio.login.getUser({
+            fn: function(usr) {
+                var o = Ext.apply({}, options);
+                var p = {};
+                if(usr.uid)
+                    p.uid = usr.uid;
+                else if (usr.login)
+                    p.login = usr.login;
+                Ext.apply(o.params, p);
+                return me.request0(o);
+            },
+            scope: me
+        });
     },
 
     onComplete0 : function(request, xdrResult) {
@@ -99,6 +173,13 @@ Ext.override(Ext.data.Connection, {
 
 
         if (success) {
+            var bioResponse = Ext.decode(response.responseText);
+            if(bioResponse.exceptions && bioResponse.exceptions[0].class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
+                Bio.app.curUsr = undefined;
+                me.request(options);
+                return;
+            }
+
             me.fireEvent('requestcomplete', me, response, options);
             Ext.callback(options.success, options.scope, [response, options]);
         } else {

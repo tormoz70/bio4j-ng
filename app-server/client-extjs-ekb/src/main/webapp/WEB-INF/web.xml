@@ -10,7 +10,7 @@
         <servlet-class>ru.bio4j.ng.client.extjs.BioServlet</servlet-class>
         <init-param>
             <param-name>forwardURL</param-name>
-            <param-value>http://localhost:9090/biosrvapi</param-value>
+            <param-value>http://localhost:9090/srvapi</param-value>
         </init-param>
     </servlet>
     <!--<servlet>-->
@@ -33,6 +33,10 @@
         <init-param>
             <param-name>error_page</param-name>
             <param-value>error.jsp</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forwardURL</param-name>
+            <param-value>http://localhost:9090/login</param-value>
         </init-param>
     </filter>
     <!--Mapping-->

@@ -5,10 +5,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioResponse;
+import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.BioRouter;
+import ru.bio4j.ng.service.api.SecurityHandler;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -22,10 +27,14 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class BioServletBase extends HttpServlet {
 
-    public static final String FORWARD_URL_PARAM_NAME = "forwardURL";
+    public final static String LOGIN_PARAM_NAME = "login";
+    public final static String UID_PARAM_NAME = "uid";
+    public final static String UID_SESSION_ATTR_NAME = "currentUsrUID";
+    public final static String FORWARD_URL_PARAM_NAME = "forwardURL";
 
     protected Logger LOG;
 
+    protected SecurityHandler securityHandler;
     protected BioRouter router;
 
     public BioServletBase() {
@@ -35,6 +44,26 @@ public class BioServletBase extends HttpServlet {
     public static void writeResponse(String brespJson, HttpServletResponse response) throws IOException {
         PrintWriter writer = response.getWriter();
         writer.append(brespJson);
+    }
+
+    protected void initSecurityHandler(ServletContext servletContext) {
+        if(securityHandler == null) {
+            try {
+                securityHandler = Utl.getService(servletContext, SecurityHandler.class);
+            } catch (IllegalStateException e) {
+                securityHandler = null;
+            }
+        }
+    }
+
+    protected void initRouter(ServletContext servletContext) {
+        if(router == null) {
+            try {
+                router = Utl.getService(servletContext, BioRouter.class);
+            } catch (IllegalStateException e) {
+                router = null;
+            }
+        }
     }
 
     public static void writeResponse(BioResponse bresp, HttpServletResponse response) throws IOException {
@@ -61,6 +90,14 @@ public class BioServletBase extends HttpServlet {
         final HttpServletRequest rqst = request;
         final HttpServletResponse rspns = response;
         final String method = rqst.getMethod();
+        final String login = rqst.getParameter(LOGIN_PARAM_NAME);
+        final String userUID = rqst.getParameter(UID_PARAM_NAME);
+        initSecurityHandler(this.getServletContext());
+        if(securityHandler == null)
+            throw new IllegalArgumentException("SecurityHandler not defined!");
+        final User usr = (!Strings.isNullOrEmpty(login) && login.equals(".")) ? securityHandler.getUser(userUID) : null;
+
+
         final String requestType = rqst.getParameter(REQUEST_TYPE_PARAM_NAME);
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
         if(isNullOrEmpty(requestType))
@@ -72,10 +109,14 @@ public class BioServletBase extends HttpServlet {
             jd.append(jsonDataAsQueryParam);
         else
             Httpc.readDataFromRequest(request, jd);
-        router.route(requestType, jd.toString(), new BioRouter.Callback() {
+
+        BioRequest bioRequest = Jsons.decode(jd.toString(), BioRoute.getType(requestType).getClazz());
+
+        router.route(bioRequest, new BioRouter.Callback() {
             @Override
-            public void run(String responseBody) throws Exception {
-                rspns.getWriter().append(responseBody);
+            public void run(BioRespBuilder.Builder brsp) throws Exception {
+                String responseJson = Jsons.encode(brsp.user(usr).build());
+                rspns.getWriter().append(responseJson);
             }
         });
     }

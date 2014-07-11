@@ -4,25 +4,16 @@ Ext.define('Bio.dialog.Login', {
 
     form: null,
 
-    getLastError: function(brsp) {
-        var exs = brsp["exceptions"];
-        if(exs && (exs instanceof Array) && (exs.length > 0))
-            return exs[0];
-        else
-            return exs;
-    },
-
     constructor: function(config) {
         var me = this;
 
-        var storedUserName = Bio.login.restoreLastSuccessUserName() || "";
+        var storedUserName = "root"; //Bio.login.restoreLastSuccessUserName() || "";
+        var storedUserPwd = "root";
 
         me.form = new Ext.form.Panel({
             url: 'dummy.php',
             frame: true,
-            //title: 'Simple Form',
             bodyStyle: 'padding:5px 5px 0',
-            //width: 250,
             autoWidth: true,
 
             layout: 'anchor',
@@ -46,7 +37,7 @@ Ext.define('Bio.dialog.Login', {
                     labelAlign: "right",
                     name: "FA_PASSWORD",
                     inputType: "password",
-                    value: ""
+                    value: storedUserPwd
                 }
             ],
             buttons:[
@@ -93,88 +84,25 @@ Ext.define('Bio.dialog.Login', {
     },
 
     transaction: null,
-    lastLoginResult: null,
+    lastLogin: null,
     doOK: function (sender) {
         var me = this;
 
         var userNameFld = me.findField("FA_USER_NAME");
         var userPasswordFld = me.findField("FA_PASSWORD");
 
-        //alert(vUserNameFld.name);
         var userName = (userNameFld) ? userNameFld.getValue() : null;
         var userPassword = (userPasswordFld) ? userPasswordFld.getValue() : null;
-        var login = userName+"/"+userPassword;
-
-
-        Bio.app.waitMaskShow("Проверка имени пользователя и пароля...");
-        var vURL = Bio.Tools.bldBioUrl("/login");
-        var cfg = {
-            url: vURL,
-            params: {login: login},
-            success: undefined,
-            failure: undefined,
-            callback: function(options, success, response){
-                var me = this;
-                me.transaction = null;
-                Bio.app.waitMaskHide();
-                var rspText = response.responseText;
-                try {
-                    me.lastLoginResult = Ext.decode(rspText);
-                }
-                catch (e) {
-                    me.lastLoginResult = null;
-                    Bio.dlg.showMsg("Ошибка на сервере", Bio.Tools.ObjToStr(response));
-                }
-                if (me.lastLoginResult != null) {
-                    var ex = me.getLastError(me.lastLoginResult);
-                    if (ex != null) {
-                        if (ex.class == "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
-                            Bio.dlg.showMsg("Ошибка входа в систему", "Не верный логин!", null, null, function () {
-                                //Bio.Login.showDialog(dlg.bio.Callback);
-                            });
-                        }
-                        else if (ex.type == 'EBioBadUser') {
-                            Bio.dlg.showMsg("Ошибка входа в систему", "Пользователь в системе не зарегистрирован.", null, null, function () {
-                                //Bio.Login.showDialog(dlg.bio.Callback);
-                            });
-                        }
-                        else if (ex.type == 'EBioUncnfrmdUser') {
-                            Bio.dlg.showMsg("Ошибка входа в систему", "Пользователь не активирован.", null, null, function () {
-                                //Bio.Login.showDialog(dlg.bio.Callback);
-                            });
-                        }
-                        else if (ex.type == "EBioBadPwd") {
-                            Bio.dlg.showMsg("Ошибка входа в систему", "Не верный пароль.", null, null, function () {
-                                //Bio.Login.showDialog(dlg.bio.Callback);
-                            });
-                        }
-                        else if (ex.type == "EBioException") {
-                            Bio.dlg.showMsg("Непредвиденная ошибка", ex.message, null, null, function () {
-                                //Bio.Login.showDialog(dlg.bio.Callback);
-                            });
-                        }
-                    } else {
-                        if (me.lastLoginResult.user) {
-                            me.closeDialog({
-                                modalResult: 1,
-                                user: me.lastLoginResult.user
-                            });
-                        }
-
-                    }
-                }
-            },
-            scope: me,
-            method: "POST"
-        };
-
-        me.transaction = Ext.Ajax.request(cfg);
+        me.closeDialog({
+            modalResult: 1,
+            login: userName+"/"+userPassword
+        });
     },
 
     doCancel: function () {
         this.closeDialog({
             modalResult: 0,
-            user: null
+            login: null
         });
     },
 

@@ -1,4 +1,4 @@
-//Ext.namespace("Bio");
+Ext.namespace("Bio");
 //Ext.define('Bio.Org', {
 //    config: {
 //
@@ -16,6 +16,11 @@
 
 Ext.define('Bio.User', {
     config: {
+
+        /**
+         * LOGIN пользователя в виде <user_name>/<password>
+         */
+        login: '',
 
         /**
          * UID пользователя
@@ -41,6 +46,11 @@ Ext.define('Bio.User', {
          * Организация
          */
         org: null
+    },
+
+    constructor: function(config) {
+        var me = this;
+        Ext.apply(me, config);
     }
 });
 

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioResponse;
@@ -27,12 +28,14 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public class SecurityFilter implements Filter {
     private final static Logger LOG = LoggerFactory.getLogger(SecurityFilter.class);
 
+    private String forwardURL = null;
     private String errorPage;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG.debug("init...");
         if (filterConfig != null) {
+            forwardURL = filterConfig.getInitParameter(BioServletBase.FORWARD_URL_PARAM_NAME);
             errorPage = filterConfig.getInitParameter("error_page");
             LOG.debug("errorPage - {}.", errorPage);
         }
@@ -50,12 +53,15 @@ public class SecurityFilter implements Filter {
         }
     }
 
-    private void checkUser(User user, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private void processUser(User user, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         final HttpSession session = request.getSession();
         if (user != null) {
-            session.setAttribute(User.SESSION_ATTR_NAME, user.getUid());
+            session.setAttribute(BioServletBase.UID_SESSION_ATTR_NAME, user.getUid());
             Map<String, String[]> extraParams = new TreeMap<>();
-            extraParams.put(User.LOGIN_PARAM_NAME, new String[] {user.getUid()});
+            extraParams.putAll(request.getParameterMap());
+            if(extraParams.containsKey(BioServletBase.LOGIN_PARAM_NAME))
+                extraParams.put(BioServletBase.LOGIN_PARAM_NAME, new String[] {"."});
+            extraParams.put(BioServletBase.UID_PARAM_NAME, new String[] {user.getUid()});
             HttpServletRequest wrappedRequest = new BioWrappedRequest(request, extraParams);
             chain.doFilter(wrappedRequest, response);
         } else
@@ -86,22 +92,22 @@ public class SecurityFilter implements Filter {
 //            }
 
 
-            String login = req.getParameter(User.LOGIN_PARAM_NAME);
+            String login = req.getParameter(BioServletBase.LOGIN_PARAM_NAME);
             initSecurityHandler(req.getServletContext());
             if(securityHandler != null) {
                 User user = securityHandler.getUser(login);
-                checkUser(user, req, resp, chn);
+                processUser(user, req, resp, chn);
             } else {
-                final String queryString = req.getQueryString();
-                final String destination = "login"+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
-                Httpc.forwardRequest(destination, req, new Httpc.Callback() {
+                final String queryString = Httpc.getQueryString(req);
+                final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
+                Httpc.requestJson(destination, new Httpc.Callback() {
                     @Override
                     public void process(InputStream inputStream) throws Exception {
                         String brespJson = Utl.readStream(inputStream);
                         BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
                         if(bresp.isSuccess()) {
                             User user = bresp.getUser();
-                            checkUser(user, req, resp, chn);
+                            processUser(user, req, resp, chn);
                         } else {
                             BioServletBase.writeResponse(BioRespBuilder.anError().addError(bresp.getException()), resp);
                             LOG.error("An error while checking User!", bresp.getException());

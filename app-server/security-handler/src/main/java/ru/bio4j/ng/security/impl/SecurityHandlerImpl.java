@@ -68,7 +68,8 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             if(onlineUser != null){
                 LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", uid, onlineUser.getLogin());
                 return onlineUser;
-            }
+            } else
+                throw new BioError.Login.BadLogin();
         }
 
         if(!login.equals("root/root"))
@@ -77,7 +78,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         BioModule module = moduleProvider.getModule("bio");
         BioCursor cursor = module.getCursor("get-user");
         SQLContext globalSQLContext = sqlContextProvider.globalContext();
-        return globalSQLContext.execBatch(new SQLActionScalar<User>() {
+        User newUsr = globalSQLContext.execBatch(new SQLActionScalar<User>() {
             @Override
             public User exec(SQLContext context, Connection conn) throws Exception {
             LOG.debug("User {} logging in...", login);
@@ -101,6 +102,13 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             return null;
             }
         });
+        storeUser(newUsr);
+        return newUsr;
+    }
+
+    @Override
+    public void logoff(String uid) throws Exception {
+        removeUser(uid);
     }
 
     @Validate

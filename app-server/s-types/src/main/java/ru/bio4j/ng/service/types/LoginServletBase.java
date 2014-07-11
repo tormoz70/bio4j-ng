@@ -37,7 +37,7 @@ public class LoginServletBase extends HttpServlet {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        String login = request.getParameter(User.LOGIN_PARAM_NAME);
+        String login = request.getParameter(BioServletBase.LOGIN_PARAM_NAME);
         brsp.user(securityHandler.getUser(login))
             .success(brsp.getUser() != null);
         return brsp;

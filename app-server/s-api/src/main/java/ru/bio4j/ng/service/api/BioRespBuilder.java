@@ -23,8 +23,9 @@ public class BioRespBuilder {
     }
 
     public static abstract class Builder <T extends Builder> {
+        protected boolean success;
+        protected User user;
         protected List<BioError> exceptions;
-        public abstract BioResponse build();
 
         public T addError(BioError e) {
             if(exceptions == null)
@@ -33,28 +34,26 @@ public class BioRespBuilder {
             return (T)this;
         }
 
+        public T success(boolean value) {
+            success = value;
+            return (T)this;
+        }
+
+        public T user(User value) {
+            user = value;
+            return (T)this;
+        }
 
         public List<BioError> getExceptions() {
             return exceptions;
         }
-
-    }
-
-    public static class Login extends Builder<Login> {
-        private boolean success;
-        private User user;
-
-        public Login success(boolean value) {
-            success = value;
-            return this;
+        public boolean isSuccess() {
+            return success;
+        }
+        public User getUser() {
+            return user;
         }
 
-        public Login user(User value) {
-            user = value;
-            return this;
-        }
-
-        @Override
         public BioResponse build() {
             BioResponse response = new BioResponse();
             response.setSuccess(success);
@@ -63,14 +62,12 @@ public class BioRespBuilder {
             return response;
         }
 
-        public boolean isSuccess() {
-            return success;
-        }
-
-        public User getUser() {
-            return user;
-        }
     }
+
+    public static class Login extends Builder<Login> {
+
+    }
+
     public static Login login() {
         return create(Login.class);
     }
@@ -79,9 +76,8 @@ public class BioRespBuilder {
 
         @Override
         public BioResponse build() {
-            BioResponse response = new BioResponse();
+            BioResponse response = super.build();
             response.setSuccess(false);
-            response.setExceptions(this.exceptions);
             return response;
         }
 
@@ -92,7 +88,6 @@ public class BioRespBuilder {
 
     public static class Data extends Builder<Data> {
 
-        private boolean success;
         private String bioCode;
         private List<Param> bioParams;
         private RmtStatePack rmtStatePack;
@@ -100,11 +95,6 @@ public class BioRespBuilder {
         private Sort sort;
         private Expression filter;
 
-
-        public Data success(boolean value) {
-            success = value;
-            return this;
-        }
 
         public Data bioCode(String value) {
             bioCode = value;
@@ -137,9 +127,7 @@ public class BioRespBuilder {
 
         @Override
         public BioResponse build() {
-            BioResponse response = new BioResponse();
-            response.setSuccess(success);
-            response.setExceptions(exceptions);
+            BioResponse response = super.build();
             response.setBioCode(bioCode);
             response.setBioParams(bioParams);
             response.setRmtStatePack(rmtStatePack);
@@ -147,10 +135,6 @@ public class BioRespBuilder {
             response.setSort(sort);
             response.setFilter(filter);
             return response;
-        }
-
-        public boolean isSuccess() {
-            return success;
         }
 
         public String getBioCode() {

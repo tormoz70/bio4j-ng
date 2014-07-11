@@ -8,6 +8,11 @@ import java.util.List;
  */
 public class BioRequest {
 
+    /**
+     * Тип запроса - используется для мапинга на router
+     */
+    private String requestType;
+
     /** UID пользователя
      * Это может быть либо реальный UID пользователя,
      * либо логин в формате <имя>/<пароль>
@@ -92,4 +97,13 @@ public class BioRequest {
     public void setUserUID(String userUID) {
         this.userUID = userUID;
     }
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
+
 }

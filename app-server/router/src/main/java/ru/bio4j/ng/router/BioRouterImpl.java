@@ -5,12 +5,13 @@ import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
 import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.types.BioRoute;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.HashMap;
@@ -29,8 +30,8 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
     private static void  processCallback(BioRespBuilder.Builder brsp, Callback callback) throws Exception {
         if(callback != null) {
-            String responseJson = Jsons.encode(brsp.build());
-            callback.run(responseJson);
+            //String responseJson = Jsons.encode(brsp.build());
+            callback.run(brsp);
         }
     }
 
@@ -41,36 +42,36 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         if(routeMap == null) {
             routeMap = new HashMap<>();
 
-            routeMap.put(BioRoute.UNKNOWN, new BioRouteHandler() {
-                    @Override
-                    public void handle(String requestType, String requestBody, Callback callback) throws Exception {
+            routeMap.put(BioRoute.UNKNOWN, new BioRouteHandler<BioRequest>() {
+                @Override
+                public void handle(BioRequest request, Callback callback) throws Exception {
                     processCallback(
                         BioRespBuilder.anError()
-                            .addError(new BioError.BadRequestType(requestType))
+                            .addError(new BioError.BadRequestType(request.getRequestType()))
                     , callback);
-                 }
-                });
+                }
+            });
 
-            routeMap.put(BioRoute.PING, new BioRouteHandler() {
+            routeMap.put(BioRoute.PING, new BioRouteHandler<BioRequest>() {
                 @Override
-                public void handle(String requestType, String requestBody, Callback callback) throws Exception {
+                public void handle(BioRequest request, Callback callback) throws Exception {
                     BioRespBuilder.Data responseBuilder = BioRespBuilder.data();
                     processCallback(responseBuilder, callback);
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_DATA_GET, new BioRouteHandler() {
-                    @Override
-                    public void handle(String requestType, String requestBody, Callback callback) throws Exception {
+            routeMap.put(BioRoute.CRUD_DATA_GET, new BioRouteHandler<BioRequestJStoreGet>() {
+                @Override
+                public void handle(BioRequestJStoreGet request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATA_GET);
-                    LOG.debug("Lets try to decode {} from json: \n{}", BioRequestJStoreGet.class.getName(), requestBody);
-                    BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
+//                        LOG.debug("Lets try to decode {} from json: \n{}", BioRequestJStoreGet.class.getName(), requestBody);
+//                        BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
                     LOG.debug("BioRequestJStoreGet object restored.");
 //                        request.setOrigJson(requestBody);
                     BioRespBuilder.Data responseBuilder = dataProvider.getData(request);
                     processCallback(responseBuilder, callback);
-                    }
-                });
+                }
+            });
         }
 
         this.redy = true;
@@ -94,9 +95,9 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     }
 
     @Override
-    public void route(String requestType, String requestBody, Callback callback) throws Exception {
-        BioRoute type = BioRoute.getType(requestType);
-        routeMap.get(type).handle(requestType, requestBody, callback);
+    public void route(BioRequest request, Callback callback) throws Exception {
+        BioRoute type = BioRoute.getType(request.getRequestType());
+        routeMap.get(type).handle(request, callback);
 
     }
 }

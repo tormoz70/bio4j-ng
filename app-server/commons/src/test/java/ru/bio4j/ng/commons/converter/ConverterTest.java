@@ -5,7 +5,9 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.math.BigDecimal;
+import java.sql.Array;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class ConverterTest {
@@ -180,5 +182,18 @@ public class ConverterTest {
         String instr = "OUT";
         Param.Direction dir = Converter.toType(instr, Param.Direction.class);
         Assert.assertTrue(dir == Param.Direction.OUT);
+    }
+
+    @Test(enabled=true)
+    public void array1() throws Exception {
+        String[] instr = {"OUT"};
+        String[] dir = Converter.toType(instr, String[].class);
+        Assert.assertTrue(Arrays.equals(instr, dir));
+    }
+    @Test(enabled=true)
+    public void array2() throws Exception {
+        String[] instr = {"OUT"};
+        int[] dir = Converter.toType(instr, int[].class);
+        Assert.assertTrue(Arrays.equals(dir, null));
     }
 }

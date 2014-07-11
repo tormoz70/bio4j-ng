@@ -1,4 +1,4 @@
-package ru.bio4j.ng.router;
+package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;

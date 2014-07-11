@@ -18,7 +18,7 @@ public class StringHandler extends TypeHandlerBase implements TypeHandler<String
         Class<?> valType = (value == null) ? null : value.getClass();
 
         if (Types.typeIsDate(valType))
-            return valType.toString();
+            return value.toString();
         else if (Types.typeIsNumber(valType))
             return value.toString();
         else if (valType == String.class)

@@ -25,12 +25,14 @@ Ext.define('Bio.login', {
     getUser: function(callback) {
         var usr = Bio.app.curUsr;
         if(usr)
-            return Ext.callback(callback.fn, callback.scope, [usr]);
+            Ext.callback(callback.fn, callback.scope, [usr]);
         else {
             Bio.login.showDialog({
                 fn: function(dr) {
-                    if(dr.modalResult === 1)
-                        Bio.app.curUsr = dr.user;
+                    if(dr.modalResult === 1) {
+                        usr = new Bio.User({login:dr.login});
+                        Ext.callback(callback.fn, callback.scope, [usr]);
+                    }
                 }
             });
         }

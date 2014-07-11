@@ -32,17 +32,6 @@ public class BioServlet extends BioServletBase {
         doPost(request, response);
     }
 
-    private void initRouter(ServletContext servletContext) {
-        if(router == null) {
-            try {
-                router = Utl.getService(servletContext, BioRouter.class);
-            } catch (IllegalStateException e) {
-                router = null;
-            }
-        }
-    }
-
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -61,7 +50,7 @@ public class BioServlet extends BioServletBase {
 
     private void doFwd(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final HttpServletResponse rsp = response;
-        final String queryString = request.getQueryString();
+        final String queryString = Httpc.getQueryString(request);
         final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
 
         String jsonDataAsQueryParam = request.getParameter(JSON_DATA_PARAM_NAME);

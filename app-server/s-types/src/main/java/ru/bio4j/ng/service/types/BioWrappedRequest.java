@@ -14,7 +14,6 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     public BioWrappedRequest(final HttpServletRequest request, final Map<String, String[]> newParams) {
         super(request);
         modParameters = new TreeMap<>();
-        modParameters.putAll(super.getParameterMap());
         modParameters.putAll(newParams);
     }
 
