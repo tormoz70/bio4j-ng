@@ -13,6 +13,7 @@ import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.BioServletBase;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
+import ru.bio4j.ng.service.types.LoginServletBase;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -59,8 +60,8 @@ public class SecurityFilter implements Filter {
             session.setAttribute(BioServletBase.UID_SESSION_ATTR_NAME, user.getUid());
             Map<String, String[]> extraParams = new TreeMap<>();
             extraParams.putAll(request.getParameterMap());
-            if(extraParams.containsKey(BioServletBase.LOGIN_PARAM_NAME))
-                extraParams.put(BioServletBase.LOGIN_PARAM_NAME, new String[] {"."});
+//            if(extraParams.containsKey(BioServletBase.LOGIN_PARAM_NAME))
+//                extraParams.put(BioServletBase.LOGIN_PARAM_NAME, new String[] {"."});
             extraParams.put(BioServletBase.UID_PARAM_NAME, new String[] {user.getUid()});
             HttpServletRequest wrappedRequest = new BioWrappedRequest(request, extraParams);
             chain.doFilter(wrappedRequest, response);
@@ -92,28 +93,35 @@ public class SecurityFilter implements Filter {
 //            }
 
 
-            String login = req.getParameter(BioServletBase.LOGIN_PARAM_NAME);
             initSecurityHandler(req.getServletContext());
             if(securityHandler != null) {
+                String login = LoginServletBase.buildLoginParam(req);
                 User user = securityHandler.getUser(login);
                 processUser(user, req, resp, chn);
             } else {
-                final String queryString = Httpc.getQueryString(req);
-                final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
-                Httpc.requestJson(destination, new Httpc.Callback() {
-                    @Override
-                    public void process(InputStream inputStream) throws Exception {
-                        String brespJson = Utl.readStream(inputStream);
-                        BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
-                        if(bresp.isSuccess()) {
-                            User user = bresp.getUser();
-                            processUser(user, req, resp, chn);
-                        } else {
-                            BioServletBase.writeResponse(BioRespBuilder.anError().addError(bresp.getException()), resp);
-                            LOG.error("An error while checking User!", bresp.getException());
+//                final String queryString = Httpc.getQueryString(req);
+                final String uid = req.getParameter(BioServletBase.UID_PARAM_NAME);
+//                final String login = req.getParameter(BioServletBase.LOGIN_PARAM_NAME);
+
+                final String destination = this.forwardURL+"?uid="+uid;
+                try {
+                    Httpc.requestJson(destination, new Httpc.Callback() {
+                        @Override
+                        public void process(InputStream inputStream) throws Exception {
+                            String brespJson = Utl.readStream(inputStream);
+                            BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
+                            if (bresp.isSuccess()) {
+                                User user = bresp.getUser();
+                                processUser(user, req, resp, chn);
+                            } else {
+                                BioServletBase.writeResponse(BioRespBuilder.anError().addError(bresp.getException()), resp);
+                                LOG.error("An error while checking User!", bresp.getException());
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (Exception e) {
+                    throw new BioError(String.format("Unexpected error while forwarding getUser-request to the BioServer! Message: %s", e.getMessage()), e);
+                }
 
             }
 

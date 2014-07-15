@@ -415,6 +415,14 @@ Bio.Tools = function(){
       if (vIFrm) {
         vIFrm.dom.setAttribute("src", pUrl);
       } 
+    },
+
+    wrapCallback: function(callback){
+        var cb = callback;
+        var cbType = typeof callback;
+        if(cb && cbType === "function")
+            cb = { fn: cb };
+        return cb;
     }
 
     //{"@class":"ru.bio4j.model.transport.BioRequest","bioCode":"emp.test","bioParams":{"query":{"value":"SAL%","type":"string","left":"SAL%","right":"string"}}}

@@ -10,6 +10,9 @@ public class BioError extends Exception {
     public BioError(String message) {
         super(message);
     }
+    public BioError(String message, Exception e) {
+        super(message, e);
+    }
 
     private BioError(Exception e) {
         super(e);
@@ -31,5 +34,6 @@ public class BioError extends Exception {
 
     public static class Login extends BioError {
         public static class BadLogin extends BioError.Login { }
+        public static class LoginExpired extends BioError.Login { }
     }
 }

@@ -2,6 +2,7 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -33,11 +34,20 @@ public class LoginServletBase extends HttpServlet {
 //    }
 
 
+    public static String buildLoginParam(HttpServletRequest request) {
+        return request.getParameter(BioServletBase.UID_PARAM_NAME);
+//        String login = request.getParameter(BioServletBase.LOGIN_PARAM_NAME);
+//        if(!Strings.isNullOrEmpty(uid))
+//            return uid;
+//        else
+//            return login;
+    }
+
     protected BioRespBuilder.Login doLogin(HttpServletRequest request) throws Exception {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        String login = request.getParameter(BioServletBase.LOGIN_PARAM_NAME);
+        String login = buildLoginParam(request);
         brsp.user(securityHandler.getUser(login))
             .success(brsp.getUser() != null);
         return brsp;

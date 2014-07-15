@@ -1,6 +1,6 @@
 Ext.namespace("Bio.request.store");
 Ext.define('Bio.request.store.GetData', {
-//    singleton:true,
+    singleton:true,
     config: {
 
         /**
@@ -51,6 +51,6 @@ Ext.define('Bio.request.store.GetData', {
     }
 });
 
-Ext.define('Bio.transport.request.store.PostData', {
+Ext.define('Bio.request.store.PostData', {
 
 });

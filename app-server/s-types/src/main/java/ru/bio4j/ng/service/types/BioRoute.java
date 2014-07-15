@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.BioRequestPing;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
@@ -10,7 +11,7 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
  */
 public enum BioRoute {
     UNKNOWN("unknown", null),
-    PING("ping", null),
+    PING("ping", BioRequestPing.class),
     CRUD_DATA_GET("crud.dt.gt", BioRequestJStoreGet.class);
 
     private String alias;
@@ -32,6 +33,8 @@ public enum BioRoute {
     }
 
     public Class<? extends BioRequest> getClazz() {
+        if(clazz == null)
+            throw new IllegalArgumentException(String.format("Property Clazz is not defined for value %s!", this.name()));
         return clazz;
     }
 }

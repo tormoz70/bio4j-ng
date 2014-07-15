@@ -49,7 +49,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 //                        dummysum += c.getValue("DM", Double.class);
                     }
                 }
-                return result;
+                return result.success(true);
             }
         }, cursor);
         return response;

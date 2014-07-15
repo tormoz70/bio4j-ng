@@ -95,11 +95,13 @@ Ext.override(Ext.data.Connection, {
         return Bio.login.getUser({
             fn: function(usr) {
                 var o = Ext.apply({}, options);
-                var p = {};
-                if(usr.uid)
-                    p.uid = usr.uid;
-                else if (usr.login)
-                    p.login = usr.login;
+                var p = {
+                    uid : usr.login||usr.uid
+                };
+//                if(usr.uid)
+//                    p.uid = usr.uid;
+//                if(usr.login)
+//                    p.login = usr.login;
                 Ext.apply(o.params, p);
                 return me.request0(o);
             },
@@ -144,6 +146,10 @@ Ext.override(Ext.data.Connection, {
         return response;
     },
 
+    reRequest : function(options) {
+
+    },
+
     onComplete : function(request, xdrResult) {
         var me = this,
             options = request.options,
@@ -171,15 +177,9 @@ Ext.override(Ext.data.Connection, {
                 response = me.createResponse(request);
         }
 
+        success = success && Bio.login.processUser(response, function(dr) { me.request(options); });
 
-        if (success) {
-            var bioResponse = Ext.decode(response.responseText);
-            if(bioResponse.exceptions && bioResponse.exceptions[0].class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
-                Bio.app.curUsr = undefined;
-                me.request(options);
-                return;
-            }
-
+        if (success === true) {
             me.fireEvent('requestcomplete', me, response, options);
             Ext.callback(options.success, options.scope, [response, options]);
         } else {

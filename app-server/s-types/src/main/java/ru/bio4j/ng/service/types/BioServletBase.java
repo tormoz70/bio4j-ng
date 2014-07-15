@@ -27,7 +27,7 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class BioServletBase extends HttpServlet {
 
-    public final static String LOGIN_PARAM_NAME = "login";
+//    public final static String LOGIN_PARAM_NAME = "login";
     public final static String UID_PARAM_NAME = "uid";
     public final static String UID_SESSION_ATTR_NAME = "currentUsrUID";
     public final static String FORWARD_URL_PARAM_NAME = "forwardURL";
@@ -90,13 +90,13 @@ public class BioServletBase extends HttpServlet {
         final HttpServletRequest rqst = request;
         final HttpServletResponse rspns = response;
         final String method = rqst.getMethod();
-        final String login = rqst.getParameter(LOGIN_PARAM_NAME);
+//        final String login = rqst.getParameter(LOGIN_PARAM_NAME);
         final String userUID = rqst.getParameter(UID_PARAM_NAME);
         initSecurityHandler(this.getServletContext());
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        final User usr = (!Strings.isNullOrEmpty(login) && login.equals(".")) ? securityHandler.getUser(userUID) : null;
-
+//        final User usr = (!Strings.isNullOrEmpty(login) && login.equals(".")) ? securityHandler.getUser(userUID) : null;
+        final User usr = securityHandler.getUser(userUID);
 
         final String requestType = rqst.getParameter(REQUEST_TYPE_PARAM_NAME);
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
@@ -109,8 +109,11 @@ public class BioServletBase extends HttpServlet {
             jd.append(jsonDataAsQueryParam);
         else
             Httpc.readDataFromRequest(request, jd);
-
+        if(jd.length() == 0)
+            jd.append("{}");
         BioRequest bioRequest = Jsons.decode(jd.toString(), BioRoute.getType(requestType).getClazz());
+        bioRequest.setRequestType(requestType);
+        bioRequest.setUser(usr);
 
         router.route(bioRequest, new BioRouter.Callback() {
             @Override

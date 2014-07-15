@@ -12,6 +12,7 @@ Ext.define('Bio.dialog.Message', {
         var me = this;
 
         var config = Ext.apply({
+            callback: cfg.callback,
             title: cfg.title,
             width: (cfg.width) ? cfg.width : 500,
             height: (cfg.height) ? cfg.height : 300,

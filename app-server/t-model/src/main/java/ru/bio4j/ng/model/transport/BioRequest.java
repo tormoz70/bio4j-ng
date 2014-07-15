@@ -17,7 +17,7 @@ public class BioRequest {
      * Это может быть либо реальный UID пользователя,
      * либо логин в формате <имя>/<пароль>
      */
-    private String userUID;
+    private User user;
 
     /** Параметры запроса.
      * Данные параметры передаются на сервер в виде параметров Http-запроса
@@ -90,12 +90,12 @@ public class BioRequest {
         this.bioParams = bioParams;
     }
 
-    public String getUserUID() {
-        return userUID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserUID(String userUID) {
-        this.userUID = userUID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getRequestType() {

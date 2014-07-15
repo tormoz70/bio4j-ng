@@ -4,8 +4,8 @@ public class User {
     private String uid;
     private String login;
     private String fio;
-    private String[] roles;
-    private String[] grants;
+    private String roles;
+    private String grants;
 
     public String getUid() {
         return uid;
@@ -19,11 +19,11 @@ public class User {
         return fio;
     }
 
-    public String[] getRoles() {
+    public String getRoles() {
         return roles;
     }
 
-    public String[] getGrants() {
+    public String getGrants() {
         return grants;
     }
 
@@ -39,11 +39,11 @@ public class User {
         this.fio = fio;
     }
 
-    public void setRoles(String[] roles) {
+    public void setRoles(String roles) {
         this.roles = roles;
     }
 
-    public void setGrants(String[] grants) {
+    public void setGrants(String grants) {
         this.grants = grants;
     }
 }

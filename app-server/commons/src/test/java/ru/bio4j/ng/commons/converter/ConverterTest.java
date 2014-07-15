@@ -192,8 +192,12 @@ public class ConverterTest {
     }
     @Test(enabled=true)
     public void array2() throws Exception {
-        String[] instr = {"OUT"};
-        int[] dir = Converter.toType(instr, int[].class);
-        Assert.assertTrue(Arrays.equals(dir, null));
+        try {
+            String[] instr = {"OUT"};
+            int[] dir = Converter.toType(instr, int[].class);
+            Assert.fail("This conversion must fail!");
+        } catch (ConvertValueException e) {
+            Assert.assertTrue(true);
+        }
     }
 }

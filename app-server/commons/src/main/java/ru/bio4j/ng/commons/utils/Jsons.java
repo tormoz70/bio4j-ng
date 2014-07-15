@@ -65,6 +65,8 @@ public class Jsons {
     }
 
 	public static <T> T decode(String json, Class<T> targetClass) throws Exception {
+        if(targetClass == null)
+            throw new IllegalAccessException("Parameter targetClass cannot be null!");
         T newResult = null;
         newResult = targetClass.newInstance();
 		return decode(json, newResult);

@@ -69,7 +69,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                 LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", uid, onlineUser.getLogin());
                 return onlineUser;
             } else
-                throw new BioError.Login.BadLogin();
+                throw new BioError.Login.LoginExpired();
         }
 
         if(!login.equals("root/root"))
@@ -92,8 +92,9 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                     usr.setUid("test-user-uid");
                     usr.setLogin("root");
                     usr.setFio("Test User FIO");
-                    usr.setRoles(new String[]{"*"});
-                    usr.setGrants(new String[] {"*"});
+                    usr.setRoles("*");
+                    usr.setGrants("*"
+                    );
                     LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
                     return usr;
                 }
