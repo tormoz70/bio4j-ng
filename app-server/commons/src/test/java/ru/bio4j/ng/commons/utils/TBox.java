@@ -1,5 +1,7 @@
 package ru.bio4j.ng.commons.utils;
 
+import ru.bio4j.ng.model.transport.BioError;
+
 import java.util.Date;
 
 public class TBox {
@@ -8,6 +10,7 @@ public class TBox {
 	private Double volume;
 	private TPacket[] packets;
 	private Exception ex;
+    private BioError err;
 
 	public TBox() {
 	}
@@ -56,5 +59,13 @@ public class TBox {
 
 	public void setEx(Exception ex) {
 	    this.ex = ex;
+    }
+
+    public BioError getErr() {
+        return err;
+    }
+
+    public void setErr(BioError err) {
+        this.err = err;
     }
 }

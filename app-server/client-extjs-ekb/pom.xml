@@ -48,14 +48,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <webResources>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>src/main/webapp</directory>
+                            <includes>
+                                <include>**/web.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                     <archive>
-                        <!--&lt;!&ndash; add bundle plugin generated manifest to the war &ndash;&gt;-->
+                        <!-- add bundle plugin generated manifest to the war -->
                         <manifestFile>
                             ${project.build.outputDirectory}/META-INF/MANIFEST.MF
                         </manifestFile>
-                        <!--&lt;!&ndash; For some reason, adding Bundle-ClassPath in maven-bundle-plugin-->
+                        <!-- For some reason, adding Bundle-ClassPath in maven-bundle-plugin-->
                         <!--confuses that plugin and it generates wrong Import-Package, etc. So, we generate-->
-                        <!--it here.&ndash;&gt;-->
+                        <!--it here.-->-->
                         <manifestEntries>
                             <Bundle-ClassPath>WEB-INF/classes/</Bundle-ClassPath>
                         </manifestEntries>

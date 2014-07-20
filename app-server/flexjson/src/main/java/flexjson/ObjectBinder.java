@@ -62,11 +62,11 @@ public class ObjectBinder {
         return currentPath;
     }
 
-    public Object bind( Object input ) {
+    public Object bind( Object input ) throws Exception {
         return this.bind( input, null );
     }
 
-    public Object bind( Object source, Object target ) {
+    public Object bind( Object source, Object target ) throws Exception {
         if( target instanceof Map ) {
             bindIntoMap( (Map)source, (Map<Object,Object>)target, null, null );
         } else if( target instanceof Collection ) {
@@ -77,7 +77,7 @@ public class ObjectBinder {
         return target;
     }
 
-    public Object bind( Object input, Type targetType ) {
+    public Object bind( Object input, Type targetType ) throws Exception {
         jsonStack.add( input );
         try {
             if( input == null ) return null;
@@ -90,7 +90,7 @@ public class ObjectBinder {
         }
     }
 
-    public <T extends Collection<Object>> T bindIntoCollection(Collection value, T target, Type targetType) {
+    public <T extends Collection<Object>> T bindIntoCollection(Collection value, T target, Type targetType) throws Exception {
         Type valueType = null;
         if( targetType instanceof ParameterizedType) {
             valueType = ((ParameterizedType)targetType).getActualTypeArguments()[0];
@@ -107,7 +107,7 @@ public class ObjectBinder {
         return target;
     }
 
-    public Object bindIntoMap(Map input, Map<Object, Object> result, Type keyType, Type valueType) {
+    public Object bindIntoMap(Map input, Map<Object, Object> result, Type keyType, Type valueType) throws Exception {
         jsonStack.add( input );
         objectStack.add( result );
         for( Object inputKey : input.keySet() ) {
@@ -128,7 +128,7 @@ public class ObjectBinder {
         return (value instanceof HashMap && ((HashMap) value).size() == 0);
     }
 
-    public Object bindIntoObject(Map jsonOwner, Object target, Type targetType) {
+    public Object bindIntoObject(Map jsonOwner, Object target, Type targetType) throws Exception {
         try {
             objectStack.add( target );
             BeanAnalyzer analyzer = BeanAnalyzer.analyze( target.getClass() );

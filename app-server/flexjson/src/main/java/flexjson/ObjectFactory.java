@@ -22,5 +22,5 @@ public interface ObjectFactory {
      *
      * @return the fully bound object.  At the end of this method the object should be fully constructed.
      */
-    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass);
+    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception;
 }

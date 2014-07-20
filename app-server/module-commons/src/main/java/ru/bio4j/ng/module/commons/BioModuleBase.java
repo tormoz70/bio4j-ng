@@ -1,6 +1,8 @@
 package ru.bio4j.ng.module.commons;
 
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -17,7 +19,15 @@ import ru.bio4j.ng.service.api.Configurator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BioModuleBase implements BioModule {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
@@ -32,7 +42,7 @@ public abstract class BioModuleBase implements BioModule {
 
     private static BioCursor loadCursor(BundleContext context, String bioCode) throws Exception {
         BioCursor cursor = null;
-        String path = "/" + bioCode.replace(".", "/");
+        String path = Utl.extractBioPath(bioCode);
         URL url = context.getBundle().getResource(path + ".xml");
         if(url != null) {
             LOG.debug("Loading cursor spec from \"{}\"", path + ".xml");
@@ -90,4 +100,26 @@ public abstract class BioModuleBase implements BioModule {
         }
         return sqlContext;
     }
+
+    protected abstract EventAdmin getEventAdmin();
+
+    protected abstract String getSelfModuleKey();
+
+    protected void fireEventModuleUpdated() throws Exception {
+        // Откладываем отправку события чтобы успел инициализироваться логгер
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.schedule(new Runnable() {
+            @Override
+            public void run() {
+                String selfModuleKey = getSelfModuleKey();
+                LOG.debug("Sending event [bio-module-updated] for module \"{}\"...", selfModuleKey);
+                Map<String, Object> props = new HashMap<>();
+                props.put("bioModuleKey", selfModuleKey);
+                getEventAdmin().postEvent(new Event("bio-module-updated", props));
+                LOG.debug("Event sent.");
+            }
+        }, 1, TimeUnit.SECONDS);
+
+    }
+
 }

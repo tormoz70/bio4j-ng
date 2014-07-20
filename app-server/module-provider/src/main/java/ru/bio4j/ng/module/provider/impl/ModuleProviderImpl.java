@@ -1,7 +1,9 @@
 package ru.bio4j.ng.module.provider.impl;
 
 import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.module.commons.BioModuleHelper;
@@ -45,6 +47,19 @@ public class ModuleProviderImpl extends BioServiceBase implements ModuleProvider
         LOG.debug("Stoping...");
         this.redy = false;
         LOG.debug("Stoped.");
+    }
+
+    @Subscriber(
+            name="module.provider.subscriber",
+            topics="bio-module-updated")
+    public void receive(Event e) throws Exception {
+        String updatedModuleKey = (String)e.getProperty("bioModuleKey");
+        LOG.debug("Module \"{}\" updated event recived!!!", updatedModuleKey);
+        if(modules.containsKey(updatedModuleKey)) {
+            modules.remove(updatedModuleKey);
+            LOG.debug("Module \"{}\" removed from cache!!!", updatedModuleKey);
+        }
+
     }
 
 }

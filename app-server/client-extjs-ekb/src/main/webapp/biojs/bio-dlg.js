@@ -20,8 +20,8 @@ Ext.define('Bio.dlg', {
             errObj = Bio.Tools.tryDecodeJSON(err);
         else if (err)
             errObj = err;
-        if (errObj && (typeof errObj == "object") && errObj.message)
-            msg = errObj.message;
+        if (errObj && (typeof errObj == "object"))
+            msg = errObj.message||"<нет сообщения в объекте исключения!>";
         this.showMsg(
             title,
             msg,

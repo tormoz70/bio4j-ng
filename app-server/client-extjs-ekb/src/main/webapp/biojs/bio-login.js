@@ -69,32 +69,36 @@ Ext.define('Bio.login', {
 
     processUser: function(response, callback) {
         var me = this;
-        var bioResponse = Ext.decode(response.responseText);
-        if (bioResponse) {
-            if (bioResponse.exceptions instanceof Array && bioResponse.exceptions.length > 0) {
-                if (bioResponse.exceptions[0].class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
-                    Bio.app.curUsr = undefined;
-                    me.removeLastSuccessUserName();
-                    Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
-                    return false;
-                }
-                if (bioResponse.exceptions[0].class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
-                    Bio.app.curUsr = undefined;
-                    me.removeLastSuccessUserName();
-                    if(callback) {
-                        var cb = Bio.Tools.wrapCallback(callback);
-                        Ext.callback(cb.fn, cb.scope, [{modalResult: 1}]);
+        if(response.responseText) {
+            var bioResponse = Ext.decode(response.responseText);
+            if (bioResponse) {
+                if (bioResponse.exceptions instanceof Array && bioResponse.exceptions.length > 0) {
+                    if (bioResponse.exceptions[0].class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
+                        Bio.app.curUsr = undefined;
+                        me.removeLastSuccessUserName();
+                        Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
+                        return false;
                     }
+                    if (bioResponse.exceptions[0].class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
+                        Bio.app.curUsr = undefined;
+                        me.removeLastSuccessUserName();
+                        if (callback) {
+                            var cb = Bio.Tools.wrapCallback(callback);
+                            Ext.callback(cb.fn, cb.scope, [
+                                {modalResult: 1}
+                            ]);
+                        }
+                        return false;
+                    }
+                    Bio.dlg.showErr("Ошибка", bioResponse.exceptions[0], 400, 300, null);
                     return false;
                 }
-                Bio.dlg.showErr("Ошибка", bioResponse.exceptions[0], 400, 300, null);
-                return false;
+                if (bioResponse.user)
+                    me.storeLastSuccessUser(bioResponse.user);
+                return true;
             }
-            if(bioResponse.user)
-                me.storeLastSuccessUser(bioResponse.user);
-            return true;
         }
-        Bio.dlg.showErr("Ошибка", "Unknown response recived. responseText: "+response.responseText, 400, 300, null);
+        Bio.dlg.showErr("Ошибка", "Unknown response recived. responseText: "+(response.responseText||"<null>"), 400, 300, null);
         return false;
     }
 

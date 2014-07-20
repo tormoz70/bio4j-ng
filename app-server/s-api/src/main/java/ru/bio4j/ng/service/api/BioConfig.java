@@ -4,6 +4,9 @@ import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Utl;
 
 public class BioConfig {
+    @Prop(name = "bio.debug")
+    private boolean bioDebug = false;
+
     @Prop(name = "ehcache.persistent.path")
     private String cachePersistentPath = null;
 
@@ -128,4 +131,7 @@ public class BioConfig {
         this.driverName = driverName;
     }
 
+    public boolean isBioDebug() {
+        return bioDebug;
+    }
 }

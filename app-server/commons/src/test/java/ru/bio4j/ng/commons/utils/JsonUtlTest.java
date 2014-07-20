@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
 import java.text.ParseException;
@@ -27,15 +28,16 @@ public class JsonUtlTest {
 		this.testBox.setName("Test-Box");
 		this.testBox.setCreated(Types.parse("2012.12.20-15:11:24", "yyyy.MM.dd-HH:mm:ss"));
 		this.testBox.setVolume(123.05);
-		this.testBox.setPackets(new TPacket[] { new TPacket() });
+		this.testBox.setPackets(new TPacket[]{new TPacket()});
 		this.testBox.getPackets()[0].setName("packet-0");
 		this.testBox.getPackets()[0].setVolume(100.10);
-		this.testBox.getPackets()[0].setApples(new TApple[] { new TApple(), new TApple() });
+		this.testBox.getPackets()[0].setApples(new TApple[]{new TApple(), new TApple()});
 		this.testBox.getPackets()[0].getApples()[0].setName("apple-0-0");
 		this.testBox.getPackets()[0].getApples()[0].setWheight(10.100);
 		this.testBox.getPackets()[0].getApples()[1].setName("apple-0-1");
 		this.testBox.getPackets()[0].getApples()[1].setWheight(10.200);
 		this.testBox.setEx(new Exception("FTW TestException"));
+        this.testBox.setErr(new BioError("BIO TestError"));
 	}
 
 	@Test(enabled = true)
@@ -43,7 +45,7 @@ public class JsonUtlTest {
         TBox testBox = new TBox();
         testBox.setName("Test-Box");
 		String expected =
-		 "{\"created\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"volume\":null}";
+		 "{\"created\":null,\"err\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"volume\":null}";
 		String testJson = Jsons.encode(testBox);
 		System.out.println(testJson);
 		Assert.assertEquals(expected, testJson);
@@ -63,6 +65,8 @@ public class JsonUtlTest {
 		Assert.assertEquals(this.testBox.getPackets()[0].getApples()[0].getWheight(), restored.getPackets()[0].getApples()[0].getWheight());
 		Assert.assertEquals(this.testBox.getPackets()[0].getApples()[1].getName(), restored.getPackets()[0].getApples()[1].getName());
 		Assert.assertEquals(this.testBox.getPackets()[0].getApples()[1].getWheight(), restored.getPackets()[0].getApples()[1].getWheight());
+        Assert.assertEquals(restored.getEx().getMessage(), this.testBox.getEx().getMessage());
+        Assert.assertEquals(restored.getErr().getMessage(), this.testBox.getErr().getMessage());
 	}
 
     @Test(enabled = true)

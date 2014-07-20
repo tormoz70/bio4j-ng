@@ -153,7 +153,7 @@ public class JSONDeserializer<T> {
      * @param input a json formatted string.
      * @return an Java instance deserialized from the json input.
      */
-    public T deserialize( String input ) {
+    public T deserialize( String input ) throws Exception {
         ObjectBinder binder = createObjectBinder();
         return (T)binder.bind( new JSONTokener( input ).nextValue() );
     }
@@ -165,7 +165,7 @@ public class JSONDeserializer<T> {
      * @param input the stream where the json input is coming from.
      * @return an Java instance deserialized from the java.io.Reader's input.
      */
-    public T deserialize( Reader input ) {
+    public T deserialize( Reader input ) throws Exception {
         ObjectBinder binder = createObjectBinder();
         return (T)binder.bind( new JSONTokener( input ).nextValue() );
     }
@@ -179,7 +179,7 @@ public class JSONDeserializer<T> {
      * @param root a Class used to create the initial object.
      * @return the object created from the given json input.
      */
-    public T deserialize( String input, Class root ) {
+    public T deserialize( String input, Class root ) throws Exception {
         ObjectBinder binder = createObjectBinder();
         return (T)binder.bind( new JSONTokener( input ).nextValue(), root );
     }
@@ -192,7 +192,7 @@ public class JSONDeserializer<T> {
      * @param root a Class used to create the initial object.
      * @return an Java instance deserialized from the java.io.Reader's input.
      */
-    public T deserialize( Reader input, Class root ) {
+    public T deserialize( Reader input, Class root ) throws Exception {
         ObjectBinder binder = createObjectBinder();
         return (T)binder.bind( new JSONTokener( input ).nextValue(), root );
     }
@@ -205,7 +205,7 @@ public class JSONDeserializer<T> {
      * @param factory an ObjectFactory used to create the initial object.
      * @return the object created from the given json input.
      */
-    public T deserialize( String input, ObjectFactory factory ) {
+    public T deserialize( String input, ObjectFactory factory ) throws Exception {
         use( (String)null, factory );
         ObjectBinder binder = createObjectBinder();
         return (T)binder.bind( new JSONTokener( input ).nextValue() );
@@ -219,7 +219,7 @@ public class JSONDeserializer<T> {
      * @param factory an ObjectFactory used to create the initial object.
      * @return an Java instance deserialized from the java.io.Reader's input.
      */
-    public T deserialize( Reader input, ObjectFactory factory ) {
+    public T deserialize( Reader input, ObjectFactory factory ) throws Exception {
         use( (String)null, factory );
         ObjectBinder binder = createObjectBinder();
         return (T)binder.bind( new JSONTokener( input ).nextValue() );
@@ -235,7 +235,7 @@ public class JSONDeserializer<T> {
      * @param target an instance to set values into from the json string.
      * @return will return a reference to target.
      */
-    public T deserializeInto( String input, T target ) {
+    public T deserializeInto( String input, T target ) throws Exception {
         return deserialize( input, new ExistingObjectFactory(target) );
     }
 
@@ -247,7 +247,7 @@ public class JSONDeserializer<T> {
      * @param target an instance to set values into from the json string.
      * @return will return a reference to target.
      */
-    public T deserializeInto( Reader input, T target ) {
+    public T deserializeInto( Reader input, T target ) throws Exception {
         return deserialize( input, new ExistingObjectFactory(target) );
     }
 

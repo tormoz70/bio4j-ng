@@ -10,7 +10,9 @@ import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.DateTransformer;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.model.transport.BioError;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,19 +48,37 @@ public class Jsons {
         JSONDeserializer<T> deserializer = new JSONDeserializer<T>()
                 .use(Date.class, new ObjectFactory() {
                     @Override
-                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
+                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
                         return Types.parse((String) value, DATE_TIME_FORMAT);
                     }
                 })
                 .use(StackTraceElement.class, new ObjectFactory() {
                     @Override
-                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
-                        HashMap<String, ?> vals = (HashMap<String,?>)value;
-                        String className = (String)vals.get("className");
-                        String methodName = (String)vals.get("methodName");
-                        String fileName = (String)vals.get("fileName");
-                        int lineNumber = (Integer)vals.get("lineNumber");
+                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+                        HashMap<String, ?> vals = (HashMap<String, ?>) value;
+                        String className = (String) vals.get("className");
+                        String methodName = (String) vals.get("methodName");
+                        String fileName = (String) vals.get("fileName");
+                        int lineNumber = (Integer) vals.get("lineNumber");
                         return new StackTraceElement(className, methodName, fileName, lineNumber);
+                    }
+                })
+                .use(Exception.class, new ObjectFactory() {
+                    @Override
+                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+                        HashMap<String, ?> vals = (HashMap<String, ?>) value;
+                        String message = (String) vals.get("message");
+                        return new Exception(message);
+                    }
+                })
+                .use(BioError.class, new ObjectFactory() {
+                    @Override
+                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+                        HashMap<String, ?> vals = (HashMap<String, ?>) value;
+                        String message = (String) vals.get("message");
+                        Constructor<?> ctor = targetClass.getConstructor(String.class);
+                        BioError object = (BioError)ctor.newInstance(new Object[]{message});
+                        return object;
                     }
                 });
         return deserializer.deserializeInto(json, target);

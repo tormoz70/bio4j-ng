@@ -146,10 +146,6 @@ Ext.override(Ext.data.Connection, {
         return response;
     },
 
-    reRequest : function(options) {
-
-    },
-
     onComplete : function(request, xdrResult) {
         var me = this,
             options = request.options,

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.lang.reflect.Type;
 
 public class ListObjectFactory implements ObjectFactory {
-    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
+    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
         if( value instanceof Collection) {
             return context.bindIntoCollection((Collection)value, new ArrayList(), targetType);
         } else {

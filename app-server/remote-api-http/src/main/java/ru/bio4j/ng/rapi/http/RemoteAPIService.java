@@ -1,11 +1,11 @@
 package ru.bio4j.ng.rapi.http;
 
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.BioRouter;
+import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.DataProvider;
 import ru.bio4j.ng.service.api.SecurityHandler;
 
@@ -27,21 +27,23 @@ public class RemoteAPIService {
     private BioRouter router;
     @Requires
     private SecurityHandler securityHandler;
+    @Requires
+    private ConfigProvider configProvider;
 
     @Validate
     public void doStart() throws Exception {
         if (httpService != null) {
             LOG.debug("Registering \"{}\"-servlet...", HELLO_SERVLET_PATH);
             httpService.registerServlet(HELLO_SERVLET_PATH, new HelloWorld(this), null, null);
-            LOG.info("Servlet \"{}\" registered. With this.", HELLO_SERVLET_PATH);
+            LOG.info("Servlet \"{}\" registered.", HELLO_SERVLET_PATH);
 
             LOG.debug("Registering \"{}\"-servlet...", BIO_SERVLET_PATH);
-            httpService.registerServlet(BIO_SERVLET_PATH, new BioServlet(router), null, null);
-            LOG.info("Servlet \"{}\" registered. With router:{}.", BIO_SERVLET_PATH, router);
+            httpService.registerServlet(BIO_SERVLET_PATH, new ServletApi(this), null, null);
+            LOG.info("Servlet \"{}\" registered.", BIO_SERVLET_PATH);
 
             LOG.debug("Registering \"{}\"-servlet...", BIO_LOGIN_SERVLET_PATH);
-            httpService.registerServlet(BIO_LOGIN_SERVLET_PATH, new BioLogin(securityHandler), null, null);
-            LOG.info("Servlet \"{}\" registered. With securityHandler:{}.", BIO_LOGIN_SERVLET_PATH, securityHandler);
+            httpService.registerServlet(BIO_LOGIN_SERVLET_PATH, new ServletLogin(this), null, null);
+            LOG.info("Servlet \"{}\" registered.", BIO_LOGIN_SERVLET_PATH);
         }
     }
 

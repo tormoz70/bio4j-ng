@@ -6,45 +6,18 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <modules>
-        <!-- Common services -->
-        <module>dependency-security-filter</module>
-        <module>flexjson</module>
-        <module>t-model</module>
-        <module>commons</module>
-        <module>s-types</module>
-        <module>s-api</module>
-        <module>db-api</module>
-        <module>doa</module>
-        <module>sql-context</module>
-        <module>crud-handler</module>
-        <module>security-handler</module>
-        <module>remote-api-http</module>
-        <!--<module>e-hcache</module>-->
-        <!--<module>content-resolver</module>-->
-        <module>config</module>
-        <module>router</module>
-        <!--<module>remote-api-rmi</module>-->
-        <module>remote-api</module>
-        <!--<module>test-jetty-wab-sample</module>-->
-        <module>client-extjs-ekb</module>
-        <!--bio-modules-->
-        <module>module-commons</module>
-        <module>module-provider</module>
-        <module>module-x-bio</module>
-
-        <module>module-x-ekb</module>
-        <!-- Special services -->
-        <!-- Distribution -->
-        <module>as-distribution</module>
-
-        <!--<module>test-rmi-client</module>-->
-    </modules>
-
     <properties>
         <!-- Main settings -->
         <project.Organization.Name>Bio4j Co</project.Organization.Name>
         <project.Description>Bio4j platform</project.Description>
+
+        <distr.base>target</distr.base>
+        <distr.depends>${distr.base}/dependencies</distr.depends>
+        <distr.bundles>${distr.depends}/bundle</distr.bundles>
+        <distr.install>${distr.depends}/install</distr.install>
+        <distr.modules>${distr.depends}/modules</distr.modules>
+        <distr.webapps>${distr.depends}/webapps</distr.webapps>
+        <distr.deploy>../as-distribution</distr.deploy>
 
         <testng.version>6.7</testng.version>
 
@@ -338,4 +311,61 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>distr-as</id>
+            <modules>
+                <!-- Common services -->
+                <module>dependency-security-filter</module>
+                <module>flexjson</module>
+                <module>t-model</module>
+                <module>commons</module>
+                <module>s-types</module>
+                <module>s-api</module>
+                <module>db-api</module>
+                <module>doa</module>
+                <module>sql-context</module>
+                <module>crud-handler</module>
+                <module>security-handler</module>
+                <module>remote-api-http</module>
+                <!--<module>e-hcache</module>-->
+                <!--<module>content-resolver</module>-->
+                <module>config</module>
+                <module>router</module>
+                <!--<module>remote-api-rmi</module>-->
+                <module>remote-api</module>
+                <!--<module>test-jetty-wab-sample</module>-->
+                <!--bio-modules-->
+                <module>module-commons</module>
+                <module>module-provider</module>
+                <module>module-x-bio</module>
+
+                <!-- Special services -->
+                <!-- Distribution -->
+                <!--<module>as-distribution</module>-->
+                <module>as-distribution-as</module>
+                <!--<module>test-rmi-client</module>-->
+            </modules>
+        </profile>
+        <profile>
+            <id>distr-cli</id>
+            <modules>
+                <module>client-extjs-ekb</module>
+                <module>as-distribution-cli</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>distr-ekb</id>
+            <modules>
+                <module>module-x-ekb</module>
+                <module>as-distribution-ekb</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <bioDebug>true</bioDebug>
+            </properties>
+        </profile>
+    </profiles>
 </project>

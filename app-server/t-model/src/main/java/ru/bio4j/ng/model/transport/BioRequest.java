@@ -31,11 +31,6 @@ public class BioRequest {
     private String login;
 
     /**
-     * Код запрашиваемого bio-модуля
-     */
-    private String bioModuleKey;
-
-    /**
      * Код запрашиваемого инф. объекта. Фактически - это путь к файлу описания метаданных запроса
      */
     private String bioCode;
@@ -64,14 +59,6 @@ public class BioRequest {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getBioModuleKey() {
-        return bioModuleKey;
-    }
-
-    public void setBioModuleKey(String bioModuleKey) {
-        this.bioModuleKey = bioModuleKey;
     }
 
     public String getBioCode() {

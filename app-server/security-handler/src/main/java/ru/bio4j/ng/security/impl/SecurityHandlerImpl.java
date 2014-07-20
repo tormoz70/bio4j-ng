@@ -76,7 +76,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             throw new BioError.Login.BadLogin();
 
         BioModule module = moduleProvider.getModule("bio");
-        BioCursor cursor = module.getCursor("get-user");
+        BioCursor cursor = module.getCursor("bio@get-user");
         SQLContext globalSQLContext = sqlContextProvider.globalContext();
         User newUsr = globalSQLContext.execBatch(new SQLActionScalar<User>() {
             @Override

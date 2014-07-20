@@ -20,7 +20,7 @@ public class ClassLocatorObjectFactory implements ObjectFactory {
         this.locator = locator;
     }
 
-    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
+    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
         Class clazz = null;
         try {
             clazz = locator.locate( context, context.getCurrentPath() );

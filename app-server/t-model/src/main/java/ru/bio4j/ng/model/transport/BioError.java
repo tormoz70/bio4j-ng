@@ -1,10 +1,9 @@
 package ru.bio4j.ng.model.transport;
 
-/**
- * Created by ayrat on 07.06.14.
- */
 public class BioError extends Exception {
+
     public BioError() {
+        super();
     }
 
     public BioError(String message) {
@@ -27,13 +26,36 @@ public class BioError extends Exception {
     //********************************************************************************
 
     public static class BadRequestType extends BioError {
+        public BadRequestType() {
+            super();
+        }
         public BadRequestType(String requestType) {
             super(String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType));
         }
     }
 
     public static class Login extends BioError {
-        public static class BadLogin extends BioError.Login { }
-        public static class LoginExpired extends BioError.Login { }
+        public Login() {
+            super();
+        }
+        public Login(String message) {
+            super(message);
+        }
+        public static class BadLogin extends BioError.Login {
+            public BadLogin() {
+                super("Не верное имя или пароль пользователя!");
+            }
+            public BadLogin(String message) {
+                super(message);
+            }
+        }
+        public static class LoginExpired extends BioError.Login {
+            public LoginExpired() {
+                super("Сеанс связи прекращен сервером!");
+            }
+            public LoginExpired(String message) {
+                super(message);
+            }
+        }
     }
 }

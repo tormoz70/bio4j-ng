@@ -145,7 +145,7 @@ public abstract class OraCommand <T extends SQLCommandBase> implements SQLComman
                     sb.append("}}");
 //                    LOG.debug(sb.toString());
 //                }
-                lastError = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command. %s", this.preparedSQL, sb.toString(), e.getMessage()), e);
+                lastError = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", this.preparedSQL, sb.toString(), e.getMessage()), e);
                 throw lastError;
             }
         } finally {

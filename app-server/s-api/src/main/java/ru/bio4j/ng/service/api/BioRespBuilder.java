@@ -34,6 +34,19 @@ public class BioRespBuilder {
             return (T)this;
         }
 
+        public T replaceError(BioError e, BioError newe) {
+            if(exceptions != null && e != newe) {
+                int indx = exceptions.indexOf(e);
+                if(indx >= 0) {
+                    if(newe != null)
+                        exceptions.set(indx, newe);
+                    else
+                        exceptions.remove(indx);
+                }
+            }
+            return (T)this;
+        }
+
         public T success(boolean value) {
             success = value;
             return (T)this;
@@ -64,7 +77,11 @@ public class BioRespBuilder {
 
     }
 
-    public static class Login extends Builder<Login> {
+    public static abstract class Success <T extends Builder> extends Builder<T> {
+
+    }
+
+    public static class Login extends Success<Login> {
 
     }
 
@@ -86,7 +103,7 @@ public class BioRespBuilder {
         return create(AnError.class);
     }
 
-    public static class Data extends Builder<Data> {
+    public static class Data extends Success<Data> {
 
         private String bioCode;
         private List<Param> bioParams;

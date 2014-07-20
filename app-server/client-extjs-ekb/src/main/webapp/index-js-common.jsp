@@ -13,6 +13,15 @@
             Ext.form.Field.prototype.msgTarget = 'side';
             Ext.enableListenerCollection = true;
 
+            Ext.Error.handle = function(err) {
+                Ext.create('Views.view.controls.ErrorWindow', {
+                    title: 'Server Error',
+                    text: "Error caught successfully!!!"
+                }).show();
+
+                return true;
+            };
+
             Bio.app = new Bio.Application({
                 APP_URL: "<%=APP_URL%>",
                 APP_TITLE: "<%=APP_TITLE%>",

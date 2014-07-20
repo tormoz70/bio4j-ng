@@ -44,7 +44,9 @@ public class UtlTest {
                 "   - volume : null;\n" +
                 "   - packets : null;\n" +
                 "   - ex : null;\n" +
+                "   - err : null;\n" +
                 "  }";
+
         String info = Utl.buildBeanStateInfo(box, null, "  ");
         System.out.println(info);
         Assert.assertEquals(info, rslt);

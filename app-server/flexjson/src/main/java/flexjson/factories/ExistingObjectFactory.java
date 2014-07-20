@@ -15,7 +15,7 @@ public class ExistingObjectFactory implements ObjectFactory {
     }
 
     @Override
-    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
+    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
         return context.bindIntoObject( (Map)value, source, targetType );
     }
 }

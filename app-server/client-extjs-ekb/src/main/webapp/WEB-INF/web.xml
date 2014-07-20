@@ -7,7 +7,11 @@
     <!--Servlets-->
     <servlet>
         <servlet-name>biosrv</servlet-name>
-        <servlet-class>ru.bio4j.ng.client.extjs.BioServlet</servlet-class>
+        <servlet-class>ru.bio4j.ng.client.extjs.ServletApi</servlet-class>
+        <init-param>
+            <param-name>bioDebug</param-name>
+            <param-value>${bioDebug}</param-value>
+        </init-param>
         <init-param>
             <param-name>forwardURL</param-name>
             <param-value>http://localhost:9090/srvapi</param-value>
@@ -26,6 +30,10 @@
     <filter>
         <filter-name>security</filter-name>
         <filter-class>ru.bio4j.ng.client.extjs.filter.SecurityFilter</filter-class>
+        <init-param>
+            <param-name>bioDebug</param-name>
+            <param-value>${bioDebug}</param-value>
+        </init-param>
         <init-param>
             <param-name>staticSecurityManagerEnabled</param-name>
             <param-value>true</param-value>

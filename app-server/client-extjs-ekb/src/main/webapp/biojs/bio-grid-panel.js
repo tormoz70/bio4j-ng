@@ -25,7 +25,6 @@ Ext.define('Bio.grid.Panel', {
             });
             config.store = Ext.create('Bio.data.Store', {
                 url: cfg.url,
-                bioModuleKey: cfg.bioModuleKey,
                 bioCode: cfg.bioCode,
                 bioParams: cfg.bioParams,
                 listeners: {

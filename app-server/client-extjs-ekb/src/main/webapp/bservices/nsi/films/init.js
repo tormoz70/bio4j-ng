@@ -20,8 +20,7 @@ Ext.onReady(function () {
         id: 'ekb-films-grid',
         title: 'Default Tab',
         storeCfg: {
-            bioModuleKey:'ekbp',
-            bioCode:'cabinet.film-registry',
+            bioCode:'ekbp@cabinet.film-registry',
             bioParams:[
                 {
                     name:"prm1",

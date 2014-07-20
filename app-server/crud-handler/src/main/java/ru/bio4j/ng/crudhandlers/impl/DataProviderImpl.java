@@ -6,6 +6,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
 import ru.bio4j.ng.database.api.*;
@@ -46,7 +48,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     LOG.debug("Cursor opened!!!");
                     if(c.reader().read()){
                         LOG.debug("FirstRec readed!!!");
-//                        dummysum += c.getValue("DM", Double.class);
                     }
                 }
                 return result.success(true);
@@ -74,8 +75,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     private BioRespBuilder.Data processRequest(BioRequestJStoreGet request) throws Exception {
-        LOG.debug("Now processing request to module \"{}\"...", request.getBioModuleKey());
-        BioModule module = moduleProvider.getModule(request.getBioModuleKey());
+        String moduleKey = Utl.extractModuleKey(request.getBioCode());
+        LOG.debug("Now processing request to module \"{}\"...", moduleKey);
+        BioModule module = moduleProvider.getModule(moduleKey);
         BioCursor cursor = module.getCursor(request);
         wrapCursor(cursor);
         return processCursor(module, cursor);

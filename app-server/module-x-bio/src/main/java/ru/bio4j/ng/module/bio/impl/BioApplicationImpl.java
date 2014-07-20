@@ -2,6 +2,7 @@ package ru.bio4j.ng.module.bio.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.BioModule;
@@ -17,6 +18,19 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
         )})
 public class BioApplicationImpl extends BioModuleBase {
     private static final Logger LOG = LoggerFactory.getLogger(BioApplicationImpl.class);
+
+    @Requires
+    private EventAdmin eventAdmin;
+
+    @Override
+    protected EventAdmin getEventAdmin() {
+        return eventAdmin;
+    }
+
+    @Override
+    protected String getSelfModuleKey() {
+        return "bio";
+    }
 
     @Context
     private BundleContext bundleContext;

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class MapObjectFactory implements ObjectFactory {
-    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
+    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
         if( targetType != null ) {
             if( targetType instanceof ParameterizedType ) {
                 ParameterizedType ptype = (ParameterizedType) targetType;
