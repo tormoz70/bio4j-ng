@@ -69,6 +69,14 @@ public class Strings {
 			return new String[] {};
 	}
 
+    public static String[] split(String str, char[] delimiters) {
+        String[] d = new String[delimiters.length];
+        for(int i=0; i<delimiters.length; i++){
+            d[i] = ""+delimiters[i];
+        }
+        return split(str, d);
+    }
+
 	/**
 	 * Разбивает строку на подстроки с заданным разделителем
 	 * @param str - строка, которую необходимо разбить
@@ -148,5 +156,11 @@ public class Strings {
                 sb.deleteCharAt(sb.length()-1);
         }
         return sb.toString();
+    }
+
+    public static String replace(String str, int startIndex, int endIndex, String replacement) {
+        StringBuffer text = new StringBuffer(str);
+        text.replace(startIndex, endIndex+1, replacement);
+        return text.toString();
     }
 }

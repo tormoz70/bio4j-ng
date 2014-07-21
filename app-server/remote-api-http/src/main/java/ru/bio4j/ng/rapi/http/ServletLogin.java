@@ -30,7 +30,10 @@ public class ServletLogin extends BioServletLoginBase {
             BioRespBuilder.Login bresp = doLogin(req);
             writeSuccess(bresp, resp);
         } catch (Exception e) {
-            LOG.error("Unexpected error while login (Level-0)!", e);
+            if(e instanceof BioError.Login)
+                LOG.error("Expected error while login (Level-0) - {} -- {}!", e.getClass(), e.getMessage());
+            else
+                LOG.error("Unexpected error while login (Level-0)!", e);
             responseError(BioError.wrap(e), resp);
         }
 

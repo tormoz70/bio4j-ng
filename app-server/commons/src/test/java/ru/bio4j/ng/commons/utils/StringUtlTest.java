@@ -80,4 +80,24 @@ public class StringUtlTest {
         Assert.assertEquals(Strings.cutFirstItem(list3, "/"), null);
     }
 
+    @Test(enabled = true)
+    public void replace0() throws Exception {
+        final String src = "Something in the air!!!";
+        Assert.assertEquals(Strings.replace(src, 10, 12, ""), "Something the air!!!");
+    }
+    @Test(enabled = true)
+    public void replace1() throws Exception {
+        final String src = "Something in the air!!!";
+        Assert.assertEquals(Strings.replace(src, 10, 11, "on"), "Something on the air!!!");
+    }
+    @Test(enabled = true)
+    public void replace2() throws Exception {
+        final String src = "Something in the air!!!";
+        Assert.assertEquals(Strings.replace(src, 10, 100, ""), "Something ");
+    }
+    @Test(enabled = true)
+    public void replace3() throws Exception {
+        final String src = "Something in the air!!!";
+        Assert.assertEquals(Strings.replace(src, 10, 100, "qwe"), "Something qwe");
+    }
 }

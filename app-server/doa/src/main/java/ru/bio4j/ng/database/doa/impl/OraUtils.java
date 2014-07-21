@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Утилиты для работы с метаданными СУБД Oracle
@@ -58,7 +59,7 @@ public class OraUtils {
     public static String[] detectExecsOfStoredProcs(String sql) {
         final String csDelimiter = "+|+";
         String resultStr = null;
-        Matcher m = Regexs.match(sql, "\\b[\\w$]+\\b[.]\\b[\\w$]+\\b\\s*[(]\\s*[$]PRMLIST\\s*[)]", true);
+        Matcher m = Regexs.match(sql, "\\b[\\w$]+\\b[.]\\b[\\w$]+\\b\\s*[(]\\s*[$]PRMLIST\\s*[)]", Pattern.CASE_INSENSITIVE);
         while(m.find())
             resultStr = Strings.append(resultStr, m.group(), csDelimiter);
         return !Strings.isNullOrEmpty(resultStr) ? Strings.split(resultStr, csDelimiter) : new String[0];
@@ -100,18 +101,18 @@ public class OraUtils {
 //        LOG.debug("sql: " + sql);
         List<String> rslt = new ArrayList();
 //        LOG.debug("Удаляем все строковые константы");
-        sql = Regexs.replace(sql, "(['])(.*?)\\1", "", true);
+        sql = Regexs.replace(sql, "(['])(.*?)\\1", "", Pattern.CASE_INSENSITIVE);
 //        LOG.debug("sql: " + sql);
 //        LOG.debug("Удаляем все многострочные коментарии");
-        sql = Regexs.replace(sql, "[/]\\*.*?\\*[/]", "", true);
+        sql = Regexs.replace(sql, "[/]\\*.*?\\*[/]", "", Pattern.CASE_INSENSITIVE);
 //        LOG.debug("sql: " + sql);
 
 //        LOG.debug("Удаляем все операторы присвоения");
-        sql = Regexs.replace(sql, ":=", "", true);
+        sql = Regexs.replace(sql, ":=", "", Pattern.CASE_INSENSITIVE);
 //        LOG.debug("sql: " + sql);
 
 //        LOG.debug("Находим все параметры вида :qwe_ad");
-        Matcher m = Regexs.match(sql, "(?<=:)\\b[\\w\\#\\$]+", true);
+        Matcher m = Regexs.match(sql, "(?<=:)\\b[\\w\\#\\$]+", Pattern.CASE_INSENSITIVE);
         while(m.find()) {
             String parName = m.group();
 //            LOG.debug(" - parName["+m.start()+"]: " + parName);

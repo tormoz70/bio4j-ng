@@ -8,6 +8,8 @@ import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Column;
 import ru.bio4j.ng.service.api.BioCursor;
 
+import java.io.InputStream;
+
 /**
  * Created by ayrat on 16.04.14.
  */
@@ -30,4 +32,13 @@ public class CursorParserTest {
         Assert.assertEquals(col.getType(), MetaType.UNDEFINED);
         Assert.assertEquals(cursor.getWrapMode(), BioCursor.WrapMode.SORT.code()+ BioCursor.WrapMode.PAGING.code());
     }
+
+    @Test(enabled = true)
+    public void killSQLComments() throws Exception {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("film-registry.sql");
+        String sql = Utl.readStream(inputStream);
+        String sql0 = CursorParser.removeSingleLineCommentsFromSQL(sql);
+        System.out.println(sql0);
+    }
+
 }

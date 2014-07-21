@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.model.transport.Param;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -14,9 +15,9 @@ import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -96,6 +97,7 @@ public class Utl {
 		String read = br.readLine();
 		while(read != null) {
 		    sb.append(read);
+            sb.append(System.lineSeparator());
 		    read =br.readLine();
 		}
 		return sb.toString();		
@@ -231,7 +233,12 @@ public class Utl {
             } catch (IllegalAccessException ex) {
                 val = ex.toString();
             }
-            out.append(String.format(attrFmt, fld.getName(), val));
+            String valStr = (val instanceof String) ? ((String)val).trim() : null;
+            if(!Strings.isNullOrEmpty(valStr) && valStr.indexOf("\n") >= 0) {
+                valStr = valStr.substring(0, valStr.indexOf("\n")) + "...";
+            } else
+                valStr = ""+val;
+            out.append(String.format(attrFmt, fld.getName(), valStr));
         }
         out.append(tab + "}");
         return out.toString();

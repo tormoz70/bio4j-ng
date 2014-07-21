@@ -6,6 +6,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author ayrat
@@ -63,7 +64,7 @@ public class DateTimeParser {
 	public String detectFormat(String datetimeValue) {
 
 		for (DateTimeParserTemplate f : this.templates) {
-			if (Regexs.match(datetimeValue, f.getRegex(), true).matches())
+			if (Regexs.match(datetimeValue, f.getRegex(), Pattern.CASE_INSENSITIVE).matches())
 				return f.getFormat();
 		}
 		return null;

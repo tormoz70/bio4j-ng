@@ -21,6 +21,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,8 +38,8 @@ public class CursorParser {
     private static final String REGEX_PARAM_KILLDEBUG = "debug:\\*/.*/\\*";
 
     private static Param parseParam(String paramDef) {
-        String attrsList = Regexs.find(paramDef, REGEX_ATTRS);
-        attrsList = Regexs.replace(attrsList, REGEX_PARAM_KILLDEBUG, "", true, true);
+        String attrsList = Regexs.find(paramDef, REGEX_ATTRS, 0);
+        attrsList = Regexs.replace(attrsList, REGEX_PARAM_KILLDEBUG, "", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         String[] attrs = Strings.split(attrsList, ATTRS_DELIMITER);
         String name = null;
         MetaType type = null;
@@ -86,32 +87,32 @@ public class CursorParser {
 
     private static Column parseCol(String colDef) {
         Column col = new Column();
-        String attrsList = Regexs.find(colDef, REGEX_ATTRS);
+        String attrsList = Regexs.find(colDef, REGEX_ATTRS, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL);
         // Заменяем все внутренние(экранированные) ковычки на QUOTES_PLACEHOLDER
-        attrsList = Regexs.replace(attrsList, REGEX_QUOTES_REPLACER, QUOTES_PLACEHOLDER, true, true);
+        attrsList = Regexs.replace(attrsList, REGEX_QUOTES_REPLACER, QUOTES_PLACEHOLDER, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         // Вытаскиваем имя колонки
-        String name = Regexs.find(attrsList, REGEX_COLS_NAME, true, true);
+        String name = Regexs.find(attrsList, REGEX_COLS_NAME, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         if(Strings.isNullOrEmpty(name))
             throw new IllegalArgumentException("Attribute \"col.name\" not found in descriptor!");
         name = Strings.split(name, ".")[1].trim().toLowerCase();
-        attrsList = Regexs.replace(attrsList, REGEX_COLS_NAME, "", true, true);
+        attrsList = Regexs.replace(attrsList, REGEX_COLS_NAME, "", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         // Вытаскиваем title
-        String title = Regexs.find(attrsList, REGEX_COLS_TITLE, true, true);
+        String title = Regexs.find(attrsList, REGEX_COLS_TITLE, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         if(!Strings.isNullOrEmpty(title)) {
             // Удаляем title из атрибутов
-            attrsList = Regexs.replace(attrsList, REGEX_COLS_TITLE, "", true, true);
+            attrsList = Regexs.replace(attrsList, REGEX_COLS_TITLE, "", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
             // Вытаскиваем значение
             title = Strings.split(title, ATTRS_KEYVALUE_DELIMITER)[1].trim();
             // Удаляем ковычки заголовка
             title = Strings.trim(title, "\"");
             // Возвращаем назад внутренние ковычки
-            title = Regexs.replace(title, QUOTES_PLACEHOLDER, "\"", true, true);
+            title = Regexs.replace(title, QUOTES_PLACEHOLDER, "\"", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         }
         // Вытаскиваем format
-        String format = Regexs.find(attrsList, REGEX_COLS_FORMAT, true, true);
+        String format = Regexs.find(attrsList, REGEX_COLS_FORMAT, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         if(!Strings.isNullOrEmpty(format)) {
             // Удаляем format из атрибутов
-            attrsList = Regexs.replace(attrsList, REGEX_COLS_FORMAT, "", true, true);
+            attrsList = Regexs.replace(attrsList, REGEX_COLS_FORMAT, "", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
             // Вытаскиваем значение format
             format = Strings.split(format, ATTRS_KEYVALUE_DELIMITER)[1].trim();
             // Удаляем ковычки формата
@@ -146,8 +147,7 @@ public class CursorParser {
 
     private static void parsCols(final BioCursor cursor) {
         List<Column> cols = new ArrayList<>();
-        final Pattern pattern = Pattern.compile(REGEX_COLS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
-        final Matcher matcher = pattern.matcher(cursor.getSql());
+        final Matcher matcher = Regexs.match(cursor.getSql(), REGEX_COLS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE+Pattern.DOTALL);
         while (matcher.find())
             cols.add(parseCol(matcher.group()));
         cursor.getMetadata().setColumns(cols);
@@ -187,11 +187,11 @@ public class CursorParser {
         final Pattern pattern = Pattern.compile(REGEX_HINTS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(cursor.getSql());
         if (matcher.find()) {
-            String hints = Regexs.find(matcher.group(), REGEX_ATTRS);
-            Matcher m = Regexs.match(hints, REGEX_HINTS_TYPE, true, true);
+            String hints = Regexs.find(matcher.group(), REGEX_ATTRS, 0);
+            Matcher m = Regexs.match(hints, REGEX_HINTS_TYPE, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
             if(m.find())
                 cursor.setType(parsType(m.group(1)));
-            m = Regexs.match(hints, REGEX_HINTS_WRAP, true, true);
+            m = Regexs.match(hints, REGEX_HINTS_WRAP, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
             if(m.find())
                 cursor.setWrapMode(parsWrapMode(m.group(0)));
 
@@ -214,7 +214,7 @@ public class CursorParser {
                 Element paramElem = (Element)paramNodes.item(i);
                 String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
                 MetaType paramType = Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class);
-                Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);;
+                Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);
                 Param param = p.getParam(paramName, true);
                 if(param == null) {
                     param = Param.builder()
@@ -228,6 +228,64 @@ public class CursorParser {
                     param.setDirection(paramDir);
                 }
             }
+        }
+    }
+
+    private static String bkpSubstring(final String str, final String regex, final Stack<BackupPair> bkpSubstrings) {
+        final StringBuffer out = new StringBuffer(str.length());
+        final Matcher matcher = Regexs.match(str, regex, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
+        while (matcher.find()) {
+            String foundSubstr = matcher.group();
+            String placeHolder = "{backup-substr-before-kill-sql-comments-"+bkpSubstrings.size()+"}";
+            bkpSubstrings.push(new BackupPair(placeHolder, foundSubstr));
+            matcher.appendReplacement(out, placeHolder);
+        }
+        matcher.appendTail(out);
+        return out.toString();
+    }
+
+    private static String restoreSubstring(String str, Stack<BackupPair> bkpSubstrings) {
+        while (!bkpSubstrings.empty()) {
+            BackupPair bp = bkpSubstrings.pop();
+            str = str.replace(bp.placeholder, bp.substring);
+        }
+        return str;
+    }
+
+    private static class BackupPair {
+        public String placeholder;
+        public String substring;
+        public BackupPair(String placeholder, String substring) {
+            this.placeholder = placeholder;
+            this.substring = substring;
+        }
+    }
+
+    public static String removeSingleLineCommentsFromSQL(String sql) {
+        Stack<BackupPair> bkpSubstrings = new Stack<>();
+        sql = bkpSubstring(sql, "(['])(.*?)\\1", bkpSubstrings); // backup - replace string consts by placeholders
+        sql = bkpSubstring(sql, "([\"])(.*?)\\1", bkpSubstrings); // backup - replace double quoted string by placeholders
+
+        sql = Regexs.replace(sql, "--.*$", "", Pattern.MULTILINE); // kill single line comments
+        sql = restoreSubstring(sql, bkpSubstrings); // restore backuped substrings
+        return sql;
+    }
+
+
+    private static final String REGEX_SQL_PARAMS = "(?<=:)\\b[\\w\\#\\$]+";
+    private static void overrideParamsFromSQL(final BioCursor cursor) {
+        final String sql0 = removeSingleLineCommentsFromSQL(cursor.getPreparedSql());
+
+        final StringBuffer out = new StringBuffer(sql0.length());
+        final Matcher matcher = Regexs.match(sql0, REGEX_SQL_PARAMS, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+        while (matcher.find()) {
+            String text = matcher.group();
+            Param param = Param.builder()
+                    .name(text)
+                    .type(MetaType.STRING)
+                    .direction(Param.Direction.IN)
+                    .build();
+            cursor.getParams().add(param);
         }
     }
 
@@ -245,7 +303,7 @@ public class CursorParser {
         parsParams(cursor);
         parsCols(cursor);
         parsHints(cursor);
-        // TODO тут надо сделать overload параметров курсора из XML
+        overrideParamsFromSQL(cursor);
         overrideParamsFromXml(cursor, document);
         overrideColsFromXml(cursor, document);
 

@@ -7,9 +7,11 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 
+import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UtlTest {
     private final static Logger LOG = LoggerFactory.getLogger(UtlTest.class);
@@ -58,7 +60,7 @@ public class UtlTest {
                 "ORA-06512: на  \"GIVCAPI.GACC\", line 316\n" +
                 "ORA-06512: на  \"GIVCAPI.GACC\", line 331\n" +
                 "ORA-06512: на  line 1";
-        Matcher m = Regexs.match(txt, "(?<=ORA-2\\d{4}:).+(?=\\nORA-\\d{5}:)", true, true, true);
+        Matcher m = Regexs.match(txt, "(?<=ORA-2\\d{4}:).+(?=\\nORA-\\d{5}:)", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL);
         String fnd = m.group();
         System.out.println(fnd);
     }
@@ -127,4 +129,5 @@ public class UtlTest {
         TestGeneric<TestGenericBean> t = new TestGeneric<>();
         Assert.assertEquals(t.getparamType(), TestGenericBean.class);
     }
+
 }

@@ -4,6 +4,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +16,7 @@ import java.util.regex.Matcher;
 public class RegexUtlTest {
     @Test
     public void testMatch() throws Exception {
-        Matcher m = Regexs.match("select :w1, :w2, :w3 from dual", "(?<=:)\\b[\\w\\#\\$]+", true);
+        Matcher m = Regexs.match("select :w1, :w2, :w3 from dual", "(?<=:)\\b[\\w\\#\\$]+", Pattern.CASE_INSENSITIVE);
         StringBuilder paramsList = new StringBuilder();
         while(m.find())
             paramsList.append(m.group()+";");
@@ -36,7 +37,7 @@ public class RegexUtlTest {
     @Test
     public void testReplace() throws Exception {
         String sql = "select 'sdf' as f1 from dual";
-        sql = Regexs.replace(sql, "(['])(.*?)\\1", "", true);
+        sql = Regexs.replace(sql, "(['])(.*?)\\1", "", Pattern.CASE_INSENSITIVE);
         System.out.println(sql);
         Assert.assertEquals(sql, "select  as f1 from dual");
     }

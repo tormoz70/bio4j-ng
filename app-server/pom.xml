@@ -17,7 +17,7 @@
         <distr.install>${distr.depends}/install</distr.install>
         <distr.modules>${distr.depends}/modules</distr.modules>
         <distr.webapps>${distr.depends}/webapps</distr.webapps>
-        <distr.deploy>../as-distribution</distr.deploy>
+        <distr.deploy>../as-distribution/target</distr.deploy>
 
         <testng.version>6.7</testng.version>
 
