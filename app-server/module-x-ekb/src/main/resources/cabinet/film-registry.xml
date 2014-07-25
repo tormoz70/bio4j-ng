@@ -16,7 +16,7 @@ select * from (
        a.pu_vrfd_date, a.pu_vrfd_usr, a.org_id, a.prnt_org_id,
        a.org_name, a.prnt_org_name, a.genre
  FROM nsi$filmpus a WHERE rownum < 101) b
-WHERE (:SYS_CURUSERROLES in ('*', '1','2','5','6','7','8')) and
+WHERE (:SYS_CURUSR_ROLES in ('*', '1','2','5','6','7','8')) and
   (
     ((:seld_from is null) or (b.cre_date >= trunc(to_date(:seld_from)))) and
     ((:seld_to is null) or (b.cre_date < trunc(to_date(:seld_to)+1)))

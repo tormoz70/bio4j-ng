@@ -31,7 +31,8 @@ public class BioCursor {
     private byte wrapMode = WrapMode.ALL.code();
     private final String sql;
     private String preparedSql;
-    private final StoreMetadata metadata = new StoreMetadata();
+
+    private List<Column> columns = new ArrayList<>();
     private final List<Param> params = new ArrayList<>();
     private Expression filter;
     private Sort sort;
@@ -43,6 +44,7 @@ public class BioCursor {
     public BioCursor(String bioCode, String sql) {
         this.bioCode = bioCode;
         this.sql = sql;
+        this.preparedSql = sql;
     }
 
     public BioCursor setParamValue(String name, Object value) {
@@ -59,18 +61,19 @@ public class BioCursor {
         return this;
     }
 
-    public Column getColumn(String columnName) {
-        return null;
+    public List<Column> getColumns() {
+        return columns;
     }
+
+    public void setColumns(List<Column> columns) {
+        this.columns = columns;
+    }
+
 
     public String getBioCode() { return bioCode; }
 
     public String getSql() {
         return sql;
-    }
-
-    public StoreMetadata getMetadata() {
-        return metadata;
     }
 
     public List<Param> getParams() {

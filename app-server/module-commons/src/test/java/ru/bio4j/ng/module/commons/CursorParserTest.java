@@ -2,6 +2,7 @@ package ru.bio4j.ng.module.commons;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
@@ -19,7 +20,7 @@ public class CursorParserTest {
         String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("test.sql"));
         BioCursor cursor = CursorParser.pars("test", sql);
         Assert.assertTrue(cursor != null);
-        Column col = cursor.getMetadata().getColumns().get(0);
+        Column col = cursor.getColumns().get(0);
         Assert.assertEquals(col.getName(), "subdivision");
         Assert.assertEquals(col.getTitle(), "\"Дивизион\"; (miter)");
         Assert.assertEquals(col.isPk(), true);
@@ -33,11 +34,11 @@ public class CursorParserTest {
         Assert.assertEquals(cursor.getWrapMode(), BioCursor.WrapMode.SORT.code()+ BioCursor.WrapMode.PAGING.code());
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void killSQLComments() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("film-registry.sql");
         String sql = Utl.readStream(inputStream);
-        String sql0 = CursorParser.removeSingleLineCommentsFromSQL(sql);
+        String sql0 = Sqls.deleteNonSQLSubstringsInSQL(sql);
         System.out.println(sql0);
     }
 

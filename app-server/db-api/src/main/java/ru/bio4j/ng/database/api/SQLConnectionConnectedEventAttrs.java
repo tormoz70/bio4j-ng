@@ -9,11 +9,11 @@ import java.sql.Connection;
  * Time: 23:49
  * To change this template use File | Settings | File Templates.
  */
-public class SQLConnectionAfterEventAttrs {
+public class SQLConnectionConnectedEventAttrs {
     private Connection connection;
 
-    public static SQLConnectionAfterEventAttrs build (Connection connection) {
-        SQLConnectionAfterEventAttrs rslt = new SQLConnectionAfterEventAttrs();
+    public static SQLConnectionConnectedEventAttrs build (Connection connection) {
+        SQLConnectionConnectedEventAttrs rslt = new SQLConnectionConnectedEventAttrs();
         rslt.connection = connection;
         return rslt;
     }

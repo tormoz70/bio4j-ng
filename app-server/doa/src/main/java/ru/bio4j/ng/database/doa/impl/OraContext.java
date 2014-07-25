@@ -20,8 +20,8 @@ public class OraContext implements SQLContext {
 
     private DataSource cpool;
 
-    private final List<SQLConnectionAfterEvent> afterEvents = new ArrayList<>();
-    private final List<SQLConnectionAfterEvent> innerAfterEvents = new ArrayList<>();
+    private final List<SQLConnectionConnectedEvent> afterEvents = new ArrayList<>();
+    private final List<SQLConnectionConnectedEvent> innerAfterEvents = new ArrayList<>();
 
     private final SQLConnectionPoolConfig config;
 
@@ -30,9 +30,9 @@ public class OraContext implements SQLContext {
         this.config = config;
         if(this.config.getCurrentSchema() != null) {
             this.innerAfterEvents.add(
-                    new SQLConnectionAfterEvent() {
+                    new SQLConnectionConnectedEvent() {
                         @Override
-                        public void handle(SQLContext sender, SQLConnectionAfterEventAttrs attrs) throws SQLException {
+                        public void handle(SQLContext sender, SQLConnectionConnectedEventAttrs attrs) throws SQLException {
                             if(attrs.getConnection() != null) {
                                 String curSchema = OraContext.this.config.getCurrentSchema().toUpperCase();
                                 LOG.debug("onAfterGetConnection - start setting current_schema="+curSchema);
@@ -47,7 +47,7 @@ public class OraContext implements SQLContext {
     }
 
     @Override
-    public void addAfterEvent(SQLConnectionAfterEvent e) {
+    public void addAfterEvent(SQLConnectionConnectedEvent e) {
         this.afterEvents.add(e);
     }
 
@@ -56,13 +56,13 @@ public class OraContext implements SQLContext {
         this.afterEvents.clear();
     }
 
-    private void doAfterConnect(SQLConnectionAfterEventAttrs attrs) throws SQLException {
+    private void doAfterConnect(SQLConnectionConnectedEventAttrs attrs) throws SQLException {
         if(this.innerAfterEvents.size() > 0) {
-            for(SQLConnectionAfterEvent e : this.innerAfterEvents)
+            for(SQLConnectionConnectedEvent e : this.innerAfterEvents)
                 e.handle(this, attrs);
         }
         if(this.afterEvents.size() > 0) {
-            for(SQLConnectionAfterEvent e : this.afterEvents)
+            for(SQLConnectionConnectedEvent e : this.afterEvents)
                 e.handle(this, attrs);
         }
     }
@@ -92,7 +92,7 @@ public class OraContext implements SQLContext {
             conn = this.cpool.getConnection();
         else
             conn = this.cpool.getConnection(userName, password);
-        this.doAfterConnect(SQLConnectionAfterEventAttrs.build(conn));
+        this.doAfterConnect(SQLConnectionConnectedEventAttrs.build(conn));
         return conn;
 	}
 

@@ -3,6 +3,7 @@ package ru.bio4j.ng.database.doa.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.CallableStatement;
@@ -31,7 +32,7 @@ public class OraCallableParamSetter implements OraParamSetter {
         if(callable == null)
             throw new SQLException("Parameter [statement] mast be instance of CallableStatement!");
         final String sql = this.owner.getPreparedSQL();
-        final List<String> paramsNames = OraUtils.extractParamNamesFromSQL(sql);
+        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         final List<Param> outParams = new ArrayList<>();
         for (int i = 0; i < paramsNames.size(); i++) {
             String paramName = paramsNames.get(i);

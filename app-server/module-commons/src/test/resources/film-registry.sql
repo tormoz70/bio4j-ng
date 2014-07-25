@@ -9,11 +9,11 @@ select * from (
        a.org_name, a.prnt_org_name, a.genre
  FROM nsi$filmpus a WHERE rownum < 101) b
 WHERE --(:SYS_CURUSERROLES in ('*', '1','2','5','6','7','8')) and
-  (
+  /*(
     ((:seld_from is null) or (b.cre_date >= trunc(to_date(:seld_from)))) and
     ((:seld_to is null) or (b.cre_date < trunc(to_date(:seld_to)+1)))
   )
-  and(
+  and*/(
     (:filmname is null) or
     (
       (upper(b.film_name) like '%'||upper(:filmname)||'%') or

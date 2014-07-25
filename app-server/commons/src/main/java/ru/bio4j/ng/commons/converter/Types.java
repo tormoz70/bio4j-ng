@@ -187,8 +187,9 @@ public class Types {
 	}
 
     public static Boolean parsBoolean(String value) {
-        return !Strings.isNullOrEmpty(value) ||
-                value.toLowerCase().equals("true") ||
+        if(Strings.isNullOrEmpty(value))
+            return false;
+        return  value.toLowerCase().equals("true") ||
                 value.toLowerCase().equals("t") ||
                 value.toLowerCase().equals("1") ||
                 value.toLowerCase().equals("yes") ||
@@ -200,7 +201,7 @@ public class Types {
             throw new IllegalArgumentException("Parameter type mast be instance of Enum!");
         Field[] flds = type.getDeclaredFields();
         for(Field f : flds)
-            if(f.getName().equals(value))
+            if(Strings.compare(f.getName(), value, true))
                 try {
                     return (T)f.get(type);
                 } catch (IllegalAccessException e) {

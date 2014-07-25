@@ -24,12 +24,12 @@ public class ParamsTest {
 		List<Param> testParams = new ArrayList<>();
         try(Paramus paramus  = Paramus.set(testParams);){
             paramus.add("param1", 111).add("param1", 111, true);
-            Assert.assertEquals(111, paramus.getValueByName("param1", false));
+            Assert.assertEquals(paramus.getValueByName("param1", false), 111);
             paramus.add("param3", 33);
             Assert.assertNotNull(paramus.getParam("param3"));
             Assert.assertTrue(paramus.paramExists("param3"));
-            Assert.assertFalse(paramus.paramExists("Param3"));
-            Assert.assertTrue(paramus.paramExists("Param3", true));
+            Assert.assertFalse(paramus.paramExists("Param3", false));
+            Assert.assertTrue(paramus.paramExists("Param3"));
         }
 	}
 

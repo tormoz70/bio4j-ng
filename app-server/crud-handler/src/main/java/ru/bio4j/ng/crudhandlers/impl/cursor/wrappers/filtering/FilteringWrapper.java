@@ -49,9 +49,11 @@ public class FilteringWrapper extends AbstractWrapper {
      */
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
-        if((cursor.getWrapMode() & BioCursor.WrapMode.FILTER.code()) == BioCursor.WrapMode.FILTER.code()) {
-            String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", cursor.getFilter());
-            cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
+        if ((cursor.getWrapMode() & BioCursor.WrapMode.FILTER.code()) == BioCursor.WrapMode.FILTER.code()) {
+            if(cursor.getFilter() != null) {
+                String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", cursor.getFilter());
+                cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
+            }
         }
         return cursor;
     }

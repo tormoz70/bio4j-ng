@@ -96,33 +96,6 @@ public class OraUtils {
         return newExec;
     }
 
-    public static List<String> extractParamNamesFromSQL(String sql) {
-//        LOG.debug("extractParamNamesFromSQL - start");
-//        LOG.debug("sql: " + sql);
-        List<String> rslt = new ArrayList();
-//        LOG.debug("Удаляем все строковые константы");
-        sql = Regexs.replace(sql, "(['])(.*?)\\1", "", Pattern.CASE_INSENSITIVE);
-//        LOG.debug("sql: " + sql);
-//        LOG.debug("Удаляем все многострочные коментарии");
-        sql = Regexs.replace(sql, "[/]\\*.*?\\*[/]", "", Pattern.CASE_INSENSITIVE);
-//        LOG.debug("sql: " + sql);
-
-//        LOG.debug("Удаляем все операторы присвоения");
-        sql = Regexs.replace(sql, ":=", "", Pattern.CASE_INSENSITIVE);
-//        LOG.debug("sql: " + sql);
-
-//        LOG.debug("Находим все параметры вида :qwe_ad");
-        Matcher m = Regexs.match(sql, "(?<=:)\\b[\\w\\#\\$]+", Pattern.CASE_INSENSITIVE);
-        while(m.find()) {
-            String parName = m.group();
-//            LOG.debug(" - parName["+m.start()+"]: " + parName);
-            if(rslt.indexOf(parName) == -1)
-                rslt.add(parName);
-        }
-//        LOG.debug("Найдено: " + rslt.size() + " параметров");
-        return rslt;
-    }
-
     public static int paramSqlType(Param param) {
         int stringSize = 0;
         if(param.getType() == MetaType.STRING){

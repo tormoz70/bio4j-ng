@@ -114,6 +114,15 @@ public abstract class OraCommand <T extends SQLCommandBase> implements SQLComman
         }
     }
 
+    private static String getSQL2Execute(String sql, List<Param> params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{OraCommand.Params(before exec): {\n");
+        for (Param p : params)
+            sb.append("\t"+p.toString()+",\n");
+        sb.append("}}");
+        return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
+    }
+
     protected T processStatement(List<Param> params, DelegateSQLAction action) throws SQLException {
         SQLException lastError = null;
         try {
@@ -131,21 +140,15 @@ public abstract class OraCommand <T extends SQLCommandBase> implements SQLComman
 
                 this.setParamsToStatement(); // Применяем параметры
 
-                if (action != null)
+                if (action != null) {
+                    LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.params));
                     action.execute(); // Выполняем команду
+                }
 
                 this.getBackOutParams(); // Вытаскиваем OUT-параметры
 
             } catch (SQLException e) {
-//                if(LOG.isDebugEnabled()){
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("{OraCommand.Params(before exec): {\n");
-                    for (Param p : this.params)
-                        sb.append("\t"+p.toString()+",\n");
-                    sb.append("}}");
-//                    LOG.debug(sb.toString());
-//                }
-                lastError = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", this.preparedSQL, sb.toString(), e.getMessage()), e);
+                lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
                 throw lastError;
             }
         } finally {

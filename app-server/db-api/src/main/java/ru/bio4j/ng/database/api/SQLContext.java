@@ -14,7 +14,7 @@ public interface SQLContext {
     <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> action) throws Exception;
 
 //    SQLConnectionPoolStat getStat();
-    void addAfterEvent(SQLConnectionAfterEvent e);
+    void addAfterEvent(SQLConnectionConnectedEvent e);
     void clearAfterEvents();
 
     SQLCursor CreateCursor();

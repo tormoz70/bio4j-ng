@@ -10,8 +10,12 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
+import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -93,7 +97,7 @@ public class Paramus implements Closeable {
 	}
 
 	public Param getParam(final String name) {
-		return getParam(name, false);
+		return getParam(name, true);
 	}
 
 	public String getNamesList() {
@@ -115,14 +119,7 @@ public class Paramus implements Closeable {
 	}
 
 	public List<Param> process(DelegateCheck<Param> check) {
-        List<Param> result = new ArrayList<>();
-		if (check != null) {
-            List<Param> lst = get();
-			for (Param param : lst)
-				if (check.callback(param))
-                    result.add(param);
-        }
-		return result;
+        return Lists.select(get(), check);
 	}
 
 	public Param first() {
@@ -144,23 +141,30 @@ public class Paramus implements Closeable {
 		return rslt;
 	}
 
-	private Boolean alredyExists(String name, Boolean replaceIfExists) {
-		Boolean result = false;
-		Param exists = this.getParam(name);
-		if (exists != null) {
-			if (replaceIfExists) {
-                get().remove(exists);
-				exists = null;
-			} else
-				result = true;
-		}
-		return result;
-	}
+//	private Boolean alredyExists(String name) {
+//		Boolean result = false;
+//		Param exists = this.getParam(name);
+//		if (exists != null) {
+////			if (replaceIfExists) {
+////                get().remove(exists);
+////				exists = null;
+////			} else
+//				result = true;
+//		}
+//		return result;
+//	}
 
 	public Paramus add(Param item, Boolean replaceIfExists) {
 		if (item != null) {
-			if (!this.alredyExists(item.getName(), replaceIfExists))
+            Param exists = this.getParam(item.getName());
+			if (exists == null)
                 get().add(item);
+            else {
+                if (replaceIfExists) {
+                    get().remove(exists);
+                    get().add(item);
+                }
+            }
 		}
 		return this;
 	}
@@ -194,6 +198,17 @@ public class Paramus implements Closeable {
 		}
 		return this;
 	}
+
+    /**
+     * Если есть параметр с таким именем, то обновляет его поля, иначе просто добавляет
+     * @param item
+     * @return
+     * @throws Exception
+     */
+    public Paramus apply(Param item) throws Exception {
+        apply(Arrays.asList(item));
+        return this;
+    }
 
     public Paramus apply(List<Param> params) {
         if ((params != null) && (params != this.get())) {
@@ -327,13 +342,24 @@ public class Paramus implements Closeable {
 		return setList(names, values, csDefaultDelimiter);
 	}
 
-    public Paramus setValue(String name, Object value) {
+    public Paramus setValue(String name, Object value, boolean addIfNotExists) {
+        MetaType valueType = MetaTypeConverter.read((value != null) ? value.getClass() : String.class);
         Param param = this.getParam(name);
-        if(param != null)
+        if(param != null) {
             param.setValue(value);
-        else
-            this.add(name, value);
+            param.setType(valueType);
+        } else {
+            if(addIfNotExists)
+                this.add(Param.builder()
+                        .name(name)
+                        .value(value)
+                        .type(valueType)
+                        .build());
+        }
         return this;
+    }
+    public Paramus setValue(String name, Object value) {
+        return setValue(name, value, true);
     }
 
 	public Paramus removeList(String names, String delimiter) {

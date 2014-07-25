@@ -178,6 +178,18 @@ public class ConverterTest {
     }
 
     @Test(enabled=true)
+    public void stringToBool() throws Exception {
+        boolean r = Converter.toType("false", boolean.class);
+        Assert.assertFalse(r);
+        r = Converter.toType("t", boolean.class);
+        Assert.assertTrue(r);
+        r = Converter.toType("", boolean.class);
+        Assert.assertFalse(r);
+        r = Converter.toType(null, boolean.class);
+        Assert.assertFalse(r);
+    }
+
+    @Test(enabled=true)
     public void stringToEnum() throws Exception {
         String instr = "OUT";
         Param.Direction dir = Converter.toType(instr, Param.Direction.class);

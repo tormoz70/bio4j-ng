@@ -181,7 +181,7 @@ public class OraReader implements SQLReader {
     }
 
     @Override
-    public List<Object> gerValues() {
+    public List<Object> getValues() {
         return this.rowValues;
     }
 }

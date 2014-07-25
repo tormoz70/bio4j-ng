@@ -25,6 +25,43 @@ Ext.define('Bio.data.RestReader', {
      */
     useSimpleAccessors: false,
 
+//    onMetaChange : function(meta) {
+//        var me = this,
+//            fields = meta.columns,
+//            newModel,
+//            clientIdProperty;
+//
+//
+//        me.metaData = meta;
+//
+//
+//        me.root = meta.root || me.root;
+//        me.idProperty = meta.idProperty || me.idProperty;
+//        me.totalProperty = meta.totalProperty || me.totalProperty;
+//        me.successProperty = meta.successProperty || me.successProperty;
+//        me.messageProperty = meta.messageProperty || me.messageProperty;
+//        clientIdProperty = meta.clientIdProperty;
+//
+//        if (me.model) {
+//            me.model.setFields(fields, me.idProperty, clientIdProperty);
+//            me.setModel(me.model, true);
+//        }
+//        else {
+//            newModel = Ext.define("Ext.data.reader.Json-Model" + Ext.id(), {
+//                extend: 'Ext.data.Model',
+//                fields: fields,
+//                clientIdProperty: clientIdProperty
+//            });
+//            if (me.idProperty) {
+//
+//
+//
+//
+//                newModel.idProperty = me.idProperty;
+//            }
+//            me.setModel(newModel, true);
+//        }
+//    },
     /**
      * Reads a JSON object and returns a ResultSet. Uses the internal getTotal and getSuccess extractors to
      * retrieve meta data from the response, and extractData to turn the JSON data into model instances.
@@ -39,12 +76,8 @@ Ext.define('Bio.data.RestReader', {
         //this has to be before the call to super because we use the meta data in the superclass readRecords
         if (me.getMeta) {
             meta = me.getMeta(data);
-            if (meta) {
-                Ext.Array.forEach(meta.fields, function(f){
-                    f.type = f.columnType;
-                }, this);
+            if (meta)
                 me.onMetaChange(meta);
-            }
         } else if (data.metaData) {
             me.onMetaChange(data.metaData);
         }

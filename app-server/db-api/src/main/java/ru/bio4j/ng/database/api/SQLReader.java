@@ -29,5 +29,5 @@ public interface SQLReader {
 
     void close() throws Exception;
 
-    List<Object> gerValues();
+    List<Object> getValues();
 }

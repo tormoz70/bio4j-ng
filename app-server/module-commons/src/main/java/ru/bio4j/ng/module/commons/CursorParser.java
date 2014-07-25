@@ -6,13 +6,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Doms;
-import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.commons.utils.Regexs;
-import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Column;
 import ru.bio4j.ng.service.api.BioCursor;
@@ -62,16 +60,18 @@ public class CursorParser {
                 .build();
     }
 
-    private static void parsParams(final BioCursor cursor) {
+    private static void parsParams(final BioCursor cursor) throws Exception {
         final String sql = cursor.getSql();
         final StringBuffer out = new StringBuffer(sql.length());
         final Pattern pattern = Pattern.compile(REGEX_PARAMS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
         final Matcher matcher = pattern.matcher(sql);
-        while (matcher.find()) {
-            String text = matcher.group();
-            Param param = parseParam(text);
-            cursor.getParams().add(param);
-            matcher.appendReplacement(out, ":" + param.getName());
+        try(Paramus p = Paramus.set(cursor.getParams());) {
+            while (matcher.find()) {
+                String text = matcher.group();
+                Param param = parseParam(text);
+                p.apply(param);
+                matcher.appendReplacement(out, ":" + param.getName());
+            }
         }
         matcher.appendTail(out);
         cursor.setPreparedSql(out.toString());
@@ -150,7 +150,7 @@ public class CursorParser {
         final Matcher matcher = Regexs.match(cursor.getSql(), REGEX_COLS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE+Pattern.DOTALL);
         while (matcher.find())
             cols.add(parseCol(matcher.group()));
-        cursor.getMetadata().setColumns(cols);
+        cursor.setColumns(cols);
     }
 
     private static final String REGEX_HINTS = "(/\\*\\$\\{hints\\s+.*?\\}\\*/)";
@@ -261,35 +261,68 @@ public class CursorParser {
         }
     }
 
-    public static String removeSingleLineCommentsFromSQL(String sql) {
-        Stack<BackupPair> bkpSubstrings = new Stack<>();
+    public static String backupNonSQLSubstringsInSQL(String sql, final Stack<BackupPair> bkpSubstrings) {
         sql = bkpSubstring(sql, "(['])(.*?)\\1", bkpSubstrings); // backup - replace string consts by placeholders
         sql = bkpSubstring(sql, "([\"])(.*?)\\1", bkpSubstrings); // backup - replace double quoted string by placeholders
+        sql = bkpSubstring(sql, "--.*$", bkpSubstrings); // backup - single line comments
+        sql = bkpSubstring(sql, "\\/\\*.*\\*\\/", bkpSubstrings); // backup - single line comments
 
-        sql = Regexs.replace(sql, "--.*$", "", Pattern.MULTILINE); // kill single line comments
-        sql = restoreSubstring(sql, bkpSubstrings); // restore backuped substrings
         return sql;
     }
 
-
-    private static final String REGEX_SQL_PARAMS = "(?<=:)\\b[\\w\\#\\$]+";
-    private static void overrideParamsFromSQL(final BioCursor cursor) {
-        final String sql0 = removeSingleLineCommentsFromSQL(cursor.getPreparedSql());
-
+    private static void addParamsFromSQL(final BioCursor cursor) throws Exception {
+        final String sql0 = cursor.getPreparedSql();
         final StringBuffer out = new StringBuffer(sql0.length());
-        final Matcher matcher = Regexs.match(sql0, REGEX_SQL_PARAMS, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
-        while (matcher.find()) {
-            String text = matcher.group();
-            Param param = Param.builder()
-                    .name(text)
-                    .type(MetaType.STRING)
-                    .direction(Param.Direction.IN)
-                    .build();
-            cursor.getParams().add(param);
+        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql0);
+        try(Paramus p = Paramus.set(cursor.getParams());) {
+            for (String paramActual : paramsNames) {
+                Param param = Param.builder()
+                        .name(paramActual)
+                        .type(MetaType.STRING)
+                        .direction(Param.Direction.IN)
+                        .build();
+                p.add(param);
+            }
         }
     }
 
+    private static Column findCol(final String name, final List<Column> cols) {
+        return Lists.first(cols, new DelegateCheck<Column>() {
+            @Override
+            public Boolean callback(Column item) {
+                return Strings.compare(name, item.getName(), true);
+            }
+        });
+    }
+
     private static void overrideColsFromXml(final BioCursor cursor, final Document document) throws Exception {
+        Element sqlElem = Doms.findElem(document, "/cursor/fields");
+        NodeList colNodes = sqlElem.getElementsByTagName("field");
+        List<Column> cols = cursor.getColumns();
+        if(cols == null) {
+            cols = new ArrayList<>();
+            cursor.setColumns(cols);
+        }
+        for(int i=0; i<colNodes.getLength(); i++) {
+            Element paramElem = (Element)colNodes.item(i);
+            String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
+            Column col = findCol(fieldName, cols);
+            if(col == null) {
+                col = new Column();
+                col.setName(fieldName);
+            }
+            col.setId(i+1);
+            col.setFormat(Doms.getAttribute(paramElem, "format", null, String.class));
+            col.setTitle(Doms.getAttribute(paramElem, "header", null, String.class));
+            col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
+            col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
+            col.setHidden(Converter.toType(Doms.getAttribute(paramElem, "hidden", "false", String.class), boolean.class));
+            col.setDefaultVal(Doms.getAttribute(paramElem, "defaultVal", null, String.class));
+            col.setPk(Converter.toType(Doms.getAttribute(paramElem, "pk", "false", String.class), boolean.class));
+            col.setReadonly(Converter.toType(Doms.getAttribute(paramElem, "readOnly", "false", String.class), boolean.class));
+            col.setWidth(Doms.getAttribute(paramElem, "width", null, String.class));
+            cols.add(col);
+        }
 
     }
 
@@ -300,10 +333,10 @@ public class CursorParser {
         String sql = sqlTextElem.getTextContent();
 
         BioCursor cursor = new BioCursor(bioCode, sql);
+        addParamsFromSQL(cursor);
         parsParams(cursor);
         parsCols(cursor);
         parsHints(cursor);
-        overrideParamsFromSQL(cursor);
         overrideParamsFromXml(cursor, document);
         overrideColsFromXml(cursor, document);
 

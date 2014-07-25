@@ -51,8 +51,10 @@ public class SortingWrapper extends AbstractWrapper {
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
         if((cursor.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
-            String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", cursor.getSort());
-            cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY "+orderbySql));
+            if(cursor.getSort() != null) {
+                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", cursor.getSort());
+                cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
+            }
         }
         return cursor;
     }
