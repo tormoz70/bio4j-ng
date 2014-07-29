@@ -56,7 +56,15 @@ public class BioServletApiBase extends BioServletBase {
             Httpc.readDataFromRequest(request, jd);
         if(jd.length() == 0)
             jd.append("{}");
-        BioRequest bioRequest = Jsons.decode(jd.toString(), BioRoute.getType(requestType).getClazz());
+        BioRequest bioRequest;
+        String bioRequestJson = jd.toString();
+        try {
+            bioRequest = Jsons.decode(bioRequestJson, BioRoute.getType(requestType).getClazz());
+        } catch (Exception e) {
+            LOG.debug("Unexpected error while decoding BioRequest JSON: {}\n"+
+                    " - Error: {}", bioRequestJson, e.getMessage());
+            throw e;
+        }
         bioRequest.setRequestType(requestType);
         bioRequest.setUser(usr);
 

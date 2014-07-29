@@ -3,8 +3,8 @@ Ext.Loader.setPath('Ext.ux', '../../../ux');
 //Ext.Loader.setPath('Ekb.grid', './');
 Ext.Loader.setPath('Ekb.form', '.');
 Ext.require([
-    'Ext.ux.PreviewPlugin',
-    'Ekb.form.FilmDetails'
+    'Ext.ux.PreviewPlugin'
+    //'Ekb.form.FilmDetails'
 ]);
 
 //alert("Required loaded!");
@@ -33,6 +33,12 @@ Ext.onReady(function () {
             ],
             autoLoad: true
         },
+//        columns: [
+//            {
+//                dataIndex: 'cre_date',
+//                renderer : Ext.util.Format.dateRenderer('m/d/Y')
+//            }
+//        ],
         tbar: Ext.create('Ext.toolbar.Toolbar', {
             items: [
                 {
@@ -120,7 +126,6 @@ Ext.onReady(function () {
         renderTo: 'root-container',
         store: null
     });
-
 
     var hideMask = function () {
         Ext.get('loading').remove();

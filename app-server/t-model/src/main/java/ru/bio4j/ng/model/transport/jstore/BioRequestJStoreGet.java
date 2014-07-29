@@ -9,6 +9,10 @@ import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 public class BioRequestJStoreGet extends BioRequest {
 
     /**
+     * Всего записей в запросе
+     */
+    private int totalCount;
+    /**
      * Начальная позиция
      */
     private int offset;
@@ -82,6 +86,14 @@ public class BioRequestJStoreGet extends BioRequest {
 
     public void setOrigJson(String origJson) {
         this.origJson = origJson;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
     }
 }
 

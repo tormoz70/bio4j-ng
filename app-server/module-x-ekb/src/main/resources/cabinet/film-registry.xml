@@ -15,7 +15,7 @@ select * from (
        a.pu_num, a.pu_num_found,
        a.pu_vrfd_date, a.pu_vrfd_usr, a.org_id, a.prnt_org_id,
        a.org_name, a.prnt_org_name, a.genre
- FROM nsi$filmpus a WHERE rownum < 101) b
+ FROM nsi$filmpus a WHERE rownum < 10000000001) b
 WHERE (:SYS_CURUSR_ROLES in ('*', '1','2','5','6','7','8')) and
   (
     ((:seld_from is null) or (b.cre_date >= trunc(to_date(:seld_from)))) and
@@ -51,8 +51,8 @@ WHERE (:SYS_CURUSR_ROLES in ('*', '1','2','5','6','7','8')) and
         <field name="is_verified" type="boolean" header="Выверен"/>
         <field name="pu_verified_state" type="string" header="Состояние"/>
         <field name="hide_sess" type="boolean" header="Скрыть"/>
-        <field name="cre_date" type="date" header="Дата/Время поступления"/>
-        <field name="pu_vrfd_date" type="date" header="Дата/Время выверки"/>
+        <field name="cre_date" type="date" header="Дата/Время поступления" format="d.m.Y H:i:s"/>
+        <field name="pu_vrfd_date" type="date" header="Дата/Время выверки" format="d.m.Y H:i:s"/>
         <field name="pu_vrfd_usr" type="string" header="Кто сделал выверку"/>
         <field name="pu_num" type="string" header="Номер ПУ"/>
         <field name="pu_num_found" type="string" header="Номер ПУ, определен"/>

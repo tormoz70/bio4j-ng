@@ -22,11 +22,25 @@ Ext.define('Bio.data.RestProxy', {
 //        params = {
 //            query:{value: "SAL%", type: 'string'}
 //        };
+
+        var sort = null, sorters = operation.sorters;
+        if(sorters instanceof Array){
+            sort = [];
+            sorters.forEach(function(e) {
+                sort.push({
+                    fieldName: e.property,
+                    direction: e.direction
+                });
+            });
+        }
+
         request['jsonData'] = Bio.request.store.GetData.jsonData({
             bioCode: store.bioCode,
             bioParams: params,
+            totalCount: store.totalCount,
             offset: offset,
-            pagesize: operation.limit
+            pagesize: operation.limit,
+            sort: sort
         });
         request.params = {
             rqt: 'crud.dt.gt'

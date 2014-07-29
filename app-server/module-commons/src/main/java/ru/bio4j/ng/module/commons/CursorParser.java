@@ -15,8 +15,6 @@ import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Column;
 import ru.bio4j.ng.service.api.BioCursor;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -60,7 +58,7 @@ public class CursorParser {
                 .build();
     }
 
-    private static void parsParams(final BioCursor cursor) throws Exception {
+    private static void addParamsFromSQLDesc(final BioCursor cursor) throws Exception {
         final String sql = cursor.getSql();
         final StringBuffer out = new StringBuffer(sql.length());
         final Pattern pattern = Pattern.compile(REGEX_PARAMS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
@@ -85,8 +83,7 @@ public class CursorParser {
     private static final String REGEX_QUOTES_REPLACER = "\\\\\"";
     private static final String QUOTES_PLACEHOLDER = "\\$quote\\$";
 
-    private static Column parseCol(String colDef) {
-        Column col = new Column();
+    private static void parseCol(List<Column> cols, String colDef) {
         String attrsList = Regexs.find(colDef, REGEX_ATTRS, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL);
         // Заменяем все внутренние(экранированные) ковычки на QUOTES_PLACEHOLDER
         attrsList = Regexs.replace(attrsList, REGEX_QUOTES_REPLACER, QUOTES_PLACEHOLDER, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
@@ -95,6 +92,16 @@ public class CursorParser {
         if(Strings.isNullOrEmpty(name))
             throw new IllegalArgumentException("Attribute \"col.name\" not found in descriptor!");
         name = Strings.split(name, ".")[1].trim().toLowerCase();
+
+        Column col = findCol(name, cols);
+        if(col == null) {
+            col = new Column();
+            cols.add(col);
+            col.setName(name);
+            col.setId(cols.size());
+        }
+
+
         attrsList = Regexs.replace(attrsList, REGEX_COLS_NAME, "", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         // Вытаскиваем title
         String title = Regexs.find(attrsList, REGEX_COLS_TITLE, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
@@ -142,15 +149,18 @@ public class CursorParser {
                     col.setReadonly(Boolean.parseBoolean(pair[1].trim()));
             }
         }
-        return col;
     }
 
-    private static void parsCols(final BioCursor cursor) {
-        List<Column> cols = new ArrayList<>();
+    private static void addColsFromSQLDesc(final BioCursor cursor) {
+        List<Column> cols = cursor.getColumns();
+        if(cols == null) {
+            cols = new ArrayList<>();
+            cursor.setColumns(cols);
+        }
         final Matcher matcher = Regexs.match(cursor.getSql(), REGEX_COLS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE+Pattern.DOTALL);
-        while (matcher.find())
-            cols.add(parseCol(matcher.group()));
-        cursor.setColumns(cols);
+        while (matcher.find()) {
+            parseCol(cols, matcher.group());
+        }
     }
 
     private static final String REGEX_HINTS = "(/\\*\\$\\{hints\\s+.*?\\}\\*/)";
@@ -200,13 +210,13 @@ public class CursorParser {
 
     public static BioCursor pars(final String bioCode, final String sql) throws Exception {
         BioCursor cursor = new BioCursor(bioCode, sql);
-        parsParams(cursor);
-        parsCols(cursor);
+        addParamsFromSQLDesc(cursor);
+        addColsFromSQLDesc(cursor);
         parsHints(cursor);
         return cursor;
     }
 
-    private static void overrideParamsFromXml(final BioCursor cursor, final Document document) throws Exception {
+    private static void addParamsFromXml(final BioCursor cursor, final Document document) throws Exception {
         Element sqlElem = Doms.findElem(document, "/cursor/SQL");
         NodeList paramNodes = sqlElem.getElementsByTagName("param");
         try(Paramus p = Paramus.set(cursor.getParams());) {
@@ -270,7 +280,7 @@ public class CursorParser {
         return sql;
     }
 
-    private static void addParamsFromSQL(final BioCursor cursor) throws Exception {
+    private static void addParamsFromSQLBody(final BioCursor cursor) throws Exception {
         final String sql0 = cursor.getPreparedSql();
         final StringBuffer out = new StringBuffer(sql0.length());
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql0);
@@ -295,7 +305,7 @@ public class CursorParser {
         });
     }
 
-    private static void overrideColsFromXml(final BioCursor cursor, final Document document) throws Exception {
+    private static void addColsFromXml(final BioCursor cursor, final Document document) throws Exception {
         Element sqlElem = Doms.findElem(document, "/cursor/fields");
         NodeList colNodes = sqlElem.getElementsByTagName("field");
         List<Column> cols = cursor.getColumns();
@@ -309,6 +319,7 @@ public class CursorParser {
             Column col = findCol(fieldName, cols);
             if(col == null) {
                 col = new Column();
+                cols.add(col);
                 col.setName(fieldName);
             }
             col.setId(i+1);
@@ -321,7 +332,6 @@ public class CursorParser {
             col.setPk(Converter.toType(Doms.getAttribute(paramElem, "pk", "false", String.class), boolean.class));
             col.setReadonly(Converter.toType(Doms.getAttribute(paramElem, "readOnly", "false", String.class), boolean.class));
             col.setWidth(Doms.getAttribute(paramElem, "width", null, String.class));
-            cols.add(col);
         }
 
     }
@@ -333,12 +343,12 @@ public class CursorParser {
         String sql = sqlTextElem.getTextContent();
 
         BioCursor cursor = new BioCursor(bioCode, sql);
-        addParamsFromSQL(cursor);
-        parsParams(cursor);
-        parsCols(cursor);
+        addColsFromXml(cursor, document); // добавляем колонки из XML
+        addColsFromSQLDesc(cursor); // добавляем колонки описанные в SQL, в коментах
+        addParamsFromSQLBody(cursor); // добавляем переменные из SQL
+        addParamsFromSQLDesc(cursor); // добавляем переменные описанные в SQL, в коментах
+        addParamsFromXml(cursor, document); // добавляем переменные из XML
         parsHints(cursor);
-        overrideParamsFromXml(cursor, document);
-        overrideColsFromXml(cursor, document);
 
         LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;

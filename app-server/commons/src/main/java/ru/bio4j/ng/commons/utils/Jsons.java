@@ -4,13 +4,12 @@ package ru.bio4j.ng.commons.utils;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import sun.org.mozilla.javascript.internal.json.JsonParser;
 
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-import flexjson.ObjectBinder;
-import flexjson.ObjectFactory;
+import flexjson.*;
+import flexjson.transformer.AbstractTransformer;
 import flexjson.transformer.DateTransformer;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.MetaType;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -20,12 +19,35 @@ import java.util.HashMap;
 public class Jsons {
 	public static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+    public static class ExceptionTransformer extends AbstractTransformer {
+
+        public void transform(Object value) {
+            JSONContext context = getContext();
+            String valueStr = new JSONSerializer()
+                    .exclude("cause", "localizedMessage", "stackTraceDepth","stackTrace")
+                    .serialize(value);
+            context.write(valueStr);
+        }
+
+    }
+
+    public static class MetaTypeTransformer extends AbstractTransformer {
+
+        public void transform(Object value) {
+            JSONContext context = getContext();
+            String valueStr = "\""+value.toString().toLowerCase()+"\"";
+            context.write(valueStr);
+        }
+
+    }
+
 	public static String encode(Object object) {
 		JSONSerializer serializer = new JSONSerializer();
 		return serializer
                 .exclude("class")
 				.transform(new DateTransformer(DATE_TIME_FORMAT), Date.class)
 				.transform(new ExceptionTransformer(), Exception.class)
+                .transform(new MetaTypeTransformer(), MetaType.class)
 				.deepSerialize(object);
 	}
 
@@ -50,6 +72,13 @@ public class Jsons {
                     @Override
                     public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
                         return Types.parse((String) value, DATE_TIME_FORMAT);
+                    }
+                })
+                .use(MetaType.class, new ObjectFactory() {
+                    @Override
+                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+                        String valStr = (String)value;
+                        return MetaType.decode(valStr);
                     }
                 })
                 .use(StackTraceElement.class, new ObjectFactory() {

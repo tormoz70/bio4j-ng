@@ -7,6 +7,7 @@ import flexjson.JSONException;
 import java.lang.reflect.Type;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class BeanObjectFactory implements ObjectFactory {
@@ -14,6 +15,8 @@ public class BeanObjectFactory implements ObjectFactory {
     public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
         try {
             Object target = instantiate( targetClass );
+            if(value instanceof ArrayList && ((ArrayList) value).size() == 0)
+                return null;
             return context.bindIntoObject( (Map)value, target, targetType );
         } catch (InstantiationException e) {
             throw new JSONException(context.getCurrentPath() + ":There was an exception trying to instantiate an instance of " + targetClass.getName(), e );

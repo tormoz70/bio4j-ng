@@ -2,7 +2,7 @@
 <templates>
 
     <!--
-      $QUERY - запрос который фильтрануть
+      ${QUERY_PLACEHOLDER} - запрос который фильтрануть
     -->
     <template type="filtering"><![CDATA[
     SELECT fltrng$wrpr.*
@@ -11,7 +11,7 @@
     ]]></template>
 
     <!--
-      $QUERY - запрос который сортирнуть
+      ${QUERY_PLACEHOLDER} - запрос который сортирнуть
     -->
     <template type="sorting"><![CDATA[
     SELECT srtng$wrpr.*
@@ -21,16 +21,22 @@
 
 
     <!--
-      $QUERY - запрос который небходимо разбить на страницы (т.е. иметь возможность
+      ${QUERY_PLACEHOLDER} - запрос который небходимо разбить на страницы (т.е. иметь возможность
                 запросить :PAGING_COUNT зaписей с :PAGING_OFFSET )
-      :PAGING_COUNT   - количество записей которые необходимо загрузить
-      :PAGING_OFFSET  - количество пропущенных записей до первой загруженной
-      :PAGING_LAST    - последняя запись которую нужно загрузить
+      :paging$offset  - количество пропущенных записей до первой загруженной
+      :paging$last    - последняя запись которую нужно загрузить
     -->
     <template type="paging"><![CDATA[
     SELECT * FROM (
         SELECT pgng$wrpr0.*, ROWNUM rnum$pgng
           FROM ( ${QUERY_PLACEHOLDER} ) pgng$wrpr0
     ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)
+    ]]></template>
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо кол-во записей
+    -->
+    <template type="totals"><![CDATA[
+        SELECT COUNT(1) ttlCnt$wrpr
+          FROM ( ${QUERY_PLACEHOLDER} )
     ]]></template>
 </templates>

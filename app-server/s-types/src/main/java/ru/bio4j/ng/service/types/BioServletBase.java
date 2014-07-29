@@ -67,7 +67,6 @@ public class BioServletBase extends HttpServlet {
     }
 
     private static void writeResponse(String brespJson, HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding("UTF-8");
         PrintWriter writer = response.getWriter();
         writer.append(brespJson);
     }

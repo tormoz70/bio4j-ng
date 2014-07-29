@@ -52,9 +52,6 @@ public class OraReader implements SQLReader {
         if(resultSet.next()){
             if(this.fields == null) {
                 ResultSetMetaData metadata = resultSet.getMetaData();
-                this.rowValues = new ArrayList<>(metadata.getColumnCount());
-                for (int i = 0; i < metadata.getColumnCount(); i++)
-                    this.rowValues.add(null);
 
                 this.fields = new ArrayList<>();
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
@@ -70,6 +67,9 @@ public class OraReader implements SQLReader {
                     this.fields.add(field);
                 }
             }
+            this.rowValues = new ArrayList<>(this.fields.size());
+            for (int i = 0; i < this.fields.size(); i++)
+                this.rowValues.add(null);
             for (Field field : this.fields) {
                 int valueIndex = field.getId() - 1;
                 Object value;

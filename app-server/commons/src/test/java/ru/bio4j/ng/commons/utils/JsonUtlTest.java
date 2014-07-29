@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
 import java.text.ParseException;
@@ -25,6 +26,7 @@ public class JsonUtlTest {
 	@BeforeClass
 	private void setUp() {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+04:00"));
+        this.testBox.setType(MetaType.INTEGER);
 		this.testBox.setName("Test-Box");
 		this.testBox.setCreated(Types.parse("2012.12.20-15:11:24", "yyyy.MM.dd-HH:mm:ss"));
 		this.testBox.setVolume(123.05);
@@ -45,7 +47,7 @@ public class JsonUtlTest {
         TBox testBox = new TBox();
         testBox.setName("Test-Box");
 		String expected =
-		 "{\"created\":null,\"err\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"volume\":null}";
+		 "{\"created\":null,\"err\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"type\":\"undefined\",\"volume\":null}";
 		String testJson = Jsons.encode(testBox);
 		System.out.println(testJson);
 		Assert.assertEquals(expected, testJson);
@@ -112,4 +114,11 @@ public class JsonUtlTest {
         LOG.debug("c2:{}, {}", c2.getTime(), c2.getTimeZone());
     }
 
+    @Test(enabled = true)
+    public void bdecode3() throws Exception {
+        //String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[]}";
+        String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
+        BioRequestJStoreGet rq = Jsons.decode(json, BioRequestJStoreGet.class);
+        Assert.assertNotNull(rq);
+    }
 }

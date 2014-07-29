@@ -41,6 +41,7 @@ public class UtlTest {
     public void buildBeanStateInfoTest() {
         TBox box = new TBox();
         String rslt = "  ru.bio4j.ng.commons.utils.TBox {\n" +
+                "   - type : UNDEFINED;\n" +
                 "   - name : null;\n" +
                 "   - created : null;\n" +
                 "   - volume : null;\n" +
@@ -48,6 +49,7 @@ public class UtlTest {
                 "   - ex : null;\n" +
                 "   - err : null;\n" +
                 "  }";
+
 
         String info = Utl.buildBeanStateInfo(box, null, "  ");
         System.out.println(info);

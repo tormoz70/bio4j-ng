@@ -1,6 +1,9 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Lists;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Column;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -11,6 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BioCursor {
+
+    public String getTotalsSql() {
+        return totalsSql;
+    }
+
+    public void setTotalsSql(String totalsSql) {
+        this.totalsSql = totalsSql;
+    }
 
     public static enum Type {
         SELECT, EXEC
@@ -30,6 +41,7 @@ public class BioCursor {
     private Type type = Type.SELECT;
     private byte wrapMode = WrapMode.ALL.code();
     private final String sql;
+    private String totalsSql;
     private String preparedSql;
 
     private List<Column> columns = new ArrayList<>();
@@ -59,6 +71,15 @@ public class BioCursor {
             p.apply(params);
         }
         return this;
+    }
+
+    public Column findColumn(final String name) {
+        return Lists.first(columns, new DelegateCheck<Column>() {
+            @Override
+            public Boolean callback(Column item) {
+                return Strings.compare(name, item.getName(), true);
+            }
+        });
     }
 
     public List<Column> getColumns() {

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.filtering.FilteringWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.PaginationWrapper;
+import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.TotalsWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.sorting.SortingWrapper;
 import ru.bio4j.ng.service.api.BioCursor;
 
@@ -44,7 +45,7 @@ public class Wrappers {
     public void init(String dbmsName) throws Exception {
         LOG.debug("Wrapper initializing for \"{}\" database...", dbmsName);
         templates = WrapperLoader.loadQueries(dbmsName);
-        wrappers = register(FilteringWrapper.class, PaginationWrapper.class, SortingWrapper.class);
+        wrappers = register(FilteringWrapper.class, SortingWrapper.class, PaginationWrapper.class, TotalsWrapper.class);
         LOG.debug("Wrapper initialized.");
     }
 

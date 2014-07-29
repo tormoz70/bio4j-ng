@@ -25,10 +25,13 @@ public class ServletApi extends BioServletApiBase {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final HttpServletRequest req = request;
+        final HttpServletResponse resp = response;
+        resp.setCharacterEncoding("UTF-8");
         try {
             initRouter(this.getServletContext());
             initServices(this.getServletContext());
-            doRoute(request, response);
+            doRoute(req, resp);
         } catch (Exception e) {
             LOG.error("Unexpected server error (Level-0)!", e);
             responseError(BioError.wrap(e), response);

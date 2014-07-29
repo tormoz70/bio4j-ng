@@ -67,7 +67,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
 
 
-    private BioRespBuilder.Data processCursorAsSelectable(BioRequest request, BioModule module, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectable(final BioRequest request, BioModule module, BioCursor cursor) throws Exception {
+        final BioRequestJStoreGet req = (BioRequestJStoreGet)request;
         final User usr = request.getUser();
         applyCurrentUserParams(usr, cursor);
         LOG.debug("Try exec batch!!!");
@@ -78,20 +79,50 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 tryPrepareSessionContext(usr.getUid(), conn);
                 final BioRespBuilder.Data result = BioRespBuilder.data();
                 result.bioCode(cur.getBioCode());
+                int totalCount = req.getTotalCount();
+                if(totalCount == 0) {
+                    LOG.debug("Try calc count of cursor records!!!");
+                    try (SQLCursor c = context.CreateCursor()
+                            .init(conn, cur.getTotalsSql(), cur.getParams()).open();) {
+                        if (c.reader().read())
+                            totalCount = c.reader().getValue(1, int.class);
+                    }
+                    LOG.debug("Count of cursor records - {}!!!", totalCount);
+                }
                 LOG.debug("Try open Cursor!!!");
                 try(SQLCursor c = context.CreateCursor()
                         .init(conn, cur.getPreparedSql(), cur.getParams()).open();) {
                     LOG.debug("Cursor opened!!!");
                     StoreData data = new StoreData();
+                    data.setOffset(cur.getOffset());
+                    data.setPageSize(cur.getPageSize());
                     data.setMetadata(new StoreMetadata());
-                    data.getMetadata().setColumns(cur.getColumns());
+                    data.setResults(totalCount);
+                    List<Column> cols = cur.getColumns();
+                    data.getMetadata().setColumns(cols);
                     List<StoreRow> rows = new ArrayList<>();
-                    if(c.reader().read()) {
-                        LOG.debug("FirstRec readed!!!");
+                    while(c.reader().read()) {
+//                        if(cols == null) {
+//                            cols = new ArrayList<>();
+//                            for (Field f : c.reader().getFields()) {
+//                                Column col = cur.findColumn(f.getName());
+//                                if(col != null)
+//                                    cols.add(col);
+//                            }
+//                        }
                         StoreRow r = new StoreRow();
-                        r.setValues(c.reader().getValues());
+                        List<Object> vals = new ArrayList<>();
+                        for (Column col : cols) {
+                            Field f = c.reader().getField(col.getName());
+                            if (f != null)
+                                vals.add(c.reader().getValue(f.getId()));
+                            else
+                                vals.add(null);
+                        }
+                        r.setValues(vals);
                         rows.add(r);
                     }
+                    data.getMetadata().setColumns(cols);
                     data.setRows(rows);
                     result.packet(data);
                 }
@@ -116,6 +147,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private void wrapCursor(BioCursor cursor) throws Exception {
         Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
         Wrappers.wrapRequest(cursor, WrapQueryType.SORTING);
+        Wrappers.wrapRequest(cursor, WrapQueryType.TOTALS);
         Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
     }
 

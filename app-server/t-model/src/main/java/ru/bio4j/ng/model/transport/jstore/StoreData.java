@@ -19,6 +19,10 @@ public class StoreData {
     private int pageSize;
 
     /**
+     * Всего записей
+     */
+    private int results;
+    /**
      * Метаданные
      */
     private StoreMetadata metadata;
@@ -90,4 +94,11 @@ public class StoreData {
         this.rows = rows;
     }
 
+    public int getResults() {
+        return results;
+    }
+
+    public void setResults(int results) {
+        this.results = results;
+    }
 }

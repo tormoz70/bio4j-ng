@@ -25,6 +25,7 @@ public class ServletLogin extends BioServletLoginBase {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final HttpServletRequest req = request;
         final HttpServletResponse resp = response;
+        resp.setCharacterEncoding("UTF-8");
         try {
             initServices(this.getServletContext());
             BioRespBuilder.Login bresp = doLogin(req);

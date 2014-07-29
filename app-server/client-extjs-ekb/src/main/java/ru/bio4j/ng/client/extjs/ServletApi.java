@@ -58,6 +58,7 @@ public class ServletApi extends BioServletApiBase {
 
     private void doFwd(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final HttpServletResponse rsp = response;
+        rsp.setCharacterEncoding("UTF-8");
         final String queryString = Httpc.getQueryString(request);
         final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
 

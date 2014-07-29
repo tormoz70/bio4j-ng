@@ -1,10 +1,12 @@
 package ru.bio4j.ng.commons.utils;
 
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.MetaType;
 
 import java.util.Date;
 
 public class TBox {
+    private MetaType type = MetaType.UNDEFINED;
 	private String name;
 	private Date created;
 	private Double volume;
@@ -67,5 +69,13 @@ public class TBox {
 
     public void setErr(BioError err) {
         this.err = err;
+    }
+
+    public MetaType getType() {
+        return type;
+    }
+
+    public void setType(MetaType type) {
+        this.type = type;
     }
 }
