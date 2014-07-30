@@ -47,7 +47,7 @@ public class BioCursor {
     private List<Column> columns = new ArrayList<>();
     private final List<Param> params = new ArrayList<>();
     private Expression filter;
-    private Sort sort;
+    private List<Sort> sort;
     private int offset;
     private int pageSize;
     private boolean readonly;
@@ -129,9 +129,9 @@ public class BioCursor {
 
     public void setFilter(Expression filter) { this.filter = filter; }
 
-    public Sort getSort() { return sort; }
+    public List<Sort> getSort() { return sort; }
 
-    public void setSort(Sort sort) { this.sort = sort; }
+    public void setSort(List<Sort> sort) { this.sort = sort; }
 
     public int getOffset() { return offset; }
 

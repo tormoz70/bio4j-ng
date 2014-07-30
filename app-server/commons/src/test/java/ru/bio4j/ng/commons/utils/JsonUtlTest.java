@@ -116,9 +116,14 @@ public class JsonUtlTest {
 
     @Test(enabled = true)
     public void bdecode3() throws Exception {
-        //String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[]}";
         String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
         BioRequestJStoreGet rq = Jsons.decode(json, BioRequestJStoreGet.class);
+        Assert.assertNotNull(rq);
+        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[]}";
+        rq = Jsons.decode(json, BioRequestJStoreGet.class);
+        Assert.assertNotNull(rq);
+        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":null}";
+        rq = Jsons.decode(json, BioRequestJStoreGet.class);
         Assert.assertNotNull(rq);
     }
 }

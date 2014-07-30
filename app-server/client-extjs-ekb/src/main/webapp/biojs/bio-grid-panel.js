@@ -44,7 +44,7 @@ Ext.define('Bio.grid.Panel', {
                                 var xtp, rdrr;
                                 switch (f.type) {
                                     case "boolean" :
-                                        xtp = 'checkcolumn';
+                                        xtp = (f.readonly ? 'gridcolumn' : 'checkcolumn');
                                         rdrr = bool_renderer;
                                         break;
                                     case "date" :
@@ -107,7 +107,7 @@ Ext.define('Bio.grid.Panel', {
             'headerclick': function (ct, column, e, t, eOpts) {
                 var me = this;
                 //alert('Chpok!');
-                me.store.reload();
+                //me.bbar.doRefresh();
             }
         });
         config.listeners = lsnrs;

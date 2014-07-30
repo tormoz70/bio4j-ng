@@ -8,6 +8,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,13 +79,13 @@ public class OracleWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String sortToSQL(String alias, Sort sort) {
+    public String sortToSQL(String alias, List<Sort> sort) {
         if(sort != null) {
             StringBuilder result = new StringBuilder();
             char comma;
-            for (Sort.Field fld : sort){
+            for (Sort s : sort){
                 comma = (result.length() == 0) ? ' ' : ',';
-                result.append(String.format("%s %s.%s %s", comma, alias, fld.getFieldName().toUpperCase(), fld.getDirection().toString()));
+                result.append(String.format("%s %s.%s %s", comma, alias, s.getFieldName().toUpperCase(), s.getDirection().toString()));
             }
             return result.toString();
         }

@@ -20,8 +20,7 @@ Ext.define('Bio.data.Store', {
                 ,writer: {
                     type: 'biorest'
                 }
-            },
-            remoteSort: true
+            }
         }, config);
 
         me.callParent([config]);

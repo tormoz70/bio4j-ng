@@ -3,6 +3,8 @@ package ru.bio4j.ng.model.transport.jstore;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
+import java.util.List;
+
 /**
  * Запрос на получение данных в JStoreClient
  */
@@ -25,7 +27,7 @@ public class BioRequestJStoreGet extends BioRequest {
     /**
      * Параметры сортировки для запросов GET
      */
-    private Sort sort;
+    private List<Sort> sort;
 
     /**
      * Параметры фильтрации для запросов GET
@@ -56,11 +58,11 @@ public class BioRequestJStoreGet extends BioRequest {
         this.pagesize = pagesize;
     }
 
-    public Sort getSort() {
+    public List<Sort> getSort() {
         return sort;
     }
 
-    public void setSort(Sort sort) {
+    public void setSort(List<Sort> sort) {
         this.sort = sort;
     }
 

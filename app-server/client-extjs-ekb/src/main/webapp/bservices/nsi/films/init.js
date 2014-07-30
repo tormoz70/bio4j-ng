@@ -31,7 +31,8 @@ Ext.onReady(function () {
                     value:"asd"
                 }
             ],
-            autoLoad: true
+            autoLoad: true,
+            remoteSort: true
         },
 //        columns: [
 //            {
