@@ -11,6 +11,7 @@ Ext.require([
 
 Ext.onReady(function () {
 
+    document.title = document.title + " - [Справочник фильмов]";
 //    alert("Redy!!!");
     Ext.ns('Ekb');
 
@@ -31,7 +32,7 @@ Ext.onReady(function () {
                     value:"asd"
                 }
             ],
-            autoLoad: true,
+            //autoLoad: true,
             remoteSort: true
         },
 //        columns: [
@@ -139,5 +140,6 @@ Ext.onReady(function () {
 
     Ext.defer(hideMask, 250);
 
+    grid.store.locate(1182);
 
 });

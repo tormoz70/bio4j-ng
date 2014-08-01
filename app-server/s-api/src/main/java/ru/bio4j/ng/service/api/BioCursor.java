@@ -15,14 +15,6 @@ import java.util.List;
 
 public class BioCursor {
 
-    public String getTotalsSql() {
-        return totalsSql;
-    }
-
-    public void setTotalsSql(String totalsSql) {
-        this.totalsSql = totalsSql;
-    }
-
     public static enum Type {
         SELECT, EXEC
     }
@@ -42,6 +34,7 @@ public class BioCursor {
     private byte wrapMode = WrapMode.ALL.code();
     private final String sql;
     private String totalsSql;
+    private String locateSql;
     private String preparedSql;
 
     private List<Column> columns = new ArrayList<>();
@@ -148,5 +141,22 @@ public class BioCursor {
     public boolean isMultySelection() { return multySelection; }
 
     public void setMultySelection(boolean multySelection) { this.multySelection = multySelection; }
+
+    public String getTotalsSql() {
+        return totalsSql;
+    }
+
+    public void setTotalsSql(String totalsSql) {
+        this.totalsSql = totalsSql;
+    }
+
+    public String getLocateSql() {
+        return locateSql;
+    }
+
+    public void setLocateSql(String locateSql) {
+        this.locateSql = locateSql;
+    }
+
 
 }

@@ -40,6 +40,12 @@ public class BioRequestJStoreGet extends BioRequest {
      */
     private Object location;
 
+    /**
+     * Значение первичного ключя записи, которую надо загрузить на клиент
+     * Примечание: используется для загрузки данных в форму редактирования, например.
+     */
+    private Object id;
+
     private String origJson;
 
     public int getOffset() {
@@ -96,6 +102,14 @@ public class BioRequestJStoreGet extends BioRequest {
 
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public Object getId() {
+        return id;
+    }
+
+    public void setId(Object id) {
+        this.id = id;
     }
 }
 

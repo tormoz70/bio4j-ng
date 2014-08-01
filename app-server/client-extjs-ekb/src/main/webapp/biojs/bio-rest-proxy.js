@@ -40,7 +40,9 @@ Ext.define('Bio.data.RestProxy', {
             totalCount: store.totalCount,
             offset: offset,
             pagesize: operation.limit,
-            sort: sort
+            sort: sort,
+            location: operation.locate,
+            id: operation.id
         });
         request.params = {
             rqt: 'crud.dt.gt'

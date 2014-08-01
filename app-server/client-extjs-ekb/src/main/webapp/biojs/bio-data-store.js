@@ -32,15 +32,20 @@ Ext.define('Bio.data.Store', {
         }
     },
 
-    loadForm: function(form) {
+    loadForm: function(form, id) {
         var me = this;
         me.load({
-            scope: form.getForm(),
+            id: id,
             callback: function(records, operation, success) {
+                var f = form.getForm();
                 if(records && (records.length > 0))
-                    this.loadRecord(records[0]);
+                    f.loadRecord(records[0]);
             }
         });
+    },
 
+    locate: function(location) {
+        var me = this;
+        me.load({locate: location});
     }
 });

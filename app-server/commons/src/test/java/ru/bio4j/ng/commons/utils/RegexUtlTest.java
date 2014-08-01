@@ -35,10 +35,22 @@ public class RegexUtlTest {
     }
 
     @Test
-    public void testReplace() throws Exception {
+    public void testReplace0() throws Exception {
         String sql = "select 'sdf' as f1 from dual";
         sql = Regexs.replace(sql, "(['])(.*?)\\1", "", Pattern.CASE_INSENSITIVE);
         System.out.println(sql);
         Assert.assertEquals(sql, "select  as f1 from dual");
+    }
+
+
+    @Test
+    public void testReplace1() throws Exception {
+        final String query_ph = "${QUERY_PLACEHOLDER}";
+        final String templ = "SELECT COUNT(1) ttlCnt$wrpr\n" +
+                "FROM ( ${QUERY_PLACEHOLDER} )";
+        final String sql = "select 'sdf' as f1 from dual";
+        String preparedSQL = Regexs.replace(templ, query_ph, sql, Pattern.MULTILINE+Pattern.LITERAL);
+        System.out.println(preparedSQL);
+        Assert.assertTrue(true);
     }
 }

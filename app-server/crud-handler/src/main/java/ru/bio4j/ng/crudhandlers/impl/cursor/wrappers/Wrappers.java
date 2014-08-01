@@ -3,6 +3,7 @@ package ru.bio4j.ng.crudhandlers.impl.cursor.wrappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.filtering.FilteringWrapper;
+import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.TotalsWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.sorting.SortingWrapper;
@@ -45,7 +46,13 @@ public class Wrappers {
     public void init(String dbmsName) throws Exception {
         LOG.debug("Wrapper initializing for \"{}\" database...", dbmsName);
         templates = WrapperLoader.loadQueries(dbmsName);
-        wrappers = register(FilteringWrapper.class, SortingWrapper.class, PaginationWrapper.class, TotalsWrapper.class);
+        wrappers = register(
+                FilteringWrapper.class,
+                SortingWrapper.class,
+                PaginationWrapper.class,
+                TotalsWrapper.class,
+                LocateWrapper.class
+        );
         LOG.debug("Wrapper initialized.");
     }
 

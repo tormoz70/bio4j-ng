@@ -187,3 +187,15 @@ Ext.override(Ext.data.Connection, {
         return response;
     }
 });
+
+Ext.override(Ext.toolbar.Paging, {
+    doRefresh : function(){
+        var me = this,
+            current = me.store.currentPage;
+
+        if (me.fireEvent('beforechange', me, current) !== false) {
+            //me.store.loadPage(current);
+            me.store.reload();
+        }
+    }
+});

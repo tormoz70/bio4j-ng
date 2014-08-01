@@ -32,11 +32,23 @@
           FROM ( ${QUERY_PLACEHOLDER} ) pgng$wrpr0
     ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)
     ]]></template>
+
     <!--
-      ${QUERY_PLACEHOLDER} - запрос в котором небходимо кол-во записей
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо вычислить кол-во записей
     -->
     <template type="totals"><![CDATA[
         SELECT COUNT(1) ttlCnt$wrpr
           FROM ( ${QUERY_PLACEHOLDER} )
     ]]></template>
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо вычислить кол-во записей
+    -->
+    <template type="totals"><![CDATA[
+          SELECT rnum$ FROM (SELECT innerq.*, ROWNUM rnum$
+            FROM (${QUERY_PLACEHOLDER}) innerq)
+           WHERE ${WHERECLAUSE_PLACEHOLDER} AND (rnum$ >= :locate$startfrom)
+    ]]></template>
+
 </templates>
+
