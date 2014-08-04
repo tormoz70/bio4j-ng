@@ -5,6 +5,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -207,6 +208,28 @@ public class ParamsTest {
             long org = paramus.getParamValue("v_packetzip_id", long.class);
             Assert.assertEquals(0L, org);
         }
+    }
+
+    @Test(enabled = true)
+    public void cloneTest() throws Exception {
+        List<Param> p = new ArrayList<Param>();
+        try(Paramus pms = Paramus.set(p);){
+            pms.add(Param.builder()
+                            .name("p1")
+                            .value(10)
+                            .type(MetaType.CLOB)
+                            .direction(Param.Direction.INOUT)
+                            .build()
+            );
+            pms.setValue("p2", "76");
+        }
+        List<Param> pp = Paramus.clone(p);
+        Assert.assertNotNull(pp);
+        Assert.assertEquals(pp.size(), p.size());
+        Assert.assertEquals("p1", pp.get(0).getName());
+        Assert.assertEquals(10, pp.get(0).getValue());
+        Assert.assertEquals(Param.Direction.INOUT, pp.get(0).getDirection());
+        Assert.assertEquals(MetaType.CLOB, pp.get(0).getType());
     }
 
 }

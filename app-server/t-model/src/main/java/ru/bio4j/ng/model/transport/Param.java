@@ -5,7 +5,18 @@ public class Param {
     public static enum Direction {
         IN,
         OUT,
-        INOUT
+        INOUT;
+
+        public static Direction decode(String name) {
+            if (name != null) {
+                for (Direction type : values()) {
+                    if (type.name().equals(name.toUpperCase()))
+                        return type;
+                }
+            }
+            throw new IllegalArgumentException(String.format("Unknown direction \"%s\"!", name));
+        }
+
     }
 
     public static class Builder {

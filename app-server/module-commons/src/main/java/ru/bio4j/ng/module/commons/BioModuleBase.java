@@ -77,6 +77,7 @@ public abstract class BioModuleBase implements BioModule {
             final BioRequestJStoreGet r = (BioRequestJStoreGet)request;
             cursor.setOffset(r.getOffset());
             cursor.setPageSize(r.getPagesize());
+            cursor.setLocation(r.getLocation());
             cursor.setFilter(r.getFilter());
             cursor.setSort(r.getSort());
             cursor.setParams(r.getBioParams());

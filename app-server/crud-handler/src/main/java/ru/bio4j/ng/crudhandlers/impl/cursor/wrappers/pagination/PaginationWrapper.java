@@ -49,7 +49,7 @@ public class PaginationWrapper extends AbstractWrapper {
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
         if((cursor.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
-            String sql = Regexs.replace(template, QUERY, cursor.getPreparedSql(), Pattern.MULTILINE + Pattern.LITERAL);
+            String sql = template.replace(QUERY, cursor.getPreparedSql());
 //            cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix);
             cursor.setPreparedSql(sql);
         }
@@ -57,7 +57,7 @@ public class PaginationWrapper extends AbstractWrapper {
         if(pageSize > 0) {
             int offset = cursor.getOffset();
             cursor.setParamValue(OFFSET, offset)
-                  .setParamValue(LAST, pageSize + offset);
+                  .setParamValue(LAST, offset + pageSize);
         }
         return cursor;
     }

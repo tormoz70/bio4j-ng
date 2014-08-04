@@ -98,7 +98,8 @@ Ext.define('Bio.grid.Panel', {
                 beforePageText: "Страница",
                 afterPageText: "из {0}",
                 displayMsg: "Загружено {0} - {1} of {2}",
-                emptyMsg: "Нет данных"
+                emptyMsg: "Нет данных",
+                inputItemWidth: 60
             });
         }
 
@@ -111,6 +112,12 @@ Ext.define('Bio.grid.Panel', {
             }
         });
         config.listeners = lsnrs;
+
+        var viewCfg = Ext.apply(config.viewConfig||{}, {
+            loadingText: "Загрузка данных..."
+        });
+
+        config.viewConfig = viewCfg;
 
         me.callParent(arguments);
     }

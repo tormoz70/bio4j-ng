@@ -5,9 +5,6 @@ import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;
 import ru.bio4j.ng.commons.converter.Types;
 
-/**
- * Created by ayrat on 21.03.14.
- */
 public class StringHandler extends TypeHandlerBase implements TypeHandler<String> {
 
     @Override

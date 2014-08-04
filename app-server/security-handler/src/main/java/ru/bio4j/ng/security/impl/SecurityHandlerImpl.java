@@ -85,7 +85,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             try(SQLCursor c = context.CreateCursor()
                     .init(conn, "select username from user_users", null)
                     .open()) {
-                if (c.reader().read()){
+                if (c.reader().next()){
                     LOG.debug("User found!");
                     String s = c.reader().getValue("USERNAME", String.class);
                     User usr = new User();

@@ -46,7 +46,7 @@ public class OraReader implements SQLReader {
     }
 
     @Override
-    public boolean read() throws Exception {
+    public boolean next() throws Exception {
         if(resultSet == null)
             throw new IllegalArgumentException("ResultSet must be defined!");
         if(resultSet.next()){

@@ -6,6 +6,7 @@ package ru.bio4j.ng.crudhandlers.impl.cursor.wrappers;
 public abstract class AbstractWrapper implements Wrapper {
 
     public static final String QUERY = "${QUERY_PLACEHOLDER}";
+    public static final String WHERE_CLAUSE = "${WHERECLAUSE_PLACEHOLDER}";
     protected WrapperInterpreter wrapperInterpreter;
 
     public AbstractWrapper(String template) {

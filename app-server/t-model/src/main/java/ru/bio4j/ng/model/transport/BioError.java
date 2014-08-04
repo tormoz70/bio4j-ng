@@ -34,13 +34,14 @@ public class BioError extends Exception {
         }
     }
 
-    public static class Login extends BioError {
+    public static abstract class Login extends BioError {
         public Login() {
             super();
         }
         public Login(String message) {
             super(message);
         }
+
         public static class BadLogin extends BioError.Login {
             public BadLogin() {
                 super("Не верное имя или пароль пользователя!");
@@ -58,4 +59,14 @@ public class BioError extends Exception {
             }
         }
     }
+
+    public static class BadIODescriptor extends BioError {
+        public BadIODescriptor() {
+            super();
+        }
+        public BadIODescriptor(String message) {
+            super(message);
+        }
+    }
+
 }

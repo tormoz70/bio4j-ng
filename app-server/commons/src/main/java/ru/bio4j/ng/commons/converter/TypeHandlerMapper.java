@@ -9,7 +9,9 @@ public class TypeHandlerMapper {
         new StringHandler(),
         new NumberHandler(),
         new BooleanHandler(),
-        new ResultSetHandler()
+        new ResultSetHandler(),
+        new MetaTypeHandler(),
+        new DirectionHandler()
     };
 
     public static TypeHandler getHandler(Class<?> type) {

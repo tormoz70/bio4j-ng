@@ -98,10 +98,6 @@ Ext.override(Ext.data.Connection, {
                 var p = {
                     uid : usr.login||usr.uid
                 };
-//                if(usr.uid)
-//                    p.uid = usr.uid;
-//                if(usr.login)
-//                    p.login = usr.login;
                 Ext.apply(o.params, p);
                 return me.request0(o);
             },
@@ -147,6 +143,7 @@ Ext.override(Ext.data.Connection, {
     },
 
     onComplete : function(request, xdrResult) {
+        Bio.app.waitMaskHide();
         var me = this,
             options = request.options,
             result,

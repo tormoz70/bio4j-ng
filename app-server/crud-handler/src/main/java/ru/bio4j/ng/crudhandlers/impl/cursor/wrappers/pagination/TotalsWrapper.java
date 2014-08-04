@@ -46,7 +46,7 @@ public class TotalsWrapper extends AbstractWrapper {
      */
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
-        String sql = Regexs.replace(template, QUERY, cursor.getPreparedSql(), Pattern.MULTILINE+Pattern.LITERAL);
+        String sql = template.replace(QUERY, cursor.getPreparedSql());
         cursor.setTotalsSql(sql);
         return cursor;
 

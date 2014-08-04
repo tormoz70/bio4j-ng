@@ -14,8 +14,6 @@ import static ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType.FILTER
 @WrapperType(FILTERING)
 public class FilteringWrapper extends AbstractWrapper {
 
-    public static final String WHERE_CLAUSE = "${WHERECLAUSE_PLACEHOLDER}";
-
     private String queryPrefix;
     private String querySuffix;
 

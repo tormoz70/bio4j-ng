@@ -24,7 +24,7 @@ import ru.bio4j.ng.model.transport.Param;
  */
 public class Paramus implements Closeable {
 
-    private static Paramus instance = new Paramus();
+    private static final Paramus instance = new Paramus();
 
     private Paramus() {
     }
@@ -373,15 +373,11 @@ public class Paramus implements Closeable {
 		return removeList(names, csDefaultDelimiter);
 	}
 
-	@Override
-    public List<Param> clone() {
-		try {
-	    	return (List<Param>) BeanUtils.cloneBean(get());
-		} catch (Exception ex){
-            List<Param> result = new ArrayList<>();
-            result.add(Param.builder().name("ErrorOnCloneParamsMessage").value(ex.getMessage()).build());
-			return result;
-		}
+    public static List<Param> clone(List<Param> params) throws Exception {
+        List<Param> rslt = new ArrayList<>();
+        for(Param p : params)
+            rslt.add((Param) Utl.cloneBean(p));
+	    return rslt;
     }
 
     public <T> T getParamValue(String paramName, Class<T> type) throws ConvertValueException {

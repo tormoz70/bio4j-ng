@@ -7,7 +7,7 @@ import java.util.List;
  * Created by ayrat on 24.04.14.
  */
 public interface SQLReader {
-    boolean read() throws Exception;
+    boolean next() throws Exception;
 
     ResultSet getResultSet();
 

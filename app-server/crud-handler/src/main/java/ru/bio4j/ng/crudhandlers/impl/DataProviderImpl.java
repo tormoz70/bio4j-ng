@@ -10,8 +10,11 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
+import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.LocateWrapper;
+import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.*;
@@ -84,11 +87,33 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     LOG.debug("Try calc count of cursor records!!!");
                     try (SQLCursor c = context.CreateCursor()
                             .init(conn, cur.getTotalsSql(), cur.getParams()).open();) {
-                        if (c.reader().read())
+                        if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
                     }
                     LOG.debug("Count of cursor records - {}!!!", totalCount);
                 }
+
+                if(cur.getLocation() != null) {
+                    LOG.debug("Try locate cursor to [{}] record by pk!!!", cur.getLocation());
+                    List<Param> locateParams = Paramus.clone(cur.getParams());
+                    try(Paramus p = Paramus.set(locateParams)){
+                        p.setValue(LocateWrapper.PKVAL, cur.getLocation());
+                        p.setValue(LocateWrapper.STARTFROM, cur.getOffset());
+                    }
+                    try (SQLCursor c = context.CreateCursor()
+                            .init(conn, cur.getLocateSql(), locateParams).open();) {
+                        if (c.reader().next()) {
+                            int locatedPos = c.reader().getValue(1, int.class);
+                            int offset = (locatedPos / cur.getPageSize()) * cur.getPageSize();
+                            LOG.debug("Cursor successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getLocation(), locatedPos, offset);
+                            cur.setOffset(offset);
+                            cur.setParamValue(PaginationWrapper.OFFSET, cur.getOffset())
+                               .setParamValue(PaginationWrapper.LAST, cur.getOffset() + cur.getPageSize());
+                        } else
+                            LOG.debug("Cursor fail location to [{}] record by pk!!!", cur.getLocation());
+                    }
+                }
+
                 LOG.debug("Try open Cursor!!!");
                 try(SQLCursor c = context.CreateCursor()
                         .init(conn, cur.getPreparedSql(), cur.getParams()).open();) {
@@ -101,15 +126,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     List<Column> cols = cur.getColumns();
                     data.getMetadata().setColumns(cols);
                     List<StoreRow> rows = new ArrayList<>();
-                    while(c.reader().read()) {
-//                        if(cols == null) {
-//                            cols = new ArrayList<>();
-//                            for (Field f : c.reader().getFields()) {
-//                                Column col = cur.findColumn(f.getName());
-//                                if(col != null)
-//                                    cols.add(col);
-//                            }
-//                        }
+                    while(c.reader().next()) {
                         StoreRow r = new StoreRow();
                         List<Object> vals = new ArrayList<>();
                         for (Column col : cols) {
@@ -146,8 +163,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private void wrapCursor(BioCursor cursor) throws Exception {
         Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
-        Wrappers.wrapRequest(cursor, WrapQueryType.SORTING);
         Wrappers.wrapRequest(cursor, WrapQueryType.TOTALS);
+        Wrappers.wrapRequest(cursor, WrapQueryType.SORTING);
+        Wrappers.wrapRequest(cursor, WrapQueryType.LOCATE);
         Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
     }
 
@@ -176,19 +194,19 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return globalSQLContext.execBatch(new SQLActionScalar<String>() {
             @Override
             public String exec(SQLContext context, Connection conn) throws Exception {
-                StringBuilder rslt = new StringBuilder();
-                LOG.debug("Opening cursor...");
-                try(SQLCursor c = context.CreateCursor()
-                    .init(conn, "select username from user_users", null)
-                    .open()) {
-                    LOG.debug("Cursor opened...");
-                    while (c.reader().read()){
-                        LOG.debug("Reading field USERNAME...");
-                        String s = c.reader().getValue("USERNAME", String.class);
-                        rslt.append(s+";");
-                    }
+            StringBuilder rslt = new StringBuilder();
+            LOG.debug("Opening cursor...");
+            try(SQLCursor c = context.CreateCursor()
+                .init(conn, "select username from user_users", null)
+                .open()) {
+                LOG.debug("Cursor opened...");
+                while (c.reader().next()){
+                    LOG.debug("Reading field USERNAME...");
+                    String s = c.reader().getValue("USERNAME", String.class);
+                    rslt.append(s+";");
                 }
-                return rslt.toString();
+            }
+            return rslt.toString();
             }
         });
     }

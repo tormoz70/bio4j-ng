@@ -7,9 +7,6 @@ import ru.bio4j.ng.commons.converter.Types;
 
 import java.util.Date;
 
-/**
- * Created by ayrat on 21.03.14.
- */
 public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number> {
 
     @Override

@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -256,15 +257,15 @@ public class Utl {
             Prop p = findAnnotation(Prop.class, fld);
             if(p != null)
                 fldName = p.name();
-            Object valStr = vals.get(fldName);
-            if(valStr != null){
+            Object valObj = vals.get(fldName);
+            if(valObj != null){
                 try {
-                    Object val = Converter.toType(valStr, fld.getType());
+                    Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
                     fld.setAccessible(true);
                     fld.set(bean, val);
                     if(!result) result = true;
                 } catch (Exception e) {
-                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valStr, e.getMessage()));
+                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
                 }
             }
         }
@@ -275,6 +276,23 @@ public class Utl {
         for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
             if(fld.getName().equals(fieldName))
                 return fld;
+        }
+        return null;
+    }
+
+    public static Object arrayCopyOf(Object original) {
+//        T[] copy = ((Object)newType == (Object)Object[].class)
+//                ? (T[]) new Object[newLength]
+//                : (T[]) Array.newInstance(newType.getComponentType(), newLength);
+//        System.arraycopy(original, 0, copy, 0,
+//                Math.min(original.length, newLength));
+//        return copy;
+        if(original != null && original.getClass().isArray()) {
+            int l = ((Object[])original).length;
+            Class<?> originalType = original.getClass();
+            Object rslt = Array.newInstance(originalType.getComponentType(), l);
+            System.arraycopy(original, 0, rslt, 0, l);
+            return rslt;
         }
         return null;
     }
@@ -294,15 +312,21 @@ public class Utl {
                 continue;
             try {
                 srcFld.setAccessible(true);
-                Object valStr = srcFld.get(srcBean);
-                if(valStr != null){
-                    Object val = Converter.toType(valStr, fld.getType());
+                Object valObj = srcFld.get(srcBean);
+                if(valObj != null) {
+                    Object val;
+                    if(valObj.getClass().isArray()) {
+                        val = arrayCopyOf(valObj);
+                    } else {
+                        val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
+                    }
                     fld.setAccessible(true);
                     fld.set(bean, val);
                     result = true;
                 }
             } catch (Exception e) {
-                throw new ApplyValuesToBeanException(fldName, String.format("Can't set value to field. Msg: %s", e.getMessage()));
+                String msg = String.format("Can't set value to field. Msg: %s", e.getMessage());
+                throw new ApplyValuesToBeanException(fldName, msg, e);
             }
         }
         return result;
@@ -320,7 +344,13 @@ public class Utl {
     }
 
     public static Object cloneBean(Object bean) throws Exception {
-        return BeanUtils.cloneBean(bean);
+        if(bean != null && !bean.getClass().isPrimitive()) {
+            Class<?> type = bean.getClass();
+            Object newBean = type.newInstance();
+            applyValuesToBean(bean, newBean);
+            return newBean;
+        }
+        return null;
     }
 
     public static String normalizePath(String path, char pathSeparator) {

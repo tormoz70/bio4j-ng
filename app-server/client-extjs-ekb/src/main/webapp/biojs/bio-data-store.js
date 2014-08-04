@@ -10,6 +10,13 @@ Ext.define('Bio.data.Store', {
 
     constructor: function(config) {
         var me = this;
+        var lstnrs = Ext.apply(config.listeners, {
+            load: function(records, successful, eOpts ) {
+                var me = this,
+                    offset = me.proxy.reader.jsonData.packet.offset;
+                me.currentPage =  (offset / me.pageSize) + 1;
+            }
+        });
         config = Ext.apply({
             model: 'Bio.data.Model',
             proxy: {
@@ -20,16 +27,12 @@ Ext.define('Bio.data.Store', {
                 ,writer: {
                     type: 'biorest'
                 }
-            }
+            },
+            listeners: lstnrs
+
         }, config);
 
         me.callParent([config]);
-    },
-
-    listeners: {
-        load: function(records, successful, eOpts ) {
-            //
-        }
     },
 
     loadForm: function(form, id) {

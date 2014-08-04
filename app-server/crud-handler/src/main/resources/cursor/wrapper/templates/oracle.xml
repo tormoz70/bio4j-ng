@@ -42,12 +42,12 @@
     ]]></template>
 
     <!--
-      ${QUERY_PLACEHOLDER} - запрос в котором небходимо вычислить кол-во записей
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
     -->
-    <template type="totals"><![CDATA[
+    <template type="locate"><![CDATA[
           SELECT rnum$ FROM (SELECT innerq.*, ROWNUM rnum$
             FROM (${QUERY_PLACEHOLDER}) innerq)
-           WHERE ${WHERECLAUSE_PLACEHOLDER} AND (rnum$ >= :locate$startfrom)
+           WHERE ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>
 
 </templates>

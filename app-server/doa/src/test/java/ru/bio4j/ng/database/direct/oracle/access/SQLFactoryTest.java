@@ -116,7 +116,7 @@ public class SQLFactoryTest {
                     List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
                     try(SQLCursor c = context.CreateCursor()
                             .init(conn, sql, prms).open();){
-                        while(c.reader().read()){
+                        while(c.reader().next()){
                             dummysum += c.reader().getValue("DM", Double.class);
                         }
                     }
@@ -143,7 +143,7 @@ public class SQLFactoryTest {
                     String sql = "select * from table(givcapi.upld.get_schemas)";
                     try(SQLCursor c = context.CreateCursor()
                             .init(conn, sql, null).open();){
-                        while(c.reader().read()){
+                        while(c.reader().next()){
                             if(schema == null){
                                 schema = c.reader().getValue("XSD_BODY", byte[].class);
                             }

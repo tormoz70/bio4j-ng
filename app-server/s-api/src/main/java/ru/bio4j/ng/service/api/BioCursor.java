@@ -43,6 +43,7 @@ public class BioCursor {
     private List<Sort> sort;
     private int offset;
     private int pageSize;
+    private Object location;
     private boolean readonly;
     private boolean multySelection;
 
@@ -71,6 +72,15 @@ public class BioCursor {
             @Override
             public Boolean callback(Column item) {
                 return Strings.compare(name, item.getName(), true);
+            }
+        });
+    }
+
+    public Column findPk() {
+        return Lists.first(columns, new DelegateCheck<Column>() {
+            @Override
+            public Boolean callback(Column item) {
+                return item.isPk();
             }
         });
     }
@@ -156,6 +166,14 @@ public class BioCursor {
 
     public void setLocateSql(String locateSql) {
         this.locateSql = locateSql;
+    }
+
+    public Object getLocation() {
+        return location;
+    }
+
+    public void setLocation(Object location) {
+        this.location = location;
     }
 
 

@@ -59,6 +59,7 @@ Ext.define('Bio.login', {
             Bio.login.showDialog({
                 fn: function(dr) {
                     if(dr.modalResult === 1) {
+                        Bio.app.waitMaskShow("Вход в систему...");
                         usr = new Bio.User({login:dr.login});
                         Ext.callback(callback.fn, callback.scope, [usr]);
                     }

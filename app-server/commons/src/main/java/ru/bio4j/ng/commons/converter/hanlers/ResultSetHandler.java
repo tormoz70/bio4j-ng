@@ -7,9 +7,6 @@ import ru.bio4j.ng.commons.converter.Types;
 
 import java.sql.ResultSet;
 
-/**
- * Created by ayrat on 21.03.14.
- */
 public class ResultSetHandler extends TypeHandlerBase implements TypeHandler<ResultSet> {
 
     @Override

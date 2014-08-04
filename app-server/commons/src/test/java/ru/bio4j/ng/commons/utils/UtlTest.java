@@ -132,4 +132,13 @@ public class UtlTest {
         Assert.assertEquals(t.getparamType(), TestGenericBean.class);
     }
 
+    @Test(enabled = true)
+    public void arrayCopyTest() throws Exception {
+        String[] a = {"1", "2"};
+        Object b = Utl.arrayCopyOf(a);
+        Assert.assertEquals(((Object[])b).length, a.length);
+        Assert.assertEquals(((Object[])b)[0], a[0]);
+        Assert.assertEquals(((Object[])b)[1], a[1]);
+    }
+
 }
