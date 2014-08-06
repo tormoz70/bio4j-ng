@@ -22,7 +22,7 @@ Ext.onReady(function () {
         title: 'Default Tab',
         storeCfg: {
             bioCode:'ekbp@cabinet.film-registry',
-            bioParams:[
+            bioParams: [
                 {
                     name:"prm1",
                     value:"qwe"
@@ -32,7 +32,7 @@ Ext.onReady(function () {
                     value:"asd"
                 }
             ],
-            //autoLoad: true,
+            autoLoad: true,
             remoteSort: true
         },
 //        columns: [
@@ -63,7 +63,24 @@ Ext.onReady(function () {
                         });
                         win2.show();
                     }
+                },
+                {
+                    // search box
+                    id: 'txtId2Locate',
+                    xtype:'textfield',
+                    value   : "enter id..."
+                },
+                {
+                    // filter button
+                    text    : "locate",
+                    handler : function() {
+                        var me = this,
+                            grid = me.ownerCt.ownerCt;
+                        var id2Locate = parseInt(Ext.getCmp('txtId2Locate').getValue());
+                        grid.store.locate(id2Locate, 1);
+                    }
                 }
+
             ]
         })
     });
@@ -139,7 +156,5 @@ Ext.onReady(function () {
     };
 
     Ext.defer(hideMask, 250);
-
-    grid.store.locate(1182);
 
 });

@@ -10,13 +10,6 @@ Ext.define('Bio.data.Store', {
 
     constructor: function(config) {
         var me = this;
-        var lstnrs = Ext.apply(config.listeners, {
-            load: function(records, successful, eOpts ) {
-                var me = this,
-                    offset = me.proxy.reader.jsonData.packet.offset;
-                me.currentPage =  (offset / me.pageSize) + 1;
-            }
-        });
         config = Ext.apply({
             model: 'Bio.data.Model',
             proxy: {
@@ -27,12 +20,29 @@ Ext.define('Bio.data.Store', {
                 ,writer: {
                     type: 'biorest'
                 }
-            },
-            listeners: lstnrs
+            }
 
         }, config);
 
         me.callParent([config]);
+
+        // adding system event handlers
+        me.addListener("load", function(records, successful, eOpts) {
+            var me = this, locate = me.lastOptions.locate,
+                grid = me.ownerGrid,
+                offset = me.proxy.reader.jsonData.packet.offset;
+            me.currentPage = (me.pageSize != 0) ? (offset / me.pageSize) + 1 : 1;
+            me.lastOptions.locate = undefined;
+            me.lastOptions.page = me.currentPage;
+            me.lastOptions.start = offset;
+
+            me.locateLocal(locate);
+        }, me);
+        me.addListener("metachange", function(store, meta) {
+            var grid = config.ownerGrid;
+            if(grid)
+                grid.recreateCols(store, meta);
+        }, me);
     },
 
     loadForm: function(form, id) {
@@ -47,8 +57,26 @@ Ext.define('Bio.data.Store', {
         });
     },
 
-    locate: function(location) {
+    locateLocal: function(location) {
+        var me = this,
+            grid = me.ownerGrid;
+        if (grid) {
+            var idProp = me.proxy.reader.getIdProperty();
+            var rowIndex = me.find(idProp, location);
+            if(rowIndex >= 0) {
+                grid.getView().select(rowIndex);
+                return true;
+            }
+        }
+        return false;
+    },
+
+    locate: function(location, startfrom) {
         var me = this;
-        me.load({locate: location});
+        if(me.locateLocal(location) === false) {
+            if (startfrom > 0)
+                me.currentPage = (me.pageSize != 0) ? (startfrom / me.pageSize) + 1 : 1;
+            me.load({locate: location});
+        }
     }
 });
