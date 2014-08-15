@@ -315,23 +315,26 @@ public class CursorParser {
         }
         for(int i=0; i<colNodes.getLength(); i++) {
             Element paramElem = (Element)colNodes.item(i);
-            String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
-            Column col = findCol(fieldName, cols);
-            if(col == null) {
-                col = new Column();
-                cols.add(col);
-                col.setName(fieldName);
+            boolean generate = Converter.toType(Doms.getAttribute(paramElem, "generate", "true", String.class), boolean.class);
+            if(generate) {
+                String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
+                Column col = findCol(fieldName, cols);
+                if (col == null) {
+                    col = new Column();
+                    cols.add(col);
+                    col.setName(fieldName);
+                }
+                col.setId(i + 1);
+                col.setFormat(Doms.getAttribute(paramElem, "format", null, String.class));
+                col.setTitle(Doms.getAttribute(paramElem, "header", null, String.class));
+                col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
+                col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
+                col.setHidden(Converter.toType(Doms.getAttribute(paramElem, "hidden", "false", String.class), boolean.class));
+                col.setDefaultVal(Doms.getAttribute(paramElem, "defaultVal", null, String.class));
+                col.setPk(Converter.toType(Doms.getAttribute(paramElem, "pk", "false", String.class), boolean.class));
+                col.setReadonly(Converter.toType(Doms.getAttribute(paramElem, "readOnly", "true", String.class), boolean.class));
+                col.setWidth(Doms.getAttribute(paramElem, "width", null, String.class));
             }
-            col.setId(i+1);
-            col.setFormat(Doms.getAttribute(paramElem, "format", null, String.class));
-            col.setTitle(Doms.getAttribute(paramElem, "header", null, String.class));
-            col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
-            col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
-            col.setHidden(Converter.toType(Doms.getAttribute(paramElem, "hidden", "false", String.class), boolean.class));
-            col.setDefaultVal(Doms.getAttribute(paramElem, "defaultVal", null, String.class));
-            col.setPk(Converter.toType(Doms.getAttribute(paramElem, "pk", "false", String.class), boolean.class));
-            col.setReadonly(Converter.toType(Doms.getAttribute(paramElem, "readOnly", "true", String.class), boolean.class));
-            col.setWidth(Doms.getAttribute(paramElem, "width", null, String.class));
         }
 
     }

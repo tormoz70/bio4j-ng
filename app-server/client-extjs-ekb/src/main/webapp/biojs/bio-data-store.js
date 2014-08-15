@@ -28,15 +28,18 @@ Ext.define('Bio.data.Store', {
 
         // adding system event handlers
         me.addListener("load", function(records, successful, eOpts) {
-            var me = this, locate = me.lastOptions.locate,
-                grid = me.ownerGrid,
-                offset = me.proxy.reader.jsonData.packet.offset;
-            me.currentPage = (me.pageSize != 0) ? (offset / me.pageSize) + 1 : 1;
-            me.lastOptions.locate = undefined;
-            me.lastOptions.page = me.currentPage;
-            me.lastOptions.start = offset;
+            var me = this;
+            if(me.proxy.reader.jsonData) {
+                var locate = me.lastOptions.locate,
+                    grid = me.ownerGrid,
+                    offset = me.proxy.reader.jsonData.packet.offset;
+                me.currentPage = (me.pageSize != 0) ? (offset / me.pageSize) + 1 : 1;
+                me.lastOptions.locate = undefined;
+                me.lastOptions.page = me.currentPage;
+                me.lastOptions.start = offset;
 
-            me.locateLocal(locate);
+                me.locateLocal(locate);
+            }
         }, me);
         me.addListener("metachange", function(store, meta) {
             var grid = config.ownerGrid;

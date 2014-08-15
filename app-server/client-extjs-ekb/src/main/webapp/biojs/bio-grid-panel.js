@@ -61,7 +61,7 @@ Ext.define('Bio.grid.Panel', {
             }
             return value;
         };
-        var cols = [];
+        var cols = [{xtype: 'rownumberer', text: "#"}];
         Ext.Array.forEach(meta.columns, function (f) {
             if (f && f != undefined && f.hidden === false) {
                 var xtp, rdrr;
@@ -84,15 +84,16 @@ Ext.define('Bio.grid.Panel', {
                         xtp = 'gridcolumn';
                         break;
                 }
-
+                var ttl = f.title;
+                if(ttl) ttl = ttl.replace("\\n", "<br/>");
                 var newColCfg = {
                     dataIndex: f.name,
-                    text: f.title,
+                    text: ttl,
                     type: f.type,
                     mandatory: f.mandatory,
                     readonly: f.readonly,
                     pk: f.pk,
-                    width: f.width,
+                    width: Bio.Tools.tryParsInt(f.width),
                     xtype: xtp,
                     format: f.format,
                     editor: (f.type === "boolean" ? {xtype: 'checkboxfield', boxLabel: 'Box Label'} : f.editor),

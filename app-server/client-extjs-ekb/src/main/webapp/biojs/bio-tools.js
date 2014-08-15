@@ -89,6 +89,14 @@ Bio.Tools = function(){
 	var _absContTmpl = null;
 	
 	return {
+        tryParsInt: function(v) {
+            if(typeof(v) == "number")
+                return v;
+            if(typeof(v) == "string" && v.match(/\d+/) == v)
+                return parseInt(v);
+            return v;
+        },
+
 		addEvent: function(p_target, p_functionref, p_tasktype){ 
 			p_target.attachEvent(p_tasktype, p_functionref);
 		},
@@ -331,7 +339,7 @@ Bio.Tools = function(){
      * @param {Object} pCallback   - {fn:function(options, success, response), scope:Object}
      * @param {Object} pExtCfg     - Дополнительные параметры конфигурации запроса
      */
-		ajaxR:function(pMType, pBioCode, pBioParams, pExtParams, pCallback, pExtCfg){
+	ajaxR:function(pMType, pBioCode, pBioParams, pExtParams, pCallback, pExtCfg){
       var vAjaxCfg = Bio.Tools.bldAjaxCfg(pMType, pBioCode, pBioParams, pExtParams, this.doOnAjaxRe, this);
       vAjaxCfg.ExtCallback = pCallback;
       if(pExtCfg)
