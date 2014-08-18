@@ -69,7 +69,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-    private static final int MAX_RECORDS_FETCH_LIMIT = 200;
+    private static final int MAX_RECORDS_FETCH_LIMIT = 500;
 
     private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");

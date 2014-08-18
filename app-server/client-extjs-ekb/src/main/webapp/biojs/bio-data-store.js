@@ -32,14 +32,18 @@ Ext.define('Bio.data.Store', {
             if(me.proxy.reader.jsonData) {
                 var locate = me.lastOptions.locate,
                     grid = me.ownerGrid,
-                    bbar = grid.bbar,
+                    bbar = (grid && grid.initialConfig) ? grid.initialConfig.bbar : null,
                     offset = me.proxy.reader.jsonData.packet.offset;
                 me.currentPage = (me.pageSize > 0) ? (offset / me.pageSize) + 1 : 1;
                 me.lastOptions.locate = undefined;
                 me.lastOptions.page = me.currentPage;
                 me.lastOptions.start = offset;
-                if(bbar && bbar.items)
-                    bbar.items.setText("FTW!!!");
+
+                var showNotAllDataLoadedAlert = (me.pageSize < 0) && me.data.items && (me.data.items.length < me.totalCount);
+                if(showNotAllDataLoadedAlert && bbar && bbar.items && bbar.items.items) {
+                    bbar.items.items[0].setValue("Внимание превышен лимит загрузки данных!!! Загруженно записей "+me.data.items.length+", всего "+me.totalCount);
+                    bbar.setVisible(true);
+                }
                 me.locateLocal(locate);
             }
         }, me);

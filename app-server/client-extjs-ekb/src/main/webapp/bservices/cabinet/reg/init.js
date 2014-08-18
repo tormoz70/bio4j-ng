@@ -32,7 +32,7 @@ Ext.onReady(function () {
                     value:"asd"
                 }
             ],
-            pageSize: -1,
+            //pageSize: -1,
             autoLoad: true,
             remoteSort: true
         },

@@ -24,8 +24,9 @@ Ext.define('Bio.grid.Panel', {
             });
             storeCfg.ownerGrid = me;
             config.store = Ext.create('Bio.data.Store', storeCfg);
+            storeCfg.pageSize = config.store.pageSize;
             if(storeCfg.pageSize >= 0) {
-                me.bbar = Ext.create('Ext.PagingToolbar', {
+                config.bbar = Ext.create('Ext.PagingToolbar', {
                     store: config.store,
                     displayInfo: true,
                     beforePageText: "Страница",
@@ -35,11 +36,13 @@ Ext.define('Bio.grid.Panel', {
                     inputItemWidth: 60
                 });
             } else {
-                me.bbar = Ext.create('Ext.toolbar.Toolbar', {
-                    hidden: false,
+                config.bbar = Ext.create('Ext.toolbar.Toolbar', {
+                    hidden: true,
                     items: {
-                            text: '...'
-
+                        xtype: 'displayfield',
+                        margin: '0 0 0 5',
+                        readonly: true,
+                        text: "..."
                     }
                 });
             }
@@ -54,11 +57,15 @@ Ext.define('Bio.grid.Panel', {
 
         // adding system event handlers
         me.addListener("headerclick", function (ct, column, e, t, eOpts) {
-            var me = this;
+            //var me = this;
             //alert('Chpok!');
             //me.bbar.doRefresh();
         }, me);
 
+        me.addListener("afterrender", function (eOpts) {
+            //var me = this;
+            //me.store.load();
+        }, me);
     },
 
     recreateCols: function(store, meta) {
