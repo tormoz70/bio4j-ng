@@ -80,7 +80,7 @@ public class JsonUtlTest {
                                "{\"name\":\"param3\",\"value\":123},"+
                                "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.555+0400\"}"+
                 "],"+
-                "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pagesize\":26}";
+                "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pageSize\":26}";
         BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
         LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
@@ -117,13 +117,13 @@ public class JsonUtlTest {
 
     @Test(enabled = true)
     public void bdecode3() throws Exception {
-        String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
+        String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
         BioRequestJStoreGet rq = Jsons.decode(json, BioRequestJStoreGet.class);
         Assert.assertNotNull(rq);
-        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":[]}";
+        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[]}";
         rq = Jsons.decode(json, BioRequestJStoreGet.class);
         Assert.assertNotNull(rq);
-        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pagesize\":25,\"sort\":null}";
+        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":null}";
         rq = Jsons.decode(json, BioRequestJStoreGet.class);
         Assert.assertNotNull(rq);
     }

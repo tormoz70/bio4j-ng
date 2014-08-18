@@ -19,10 +19,7 @@ import ru.bio4j.ng.service.api.Configurator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -76,7 +73,7 @@ public abstract class BioModuleBase implements BioModule {
         if(request instanceof BioRequestJStoreGet) {
             final BioRequestJStoreGet r = (BioRequestJStoreGet)request;
             cursor.setOffset(r.getOffset());
-            cursor.setPageSize(r.getPagesize());
+            cursor.setPageSize(r.getPageSize());
             cursor.setLocation(r.getLocation());
             cursor.setFilter(r.getFilter());
             cursor.setSort(r.getSort());

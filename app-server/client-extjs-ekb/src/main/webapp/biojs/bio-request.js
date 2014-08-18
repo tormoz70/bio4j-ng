@@ -21,7 +21,7 @@ Ext.define('Bio.request.store.GetData', {
         /**
          * Размер страницы
          */
-        pagesize: 0,
+        pageSize: 0,
 
         /**
          * Параметры сортировки для запросов GET

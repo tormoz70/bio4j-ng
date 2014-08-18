@@ -69,7 +69,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-    private static final int MAX_RECORDS_FETCH_LIMIT = 500;
+    private static final int MAX_RECORDS_FETCH_LIMIT = 200;
 
     private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");
@@ -219,7 +219,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private BioRespBuilder.Data processCursorAsSelectable(final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
         final User usr = request.getUser();
         applyCurrentUserParams(usr, cursor);
-        if(cursor.getPageSize() == 0 || request.getId() != null)
+        if(cursor.getPageSize() < 0 || request.getId() != null)
             return processCursorAsSelectableSinglePage(usr, request, module, cursor);
         else
             return processCursorAsSelectableWithPagging(usr, request, module, cursor);

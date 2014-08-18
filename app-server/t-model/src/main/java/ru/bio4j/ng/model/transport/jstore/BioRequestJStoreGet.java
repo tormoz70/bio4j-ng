@@ -22,7 +22,7 @@ public class BioRequestJStoreGet extends BioRequest {
     /**
      * Размер страницы
      */
-    private int pagesize;
+    private int pageSize;
 
     /**
      * Параметры сортировки для запросов GET
@@ -56,12 +56,12 @@ public class BioRequestJStoreGet extends BioRequest {
         this.offset = offset;
     }
 
-    public int getPagesize() {
-        return pagesize;
+    public int getPageSize() {
+        return pageSize;
     }
 
-    public void setPagesize(int pagesize) {
-        this.pagesize = pagesize;
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 
     public List<Sort> getSort() {

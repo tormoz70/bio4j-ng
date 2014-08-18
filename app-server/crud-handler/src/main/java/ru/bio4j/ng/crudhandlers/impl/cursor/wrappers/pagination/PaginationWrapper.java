@@ -19,8 +19,6 @@ public class PaginationWrapper extends AbstractWrapper {
     public static final String LAST = "PAGING$LAST";
 
     private String template;
-//    private String queryPrefix;
-//    private String querySuffix;
 
     public PaginationWrapper(String template) {
         super(template);
@@ -32,14 +30,6 @@ public class PaginationWrapper extends AbstractWrapper {
      */
     @Override
     protected void parseTemplate(String template){
-        //ищем место куда встявляется запрос
-//        int start = template.indexOf(QUERY);
-//        if(start < 0) {
-//            throw new IllegalArgumentException("Query: \"" + template + "\" is not contain "+QUERY);
-//        }
-//        int end = start + QUERY.length();
-//        queryPrefix = template.substring(0, start);
-//        querySuffix = template.substring(end);
         this.template = template;
     }
 
@@ -48,13 +38,12 @@ public class PaginationWrapper extends AbstractWrapper {
      */
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
-        if((cursor.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
-            String sql = template.replace(QUERY, cursor.getPreparedSql());
-//            cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix);
-            cursor.setPreparedSql(sql);
-        }
         int pageSize = cursor.getPageSize();
         if(pageSize > 0) {
+            if((cursor.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
+                String sql = template.replace(QUERY, cursor.getPreparedSql());
+                cursor.setPreparedSql(sql);
+            }
             int offset = cursor.getOffset();
             cursor.setParamValue(OFFSET, offset)
                   .setParamValue(LAST, offset + pageSize);

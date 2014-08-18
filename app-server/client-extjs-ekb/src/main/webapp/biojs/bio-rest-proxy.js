@@ -39,7 +39,7 @@ Ext.define('Bio.data.RestProxy', {
             bioParams: params,
             totalCount: store.totalCount,
             offset: offset,
-            pagesize: operation.limit,
+            pageSize: operation.limit,
             sort: sort,
             location: operation.locate,
             id: operation.id

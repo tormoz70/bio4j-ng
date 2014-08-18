@@ -24,15 +24,25 @@ Ext.define('Bio.grid.Panel', {
             });
             storeCfg.ownerGrid = me;
             config.store = Ext.create('Bio.data.Store', storeCfg);
-            me.bbar = Ext.create('Ext.PagingToolbar', {
-                store: config.store,
-                displayInfo: true,
-                beforePageText: "Страница",
-                afterPageText: "из {0}",
-                displayMsg: "Загружено {0} - {1} of {2}",
-                emptyMsg: "Нет данных",
-                inputItemWidth: 60
-            });
+            if(storeCfg.pageSize >= 0) {
+                me.bbar = Ext.create('Ext.PagingToolbar', {
+                    store: config.store,
+                    displayInfo: true,
+                    beforePageText: "Страница",
+                    afterPageText: "из {0}",
+                    displayMsg: "Загружено {0} - {1} of {2}",
+                    emptyMsg: "Нет данных",
+                    inputItemWidth: 60
+                });
+            } else {
+                me.bbar = Ext.create('Ext.toolbar.Toolbar', {
+                    hidden: false,
+                    items: {
+                            text: '...'
+
+                    }
+                });
+            }
         }
 
         var viewCfg = Ext.apply(config.viewConfig||{}, {

@@ -32,12 +32,14 @@ Ext.define('Bio.data.Store', {
             if(me.proxy.reader.jsonData) {
                 var locate = me.lastOptions.locate,
                     grid = me.ownerGrid,
+                    bbar = grid.bbar,
                     offset = me.proxy.reader.jsonData.packet.offset;
-                me.currentPage = (me.pageSize != 0) ? (offset / me.pageSize) + 1 : 1;
+                me.currentPage = (me.pageSize > 0) ? (offset / me.pageSize) + 1 : 1;
                 me.lastOptions.locate = undefined;
                 me.lastOptions.page = me.currentPage;
                 me.lastOptions.start = offset;
-
+                if(bbar && bbar.items)
+                    bbar.items.setText("FTW!!!");
                 me.locateLocal(locate);
             }
         }, me);
