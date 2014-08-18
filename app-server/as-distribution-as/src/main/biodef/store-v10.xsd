@@ -153,9 +153,9 @@
                           <xs:documentation>Значения поля, соответствующие 'true' и 'false' для типа поля 'boolean', разделённые символом ':'.</xs:documentation>
                         </xs:annotation>
                       </xs:attribute>
-                      <xs:attribute name="pk" type="xs:byte">
+                      <xs:attribute name="pk" type="xs:boolean">
                         <xs:annotation>
-                          <xs:documentation>Порядковый номер поля в первичном ключе.</xs:documentation>
+                          <xs:documentation>Признак того, что поле является первичным ключем</xs:documentation>
                         </xs:annotation>
                       </xs:attribute>
                       <xs:attribute name="group" type="xs:byte">
@@ -176,7 +176,7 @@
                       </xs:attribute>
                       <xs:attribute name="generate" type="xs:boolean" default="true">
                         <xs:annotation>
-                          <xs:documentation>Создавать или нет это поле.</xs:documentation>
+                          <xs:documentation>Создавать или нет это поле</xs:documentation>
                         </xs:annotation>
                       </xs:attribute>
                       <xs:attribute name="expEnabled" type="xs:boolean" default="true">

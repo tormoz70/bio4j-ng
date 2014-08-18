@@ -43,7 +43,7 @@ WHERE (:SYS_CURUSR_ROLES in ('*', '1','2','5','6','7','8')) and
         <!--<param type="integer" name="showhidden"/>-->
     </SQL>
     <fields>
-        <field name="pureg_id" type="integer" pk="1" format="0" header="ID ПУ"/>
+        <field name="pureg_id" type="integer" pk="true" format="0" header="ID ПУ"/>
         <field name="film_id" type="integer" format="0" header="ID фильма"/>
         <field name="prnt_film_id" type="integer" format="0" header="ID фильма по гос реестру"/>
         <field name="film_name" type="string" header="Название фильма от прокатчика"/>

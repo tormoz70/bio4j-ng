@@ -58,8 +58,21 @@ Ext.onReady(function () {
                             title: 'Детальная информация по кинотеатру',
                             closable: true,
                             plain: true,
-                            layout: 'fit'
-                            //items: Ext.create('Ekb.form.FilmDetails', {bioOwnerGrid:grd})
+                            layout: 'fit',
+                            items: Ext.create('Ekb.form.OrgDetails', {
+                                listeners: {
+                                    afterrender: function() {
+                                        var seldId = grd.getSelectedId();
+                                        var store  = Ext.create('Bio.data.Store', {
+                                            bioCode: 'ekbp@cabinet.get-org'//,
+                                            //bioParams: {org_id:{value:row.ORG_ID}}
+                                            //bioParams: [{name:"org_id", value:seldId}]
+                                        });
+                                        store.loadForm(this, seldId);
+                                    }
+                                }
+
+                            })
                         });
                         win2.show();
                     }

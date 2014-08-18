@@ -66,8 +66,8 @@ public class Jsons {
 //		return deserializer.deserialize(json);
 //	}
 
-    public static <T> T decode(String json, T target) throws Exception {
-        JSONDeserializer<T> deserializer = new JSONDeserializer<T>()
+    private static <T> JSONDeserializer<T> createDeserializer(T target) {
+        return new JSONDeserializer<T>()
                 .use(Date.class, new ObjectFactory() {
                     @Override
                     public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
@@ -110,7 +110,14 @@ public class Jsons {
                         return object;
                     }
                 });
-        return deserializer.deserializeInto(json, target);
+
+    }
+    private static <T> JSONDeserializer<T> createDeserializer() {
+        return createDeserializer(null);
+    }
+
+    public static <T> T decode(String json, T target) throws Exception {
+        return createDeserializer(target).deserializeInto(json, target);
     }
 
 	public static <T> T decode(String json, Class<T> targetClass) throws Exception {
@@ -120,5 +127,10 @@ public class Jsons {
         newResult = targetClass.newInstance();
 		return decode(json, newResult);
 	}
+
+    public static <T> T decode(String json, ObjectFactory factory) throws Exception {
+        JSONDeserializer<T> d = createDeserializer();
+        return d.deserialize(json, factory);
+    }
 
 }

@@ -50,5 +50,13 @@
            WHERE ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>
 
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
+    -->
+    <template type="getrow"><![CDATA[
+          SELECT * FROM (${QUERY_PLACEHOLDER})
+           WHERE ${WHERECLAUSE_PLACEHOLDER}
+    ]]></template>
+
 </templates>
 

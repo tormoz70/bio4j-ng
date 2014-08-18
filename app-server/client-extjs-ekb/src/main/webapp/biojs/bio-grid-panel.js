@@ -112,5 +112,14 @@ Ext.define('Bio.grid.Panel', {
         }, me);
 
         me.reconfigure(store, cols);
+    },
+
+    getSelectedId: function() {
+        var me = this,
+            idProp = me.store.proxy.reader.getIdProperty();
+        var selection = me.getSelectionModel().getSelection();
+        var row = (selection && selection.length > 0) ? selection[0].data : {};
+        var result = row[idProp];
+        return result || null;
     }
 });

@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.types;
 
 
+import flexjson.ObjectFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -59,7 +60,14 @@ public class BioServletApiBase extends BioServletBase {
         BioRequest bioRequest;
         String bioRequestJson = jd.toString();
         try {
-            bioRequest = Jsons.decode(bioRequestJson, BioRoute.getType(requestType).getClazz());
+//            Class<? extends BioRequestFactory> factory = BioRoute.getType(requestType).getFactory();
+//            if(factory == null)
+//                throw new Exception(String.format("BioRequestFactory for requestType \"%s\" not found!", requestType));
+//            bioRequest = Jsons.decode(bioRequestJson, factory.newInstance());
+            Class<? extends BioRequest> clazz = BioRoute.getType(requestType).getClazz();
+            if(clazz == null)
+                throw new Exception(String.format("Clazz for requestType \"%s\" not found!", requestType));
+            bioRequest = Jsons.decode(bioRequestJson, clazz);
         } catch (Exception e) {
             LOG.debug("Unexpected error while decoding BioRequest JSON: {}\n"+
                     " - Error: {}", bioRequestJson, e.getMessage());

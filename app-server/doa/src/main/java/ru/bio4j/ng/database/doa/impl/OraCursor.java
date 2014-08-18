@@ -4,6 +4,7 @@ import oracle.jdbc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.DelegateSQLAction;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -27,6 +28,8 @@ public class OraCursor extends OraCommand<SQLCursor> implements SQLCursor {
 
 	@Override
 	public SQLCursor init(Connection conn, String sql, List<Param> params, int timeout) throws SQLException {
+        if(Strings.isNullOrEmpty(sql))
+            throw new IllegalArgumentException("Parameter \"sql\" cannon be empty!!!");
         this.sql = sql;
 		return super.init(conn, params, timeout);
 	}

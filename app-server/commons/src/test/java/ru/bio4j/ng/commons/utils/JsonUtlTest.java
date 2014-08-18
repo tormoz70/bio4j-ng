@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 
@@ -126,4 +127,13 @@ public class JsonUtlTest {
         rq = Jsons.decode(json, BioRequestJStoreGet.class);
         Assert.assertNotNull(rq);
     }
+
+    @Test(enabled = true)
+    public void bdecode4() throws Exception {
+        String json = "{\"bioCode\":\"ekbp@cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":{}}]}";
+        BioRequest bioRequest = Jsons.decode(json, BioRequestJStoreGet.class);
+        Assert.assertEquals("org_id", bioRequest.getBioParams().get(0).getName());
+        Assert.assertNull(bioRequest.getBioParams().get(0).getValue());
+    }
+
 }

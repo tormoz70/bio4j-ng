@@ -85,7 +85,7 @@ ORDER BY o1.orgname
  
   <fields>
     <field name="orgname" type="string" header="Кинотеатр" align="left" width="200"/>
-    <field name="id_org" type="integer" header="ID" pk="1" format="0"/>
+    <field name="id_org" type="integer" header="ID" pk="true" format="0"/>
     <field name="orgtype_name" type="string" header="Тип" width="80"/>
     <field name="time_zone" type="integer" header="Часовой пояс" width="30"/>
     <field name="ownership" type="string" header="Ф/С" width="60"/>
@@ -104,7 +104,7 @@ ORDER BY o1.orgname
     <field name="isreported" type="boolean" header="Отчитывается" align="center" width="30"/>
     <field name="isreported_str" type="string" generate="false"/>
     <field name="whereisdata" type="boolean" header="Молчит7дней" align="center" width="30"/>
-    <field name="last_upld" type="date" header="Поледняя \nзагрузка"/>
+    <field name="last_upld" type="date" header="Поледняя \nзагрузка" format="d.m.Y H:i:s" width="120"/>
     <field name="test" type="boolean" header="Тестовый" align="center" width="30"/>
     <field name="registred" type="boolean" header="Зарегистрирован" align="center" width="30"/>
     <field name="test_str" type="string" generate="false"/>
