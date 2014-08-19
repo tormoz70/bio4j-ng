@@ -8,33 +8,86 @@ Ext.define('Ekb.form.OrgDetails', {
     width: 800,
     bodyPadding: 0,
     autoScroll: true,
+    layout: 'anchor',
     defaults: {
-        anchor: '100%',
-        labelWidth: 100
+        anchor: '100%'
     },
     items: [
         {
             xtype: 'fieldset',
-            //title: 'А. Регистр преступления',
             collapsible: false,
-            defaults: {
-                labelWidth: 100,
-                anchor: '100%',
-                layout: {
-                    type: 'column',
-                    defaultMargins: {top: 0, right: 5, bottom: 0, left: 0}
-                }
+            collapsed: false,
+            autoHeight: true,
+            layout: {
+                type:'vbox',
+                align:'stretch',
+                padding: '0'
             },
             items: [
                 {
-                    xtype: 'textfield',
-                    //сolumnWidth: 0.5,
-                    name: 'orgname',
-                    fieldLabel: '*Название',
-                    labelWidth: 120,
-                    margin: '0 5 0 0',
-                    allowBlank: false
-                }
+                    xtype: 'fieldcontainer',
+                    layout: 'anchor',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'orgname',
+                            fieldLabel: '*Название',
+                            labelWidth: 120,
+                            labelAlign: 'right',
+                            margin: '2 2 2 0',
+                            anchor: '100%',
+                            allowBlank: false
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    defaults: {
+                        labelWidth: 120,
+                        labelAlign: 'right',
+                        margin: '2 2 2 0'
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'email',
+                            fieldLabel: 'Email',
+                            allowBlank: false,
+                            width: 350
+                        },
+                        {
+                            xtype: 'checkbox',
+                            name: 'registred',
+                            fieldLabel: 'Зарегистрирован'
+                        }
+                        ,{
+                            xtype: 'combo',
+                            labelWidth: 80,
+                            name: 'verstate',
+                            fieldLabel: 'Выверка',
+                            allowBlank: false,
+                            flex: 1
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'anchor',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'holding_id',
+                            fieldLabel: 'Киносеть',
+                            labelWidth: 120,
+                            labelAlign: 'right',
+                            margin: '2 2 2 0',
+                            anchor: '100%',
+                            allowBlank: false
+                        }
+                    ]
+                },
+
             ]
         }
     ],
