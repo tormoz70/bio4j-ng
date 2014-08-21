@@ -186,6 +186,18 @@ Ext.override(Ext.data.Connection, {
 });
 
 Ext.override(Ext.toolbar.Paging, {
+    displayInfo: true,
+    beforePageText: "Страница",
+    afterPageText: "из {0}",
+    displayMsg: "Загружено {0} - {1} of {2}",
+    emptyMsg: "Нет данных",
+    firstText: "Первая страница",
+    nextText: "Следующая страница",
+    prevText: "Предыдущая страница",
+    lastText: "Последняя страница",
+    refreshText: "Обновить",
+    inputItemWidth: 60,
+
     doRefresh : function(){
         var me = this,
             current = me.store.currentPage;

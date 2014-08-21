@@ -27,13 +27,7 @@ Ext.define('Bio.grid.Panel', {
             storeCfg.pageSize = config.store.pageSize;
             if(storeCfg.pageSize >= 0) {
                 config.bbar = Ext.create('Ext.PagingToolbar', {
-                    store: config.store,
-                    displayInfo: true,
-                    beforePageText: "Страница",
-                    afterPageText: "из {0}",
-                    displayMsg: "Загружено {0} - {1} of {2}",
-                    emptyMsg: "Нет данных",
-                    inputItemWidth: 60
+                    store: config.store
                 });
             } else {
                 config.bbar = Ext.create('Ext.toolbar.Toolbar', {

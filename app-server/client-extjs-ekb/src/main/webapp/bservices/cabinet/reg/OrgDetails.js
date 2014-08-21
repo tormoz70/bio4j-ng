@@ -60,36 +60,75 @@ Ext.define('Ekb.form.OrgDetails', {
                             xtype: 'checkbox',
                             name: 'registred',
                             fieldLabel: 'Зарегистрирован'
-                        }
-                        ,{
+                        },
+                        {
                             xtype: 'combo',
                             labelWidth: 80,
                             name: 'verstate',
                             fieldLabel: 'Выверка',
                             allowBlank: false,
-                            flex: 1
+                            flex: 1,
+                            valueField: 'id',
+                            displayField: 'caption',
+                            store: Ext.create('Ext.data.Store', {
+                                fields: ['id', 'caption'],
+                                data : [
+                                    {id:"0", caption:"не выверен"},
+                                    {id:"1", caption:"в процессе"},
+                                    {id:"2", caption:"адрес выверен"},
+                                    {id:"9", caption:"выверен"}
+                                ]
+                            })
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            xtype: 'fieldset',
+            collapsible: false,
+            collapsed: false,
+            autoHeight: true,
+            layout: {
+                type:'vbox',
+                align:'stretch',
+                padding: '0'
+            },
+            items: [
                 {
                     xtype: 'fieldcontainer',
                     layout: 'anchor',
+                    defaults: {
+                        margin: '2 2 2 0',
+                        labelWidth: 120,
+                        labelAlign: 'right',
+                        anchor: '100%'
+                    },
                     items: [
                         {
-                            xtype: 'textfield',
-                            name: 'holding_id',
-                            fieldLabel: 'Киносеть',
-                            labelWidth: 120,
-                            labelAlign: 'right',
-                            margin: '2 2 2 0',
-                            anchor: '100%',
-                            allowBlank: false
+                            xtype: 'biocombo', name: 'holding_id',
+                            minChars: 2,
+                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.holding'}),
+                            valueField: 'org_id', displayField: 'org_name',
+                            fieldLabel: 'Киносеть', labelWidth: 85, allowBlank: true,
+                            queryParam: 'orgname',
+                            tpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">',
+                                    '<div class="x-boundlist-item" style="text-align: left">{org_id} - {org_name}</div>',
+                                '</tpl>'
+                            ),
+                            displayTpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">',
+                                    '{org_id} - {org_name}',
+                                '</tpl>'
+                            )
                         }
                     ]
-                },
+                }
 
             ]
         }
+
     ],
     buttons: [
         {

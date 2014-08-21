@@ -57,18 +57,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-    private static final String PARAM_CURUSR_UID =    "SYS_CURUSR_UID";
-    private static final String PARAM_CURUSR_ROLES =  "SYS_CURUSR_ROLES";
-    private static final String PARAM_CURUSR_GRANTS = "SYS_CURUSR_GRANTS";
-
-    private static void applyCurrentUserParams(User usr, BioCursor cursor) {
-        try(Paramus p = Paramus.set(cursor.getParams())) {
-            p.setValue(PARAM_CURUSR_UID, usr.getUid(), false);
-            p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), false);
-            p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), false);
-        }
-    }
-
     private static final int MAX_RECORDS_FETCH_LIMIT = 500;
 
     private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
@@ -214,6 +202,18 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }, cursor);
         return response;
 
+    }
+
+    private static final String PARAM_CURUSR_UID =    "SYS_CURUSR_UID";
+    private static final String PARAM_CURUSR_ROLES =  "SYS_CURUSR_ROLES";
+    private static final String PARAM_CURUSR_GRANTS = "SYS_CURUSR_GRANTS";
+
+    private static void applyCurrentUserParams(User usr, BioCursor cursor) {
+        try(Paramus p = Paramus.set(cursor.getParams())) {
+            p.setValue(PARAM_CURUSR_UID, usr.getUid(), false);
+            p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), false);
+            p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), false);
+        }
     }
 
     private BioRespBuilder.Data processCursorAsSelectable(final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {

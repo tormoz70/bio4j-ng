@@ -54,11 +54,15 @@ public class BioCursor {
         this.preparedSql = sql;
     }
 
-    public BioCursor setParamValue(String name, Object value) {
+    public BioCursor setParamValue(String name, Object value, boolean addIfNotExists) {
         try(Paramus paramus = Paramus.set(params)){
-            paramus.setValue(name, value);
+            paramus.setValue(name, value, addIfNotExists);
         }
         return this;
+    }
+
+    public BioCursor setParamValue(String name, Object value) {
+        return setParamValue(name, value, true);
     }
 
     public BioCursor setParams(List<Param> params) {

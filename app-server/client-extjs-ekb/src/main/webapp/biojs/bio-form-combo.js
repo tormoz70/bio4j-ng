@@ -2,6 +2,14 @@ Ext.namespace("Bio.form");
 Ext.define('Bio.form.ComboBox', {
     extend: 'Ext.form.ComboBox',
     alias: ['widget.biocombobox', 'widget.biocombo'],
+
+    constructor: function(config) {
+        var me = this;
+        if(config.store && config.store.pageSize && config.store.pageSize > 0)
+            config.pageSize = config.store.pageSize;
+        me.callParent([config]);
+    },
+
     initComponent: function () {
         var me = this;
         me.callParent(arguments);

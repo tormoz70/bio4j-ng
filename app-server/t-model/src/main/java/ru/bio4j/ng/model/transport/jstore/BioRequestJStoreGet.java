@@ -111,5 +111,6 @@ public class BioRequestJStoreGet extends BioRequest {
     public void setId(Object id) {
         this.id = id;
     }
+
 }
 

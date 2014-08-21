@@ -22,6 +22,18 @@ Ext.define('Bio.data.RestProxy', {
 //        params = {
 //            query:{value: "SAL%", type: 'string'}
 //        };
+        if(operation && operation.params) {
+            for(var p in operation.params){
+                if(!Ext.Array.contains(["page", "start", "limit"], p)) {
+                    params = params || [];
+                    params.push({
+                        type: 'string',
+                        name: p,
+                        value: operation.params[p]
+                    });
+                }
+            }
+        }
 
         var sort = null, sorters = operation.sorters;
         if(sorters instanceof Array){
