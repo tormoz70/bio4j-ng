@@ -27,7 +27,7 @@ Ext.define('Bio.data.Store', {
         me.callParent([config]);
 
         // adding system event handlers
-        me.addListener("load", function(records, successful, eOpts) {
+        me.addListener("load", function(records, eOpts, successful) {
             var me = this;
             if(me.proxy.reader.jsonData) {
                 var locate = me.lastOptions.locate,
@@ -68,24 +68,27 @@ Ext.define('Bio.data.Store', {
 
     locateLocal: function(location) {
         var me = this,
-            grid = me.ownerGrid;
-        if (grid) {
-            var idProp = me.proxy.reader.getIdProperty();
-            var rowIndex = me.find(idProp, location);
-            if(rowIndex >= 0) {
-                grid.getView().select(rowIndex);
-                return true;
-            }
-        }
-        return false;
+            grid = me.ownerGrid,
+            idProp = me.proxy.reader.getIdProperty(),
+            rowIndex = me.find(idProp, location),
+            result = rowIndex >= 0;
+
+        if (grid && (result))
+            grid.getView().select(rowIndex);
+
+        return result;
     },
 
-    locate: function(location, startfrom) {
+    locate: function(location, startFrom, callback, scope) {
         var me = this;
         if(me.locateLocal(location) === false) {
-            if (startfrom > 0)
-                me.currentPage = (me.pageSize != 0) ? (startfrom / me.pageSize) + 1 : 1;
-            me.load({locate: location});
+            if (startFrom > 0)
+                me.currentPage = (me.pageSize != 0) ? (startFrom / me.pageSize) + 1 : 1;
+            me.load({
+                locate: location,
+                scope: scope || me,
+                callback: callback
+            });
         }
     }
 });

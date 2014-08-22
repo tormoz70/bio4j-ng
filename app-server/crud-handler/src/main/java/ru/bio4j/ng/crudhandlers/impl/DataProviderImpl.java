@@ -14,6 +14,7 @@ import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.filtering.GetrowWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
@@ -61,12 +62,12 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");
-        SQLContext ctx = sqlContextProvider.selectContext(module);
-        BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
+        final SQLContext ctx = sqlContextProvider.selectContext(module);
+        final BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
             public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
                 tryPrepareSessionContext(usr.getUid(), conn);
-                final BioRespBuilder.Data result = BioRespBuilder.data();
+                final BioRespBuilder.Data result = BioRespBuilder.data().success(true);
                 result.bioCode(cur.getBioCode());
                 int totalCount = request.getTotalCount();
                 if(totalCount == 0) {
@@ -95,8 +96,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                             cur.setOffset(offset);
                             cur.setParamValue(PaginationWrapper.OFFSET, cur.getOffset())
                                     .setParamValue(PaginationWrapper.LAST, cur.getOffset() + cur.getPageSize());
-                        } else
+                        } else {
                             LOG.debug("Cursor fail location to [{}] record by pk!!!", cur.getLocation());
+                            result.success(false);
+                            result.addError(new BioError.LacationFail(cur.getLocation()));
+                        }
                     }
                 }
 
@@ -129,7 +133,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     data.setRows(rows);
                     result.packet(data);
                 }
-                return result.success(true);
+                return result;
             }
         }, cursor);
         return response;

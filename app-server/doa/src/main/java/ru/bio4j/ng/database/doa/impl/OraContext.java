@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.oracore.OracleType;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -80,18 +82,35 @@ public class OraContext implements SQLContext {
         return new OraContext(dataSource, config);
     }
 
-    public void Close(){
-        //
-    }
-
-
-
+    private static final int CONNECTION_TRY_COUNT = 3;
+    private static final long CONNECTION_AFTER_FAIL_PAUSE = 15L;
 	public Connection getConnection(String userName, String password) throws SQLException {
-        Connection conn;
-        if(Strings.isNullOrEmpty(userName))
-            conn = this.cpool.getConnection();
-        else
-            conn = this.cpool.getConnection(userName, password);
+        LOG.debug("Getting connection from pool...");
+        Connection conn = null;
+        int connectionPass = 0;
+        while(connectionPass < CONNECTION_TRY_COUNT) {
+            connectionPass++;
+            if (Strings.isNullOrEmpty(userName))
+                conn = this.cpool.getConnection();
+            else
+                conn = this.cpool.getConnection(userName, password);
+            if (conn.isClosed() || !conn.isValid(5)) {
+                LOG.debug("Connection is not valid or closed...");
+                conn = null;
+                ((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
+                LOG.debug("Waiting {} secs before next try connect to database...", CONNECTION_AFTER_FAIL_PAUSE);
+                try {
+                    Thread.sleep(CONNECTION_AFTER_FAIL_PAUSE * 1000);
+                } catch (InterruptedException e) {}
+            } else {
+                LOG.debug("Connection is ok...");
+                break;
+            }
+        }
+
+        if(conn == null)
+            LOG.debug("All trying of connecting to database ({}) failed...", CONNECTION_TRY_COUNT);
+
         this.doAfterConnect(SQLConnectionConnectedEventAttrs.build(conn));
         return conn;
 	}

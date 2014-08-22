@@ -49,6 +49,11 @@ public class Column {
     private boolean pk;
 
     /**
+     * На клиенте не приводить значение null к типу колонки
+     */
+    private boolean useNull;
+
+    /**
      * Ширина колонки
      */
     private String width;
@@ -157,4 +162,12 @@ public class Column {
     public int getId() { return id; }
 
     public void setId(int id) { this.id = id; }
+
+    public boolean isUseNull() {
+        return useNull;
+    }
+
+    public void setUseNull(boolean useNull) {
+        this.useNull = useNull;
+    }
 }

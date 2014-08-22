@@ -5,8 +5,8 @@
   <SQL action="select">
     <text>
       <![CDATA[
-SELECT 0 as lvl, 0 as org_id, '<нет сети>' as org_name, '' as orgtype_name from dual
-union all
+--SELECT 0 as lvl, 0 as org_id, '<нет сети>' as org_name, '' as orgtype_name from dual
+--union all
 SELECT 1 as lvl, a.id_org as org_id, a.orgname as org_name, ot.orgtype_name
 FROM givc_org.org a
      left join ORG$TYPES ot on ot.orgtype = a.orgtype

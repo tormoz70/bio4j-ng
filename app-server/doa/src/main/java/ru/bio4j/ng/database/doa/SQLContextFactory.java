@@ -5,9 +5,6 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.doa.impl.OraContext;
 
-/**
- * Created by ayrat on 25.04.14.
- */
 public class SQLContextFactory {
     public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {
         return OraContext.create(config);

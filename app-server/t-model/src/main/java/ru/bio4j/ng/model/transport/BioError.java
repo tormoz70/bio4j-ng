@@ -34,6 +34,15 @@ public class BioError extends Exception {
         }
     }
 
+    public static class LacationFail extends BioError {
+        public LacationFail() {
+            super();
+        }
+        public LacationFail(Object locationId) {
+            super(String.format("Cursor fail location to [%s] record by pk!!!", locationId));
+        }
+    }
+
     public static abstract class Login extends BioError {
         public Login() {
             super();
