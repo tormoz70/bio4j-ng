@@ -107,12 +107,13 @@ Ext.define('Ekb.form.OrgDetails', {
                     items: [
                         {
                             xtype: 'biocombo', name: 'holding_id',
-                            minChars: 2,
+                            minChars: 0,
                             store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.holding'}),
                             valueField: 'org_id', displayField: 'org_name',
                             fieldLabel: "Киносеть", labelWidth: 85, allowBlank: true,
                             queryParam: 'orgname',
                             emptyText: "<нет сети>",
+                            selectOnFocus: true,
                             tpl: Ext.create('Ext.XTemplate',
                                 '<tpl for=".">',
                                     '<div class="x-boundlist-item" style="text-align: left">{org_id} - {org_name}</div>',

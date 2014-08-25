@@ -16,11 +16,11 @@ function Point(iX, iY){
  * @param {Object} o Элемент массива, который нужно удалить
  * @return {Array} Результирующий массив
  */
-Array.prototype.removeAll = function(o){
-  for(var i = 0; i < this.length;)
-    this[i] == o ? this.splice(i, 1) : i++;
-  return this;
-}
+//Array.prototype.removeAll = function(o){
+//  for(var i = 0; i < this.length;)
+//    this[i] == o ? this.splice(i, 1) : i++;
+//  return this;
+//}
 
 /**
  * Форматирует число как денежную единицу

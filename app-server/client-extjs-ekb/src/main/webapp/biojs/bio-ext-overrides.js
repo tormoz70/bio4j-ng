@@ -206,5 +206,28 @@ Ext.override(Ext.toolbar.Paging, {
             //me.store.loadPage(current);
             me.store.reload();
         }
+    },
+
+    updateInfo : function(){
+        var me = this,
+            displayItem = me.child('#displayItem'),
+            store = me.store,
+            pageData = me.getPageData(),
+            count, msg;
+
+        if (displayItem) {
+            count = store.getCount();
+            if (count === 0) {
+                msg = me.emptyMsg;
+            } else {
+                msg = Ext.String.format(
+                    me.displayMsg,
+                    pageData.fromRecord,
+                    pageData.toRecord,
+                    pageData.total
+                );
+            }
+            displayItem.setText(msg);
+        }
     }
 });

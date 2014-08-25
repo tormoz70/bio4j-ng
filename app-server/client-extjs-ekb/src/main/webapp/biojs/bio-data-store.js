@@ -7,6 +7,10 @@ Ext.define('Bio.data.Store', {
     extend: 'Ext.data.Store',
     alias: 'store.biorest',
 
+    calcCurPage: function(offset) {
+        var me = this;
+        return (me.pageSize > 0) ? Math.trunc(offset / me.pageSize) + 1 : 1;
+    },
 
     constructor: function(config) {
         var me = this;
@@ -34,7 +38,7 @@ Ext.define('Bio.data.Store', {
                     grid = me.ownerGrid,
                     bbar = (grid && grid.initialConfig) ? grid.initialConfig.bbar : null,
                     offset = me.proxy.reader.jsonData.packet.offset;
-                me.currentPage = (me.pageSize > 0) ? (offset / me.pageSize) + 1 : 1;
+                me.currentPage = me.calcCurPage(offset);
                 me.lastOptions.locate = undefined;
                 me.lastOptions.page = me.currentPage;
                 me.lastOptions.start = offset;
@@ -79,15 +83,21 @@ Ext.define('Bio.data.Store', {
         return result;
     },
 
-    locate: function(location, startFrom, callback, scope) {
-        var me = this;
-        if(me.locateLocal(location) === false) {
+    locate: function(location, startFrom, callback, params) {
+        var me = this,
+            callbackFn = (typeof callback == "function" ? callback : callback.fn),
+            callbackScope = (typeof callback == "function" ? me : callback.scope);
+        if(me.locateLocal(location)) {
+            if(callbackFn)
+                Ext.Function.bind(callbackFn, callbackScope).call(me.data.items, null, true);
+        } else {
             if (startFrom > 0)
-                me.currentPage = (me.pageSize != 0) ? (startFrom / me.pageSize) + 1 : 1;
+                me.currentPage = me.calcCurPage(startFrom);
             me.load({
+                params: params,
                 locate: location,
-                scope: scope || me,
-                callback: callback
+                scope: callbackScope,
+                callback: callbackFn
             });
         }
     }
