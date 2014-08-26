@@ -23,6 +23,13 @@ Ext.define('Ekb.form.OrgDetails', {
                 align:'stretch',
                 padding: '0'
             },
+            defaults: {
+                defaults: {
+                    anchor: '100%',
+                    labelWidth: 90,
+                    labelAlign: 'right'
+                }
+            },
             items: [
                 {
                     xtype: 'fieldcontainer',
@@ -32,10 +39,9 @@ Ext.define('Ekb.form.OrgDetails', {
                             xtype: 'textfield',
                             name: 'orgname',
                             fieldLabel: '*Название',
-                            labelWidth: 120,
-                            labelAlign: 'right',
                             margin: '2 2 2 0',
-                            anchor: '100%',
+                            labelWidth: 90,
+                            labelAlign: 'right',
                             allowBlank: false
                         }
                     ]
@@ -44,9 +50,9 @@ Ext.define('Ekb.form.OrgDetails', {
                     xtype: 'fieldcontainer',
                     layout: 'hbox',
                     defaults: {
-                        labelWidth: 120,
-                        labelAlign: 'right',
-                        margin: '2 2 2 0'
+                        margin: '2 2 2 0',
+                        labelWidth: 90,
+                        labelAlign: 'right'
                     },
                     items: [
                         {
@@ -58,12 +64,13 @@ Ext.define('Ekb.form.OrgDetails', {
                         },
                         {
                             xtype: 'checkbox',
+                            labelWidth: 110,
                             name: 'registred',
                             fieldLabel: 'Зарегистрирован'
                         },
                         {
                             xtype: 'combo',
-                            labelWidth: 80,
+                            labelWidth: 70,
                             name: 'verstate',
                             fieldLabel: 'Выверка',
                             allowBlank: false,
@@ -80,12 +87,41 @@ Ext.define('Ekb.form.OrgDetails', {
                                 ]
                             })
                         }
+
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'anchor',
+                    items: [
+                        {
+                            xtype: 'biocombo', name: 'holding_id',
+                            minChars: 0,
+                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.holding'}),
+                            valueField: 'org_id', displayField: 'org_name',
+                            fieldLabel: "Киносеть", allowBlank: true,
+                            queryParam: 'orgname',
+                            emptyText: "<нет сети>",
+                            selectOnFocus: true,
+                            tpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">',
+                                '<div class="x-boundlist-item" style="text-align: left">{org_id} - {org_name}</div>',
+                                '</tpl>'
+                            ),
+                            displayTpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">',
+                                '{org_id} - {org_name}',
+                                '</tpl>'
+                            )
+                        }
                     ]
                 }
+
             ]
         },
         {
             xtype: 'fieldset',
+            title: "Адрес",
             collapsible: false,
             collapsed: false,
             autoHeight: true,
@@ -100,31 +136,32 @@ Ext.define('Ekb.form.OrgDetails', {
                     layout: 'anchor',
                     defaults: {
                         margin: '2 2 2 0',
-                        labelWidth: 120,
+                        labelWidth: 90,
                         labelAlign: 'right',
                         anchor: '100%'
                     },
                     items: [
                         {
-                            xtype: 'biocombo', name: 'holding_id',
+                            xtype: 'biocombo', name: 'region_uid',
                             minChars: 0,
-                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.holding'}),
-                            valueField: 'org_id', displayField: 'org_name',
-                            fieldLabel: "Киносеть", labelWidth: 85, allowBlank: true,
-                            queryParam: 'orgname',
-                            emptyText: "<нет сети>",
+                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.region'}),
+                            valueField: 'region_uid', displayField: 'region',
+                            fieldLabel: "Регион", labelWidth: 85, allowBlank: true,
+                            queryParam: 'region',
+                            emptyText: "<регион не выбран>",
                             selectOnFocus: true,
                             tpl: Ext.create('Ext.XTemplate',
                                 '<tpl for=".">',
-                                    '<div class="x-boundlist-item" style="text-align: left">{org_id} - {org_name}</div>',
+                                '<div class="x-boundlist-item" style="text-align: left">{region}</div>',
                                 '</tpl>'
                             ),
                             displayTpl: Ext.create('Ext.XTemplate',
                                 '<tpl for=".">',
-                                    '{org_id} - {org_name}',
+                                '{region}',
                                 '</tpl>'
                             )
                         }
+
                     ]
                 }
 
