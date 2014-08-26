@@ -141,4 +141,11 @@ public class UtlTest {
         Assert.assertEquals(((Object[])b)[1], a[1]);
     }
 
+    @Test(enabled = true)
+    public void nullIntegerToIntTest() throws Exception {
+        Integer t = null;
+        int t1 = Utl.nvl(t, 0);
+        Assert.assertEquals(0, t1);
+    }
+
 }

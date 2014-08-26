@@ -7,6 +7,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
 import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
@@ -27,6 +28,8 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 @Component
@@ -60,6 +63,23 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private static final int MAX_RECORDS_FETCH_LIMIT = 500;
 
+    private static String buildRequestKey(final BioRequestJStoreGet request) {
+        String paramsUrl = null;
+        try(Paramus p = Paramus.set(request.getBioParams())) {
+            paramsUrl = p.buildUrlParams();
+        }
+        return request.getBioCode()+"/"+paramsUrl;
+    }
+
+    private static TimedCache<Integer> requestCache = new TimedCache(300);
+    private static boolean requestCached(final BioRequestJStoreGet request) {
+        String key = buildRequestKey(request);
+        int check = Utl.nvl(requestCache.get(key), 0);
+        requestCache.put(key, 1);
+        LOG.debug("Processed requestCache, key: \"{}\" - check is [{}].", key, check);
+        return check > 0;
+    }
+
     private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");
         final SQLContext ctx = sqlContextProvider.selectContext(module);
@@ -69,7 +89,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 tryPrepareSessionContext(usr.getUid(), conn);
                 final BioRespBuilder.Data result = BioRespBuilder.data().success(true);
                 result.bioCode(cur.getBioCode());
-                int totalCount = request.getTotalCount();
+                boolean requestCached = requestCached(request);
+
+                int totalCount = requestCached ? request.getTotalCount() : 0;
                 if(totalCount == 0) {
                     LOG.debug("Try calc count of cursor records!!!");
                     try (SQLCursor c = context.CreateCursor()

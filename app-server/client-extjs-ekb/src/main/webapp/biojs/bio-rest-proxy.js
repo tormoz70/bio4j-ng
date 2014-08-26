@@ -10,23 +10,6 @@ Ext.define('Bio.data.RestProxy', {
     },
 
 
-    lastBioParams: null,
-    dsParamsHasBeenChanged: function(bioParams) {
-        var me = this;
-        try {
-            if (me.lastBioParams && !bioParams)
-                return true;
-            if (!me.lastBioParams && bioParams)
-                return true;
-            var json1 = Ext.encode(me.lastBioParams),
-                json2 = Ext.encode(bioParams);
-            return !(json1 == json2);
-
-        } finally {
-            me.lastBioParams = Ext.clone(bioParams);
-        }
-    },
-
     //inherit docs
     buildRequest: function(operation) {
         var me = this;
@@ -67,7 +50,7 @@ Ext.define('Bio.data.RestProxy', {
         request['jsonData'] = Bio.request.store.GetData.jsonData({
             bioCode: store.bioCode,
             bioParams: params,
-            totalCount: me.dsParamsHasBeenChanged(params) ? 0 : store.totalCount,
+            totalCount: store.totalCount,
             offset: offset,
             pageSize: operation.limit,
             sort: sort,
