@@ -1,12 +1,5 @@
 package ru.bio4j.ng.database.api;
 
-/**
- * Created with IntelliJ IDEA.
- * User: ayrat
- * Date: 28.11.13
- * Time: 1:38
- * To change this template use File | Settings | File Templates.
- */
 public class SQLConnectionPoolConfig {
 
     public String getPoolName() {

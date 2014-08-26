@@ -1,7 +1,6 @@
 package ru.bio4j.ng.database.direct.oracle.access;
 
 import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.database.doa.impl.OraUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

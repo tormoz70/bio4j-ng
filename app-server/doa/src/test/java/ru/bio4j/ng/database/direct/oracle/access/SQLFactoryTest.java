@@ -10,7 +10,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.database.doa.impl.OraContext;
+import ru.bio4j.ng.database.doa.impl.DbContext;
 import ru.bio4j.ng.database.doa.impl.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
@@ -35,7 +35,7 @@ public class SQLFactoryTest {
 
     @BeforeTest
     public static void setUpClass() throws Exception {
-        context = OraContext.create(
+        context = DbContext.create(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)

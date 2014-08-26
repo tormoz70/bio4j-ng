@@ -13,7 +13,7 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Column;
-import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.database.api.BioCursor;
 
 import java.util.ArrayList;
 import java.util.List;

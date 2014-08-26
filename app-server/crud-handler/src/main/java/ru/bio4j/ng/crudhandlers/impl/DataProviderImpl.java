@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.WrapQueryType;
-import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.Wrappers;
-import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.filtering.GetrowWrapper;
-import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.LocateWrapper;
-import ru.bio4j.ng.crudhandlers.impl.cursor.wrappers.pagination.PaginationWrapper;
+import ru.bio4j.ng.database.api.WrapQueryType;
+import ru.bio4j.ng.database.doa.impl.wrappers.WrappersImpl;
+import ru.bio4j.ng.database.doa.impl.wrappers.filtering.GetrowWrapper;
+import ru.bio4j.ng.database.doa.impl.wrappers.pagination.LocateWrapper;
+import ru.bio4j.ng.database.doa.impl.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
@@ -28,8 +28,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 
 @Component
@@ -80,9 +78,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return check > 0;
     }
 
-    private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, SQLContext ctx, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");
-        final SQLContext ctx = sqlContextProvider.selectContext(module);
         final BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
             public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
@@ -161,9 +158,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return response;
     }
 
-    private BioRespBuilder.Data processCursorAsSelectableSinglePage(final User usr, final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectableSinglePage(final User usr, final BioRequestJStoreGet request, SQLContext ctx, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as SinglePage!!!");
-        SQLContext ctx = sqlContextProvider.selectContext(module);
         BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
             public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
@@ -243,12 +239,14 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     private BioRespBuilder.Data processCursorAsSelectable(final BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
+        SQLContext ctx = sqlContextProvider.selectContext(module);
+        ctx.getWrappers().wrapCursor(cursor);
         final User usr = request.getUser();
         applyCurrentUserParams(usr, cursor);
         if(cursor.getPageSize() < 0 || request.getId() != null)
-            return processCursorAsSelectableSinglePage(usr, request, module, cursor);
+            return processCursorAsSelectableSinglePage(usr, request, ctx, cursor);
         else
-            return processCursorAsSelectableWithPagging(usr, request, module, cursor);
+            return processCursorAsSelectableWithPagging(usr, request, ctx, cursor);
 
     }
 
@@ -258,21 +256,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     public BioRespBuilder.Data processCursor(BioRequestJStoreGet request, BioModule module, BioCursor cursor) throws Exception {
         if(cursor.getType() == BioCursor.Type.SELECT) {
-            wrapCursor(cursor);
             return processCursorAsSelectable(request, module, cursor);
         }
         if(cursor.getType() == BioCursor.Type.EXEC)
             return processCursorAsExecutable(request, module, cursor);
         return BioRespBuilder.data();
-    }
-
-    private void wrapCursor(BioCursor cursor) throws Exception {
-        Wrappers.wrapRequest(cursor, WrapQueryType.FILTERING);
-        Wrappers.wrapRequest(cursor, WrapQueryType.TOTALS);
-        Wrappers.wrapRequest(cursor, WrapQueryType.SORTING);
-        Wrappers.wrapRequest(cursor, WrapQueryType.LOCATE);
-        Wrappers.wrapRequest(cursor, WrapQueryType.PAGING);
-        Wrappers.wrapRequest(cursor, WrapQueryType.GETROW);
     }
 
     private BioRespBuilder.Data processRequest(BioRequestJStoreGet request) throws Exception {
@@ -319,7 +307,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
-        Wrappers.getInstance().init("oracle");
+        //WrappersImpl.getInstance().init("oracle");
         this.redy = true;
         LOG.debug("Started");
     }

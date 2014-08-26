@@ -1,12 +1,28 @@
 package ru.bio4j.ng.database.api;
 
-/**
- * Created with IntelliJ IDEA.
- * User: ayrat
- * Date: 27.11.13
- * Time: 23:49
- * To change this template use File | Settings | File Templates.
- */
+import ru.bio4j.ng.model.transport.Param;
+
+import java.util.List;
+
 public interface SQLCommandBeforeEvent {
-    void handle(SQLCommandBase sender, SQLCommandBeforeEventAttrs attrs);
+
+    public static class Attributes {
+        private List<Param> params;
+        private Boolean cancel;
+
+        public Attributes(Boolean cancel, List<Param> params) {
+            this.cancel = cancel;
+            this.params = params;
+        }
+
+        public List<Param> getParams() {
+            return params;
+        }
+
+        public Boolean getCancel() {
+            return cancel;
+        }
+    }
+
+    void handle(SQLCommandBase sender, Attributes attrs);
 }

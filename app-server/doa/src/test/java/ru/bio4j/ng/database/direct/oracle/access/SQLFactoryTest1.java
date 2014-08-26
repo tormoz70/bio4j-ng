@@ -6,21 +6,10 @@ import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.commons.converter.ConvertValueException;
-import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.database.doa.impl.OraContext;
-import ru.bio4j.ng.database.doa.impl.SQLExceptionExt;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.database.doa.impl.DbContext;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SQLFactoryTest1 {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest1.class);
@@ -35,7 +24,7 @@ public class SQLFactoryTest1 {
 
     @BeforeTest(enabled = false)
     public static void setUpClass() throws Exception {
-        context = OraContext.create(
+        context = DbContext.create(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)

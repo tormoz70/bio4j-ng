@@ -22,8 +22,6 @@ public interface SQLCommandBase {
     void clearBeforeEvents();
     void clearAfterEvents();
 
-    void setSqlWrapper(SQLWrapper sqlWrapper);
-
     String getPreparedSQL();
 
 }

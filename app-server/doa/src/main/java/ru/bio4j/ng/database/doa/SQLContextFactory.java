@@ -3,11 +3,11 @@ package ru.bio4j.ng.database.doa;
 import ru.bio4j.ng.database.api.SQLConnectionPoolConfig;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLContextConfig;
-import ru.bio4j.ng.database.doa.impl.OraContext;
+import ru.bio4j.ng.database.doa.impl.DbContext;
 
 public class SQLContextFactory {
     public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {
-        return OraContext.create(config);
+        return DbContext.create(config);
     }
     public static SQLContext create(SQLContextConfig config) throws Exception {
         return create(SQLConnectionPoolConfig.builder()

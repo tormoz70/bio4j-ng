@@ -22,4 +22,6 @@ public interface SQLContext {
     SQLReader CreateReader(ResultSet resultSet);
 
     String getDBMSName();
+
+    Wrappers getWrappers();
 }

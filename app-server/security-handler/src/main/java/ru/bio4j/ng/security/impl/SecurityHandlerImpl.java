@@ -7,6 +7,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.api.SQLActionScalar;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLCursor;
