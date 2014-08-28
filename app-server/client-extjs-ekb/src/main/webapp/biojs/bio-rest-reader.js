@@ -1,5 +1,5 @@
 Ext.define('Bio.data.RestReader', {
-    extend: 'Ext.data.reader.Reader',
+    extend: 'Ext.data.reader.Json',
     alias: 'reader.biorest',
 
     root: 'packet.rows',
@@ -15,6 +15,7 @@ Ext.define('Bio.data.RestReader', {
      */
     metaProperty: 'packet.metadata',
     totalProperty: 'packet.results',
+    messageProperty: 'errMessage',
 
     /**
      * @cfg {Boolean} useSimpleAccessors True to ensure that field names/mappings are treated as literals when
@@ -94,6 +95,9 @@ Ext.define('Bio.data.RestReader', {
             me.onMetaChange(data.metaData);
         }
 
+        if(data.exception)
+            data.errMessage = data.exception.message;
+
         /**
          * @property {Object} jsonData
          * A copy of this.rawData.
@@ -102,113 +106,6 @@ Ext.define('Bio.data.RestReader', {
         me.jsonData = data;
         return me.callParent([data]);
     },
-
-    //inherit docs
-    getResponseData: function(response) {
-        var data, error;
-
-        try {
-            data = Ext.decode(response.responseText);
-            return this.readRecords(data);
-        } catch (ex) {
-            error = new Ext.data.ResultSet({
-                total  : 0,
-                count  : 0,
-                records: [],
-                success: false,
-                message: ex.message
-            });
-
-            this.fireEvent('exception', this, response, error);
-
-            Ext.Logger.warn('Unable to parse the JSON returned by the server');
-
-            return error;
-        }
-    },
-
-    //inherit docs
-    buildExtractors : function() {
-        var me = this,
-            metaProp = me.metaProperty;
-
-        me.callParent(arguments);
-
-        if (me.root) {
-            me.getRoot = me.createAccessor(me.root);
-        } else {
-            me.getRoot = Ext.identityFn;
-        }
-
-//        me.getMeta = me.getBioMetaData;
-        if (metaProp) {
-            me.getMeta = me.createAccessor(metaProp);
-        }
-    },
-
-    /**
-     * @private
-     * We're just preparing the data for the superclass by pulling out the record objects we want. If a {@link #record}
-     * was specified we have to pull those out of the larger JSON object, which is most of what this function is doing
-     * @param {Object} root The JSON root node
-     * @return {Ext.data.Model[]} The records
-     */
-    extractData: function(root) {
-        var recordName = this.record,
-            data = [],
-            length, i;
-
-        if (recordName) {
-            length = root.length;
-
-            if (!length && Ext.isObject(root)) {
-                length = 1;
-                root = [root];
-            }
-
-            for (i = 0; i < length; i++) {
-                data[i] = root[i][recordName];
-            }
-        } else {
-            data = root;
-        }
-        return this.callParent([data]);
-    },
-
-    /**
-     * @private
-     * @method
-     * Returns an accessor function for the given property string. Gives support for properties such as the following:
-     *
-     * - 'someProperty'
-     * - 'some.property'
-     * - '["someProperty"]'
-     * - 'values[0]'
-     *
-     * This is used by {@link #buildExtractors} to create optimized extractor functions for properties that are looked
-     * up directly on the source object (e.g. {@link #successProperty}, {@link #messageProperty}, etc.).
-     */
-    createAccessor: (function() {
-        var re = /[\[\.]/;
-
-        return function(expr) {
-            if (Ext.isEmpty(expr)) {
-                return Ext.emptyFn;
-            }
-            if (Ext.isFunction(expr)) {
-                return expr;
-            }
-            if (this.useSimpleAccessors !== true) {
-                var i = String(expr).search(re);
-                if (i >= 0) {
-                    return Ext.functionFactory('obj', 'return obj' + (i > 0 ? '.' : '') + expr);
-                }
-            }
-            return function(obj) {
-                return obj[expr];
-            };
-        };
-    }()),
 
     createFieldAccessExpression: function(field, fieldVarName, dataName) {
         // In the absence of a mapping property, use the original ordinal position

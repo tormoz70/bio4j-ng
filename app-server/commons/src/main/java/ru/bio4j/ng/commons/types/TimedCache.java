@@ -124,10 +124,9 @@ public class TimedCache<T> {
             TimedCacheObject c;
 
             while (itr.hasNext()) {
-                String key = (String) itr.next();
-                c = (TimedCacheObject) ((Map.Entry<?, ?>) itr).getValue();
-                if (c != null && (now > (timeToLive + c.lastAccessed))) {
-                    deleteKey.add(key);
+                Map.Entry<String, TimedCacheObject> entry = (Map.Entry<String, TimedCacheObject>)itr.next();
+                if (entry.getValue() != null && (now > (timeToLive + entry.getValue().lastAccessed))) {
+                    deleteKey.add(entry.getKey());
                 }
             }
         }

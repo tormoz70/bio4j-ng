@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.TimedCache;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.WrapQueryType;
 import ru.bio4j.ng.database.doa.impl.wrappers.WrappersImpl;
@@ -63,10 +64,13 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private static String buildRequestKey(final BioRequestJStoreGet request) {
         String paramsUrl = null;
-        try(Paramus p = Paramus.set(request.getBioParams())) {
-            paramsUrl = p.buildUrlParams();
+        List<Param> params = request.getBioParams();
+        if (params != null) {
+            try (Paramus p = Paramus.set(params)) {
+                paramsUrl = p.buildUrlParams();
+            }
         }
-        return request.getBioCode()+"/"+paramsUrl;
+        return request.getBioCode()+(Strings.isNullOrEmpty(paramsUrl) ? "/<noparams>" : "/"+paramsUrl);
     }
 
     private static TimedCache<Integer> requestCache = new TimedCache(300);
@@ -84,7 +88,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             @Override
             public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
                 tryPrepareSessionContext(usr.getUid(), conn);
-                final BioRespBuilder.Data result = BioRespBuilder.data().success(true);
+                final BioRespBuilder.Data result = BioRespBuilder.data().exception(null);
                 result.bioCode(cur.getBioCode());
                 boolean requestCached = requestCached(request);
 
@@ -117,8 +121,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                                     .setParamValue(PaginationWrapper.LAST, cur.getOffset() + cur.getPageSize());
                         } else {
                             LOG.debug("Cursor fail location to [{}] record by pk!!!", cur.getLocation());
-                            result.success(false);
-                            result.addError(new BioError.LacationFail(cur.getLocation()));
+                            result.exception(new BioError.LacationFail(cur.getLocation()));
                         }
                     }
                 }
@@ -219,7 +222,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     LOG.debug("Count of total cursor records - {}!!!", totalCount);
                 }
                 result.getPacket().setResults(totalCount);
-                return result.success(true);
+                return result.exception(null);
             }
         }, cursor);
         return response;

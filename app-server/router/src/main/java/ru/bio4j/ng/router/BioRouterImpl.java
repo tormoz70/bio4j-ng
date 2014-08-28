@@ -47,7 +47,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 public void handle(BioRequest request, Callback callback) throws Exception {
                     processCallback(
                         BioRespBuilder.anError()
-                            .addError(new BioError.BadRequestType(request.getRequestType()))
+                            .exception(new BioError.BadRequestType(request.getRequestType()))
                     , callback);
                 }
             });

@@ -170,7 +170,20 @@ Ext.override(Ext.data.Connection, {
                 response = me.createResponse(request);
         }
 
-        success = success && Bio.login.processUser(response, function(dr) { me.request(options); });
+        if(response.responseText) {
+            var bioResponse = Ext.decode(response.responseText);
+            if (bioResponse) {
+                success = success && Bio.login.processUser(bioResponse, function(dr) { me.request(options); });
+            } else {
+                success = false;
+                Bio.dlg.showErr("Ошибка", "Unknown response recived. responseText: " + (response.responseText || "<null>"), 400, 300, null);
+            }
+        } else {
+            success = false;
+            Bio.dlg.showErr("Ошибка", "ResponseText is empty!", 400, 300, null);
+        }
+
+
 
         if (success === true) {
             me.fireEvent('requestcomplete', me, response, options);
@@ -183,6 +196,61 @@ Ext.override(Ext.data.Connection, {
         delete me.requests[request.id];
         return response;
     }
+});
+
+Ext.override(Ext.data.proxy.Server, {
+
+    processResponse: function(success, operation, request, response, callback, scope) {
+        var me = this,
+            reader,
+            result;
+
+        if (success === true) {
+            reader = me.getReader();
+
+
+
+
+            reader.applyDefaults = operation.action === 'read';
+
+            result = reader.read(me.extractResponseData(response));
+
+            Ext.apply(operation, {
+                response: response,
+                resultSet: result
+            });
+
+            operation.setCompleted();
+
+            if (result.success !== false) {
+
+// moved up
+//                Ext.apply(operation, {
+//                    response: response,
+//                    resultSet: result
+//                });
+
+                operation.commitRecords(result.records);
+//                moved up
+//                operation.setCompleted();
+                operation.setSuccessful();
+            } else {
+                operation.setException(result.message);
+                me.fireEvent('exception', this, response, operation);
+            }
+        } else {
+            me.setException(operation, response);
+            me.fireEvent('exception', this, response, operation);
+        }
+
+
+        if (typeof callback == 'function') {
+            callback.call(scope || me, operation);
+        }
+
+        me.afterRequest(request, success);
+    }
+
 });
 
 Ext.override(Ext.toolbar.Paging, {

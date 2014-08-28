@@ -25,30 +25,11 @@ public class BioRespBuilder {
     public static abstract class Builder <T extends Builder> {
         protected boolean success;
         protected User user;
-        protected List<BioError> exceptions;
+        protected BioError exception;
 
-        public T addError(BioError e) {
-            if(exceptions == null)
-                exceptions = new ArrayList<>();
-            exceptions.add(e);
-            return (T)this;
-        }
-
-        public T replaceError(BioError e, BioError newe) {
-            if(exceptions != null && e != newe) {
-                int indx = exceptions.indexOf(e);
-                if(indx >= 0) {
-                    if(newe != null)
-                        exceptions.set(indx, newe);
-                    else
-                        exceptions.remove(indx);
-                }
-            }
-            return (T)this;
-        }
-
-        public T success(boolean value) {
-            success = value;
+        public T exception(BioError e) {
+            exception = e;
+            success = exception == null;
             return (T)this;
         }
 
@@ -57,8 +38,8 @@ public class BioRespBuilder {
             return (T)this;
         }
 
-        public List<BioError> getExceptions() {
-            return exceptions;
+        public BioError getException() {
+            return exception;
         }
         public boolean isSuccess() {
             return success;
@@ -71,7 +52,7 @@ public class BioRespBuilder {
             BioResponse response = new BioResponse();
             response.setSuccess(success);
             response.setUser(user);
-            response.setExceptions(this.exceptions);
+            response.setException(this.exception);
             return response;
         }
 

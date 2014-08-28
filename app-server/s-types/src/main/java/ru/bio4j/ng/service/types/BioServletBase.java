@@ -77,10 +77,9 @@ public class BioServletBase extends HttpServlet {
     }
     public static void writeError(BioRespBuilder.AnError bresp, HttpServletResponse response, boolean debugMode) throws IOException {
         if(!debugMode) {
-            for (BioError e : bresp.getExceptions()) {
-                if (!(e instanceof BioError.Login))
-                    bresp.replaceError(e, new BioError("На сервере произошла непредвиденная ошибка!"));
-            }
+            BioError e = bresp.getException();
+            if ((e != null) && !(e instanceof BioError.Login))
+                bresp.exception(new BioError("На сервере произошла непредвиденная ошибка!"));
         }
         String brespJson = Jsons.encode(bresp);
         writeResponse(brespJson, response);
@@ -88,7 +87,7 @@ public class BioServletBase extends HttpServlet {
 
     protected void responseError(BioError error, HttpServletResponse response) throws IOException {
         writeError(BioRespBuilder.anError()
-                .addError(error), response, bioDebug);
+                .exception(error), response, bioDebug);
 
     }
 }

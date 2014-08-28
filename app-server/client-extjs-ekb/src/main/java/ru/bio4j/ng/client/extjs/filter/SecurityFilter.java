@@ -61,7 +61,7 @@ public class SecurityFilter implements Filter {
             HttpServletRequest wrappedRequest = new BioWrappedRequest(request, extraParams);
             chain.doFilter(wrappedRequest, response);
         } else
-            BioServletBase.writeError(BioRespBuilder.anError().addError(new BioError.Login.BadLogin()), response, bioDebug);
+            BioServletBase.writeError(BioRespBuilder.anError().exception(new BioError.Login.BadLogin()), response, bioDebug);
 
     }
 
@@ -94,7 +94,7 @@ public class SecurityFilter implements Filter {
                                 User user = bresp.getUser();
                                 processUser(user, req, resp, chn);
                             } else {
-                                BioServletBase.writeError(BioRespBuilder.anError().addError(bresp.getException()), resp, bioDebug);
+                                BioServletBase.writeError(BioRespBuilder.anError().exception(bresp.getException()), resp, bioDebug);
                                 LOG.error("An error while checking User!", bresp.getException());
                             }
                         }
@@ -106,7 +106,7 @@ public class SecurityFilter implements Filter {
             }
 
         } catch (Exception e) {
-            BioServletBase.writeError(BioRespBuilder.anError().addError(BioError.wrap(e)), resp, bioDebug);
+            BioServletBase.writeError(BioRespBuilder.anError().exception(BioError.wrap(e)), resp, bioDebug);
             LOG.error("Unexpected error while filtering (Level-1)!", e);
         }
     }

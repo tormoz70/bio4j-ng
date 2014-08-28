@@ -1,5 +1,6 @@
 package ru.bio4j.ng.model.transport;
 
+import flexjson.JSON;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
@@ -24,10 +25,9 @@ public class BioResponse {
     private boolean success;
 
     /**
-     * Если на сервере произошди ошибки при обработке запроса, то здесь возвращается коллекция объектов содержащий ошибки
-     * Их может быть много в общем случае
+     * Если на сервере произошла ошибка при обработке запроса, то здесь возвращается объект содержащий ошибку
      */
-    private List<BioError> exceptions;
+    private BioError exception;
 
     /**
      * Код информационного объекта
@@ -70,17 +70,12 @@ public class BioResponse {
         this.success = success;
     }
 
-    public List<BioError> getExceptions() {
-        return exceptions;
-    }
     public BioError getException() {
-        if(exceptions != null && exceptions.size() > 0)
-            return exceptions.get(0);
-        return null;
+        return exception;
     }
 
-    public void setExceptions(List<BioError> exceptions) {
-        this.exceptions = exceptions;
+    public void setException(BioError exception) {
+        this.exception = exception;
     }
 
     public List<Param> getBioParams() {
