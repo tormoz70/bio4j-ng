@@ -174,6 +174,11 @@ Ext.override(Ext.data.Connection, {
             var bioResponse = Ext.decode(response.responseText);
             if (bioResponse) {
                 success = success && Bio.login.processUser(bioResponse, function(dr) { me.request(options); });
+                // show unknown error
+                if(bioResponse && bioResponse.success === false && bioResponse.exception && bioResponse.exception.class == "ru.bio4j.ng.model.transport.BioError") {
+                    success = false;
+                    Bio.dlg.showErr("Ошибка", bioResponse.exception.message, 400, 300, null);
+                }
             } else {
                 success = false;
                 Bio.dlg.showErr("Ошибка", "Unknown response recived. responseText: " + (response.responseText || "<null>"), 400, 300, null);
