@@ -26,5 +26,5 @@ public interface SQLCommandExecErrorEvent {
         }
     }
 
-    void handle(SQLCommandBase sender, Attributes attrs);
+    void handle(SQLCommand sender, Attributes attrs);
 }

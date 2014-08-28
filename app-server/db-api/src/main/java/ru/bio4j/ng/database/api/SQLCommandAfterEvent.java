@@ -46,5 +46,5 @@ public interface SQLCommandAfterEvent {
         }
     }
 
-    void handle(SQLCommandBase sender, Attributes attrs);
+    void handle(SQLCommand sender, Attributes attrs);
 }

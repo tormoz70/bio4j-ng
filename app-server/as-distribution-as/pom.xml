@@ -747,7 +747,15 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-doa</artifactId>
+                                    <artifactId>bio4j-ng-dba-commons</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.install}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-dba-oracle</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
@@ -834,7 +842,7 @@
                                     <!--<outputDirectory>${distr.install}</outputDirectory>-->
                                 <!--</artifactItem>-->
 
-                                <!--modules - commons -->
+                                <!--modules - doa -->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-module-commons</artifactId>

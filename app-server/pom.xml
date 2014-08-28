@@ -248,7 +248,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bio4j-ng-doa</artifactId>
+                <artifactId>bio4j-ng-dba-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-dba-oracle</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -323,7 +328,8 @@
                 <module>s-types</module>
                 <module>s-api</module>
                 <module>db-api</module>
-                <module>doa</module>
+                <module>dba-commons</module>
+                <module>dba-oracle</module>
                 <module>sql-context</module>
                 <module>crud-handler</module>
                 <module>security-handler</module>

@@ -10,5 +10,5 @@ import java.util.List;
  * Вытаскивает OUT параметры из statement и засовывает их в params
  */
 public interface SQLParamGetter {
-    public void getParamsFromStatement(CallableStatement statement, List<Param> params) throws SQLException;
+    public void getParamsFromStatement(SQLCommand command, List<Param> params) throws SQLException;
 }

@@ -24,5 +24,5 @@ public interface SQLCommandBeforeEvent {
         }
     }
 
-    void handle(SQLCommandBase sender, Attributes attrs);
+    void handle(SQLCommand sender, Attributes attrs);
 }

@@ -20,7 +20,7 @@
                 <configuration>
                     <instructions>
                         <!--<Import-Package>-->
-                            <!--!org.apache.commons.logging,-->
+                            <!--!org.apache.doa.logging,-->
                             <!--!org.apache.tools.ant.*,-->
                             <!--!com.ibm.uvm.*,-->
                             <!--!com.sun.jdmk.*,-->
@@ -33,10 +33,10 @@
                             !org.apache.commons.logging,
                             !org.apache.tools.ant.*,
                             *</Import-Package>
-                        <!--<Embed-Dependency>commons-beanutils-core,janino,xalan</Embed-Dependency>-->
-                        <!--<Export-Package>ru.bio4j.ng.commons.*,org.codehaus.janino,org.apache.*</Export-Package>-->
+                        <!--<Embed-Dependency>doa-beanutils-core,janino,xalan</Embed-Dependency>-->
+                        <!--<Export-Package>ru.bio4j.ng.doa.*,org.codehaus.janino,org.apache.*</Export-Package>-->
                         <Embed-Dependency>commons-beanutils-core</Embed-Dependency>
-                        <!--<Export-Package>ru.bio4j.ng.commons.*,org.apache.xpath.*</Export-Package>-->
+                        <!--<Export-Package>ru.bio4j.ng.doa.*,org.apache.xpath.*</Export-Package>-->
                         <Export-Package>ru.bio4j.ng.commons.*</Export-Package>
                     </instructions>
                 </configuration>

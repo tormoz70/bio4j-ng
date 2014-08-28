@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface SQLCursor extends SQLCommandBase, AutoCloseable {
+public interface SQLCursor extends SQLCommand, AutoCloseable {
     /**
      * Инициализировать курсор
      * @param conn - соединение
