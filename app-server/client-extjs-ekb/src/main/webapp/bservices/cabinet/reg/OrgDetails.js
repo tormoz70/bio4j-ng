@@ -60,7 +60,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             name: 'email',
                             fieldLabel: 'Email',
                             allowBlank: false,
-                            width: 350
+                            flex: 1
                         },
                         {
                             xtype: 'checkbox',
@@ -109,9 +109,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                 '</tpl>'
                             ),
                             displayTpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">',
-                                '{org_id} - {org_name}',
-                                '</tpl>'
+                                '<tpl for=".">{org_id} - {org_name}</tpl>'
                             )
                         }
                     ]
@@ -142,11 +140,11 @@ Ext.define('Ekb.form.OrgDetails', {
                     },
                     items: [
                         {
-                            xtype: 'biocombo', name: 'region_uid',
+                            xtype: 'biocombo', name: 'kladr_code_r',
                             minChars: 0,
                             store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.region'}),
                             valueField: 'region_uid', displayField: 'region',
-                            fieldLabel: "Регион", labelWidth: 85, allowBlank: true,
+                            fieldLabel: "Регион", allowBlank: true,
                             queryParam: 'region',
                             emptyText: "<регион не выбран>",
                             selectOnFocus: true,
@@ -156,18 +154,73 @@ Ext.define('Ekb.form.OrgDetails', {
                                 '</tpl>'
                             ),
                             displayTpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">',
-                                '{region}',
-                                '</tpl>'
+                                '<tpl for=".">{region}</tpl>'
                             )
+                        },
+                        {
+                            xtype: 'biocombo', name: 'kladr_code_np',
+                            minChars: 0,
+                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.city'}),
+                            valueField: 'city_uid', displayField: 'city',
+                            fieldLabel: "Город/Нас. пункт", labelWidth: 150, allowBlank: true,
+                            queryParam: 'city',
+                            emptyText: "<город не выбран>",
+                            selectOnFocus: true,
+                            tpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">',
+                                '<div class="x-boundlist-item" style="text-align: left">{city}</div>',
+                                '</tpl>'
+                            ),
+                            displayTpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">{city}</tpl>'
+                            )
+                        },
+                        {
+                            xtype: 'biocombo', name: 'street_uid',
+                            minChars: 0,
+                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.street'}),
+                            valueField: 'street_uid', displayField: 'street',
+                            fieldLabel: "Улица", labelWidth: 150, allowBlank: true,
+                            queryParam: 'street',
+                            emptyText: "<улица не выбрана>",
+                            selectOnFocus: true,
+                            tpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">',
+                                '<div class="x-boundlist-item" style="text-align: left">{street}</div>',
+                                '</tpl>'
+                            ),
+                            displayTpl: Ext.create('Ext.XTemplate',
+                                '<tpl for=".">{street}</tpl>'
+                            )
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'address',
+                            fieldLabel: '',
+                            labelAlign: 'right',
+                            allowBlank: false
                         }
 
                     ]
                 }
 
             ]
-        }
+        },
+        {
+            xtype: 'fieldset',
+            title: "",
+            collapsible: false,
+            collapsed: false,
+            autoHeight: true,
+            layout: {
+                type: 'vbox',
+                align: 'stretch',
+                padding: '0'
+            },
+            items: [
 
+            ]
+        }
     ],
     buttons: [
         {

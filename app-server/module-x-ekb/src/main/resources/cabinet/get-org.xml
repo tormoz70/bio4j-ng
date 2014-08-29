@@ -20,7 +20,8 @@ select
    nvl(io.verstate, '9') verstate,
    o.sroom_cnt, o.splace_cnt, o.space_ttl,
    (select count(1) from givc_org.showrooms sr where sr.id_org = o.id_org and sr.deleted = 0) sroom_cnt0,
-   o.silence_period, o.closereason_id
+   o.silence_period, o.closereason_id,
+   o.kladr_code_r, o.kladr_code_np
 from givc_org.org o
   left join usrs u on u.usr_uid = o.usr_uid
   left join givc_org.incorg io on io.id_org = o.id_org and io.verstate in ('0', '1', '2')
@@ -87,6 +88,8 @@ from givc_org.org o
         <field name="space_ttl" type="decimal"/>
         <field name="sroom_cnt0" type="integer"/>
         <field name="silence_period" type="integer"/>
+        <field name="kladr_code_r" type="string"/>
+        <field name="kladr_code_np" type="string"/>
     </fields>
 </cursor>
 
