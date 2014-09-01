@@ -275,7 +275,8 @@ public class Paramus implements Closeable {
 		for (Param prm : get()) {
 			String paramStr = null;
 			try {
-				paramStr = prm.getName() + "=" + URLEncoder.encode(paramValueAsString(prm), "UTF-8");
+                String valueStr = paramValueAsString(prm);
+				paramStr = prm.getName() + "=" + (Strings.isNullOrEmpty(valueStr) ? "null" : URLEncoder.encode(valueStr, "UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 			}
 			rslt = Strings.append(rslt, paramStr, "&");

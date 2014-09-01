@@ -8,6 +8,8 @@ Ext.define('Bio.form.ComboBox', {
     constructor: function(config) {
         var me = this;
         me.superSetValue = Ext.Function.bind(Bio.form.ComboBox.superclass.setValue, me);
+        if(config.store)
+            config.store.ownerCombo = me;
         if(config.pageSize) {
             if (config.store && config.store)
                 config.store.pageSize = config.pageSize;
@@ -25,10 +27,21 @@ Ext.define('Bio.form.ComboBox', {
         me.callParent(arguments);
     },
 
+
+    permValueSetted: true,
+    tmpValue: undefined,
+
+    getValue: function() {
+        var me = this;
+        return (me.permValueSetted === false) ? me.tmpValue : me.value;
+    },
+
     setValue: function (v) {
         var me = this,
             args = arguments,
             locateVal = v;
+        me.tmpValue = locateVal; // lets set temValue? it will returned by getValue while permValueSetted === false
+        me.permValueSetted = false;
         if((v instanceof Array) && (v.length > 0) && v[0].data)
             locateVal = v[0].data[me.valueField];
         if (locateVal) {
@@ -37,15 +50,17 @@ Ext.define('Bio.form.ComboBox', {
                     {
                         fn: function(records, eOpts, successful) {
                             var me = this;
-                            //me.setValue0(locateVal);
                             me.superSetValue(locateVal);
+                            me.permValueSetted = true; //
                         },
                         scope: me
                     }
                 );
             }
-        } else
+        } else {
             me.callParent(arguments);
+            me.permValueSetted = true;
+        }
     },
 
     doQuery: function(queryString, forceAll, rawQuery) {
@@ -116,43 +131,19 @@ Ext.define('Bio.form.ComboBox', {
 
     doRemoteQuery: function(queryPlan) {
         var me = this;
-//            loadCallback = function() {
-//                me.afterQuery(queryPlan);
-//            };
 
-        // expand before loading so LoadMask can position itself correctly
-        //me.suspendEvents();
         me.expand(queryPlan);
-        //me.resumeEvents();
-
-        // In queryMode: 'remote', we assume Store filters are added by the developer as remote filters,
-        // and these are automatically passed as params with every load call, so we do *not* call clearFilter.
-//        if (me.pageSize) {
-//            // if we're paging, we've changed the query so start at page 1.
-//            me.loadPage(1, {
-//                rawQuery: queryPlan.rawQuery,
-//                callback: loadCallback
-//            });
-//        } else {
-//            me.store.load({
-//                params: me.getParams(queryPlan.query),
-//                rawQuery: queryPlan.rawQuery,
-//                callback: loadCallback
-//            });
-//        }
 
         if (!this.store.loading && me.valueField && me.store) {
-            var tryLocateValue = me.value;
-            //if(tryLocateValue)
-                me.store.locate(tryLocateValue, 1,
-                    {
-                        fn: function (records, eOpts, successful) {
-                            var me = this;
-                            me.afterQuery(queryPlan);
-                        },
-                        scope: me
-                    },
-                    me.getParams(queryPlan.query));
+            var prms = me.getParams(queryPlan.query);
+            me.store.loadPage(1, {
+                params:prms,
+                scope: me,
+                callback: function (records, eOpts, successful) {
+                    var me = this;
+                    me.afterQuery(queryPlan);
+                }
+            });
         } else
             me.afterQuery(queryPlan);
     },
@@ -165,32 +156,7 @@ Ext.define('Bio.form.ComboBox', {
             --me.ignoreSelection;
         }
 
-
         if (success && !store.lastOptions.rawQuery) {
-
-
-//            if(!store.locateLocal(me.value)) {
-//                me.value = null;
-//                me.suspendEvents();
-//                me.superSetValue(me.value);
-//                me.resumeEvents();
-//            }
-//
-//            if (me.value == null) {
-//
-//                if (me.store.getCount()) {
-//                    me.doAutoSelect();
-//                } else {
-//                    me.suspendEvents();
-//                    me.superSetValue(me.value);
-//                    me.resumeEvents();
-//                }
-//            } else {
-//                me.suspendEvents();
-//                me.superSetValue(me.value);
-//                me.resumeEvents();
-//            }
-
             if(store.locateLocal(me.value)) {
                 me.suspendEvents();
                 me.superSetValue(me.value);
@@ -206,24 +172,32 @@ Ext.define('Bio.form.ComboBox', {
         var me = this;
         me.callParent(arguments);
         if (!this.store.loading && me.valueField && me.store) {
-            var tryLocateValue = me.value;
-            //if(tryLocateValue)
-            me.store.locate(tryLocateValue, 1,
-                {
-                    fn: function (records, eOpts, successful) {
-                        var me = this;
-                        me.afterQuery(queryPlan);
-                    },
-                    scope: me
-                }
-                ,me.getParams(queryPlan.query)
-            );
+            var skipLocate = (queryPlan.query && queryPlan.rawQuery === true);
+
+            if(!skipLocate) {
+                var tryLocateValue = me.value;
+                me.store.locate(tryLocateValue, 1,
+                    {
+                        fn: function (records, eOpts, successful) {
+                            var me = this;
+                            me.afterQuery(queryPlan);
+                        },
+                        scope: me
+                    }
+                    , me.getParams(queryPlan.query)
+                );
+            }
         }
     },
 
     onCollapse: function() {
         var me = this;
         me.callParent(arguments);
+        if(me.displayTplData instanceof Array && me.displayTplData.length > 0){
+            var dispData = me.displayTplData[0],
+            rowVal = dispData[me.displayField];
+            me.setRawValue(rowVal);
+        }
     }
 
 })

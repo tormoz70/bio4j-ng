@@ -2,7 +2,7 @@ Ext.namespace("Bio");
 Ext.define('Bio.dlg', {
     singleton: true,
     showMsg: function (title, msg, width, height, callback) {
-        var cb = Bio.Tools.wrapCallback(callback);
+        var cb = Bio.tools.wrapCallback(callback);
 
         var dialog = new Bio.dialog.Message({
             title:title,
@@ -17,7 +17,7 @@ Ext.define('Bio.dlg', {
         var msg = err;
         var errObj = null;
         if (typeof err == "string")
-            errObj = Bio.Tools.tryDecodeJSON(err);
+            errObj = Bio.tools.tryDecode(err);
         else if (err)
             errObj = err;
         if (errObj && (typeof errObj == "object"))

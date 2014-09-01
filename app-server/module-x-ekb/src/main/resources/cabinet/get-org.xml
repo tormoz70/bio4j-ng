@@ -38,8 +38,10 @@ from givc_org.org o
         <field name="pasport" type="string" header="Паспорт"/>
         <field name="physic_person" type="boolean" header="Физ.лицо"/>
         <field name="orgtype" type="string" header="Тип организации"/>
-        <field name="kladr_code" type="string" header="Код КЛАДР"/>
-        <field name="address" type="string" header="Адрес"/>
+        <field name="kladr_code_r" type="string"/>
+        <field name="kladr_code_np" type="string"/>
+        <field name="kladr_code" type="string"/>
+        <field name="address" type="string"/>
         <field name="holding_id" type="integer" header="ID Киносети" useNull="true"/>
         <field name="hldname" type="string" header="Название киносети"/>
         <field name="email" type="string" header="Email"/>
@@ -88,8 +90,6 @@ from givc_org.org o
         <field name="space_ttl" type="decimal"/>
         <field name="sroom_cnt0" type="integer"/>
         <field name="silence_period" type="integer"/>
-        <field name="kladr_code_r" type="string"/>
-        <field name="kladr_code_np" type="string"/>
     </fields>
 </cursor>
 

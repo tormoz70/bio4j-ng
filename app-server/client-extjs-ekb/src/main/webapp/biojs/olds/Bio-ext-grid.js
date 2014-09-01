@@ -248,7 +248,7 @@ Ext.override(Ext.grid.EditorGridPanel, {
       grid.showEditor(null, frmName, {
         fn: function(){
           if (this.ModalResult == Bio.form.ModalResult.CANCEL) {
-            var row = Bio.Tools.getSeldRow(sm);
+            var row = Bio.tools.getSeldRow(sm);
             if (row) 
               store.remove(row);
           }
@@ -275,7 +275,7 @@ Ext.override(Ext.grid.EditorGridPanel, {
         }
       });
     else {
-      var row = Bio.Tools.getSeldRow(grid.getSelectionModel());
+      var row = Bio.tools.getSeldRow(grid.getSelectionModel());
       if (row) {
         var i = grid.store.indexOf(row);
         for (var c = 0; c < len && !grid.colModel.isCellEditable(c, i); c++);

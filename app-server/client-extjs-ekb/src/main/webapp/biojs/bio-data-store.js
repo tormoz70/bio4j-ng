@@ -86,8 +86,10 @@ Ext.define('Bio.data.Store', {
     locate: function(location, startFrom, callback, params) {
         var me = this,
             callbackFn = (typeof callback == "function" ? callback : callback.fn),
-            callbackScope = (typeof callback == "function" ? me : callback.scope);
-        if(me.locateLocal(location)) {
+            callbackScope = (typeof callback == "function" ? me : callback.scope),
+            qParamName = me.ownerCombo ? me.ownerCombo.queryParam : null,
+            forceRemoteQuery = params && Ext.isDefined(params[qParamName]);
+        if(!forceRemoteQuery && me.locateLocal(location)) {
             if(callbackFn)
                 Ext.Function.bind(callbackFn, callbackScope).call(me.data.items, null, true);
         } else {

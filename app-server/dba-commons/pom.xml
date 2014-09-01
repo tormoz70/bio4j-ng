@@ -11,47 +11,46 @@
     <packaging>bundle</packaging>
     <name>Bio Data Access Commons</name>
     <description>Data Access Commons for Bio Database API</description>
-    <properties>
-        <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
-        <tomcat-juli.version>8.0.3</tomcat-juli.version>
-    </properties>
+    <!--<properties>-->
+        <!--<tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>-->
+        <!--<tomcat-juli.version>8.0.3</tomcat-juli.version>-->
+    <!--</properties>-->
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>
-                            com.sun.security.*;resolution:="optional",
-                            sun.security.*;resolution:="optional",
-                            sun.reflect.generics.*;resolution:="optional",
-                            javax.*;resolution:="optional",
-                            org.objectweb.*;resolution:="optional",
-                            *</Import-Package>
-                        <!--<Embed-Dependency>ojdbc6,oucp</Embed-Dependency>-->
-                        <Embed-Dependency>*;scope=compile</Embed-Dependency>
-                        <Export-Package>ru.bio4j.ng.database.commons.*</Export-Package>
-                        <remoteOBR />
-                    </instructions>
-                </configuration>
+                <!--<configuration>-->
+                    <!--<instructions>-->
+                        <!--<Import-Package>-->
+                            <!--com.sun.security.*;resolution:="optional",-->
+                            <!--sun.security.*;resolution:="optional",-->
+                            <!--sun.reflect.generics.*;resolution:="optional",-->
+                            <!--javax.*;resolution:="optional",-->
+                            <!--org.objectweb.*;resolution:="optional",-->
+                            <!--*</Import-Package>-->
+                        <!--<Embed-Dependency>*;scope=compile</Embed-Dependency>-->
+                        <!--<Export-Package>ru.bio4j.ng.database.commons.*;org.apache.tomcat.jdbc.pool.*</Export-Package>-->
+                        <!--<remoteOBR />-->
+                    <!--</instructions>-->
+                <!--</configuration>-->
             </plugin>
         </plugins>
     </build>
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>${tomcat-jdbc.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-juli</artifactId>
-            <version>${tomcat-juli.version}</version>
-            <scope>compile</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-jdbc</artifactId>-->
+            <!--<version>${tomcat-jdbc.version}</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-juli</artifactId>-->
+            <!--<version>${tomcat-juli.version}</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
 
     	<dependency>
             <groupId>${project.groupId}</groupId>

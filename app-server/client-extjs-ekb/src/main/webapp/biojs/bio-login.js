@@ -82,7 +82,7 @@ Ext.define('Bio.login', {
                     Bio.app.curUsr = undefined;
                     me.removeLastSuccessUserName();
                     if (callback) {
-                        var cb = Bio.Tools.wrapCallback(callback);
+                        var cb = Bio.tools.wrapCallback(callback);
                         Ext.callback(cb.fn, cb.scope, [
                             {modalResult: 1}
                         ]);
@@ -105,13 +105,13 @@ Ext.define('Bio.login', {
 //            Bio.Login.lastLoginResult = Ext.util.JSON.decode(vRspText);
 //        } catch (e) {
 //            Bio.Login.lastLoginResult = null;
-//            Bio.dlg.showMsg("Ошибка на сервере", Bio.Tools.ObjToStr(response));
+//            Bio.dlg.showMsg("Ошибка на сервере", Bio.tools.objToStr(response));
 //        }
 //        if (Bio.Login.lastLoginResult != null) {
 //            var vEx = Bio.Login.lastLoginResult["ebio"];
 //            if (vEx != null) {
 //                if (vEx.type == "EBioLoggedOut") {
-//                    var vURL = Bio.Tools.bldBioUrl();
+//                    var vURL = Bio.tools.bldBioUrl();
 //                    self.document.location = vURL;
 //                }
 //            }
@@ -121,7 +121,7 @@ Ext.define('Bio.login', {
 //    processLogout: function (btn) {
 //        if (btn == "yes") {
 //            Bio.dlg.showGWait("Завершение работы...");
-//            var vURL = Bio.Tools.bldBioUrl("doLogout");
+//            var vURL = Bio.tools.bldBioUrl("doLogout");
 //            var vCfg = {
 //                url: vURL,
 //                success: undefined,

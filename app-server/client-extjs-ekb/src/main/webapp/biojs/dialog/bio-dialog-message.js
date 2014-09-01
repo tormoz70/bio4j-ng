@@ -4,7 +4,7 @@ Ext.define('Bio.dialog.Message', {
 
     updateText: function (msg) {
         var me = this;
-        var txtFld = Bio.Tools.getFrmFld(me.items.items[0], "msgText");
+        var txtFld = Bio.tools.getFrmFld(me.items.items[0], "msgText");
         if (txtFld) txtFld.setValue(msg);
     },
 

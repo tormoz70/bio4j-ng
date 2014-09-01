@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd">
+  <SQL action="select">
+    <text>
+      <![CDATA[
+    select a.tkldr_uid as city_uid, a.tkldr_name||' '||a.tkldrtp_sname as city
+      from REG$TKLADR a
+     where (((a.tkldr_uid like substr(a.tkldr_uid, 1, 5)||'000___00') and (substr(a.tkldr_uid, 9, 3) <> '000')) or
+             ((a.tkldr_uid like substr(a.tkldr_uid, 1, 5)||'___00000') and (substr(a.tkldr_uid, 6, 3) <> '000')) or
+              ((a.tkldr_uid like substr(a.tkldr_uid, 1, 5)||'______00') and (substr(a.tkldr_uid, 6, 6) <> '000000')) or
+               ((a.tkldr_uid like substr(a.tkldr_uid, 1, 5)||'00000000') and (a.tkldrtp_id = 103))
+          )
+          and a.tkldrtp_id  not in (418)
+          and ((:city is null) or (upper(a.tkldr_name) like '%'||upper(:city)||'%'))
+     start with a.tkldr_uid = :region_uid
+      connect by prior a.tkldr_uid = a.prnt_tkldr_uid
+      order by city
+      ]]>
+    </text>
+  </SQL>
+
+  <fields>
+    <field name="city_uid" type="string" pk="true"/>
+    <field name="city" type="string"/>
+  </fields>
+</cursor>

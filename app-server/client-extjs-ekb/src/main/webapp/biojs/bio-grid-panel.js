@@ -104,7 +104,7 @@ Ext.define('Bio.grid.Panel', {
                     mandatory: f.mandatory,
                     readonly: f.readonly,
                     pk: f.pk,
-                    width: Bio.Tools.tryParsInt(f.width),
+                    width: Bio.tools.tryParsInt(f.width),
                     xtype: xtp,
                     format: f.format,
                     editor: (f.type === "boolean" ? {xtype: 'checkboxfield', boxLabel: 'Box Label'} : f.editor),

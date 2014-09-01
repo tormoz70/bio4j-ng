@@ -33,7 +33,6 @@
                             oracle.*;resolution:="optional",
                             org.objectweb.*;resolution:="optional",
                             *</Import-Package>
-                        <!--<Embed-Dependency>ojdbc6,oucp</Embed-Dependency>-->
                         <Embed-Dependency>*;scope=compile</Embed-Dependency>
                         <Export-Package>ru.bio4j.ng.database.oracle</Export-Package>
                         <remoteOBR />
@@ -65,13 +64,6 @@
             <version>${tomcat-juli.version}</version>
             <scope>compile</scope>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>oucp</artifactId>-->
-            <!--<version>${oucp.version}</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
 
     	<dependency>
             <groupId>${project.groupId}</groupId>

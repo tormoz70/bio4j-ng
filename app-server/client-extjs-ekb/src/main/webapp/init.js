@@ -88,7 +88,7 @@ Ext.onReady(function() {
 //        fn: doOnLogin
 //    });
     Ext.Ajax.request({
-        url: Bio.Tools.bldBioUrl("/biosrv"),
+        url: Bio.tools.bldBioUrl("/biosrv"),
         params: {rqt: 'ping'},
         callback:doOnLogin
     });

@@ -155,12 +155,35 @@ Ext.define('Ekb.form.OrgDetails', {
                             ),
                             displayTpl: Ext.create('Ext.XTemplate',
                                 '<tpl for=".">{region}</tpl>'
-                            )
+                            ),
+                            listeners: {
+                                change: function(newValue, oldValue, eOpts) {
+                                    var me = this;
+                                    if(newValue != oldValue) {
+                                        var frm = me.up('form').getForm();
+                                        cityCombo = (frm ? frm.findField('kladr_code_np') : null);
+//                                        if(cityCombo)
+//                                            cityCombo.setValue(null);
+                                    }
+
+                                }
+                            }
                         },
                         {
                             xtype: 'biocombo', name: 'kladr_code_np',
                             minChars: 0,
-                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.city'}),
+                            store: Ext.create('Bio.data.Store', {
+                                bioCode: 'ekbp@cabinet.combo.city',
+                                listeners: {
+                                    beforeload: function(store, operation, eOpts) {
+                                        var me = store,
+                                            frm = (me.ownerCombo ? me.ownerCombo.up('form').getForm() : null),
+                                            regionSeldParam = {region_uid:(frm ? frm.findField('kladr_code_r').getValue() : null)};
+                                        me.bioParams = Bio.tools.setBioParam(me.bioParams, regionSeldParam);
+                                        console.log(Bio.tools.objToStr(regionSeldParam));
+                                    }
+                                }
+                            }),
                             valueField: 'city_uid', displayField: 'city',
                             fieldLabel: "Город/Нас. пункт", labelWidth: 150, allowBlank: true,
                             queryParam: 'city',
@@ -173,12 +196,35 @@ Ext.define('Ekb.form.OrgDetails', {
                             ),
                             displayTpl: Ext.create('Ext.XTemplate',
                                 '<tpl for=".">{city}</tpl>'
-                            )
+                            ),
+                            listeners: {
+                                change: function(newValue, oldValue, eOpts) {
+                                    var me = this;
+                                    if(newValue != oldValue) {
+                                        var frm = me.up('form').getForm();
+                                        streetCombo = (frm ? frm.findField('kladr_code') : null);
+//                                        if(streetCombo)
+//                                            streetCombo.setValue(null);
+                                    }
+
+                                }
+                            }
                         },
                         {
-                            xtype: 'biocombo', name: 'street_uid',
+                            xtype: 'biocombo', name: 'kladr_code',
                             minChars: 0,
-                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.street'}),
+                            store: Ext.create('Bio.data.Store', {
+                                bioCode: 'ekbp@cabinet.combo.street',
+                                listeners: {
+                                    beforeload: function(store, operation, eOpts) {
+                                        var me = store,
+                                            frm = (me.ownerCombo ? me.ownerCombo.up('form').getForm() : null),
+                                            citySeldParam = {city_uid:(frm ? frm.findField('kladr_code_np').getValue() : null)};
+                                        me.bioParams = Bio.tools.setBioParam(me.bioParams, citySeldParam);
+                                        console.log(Bio.tools.objToStr(citySeldParam));
+                                    }
+                                }
+                            }),
                             valueField: 'street_uid', displayField: 'street',
                             fieldLabel: "Улица", labelWidth: 150, allowBlank: true,
                             queryParam: 'street',
