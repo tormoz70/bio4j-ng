@@ -80,6 +80,12 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return check > 0;
     }
 
+    public static int calcOffset(int locatedPos, int pageSize){
+        int pg = ((int)((double)(locatedPos-1) / (double)pageSize) + 1);
+        LOG.debug("pg: {}", pg);
+        return (pg - 1) * pageSize;
+    }
+
     private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGet request, SQLContext ctx, BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");
         final BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
@@ -112,7 +118,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                             .init(conn, cur.getLocateSql(), locateParams).open();) {
                         if (c.reader().next()) {
                             int locatedPos = c.reader().getValue(1, int.class);
-                            int offset = (locatedPos / cur.getPageSize()) * cur.getPageSize();
+                            int offset = calcOffset(locatedPos, cur.getPageSize());
                             LOG.debug("Cursor successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getLocation(), locatedPos, offset);
                             cur.setOffset(offset);
                             cur.setParamValue(PaginationWrapper.OFFSET, cur.getOffset())

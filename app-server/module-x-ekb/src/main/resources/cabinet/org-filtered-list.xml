@@ -89,7 +89,7 @@ ORDER BY o1.orgname
     <field name="orgtype_name" type="string" header="Тип" width="80"/>
     <field name="time_zone" type="integer" header="Часовой пояс" width="30"/>
     <field name="ownership" type="string" header="Ф/С" width="60"/>
-    <field name="holding_id" type="integer" header="ID Киносети" width="40" useNull="true"/>
+    <field name="holding_id" type="integer" header="ID Киносети" width="40"/>
     <field name="hldname" type ="string" header="Киносеть" width="150"/>
     <field name="region" type="string" header="Регион" width="150" align="left"/>
     <field name="nas_punkt" type="string" header="Нас. пункт" width="150" align="left"/>

@@ -42,7 +42,7 @@ from givc_org.org o
         <field name="kladr_code_np" type="string"/>
         <field name="kladr_code" type="string"/>
         <field name="address" type="string"/>
-        <field name="holding_id" type="integer" header="ID Киносети" useNull="true"/>
+        <field name="holding_id" type="integer" header="ID Киносети"/>
         <field name="hldname" type="string" header="Название киносети"/>
         <field name="email" type="string" header="Email"/>
         <field name="dog_num" type="string" header="Регистрационный номер (РН)"/>

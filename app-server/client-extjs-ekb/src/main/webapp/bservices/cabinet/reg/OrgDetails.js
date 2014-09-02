@@ -5,7 +5,7 @@ Ext.define('Ekb.form.OrgDetails', {
     //autoHeight: true,
     baseCls: 'x-panel-body-default-framed',
 
-    height: 655,
+    height: 700,
     width: 800,
     bodyPadding: 0,
     autoScroll: true,
@@ -148,15 +148,6 @@ Ext.define('Ekb.form.OrgDetails', {
                             margin: '0',
                             queryParam: 'region',
                             emptyText: "<регион не выбран>",
-                            selectOnFocus: true,
-                            tpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">',
-                                '<div class="x-boundlist-item" style="text-align: left">{region}</div>',
-                                '</tpl>'
-                            ),
-                            displayTpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">{region}</tpl>'
-                            ),
                             listeners: {
                                 change: function(newValue, oldValue, eOpts) {
                                     var me = this;
@@ -189,15 +180,6 @@ Ext.define('Ekb.form.OrgDetails', {
                             fieldLabel: "Город/Нас. пункт", labelWidth: 150, allowBlank: true,
                             queryParam: 'city',
                             emptyText: "<город не выбран>",
-                            selectOnFocus: true,
-                            tpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">',
-                                '<div class="x-boundlist-item" style="text-align: left">{city}</div>',
-                                '</tpl>'
-                            ),
-                            displayTpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">{city}</tpl>'
-                            ),
                             listeners: {
                                 change: function(newValue, oldValue, eOpts) {
                                     var me = this;
@@ -227,24 +209,14 @@ Ext.define('Ekb.form.OrgDetails', {
                                 }
                             }),
                             valueField: 'street_uid', displayField: 'street',
-                            fieldLabel: "Улица", labelWidth: 150, allowBlank: true,
-                            queryParam: 'street',
-                            emptyText: "<улица не выбрана>",
-                            selectOnFocus: true,
-                            tpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">',
-                                '<div class="x-boundlist-item" style="text-align: left">{street}</div>',
-                                '</tpl>'
-                            ),
-                            displayTpl: Ext.create('Ext.XTemplate',
-                                '<tpl for=".">{street}</tpl>'
-                            )
+                            fieldLabel: "Улица", labelWidth: 150,
+                            emptyText: "<улица не выбрана>"
                         },
                         {
                             xtype: 'textfield',
                             name: 'address',
                             fieldLabel: '',
-                            allowBlank: false
+                            allowBlank: true
                         }
 
                     ]
@@ -269,7 +241,7 @@ Ext.define('Ekb.form.OrgDetails', {
                     margin: '0',
                     labelWidth: 140,
                     labelAlign: 'right',
-                    allowBlank: false,
+                    allowBlank: true,
                     flex: 1
                 }
             },
@@ -404,8 +376,8 @@ Ext.define('Ekb.form.OrgDetails', {
         },
         {
             xtype: 'tabpanel',
-            //autoHeight: true,
-            height: 150,
+            autoHeight: true,
+            //height: 200,
             padding: '0',
             layout: {
                 align: 'stretch'
@@ -418,9 +390,6 @@ Ext.define('Ekb.form.OrgDetails', {
             items: [
                 {
                     title: "Свойства",
-                    //collapsible: false,
-                    //collapsed: false,
-                    //autoHeight: true,
                     layout: {
                         type: 'vbox',
                         align: 'stretch'
@@ -431,7 +400,7 @@ Ext.define('Ekb.form.OrgDetails', {
                         defaults: {
                             margin: '0',
                             labelAlign: 'right',
-                            allowBlank: false,
+                            allowBlank: true,
                             flex: 1
                         }
                     },
@@ -448,33 +417,127 @@ Ext.define('Ekb.form.OrgDetails', {
                                 {
                                     xtype: 'biocombo',
                                     labelWidth: 140,
+                                    width: 380,
                                     name: 'id_prop',
                                     fieldLabel: 'Форма собственности',
-                                    allowBlank: false,
                                     flex: 0,
-                                    valueField: 'id',
-                                    displayField: 'caption',
-                                    minChars: 0,
                                     store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.prop'}),
-                                    queryParam: 'prop',
-                                    emptyText: "<форма собственности не выбрана>",
-                                    selectOnFocus: true,
-                                    tpl: Ext.create('Ext.XTemplate',
-                                        '<tpl for=".">',
-                                        '<div class="x-boundlist-item" style="text-align: left">{caption}</div>',
-                                        '</tpl>'
-                                    ),
-                                    displayTpl: Ext.create('Ext.XTemplate',
-                                        '<tpl for=".">{caption}</tpl>'
-                                    ),
                                     matchFieldWidth: false,
                                     listConfig: {
-                                        width: 280
+                                        width: 380
                                     }
                                 }
                             ]
-                        }
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'checkbox',
+                                    labelWidth: 170,
+                                    name: 'automatic',
+                                    fieldLabel: 'Наличие автоматизации СПБ'
+                                },
+                                {
+                                    xtype: 'checkbox',
+                                    labelWidth: 170,
+                                    name: 'modern',
+                                    fieldLabel: 'Современный кинотеатр'
+                                },
+                                {
+                                    xtype: 'checkbox',
+                                    labelWidth: 150,
+                                    name: 'original_dog',
+                                    fieldLabel: 'Наличие оригинала РК'
+                                },
+                                {
+                                    xtype: 'checkbox',
+                                    labelWidth: 70,
+                                    name: 'test',
+                                    fieldLabel: 'Тестовый'
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 100,
+                                    name: 'state',
+                                    fieldLabel: 'Состояние',
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.state'})
+                                },
+                                {
+                                    xtype: 'datefield',
+                                    name: 'state_date',
+                                    fieldLabel: 'Дата состояния c',
+                                    flex: 0,
+                                    labelWidth: 120,
+                                    width: 110+120
 
+                                },
+                                {
+                                    xtype: 'datefield',
+                                    name: 'suspended',
+                                    fieldLabel: 'по',
+                                    flex: 0,
+                                    labelWidth: 30,
+                                    width: 110+30
+                                }
+
+                            ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 110,
+                                    name: 'closereason_id',
+                                    fieldLabel: 'Прим. к сост.',
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.closereason'})
+                                },
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 110,
+                                    name: 'location',
+                                    fieldLabel: 'Расположение',
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.location'})
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 110,
+                                    name: 'id_vnd',
+                                    fieldLabel: 'Поставщик ПО',
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.softvendor'})
+                                },
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 110,
+                                    name: 'state_mat',
+                                    fieldLabel: 'Имущ. состояние',
+                                    matchFieldWidth: false,
+                                    listConfig: {width: 250},
+                                    store: Ext.create('Ext.data.Store', {
+                                        fields: ['id', 'caption'],
+                                        data : [
+                                            {id:"0", caption:"<не определено>"},
+                                            {id:"1", caption:"требует кап. ремонта"},
+                                            {id:"2", caption:"не удовлетворительное"},
+                                            {id:"3", caption:"удовлетворительное"},
+                                            {id:"4", caption:"хорошее"},
+                                            {id:"5", caption:"отличное"}
+                                        ]
+                                    })
+                                }
+                            ]
+                        }
                     ]
                 },
                 {

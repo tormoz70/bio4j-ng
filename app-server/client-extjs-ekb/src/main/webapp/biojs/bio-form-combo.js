@@ -6,7 +6,29 @@ Ext.define('Bio.form.ComboBox', {
     superSetValue: Ext.emptyFn(),
 
     constructor: function(config) {
-        var me = this;
+        var me = this,
+            valueFieldDefault = 'id',
+            displayFieldDefault = 'caption',
+            configDefaults = {
+                allowBlank: true,
+                valueField: valueFieldDefault,
+                displayField: displayFieldDefault,
+                minChars: 0,
+                queryParam: 'query',
+                emptyText: "<не выбрано>",
+                selectOnFocus: true,
+                tpl: Ext.create('Ext.XTemplate',
+                    '<tpl for=".">',
+                        '<div class="x-boundlist-item" style="text-align: left">{'+(config.displayField||displayFieldDefault)+'}</div>',
+                    '</tpl>'
+                ),
+                displayTpl: Ext.create('Ext.XTemplate',
+                        '<tpl for=".">{'+(config.displayField||displayFieldDefault)+'}</tpl>'
+                )
+            };
+
+        config = (config) ? Ext.apply(configDefaults, config) : configDefaults;
+
         me.superSetValue = Ext.Function.bind(Bio.form.ComboBox.superclass.setValue, me);
         if(config.store)
             config.store.ownerCombo = me;

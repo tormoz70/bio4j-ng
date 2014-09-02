@@ -305,6 +305,10 @@ Ext.override(Ext.toolbar.Paging, {
     }
 });
 
+Ext.override(Ext.view.AbstractView, {
+    loadingText: 'Загрузка...'
+});
+
 Ext.override(Ext.form.field.Base, {
     invalidText: 'Значение в этом поле не корректно!' //'The value in this field is invalid'
 });

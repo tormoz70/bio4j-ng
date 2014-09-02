@@ -9,7 +9,7 @@ select a.tkldr_uid as street_uid, a.tkldr_name||' '||a.tkldrtp_sname as street
   from REG$TKLADR a
  where a.is_street = 1
    and a.prnt_tkldr_uid = :city_uid
-   and ((:street is null) or (upper(a.tkldr_name) like '%'||upper(:street)||'%'))
+   and ((:query is null) or (upper(a.tkldr_name) like '%'||upper(:query)||'%'))
       ]]>
     </text>
   </SQL>
