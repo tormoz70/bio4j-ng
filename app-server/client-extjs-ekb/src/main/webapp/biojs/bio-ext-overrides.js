@@ -304,3 +304,56 @@ Ext.override(Ext.toolbar.Paging, {
         }
     }
 });
+
+Ext.override(Ext.form.field.Base, {
+    invalidText: 'Значение в этом поле не корректно!' //'The value in this field is invalid'
+});
+
+
+Ext.override(Ext.form.field.Text, {
+    minLengthText : 'Длинна поля должна быть не менее {0}!', //'The minimum length for this field is {0}',
+    maxLengthText : 'Длинна поля должна быть не более {0}!', //'The maximum length for this field is {0}',
+    blankText : 'Поле не может быть пустым' //'This field is required'
+
+});
+
+Ext.override(Ext.form.field.Number, {
+    minText: 'Значение поля не может быть меньше чем {0}!', //'The minimum value for this field is {0}',
+    maxText: 'Значение поля не может быть больше чем {0}!', //'The maximum value for this field is {0}',
+    nanText: 'Значение "{0}"  не является числом!', //'{0} is not a valid number',
+    negativeText: 'Значение поля не может быть меньше нуля!' //'The value cannot be negative'
+});
+
+Ext.override(Ext.form.field.Date, {
+    disabledDaysText: 'Отключено', //"Disabled",
+    disabledDatesText: 'Отключено', //"Disabled",
+    minText: 'Дата должно быть равно либо позднее {0}!', //"The date in this field must be equal to or after {0}",
+    maxText: 'Дата должно быть равно либо ранее {0}!', //"The date in this field must be equal to or before {0}",
+    invalidText: 'Значение "{0}" не является датой. Должно удовлетворять формату "{1}"!', //"{0} is not a valid date - it must be in the format {1}"
+    format : "d.m.Y"
+});
+
+Ext.override(Ext.picker.Date, {
+    todayText: 'Сегодня', //'Today',
+    minText: 'Дата ранее минимальной!', //'This date is before the minimum date',
+    maxText: 'Дата позднее максимальной!', //'This date is after the maximum date',
+    disabledDaysText: 'Отключено', //'Disabled',
+    disabledDatesText: 'Отключено', //'Disabled',
+    nextText: 'Следующий месяц (CTRL+Right)', //'Next Month (Control+Right)',
+    prevText: 'Предыдущий месяц (CTRL+Left)', //'Previous Month (Control+Left)',
+    monthYearText: 'Выберите месяц (Control+Up/Down чтобы изменить год)', //'Choose a month (Control+Up/Down to move years)'
+    cancelText: 'Отмена', //'Cancel',
+    startDay : 1
+});
+
+//Ext.Date = Ext.apply(Ext.Date, {dayNames: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]});
+//Ext.Date = Ext.apply(Ext.Date, {dayNames: ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"]});
+Ext.Date.dayNames = ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
+//Ext.Date = Ext.apply(Ext.Date, {monthNames: ["January","February","March","April","May","June",
+//    "July","August","September","October","November","December"]});
+//Ext.Date = Ext.apply(Ext.Date, {monthNames: ["Январь","Февраль","Март","Апрель","Май","Июнь",
+//    "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]});
+Ext.Date.monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь",
+    "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+
+Ext.Date.defaultFormat = "d.m.Y";

@@ -1,15 +1,17 @@
 Ext.define('Ekb.form.OrgDetails', {
     extend: 'Ext.form.Panel',
-    //title   : 'FieldContainers',
 
-    frame: true,
+    //frame: true,
     //autoHeight: true,
-    height: 700,
+    baseCls: 'x-panel-body-default-framed',
+
+    height: 655,
     width: 800,
     bodyPadding: 0,
     autoScroll: true,
     layout: 'anchor',
     defaults: {
+        margin: '5',
         padding: '5',
         anchor: '100%'
     },
@@ -404,12 +406,76 @@ Ext.define('Ekb.form.OrgDetails', {
             xtype: 'tabpanel',
             //autoHeight: true,
             height: 150,
+            padding: '0',
             layout: {
                 align: 'stretch'
             },
+            defaults: {
+                xtype: 'panel',
+                baseCls: 'x-panel-body-default-framed',
+                padding: '5'
+            },
             items: [
                 {
-                    title: "Свойства"
+                    title: "Свойства",
+                    //collapsible: false,
+                    //collapsed: false,
+                    //autoHeight: true,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    defaults: {
+                        layout: 'hbox',
+                        margin: '2 0 0 0',
+                        defaults: {
+                            margin: '0',
+                            labelAlign: 'right',
+                            allowBlank: false,
+                            flex: 1
+                        }
+                    },
+                    items: [
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'textfield',
+                                    name: 'org_www',
+                                    fieldLabel: 'Сайт',
+                                    labelWidth: 80
+                                },
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 140,
+                                    name: 'id_prop',
+                                    fieldLabel: 'Форма собственности',
+                                    allowBlank: false,
+                                    flex: 0,
+                                    valueField: 'id',
+                                    displayField: 'caption',
+                                    minChars: 0,
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.prop'}),
+                                    queryParam: 'prop',
+                                    emptyText: "<форма собственности не выбрана>",
+                                    selectOnFocus: true,
+                                    tpl: Ext.create('Ext.XTemplate',
+                                        '<tpl for=".">',
+                                        '<div class="x-boundlist-item" style="text-align: left">{caption}</div>',
+                                        '</tpl>'
+                                    ),
+                                    displayTpl: Ext.create('Ext.XTemplate',
+                                        '<tpl for=".">{caption}</tpl>'
+                                    ),
+                                    matchFieldWidth: false,
+                                    listConfig: {
+                                        width: 280
+                                    }
+                                }
+                            ]
+                        }
+
+                    ]
                 },
                 {
                     title: "Оборудование"
@@ -423,6 +489,7 @@ Ext.define('Ekb.form.OrgDetails', {
     buttons: [
         {
             text: 'Сохранить',
+            margin: '0 5 25 0',
             handler: function () {
                 var form = this.up('form').getForm(),
                     encode = Ext.String.htmlEncode,
@@ -442,6 +509,7 @@ Ext.define('Ekb.form.OrgDetails', {
 
         {
             text: 'Отменить',
+            margin: '0 20 25 0',
             handler: function () {
                 this.up('form').getForm().reset();
             }
