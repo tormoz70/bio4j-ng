@@ -463,7 +463,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             items: [
                                 {
                                     xtype: 'biocombo',
-                                    labelWidth: 100,
+                                    labelWidth: 110,
                                     name: 'state',
                                     fieldLabel: 'Состояние',
                                     store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.state'})
@@ -535,6 +535,36 @@ Ext.define('Ekb.form.OrgDetails', {
                                             {id:"5", caption:"отличное"}
                                         ]
                                     })
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 110,
+                                    name: 'state_mat',
+                                    fieldLabel: 'Часовой пояс',
+                                    matchFieldWidth: false,
+                                    listConfig: {width: 250},
+                                    store: Ext.create('Ext.data.Store', {
+                                        fields: ['id', 'caption'],
+                                        data : [
+                                            {id:"0", caption:"<не определено>"},
+                                            {id:"1", caption:"требует кап. ремонта"},
+                                            {id:"2", caption:"не удовлетворительное"},
+                                            {id:"3", caption:"удовлетворительное"},
+                                            {id:"4", caption:"хорошее"},
+                                            {id:"5", caption:"отличное"}
+                                        ]
+                                    })
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'org_www',
+                                    fieldLabel: 'Сайт',
+                                    labelWidth: 80
                                 }
                             ]
                         }
