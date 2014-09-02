@@ -70,14 +70,12 @@ Ext.define('Ekb.form.OrgDetails', {
                             fieldLabel: 'Зарегистрирован'
                         },
                         {
-                            xtype: 'combo',
+                            xtype: 'biocombo',
                             labelWidth: 70,
                             name: 'verstate',
                             fieldLabel: 'Выверка',
                             allowBlank: false,
                             flex: 1,
-                            valueField: 'id',
-                            displayField: 'caption',
                             store: Ext.create('Ext.data.Store', {
                                 fields: ['id', 'caption'],
                                 data : [
@@ -518,7 +516,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.softvendor'})
                                 },
                                 {
-                                    xtype: 'combo',
+                                    xtype: 'biocombo',
                                     labelWidth: 110,
                                     name: 'state_mat',
                                     fieldLabel: 'Имущ. состояние',
@@ -535,35 +533,35 @@ Ext.define('Ekb.form.OrgDetails', {
                                     })
                                 }
                             ]
-                        },
-                        {
-                            xtype: 'fieldcontainer',
-                            items: [
-                                {
-                                    xtype: 'biocombo',
-                                    labelWidth: 110,
-                                    name: 'time_zone',
-                                    fieldLabel: 'Часовой пояс',
-                                    store: Ext.create('Ext.data.Store', {
-                                        fields: ['id', 'caption'],
-                                        data : [
-                                            {id:"0", caption:"<не определено>"},
-                                            {id:"1", caption:"требует кап. ремонта"},
-                                            {id:"2", caption:"не удовлетворительное"},
-                                            {id:"3", caption:"удовлетворительное"},
-                                            {id:"4", caption:"хорошее"},
-                                            {id:"5", caption:"отличное"}
-                                        ]
-                                    })
-                                },
-                                {
-                                    xtype: 'textfield',
-                                    name: 'silence_period',
-                                    fieldLabel: 'Допустимый период молчания [дней]',
-                                    labelWidth: 200
-                                }
-                            ]
                         }
+//                        {
+//                            xtype: 'fieldcontainer',
+//                            items: [
+//                                {
+//                                    xtype: 'biocombo',
+//                                    labelWidth: 110,
+//                                    name: 'time_zone',
+//                                    fieldLabel: 'Часовой пояс',
+//                                    store: Ext.create('Ext.data.Store', {
+//                                        fields: ['id', 'caption'],
+//                                        data : [
+//                                            {id:"0", caption:"<не определено>"},
+//                                            {id:"1", caption:"требует кап. ремонта"},
+//                                            {id:"2", caption:"не удовлетворительное"},
+//                                            {id:"3", caption:"удовлетворительное"},
+//                                            {id:"4", caption:"хорошее"},
+//                                            {id:"5", caption:"отличное"}
+//                                        ]
+//                                    })
+//                                },
+//                                {
+//                                    xtype: 'textfield',
+//                                    name: 'silence_period',
+//                                    fieldLabel: 'Допустимый период молчания [дней]',
+//                                    labelWidth: 200
+//                                }
+//                            ]
+//                        }
                     ]
                 },
                 {
