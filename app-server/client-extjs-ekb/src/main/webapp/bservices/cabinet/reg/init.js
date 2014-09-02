@@ -50,12 +50,6 @@ Ext.onReady(function () {
                     handler: function () {
                         var grd = Ext.getCmp('ekb-orgs-grid');
                         var win2 = Ext.create('Ext.window.Window', {
-                            //autoHeight: true,
-                            height: 600,
-                            //autoWidth: true,
-                            width: 800,
-                            //x: 50,
-                            //y: 50,
                             title: 'Детальная информация по кинотеатру',
                             closable: true,
                             plain: true,
@@ -65,9 +59,7 @@ Ext.onReady(function () {
                                     afterrender: function() {
                                         var seldId = grd.getSelectedId();
                                         var store  = Ext.create('Bio.data.Store', {
-                                            bioCode: 'ekbp@cabinet.get-org'//,
-                                            //bioParams: {org_id:{value:row.ORG_ID}}
-                                            //bioParams: [{name:"org_id", value:seldId}]
+                                            bioCode: 'ekbp@cabinet.get-org'
                                         });
                                         store.loadForm(this, seldId);
                                     }

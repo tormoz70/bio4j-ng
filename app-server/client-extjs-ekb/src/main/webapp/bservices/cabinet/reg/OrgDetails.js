@@ -4,12 +4,13 @@ Ext.define('Ekb.form.OrgDetails', {
 
     frame: true,
     //autoHeight: true,
-    height: 600,
+    height: 700,
     width: 800,
     bodyPadding: 0,
     autoScroll: true,
     layout: 'anchor',
     defaults: {
+        padding: '5',
         anchor: '100%'
     },
     items: [
@@ -20,10 +21,10 @@ Ext.define('Ekb.form.OrgDetails', {
             autoHeight: true,
             layout: {
                 type:'vbox',
-                align:'stretch',
-                padding: '0'
+                align:'stretch'
             },
             defaults: {
+                margin: '2 0 0 0',
                 defaults: {
                     anchor: '100%',
                     labelWidth: 90,
@@ -39,7 +40,6 @@ Ext.define('Ekb.form.OrgDetails', {
                             xtype: 'textfield',
                             name: 'orgname',
                             fieldLabel: '*Название',
-                            margin: '2 2 2 0',
                             labelWidth: 90,
                             labelAlign: 'right',
                             allowBlank: false
@@ -50,7 +50,6 @@ Ext.define('Ekb.form.OrgDetails', {
                     xtype: 'fieldcontainer',
                     layout: 'hbox',
                     defaults: {
-                        margin: '2 2 2 0',
                         labelWidth: 90,
                         labelAlign: 'right'
                     },
@@ -125,15 +124,14 @@ Ext.define('Ekb.form.OrgDetails', {
             autoHeight: true,
             layout: {
                 type:'vbox',
-                align:'stretch',
-                padding: '0'
+                align:'stretch'
             },
             items: [
                 {
                     xtype: 'fieldcontainer',
                     layout: 'anchor',
                     defaults: {
-                        margin: '2 2 2 0',
+                        margin: '2 0 0 0',
                         labelWidth: 90,
                         labelAlign: 'right',
                         anchor: '100%'
@@ -145,6 +143,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.region'}),
                             valueField: 'region_uid', displayField: 'region',
                             fieldLabel: "Регион", allowBlank: true,
+                            margin: '0',
                             queryParam: 'region',
                             emptyText: "<регион не выбран>",
                             selectOnFocus: true,
@@ -243,7 +242,6 @@ Ext.define('Ekb.form.OrgDetails', {
                             xtype: 'textfield',
                             name: 'address',
                             fieldLabel: '',
-                            labelAlign: 'right',
                             allowBlank: false
                         }
 
@@ -260,11 +258,165 @@ Ext.define('Ekb.form.OrgDetails', {
             autoHeight: true,
             layout: {
                 type: 'vbox',
-                align: 'stretch',
-                padding: '0'
+                align: 'stretch'
+            },
+            defaults: {
+                layout: 'hbox',
+                margin: '2 0 0 0',
+                defaults: {
+                    margin: '0',
+                    labelWidth: 140,
+                    labelAlign: 'right',
+                    allowBlank: false,
+                    flex: 1
+                }
             },
             items: [
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'ogrn',
+                            fieldLabel: 'ОГРН'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'inn',
+                            fieldLabel: 'ИНН'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'dog_num',
+                            fieldLabel: 'Рег. номер (РН)'
+                        },
+                        {
+                            xtype: 'datefield',
+                            name: 'dog_date',
+                            fieldLabel: 'Дата формирования РН',
+                            labelWidth: 150
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'phone_fax',
+                            fieldLabel: 'Телефон/факс'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'respons_person',
+                            fieldLabel: 'Ответственное лицо'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'glavbuch_name',
+                            fieldLabel: 'ФИО гл. бухгалтера'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'glavbuch_email',
+                            fieldLabel: 'Email бухгалтерии'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'glavbuch_phone',
+                            fieldLabel: 'Телефон бухгалтерии'
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'autoinfo_phone',
+                            fieldLabel: 'Тел. автоинформатора'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'orgname_jur',
+                            fieldLabel: 'Наименование юр. лица',
+                            labelWidth: 150
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'address_jur',
+                            fieldLabel: 'Адрес юр. лица',
+                            labelWidth: 150
+                        }
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'sroom_cnt',
+                            fieldLabel: 'Кол-во кинозалов',
+                            flex: 0,
+                            width: 250,
+                            labelWidth: 150
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'splace_cnt',
+                            fieldLabel: 'Кол-во мест',
+                            flex: 0,
+                            width: 190,
+                            labelWidth: 90
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'space_ttl',
+                            fieldLabel: 'Площадь (общ)',
+                            labelWidth: 100
+                        }
+                    ]
+                }
 
+            ]
+        },
+        {
+            xtype: 'tabpanel',
+            //autoHeight: true,
+            height: 150,
+            layout: {
+                align: 'stretch'
+            },
+            items: [
+                {
+                    title: "Свойства"
+                },
+                {
+                    title: "Оборудование"
+                },
+                {
+                    title: "Кинозалы"
+                }
             ]
         }
     ],
