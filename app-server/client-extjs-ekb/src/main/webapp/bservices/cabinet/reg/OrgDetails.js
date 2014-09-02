@@ -518,12 +518,10 @@ Ext.define('Ekb.form.OrgDetails', {
                                     store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.softvendor'})
                                 },
                                 {
-                                    xtype: 'biocombo',
+                                    xtype: 'combo',
                                     labelWidth: 110,
                                     name: 'state_mat',
                                     fieldLabel: 'Имущ. состояние',
-                                    matchFieldWidth: false,
-                                    listConfig: {width: 250},
                                     store: Ext.create('Ext.data.Store', {
                                         fields: ['id', 'caption'],
                                         data : [
@@ -544,10 +542,8 @@ Ext.define('Ekb.form.OrgDetails', {
                                 {
                                     xtype: 'biocombo',
                                     labelWidth: 110,
-                                    name: 'state_mat',
+                                    name: 'time_zone',
                                     fieldLabel: 'Часовой пояс',
-                                    matchFieldWidth: false,
-                                    listConfig: {width: 250},
                                     store: Ext.create('Ext.data.Store', {
                                         fields: ['id', 'caption'],
                                         data : [
@@ -562,9 +558,9 @@ Ext.define('Ekb.form.OrgDetails', {
                                 },
                                 {
                                     xtype: 'textfield',
-                                    name: 'org_www',
-                                    fieldLabel: 'Сайт',
-                                    labelWidth: 80
+                                    name: 'silence_period',
+                                    fieldLabel: 'Допустимый период молчания [дней]',
+                                    labelWidth: 200
                                 }
                             ]
                         }
