@@ -4,7 +4,6 @@ Ext.define('Ekb.form.OrgDetails', {
     //frame: true,
     //autoHeight: true,
     baseCls: 'x-panel-body-default-framed',
-
     height: 705,
     width: 800,
     bodyPadding: 0,
@@ -16,6 +15,10 @@ Ext.define('Ekb.form.OrgDetails', {
         anchor: '100%'
     },
     items: [
+        {
+            xtype: 'hiddenfield',
+            name: 'id_org'
+        },
         {
             xtype: 'fieldset',
             collapsible: false,
@@ -169,10 +172,10 @@ Ext.define('Ekb.form.OrgDetails', {
                                 listeners: {
                                     beforeload: function(store, operation, eOpts) {
                                         var me = store,
-                                            frm = (me.ownerCombo ? me.ownerCombo.up('form').getForm() : null),
+                                            frm = Bio.tools.parentForm(me.ownerCombo),
                                             regionSeldParam = {region_uid:(frm ? frm.findField('kladr_code_r').getValue() : null)};
                                         me.bioParams = Bio.tools.setBioParam(me.bioParams, regionSeldParam);
-                                        console.log(Bio.tools.objToStr(regionSeldParam));
+//                                        console.log(Bio.tools.objToStr(regionSeldParam));
                                     }
                                 }
                             }),
@@ -201,10 +204,10 @@ Ext.define('Ekb.form.OrgDetails', {
                                 listeners: {
                                     beforeload: function(store, operation, eOpts) {
                                         var me = store,
-                                            frm = (me.ownerCombo ? me.ownerCombo.up('form').getForm() : null),
+                                            frm = Bio.tools.parentForm(me.ownerCombo),
                                             citySeldParam = {city_uid:(frm ? frm.findField('kladr_code_np').getValue() : null)};
                                         me.bioParams = Bio.tools.setBioParam(me.bioParams, citySeldParam);
-                                        console.log(Bio.tools.objToStr(citySeldParam));
+//                                        console.log(Bio.tools.objToStr(citySeldParam));
                                     }
                                 }
                             }),
@@ -466,6 +469,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     labelWidth: 110,
                                     name: 'state',
                                     fieldLabel: 'Состояние',
+                                    pageSize: -1,
                                     store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.state'})
                                 },
                                 {
@@ -473,8 +477,8 @@ Ext.define('Ekb.form.OrgDetails', {
                                     name: 'state_date',
                                     fieldLabel: 'Дата состояния c',
                                     flex: 0,
-                                    labelWidth: 120,
-                                    width: 127+120
+                                    labelWidth: 115,
+                                    width: 125+118
 
                                 },
                                 {
@@ -483,7 +487,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     fieldLabel: 'по',
                                     flex: 0,
                                     labelWidth: 25,
-                                    width: 127+30
+                                    width: 125+26
                                 }
 
                             ]
@@ -496,13 +500,15 @@ Ext.define('Ekb.form.OrgDetails', {
                                     labelWidth: 110,
                                     name: 'closereason_id',
                                     fieldLabel: 'Прим. к сост.',
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.closereason'})
+                                    pageSize: -1,
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.close-reason'})
                                 },
                                 {
                                     xtype: 'biocombo',
                                     labelWidth: 110,
                                     name: 'location',
                                     fieldLabel: 'Расположение',
+                                    pageSize: -1,
                                     store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.location'})
                                 }
                             ]
@@ -515,7 +521,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     labelWidth: 110,
                                     name: 'id_vnd',
                                     fieldLabel: 'Поставщик ПО',
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.softvendor'})
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.soft-vendor'})
                                 },
                                 {
                                     xtype: 'biocombo',
@@ -582,10 +588,51 @@ Ext.define('Ekb.form.OrgDetails', {
                     ]
                 },
                 {
-                    title: "Оборудование"
+                    title: "Кинозалы",
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
+                    items: {
+                        xtype: 'biogrid',
+                        id: 'ekb-sroom-grid',
+                        //title: 'Default Tab',
+                        height: 180,
+                        storeCfg: {
+                            bioCode:'ekbp@cabinet.org-sroom-list',
+                            pageSize: -1,
+                            autoLoad: true,
+                            remoteSort: true,
+                            listeners: {
+                                beforeload: function(store, operation, eOpts) {
+                                    var me = store,
+                                        //frm = Bio.tools.parentForm(me.ownerGrid),
+                                        frmCt = me.ownerGrid.findParentBy(function(c) {
+                                                return c.$className == 'Ekb.form.OrgDetails';
+                                        }),
+                                        frm = frmCt.getForm(),
+                                        orgIdParam = {id_org:(frm ? frm.findField('id_org').getValue() : null)};
+                                    console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.objToStr(orgIdParam));
+                                    me.bioParams = Bio.tools.setBioParam(me.bioParams, orgIdParam);
+                                }
+                            }
+
+                        },
+                        tbar: Ext.create('Ext.toolbar.Toolbar', {
+                            items: [
+                                {
+                                    text: 'Добавить',
+                                    scope: this,
+                                    handler: function () {
+                                    }
+                                }
+                            ]
+                        })
+                    }
+
                 },
                 {
-                    title: "Кинозалы"
+                    title: "Оборудование"
                 }
             ]
         }

@@ -5,14 +5,16 @@
   <SQL action="select">
     <text>
       <![CDATA[
-      SELECT a.closereason_id as id, a.aname FROM givc_org.closereason a
-      ORDER BY decode(a.closereason_id, 0, 0, 1), a.aname
+SELECT a.closereason_id as id, a.aname as caption
+  FROM givc_org.closereason a
+ WHERE (:query is null) or (upper(a.aname) like '%'||upper(:query)||'%')
+ ORDER BY decode(a.closereason_id, 0, 0, 1), caption
       ]]>
     </text>
   </SQL>
 
   <fields>
     <field name="id" type="integer" header="Код" hidden="true" pk="true"/>
-    <field name="aname" type="string" header="Значение" width="250"/>
+    <field name="caption" type="string" header="Значение" width="250"/>
   </fields>
 </cursor>

@@ -5,13 +5,15 @@
   <SQL action="select">
     <text>
       <![CDATA[
-      select * from GIVC_ORG.softvendor
+      select a.id_vnd as id, a.vndname as caption from GIVC_ORG.softvendor a
+      where (:query is null) or (upper(a.vndname) like '%'||upper(:query)||'%')
+      order by caption
       ]]>
     </text>
   </SQL>
 
   <fields>
-    <field name="id_vnd" type="integer" header="ID Поставщика ПО" pk="true"/>
-    <field name="vndname" type="string" header="Поставщик ПО" />
+    <field name="id" type="integer" pk="true"/>
+    <field name="caption" type="string" />
   </fields>
 </cursor>

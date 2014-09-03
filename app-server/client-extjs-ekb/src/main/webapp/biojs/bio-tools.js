@@ -138,6 +138,15 @@ Bio.tools = function(){
 					return childTags[i];
 			return null;  
 		},
+
+        parentForm: function(comp) {
+            var frmEl = (comp && comp.up ? comp.up('form') : null)
+            return (frmEl && frmEl.getForm ? frmEl.getForm() : null);
+        },
+
+        isDefined: function(v) {
+            return (typeof v !== 'undefined') && (v !== null);
+        },
 		
 		calcXY_Left : 0,
 		calcXY_Top : 0,

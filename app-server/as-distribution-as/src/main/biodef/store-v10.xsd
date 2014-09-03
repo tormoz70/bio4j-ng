@@ -78,6 +78,8 @@
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
                                     <xs:enumeration value="select"/>
+                                    <xs:enumeration value="update"/>
+                                    <xs:enumeration value="delete"/>
                                     <xs:enumeration value="execute"/>
                                 </xs:restriction>
                             </xs:simpleType>

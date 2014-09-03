@@ -10,6 +10,7 @@ select a.tkldr_uid as street_uid, a.tkldr_name||' '||a.tkldrtp_sname as street
  where a.is_street = 1
    and a.prnt_tkldr_uid = :city_uid
    and ((:query is null) or (upper(a.tkldr_name) like '%'||upper(:query)||'%'))
+   order by street
       ]]>
     </text>
   </SQL>

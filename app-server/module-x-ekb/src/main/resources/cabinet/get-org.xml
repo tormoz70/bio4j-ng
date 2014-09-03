@@ -64,7 +64,7 @@ from givc_org.org o
         <field name="modern" type="boolean" header="Современный"/>
         <field name="registred" type="boolean" header="Зарегистрирован"/>
         <field name="id_vnd" type="integer" header="Id Поставщика ПО"/>
-        <field name="closereason_id" type="integer" header="Id причины закрытия"/>
+        <field name="closereason_id" type="integer" header="Id причины закрытия" useNull="false"/>
         <field name="time_zone" type="integer" header="Часовой пояс"/>
         <field name="comments" type="string" header="Комментарии"/>
         <field name="mechanic_list" type="string" header="Оборудование"/>

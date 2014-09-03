@@ -36,13 +36,13 @@ Ext.define('Bio.form.ComboBox', {
         if (me.bioStoreAssigned === true) {
 
             me.superSetValue = Ext.Function.bind(Bio.form.ComboBox.superclass.setValue, me);
-            if (config.store)
-                config.store.ownerCombo = me;
+            config.store.ownerCombo = me;
             if (config.pageSize) {
-                if (config.store && config.store)
-                    config.store.pageSize = config.pageSize;
+                config.store.pageSize = config.pageSize;
+                if(config.pageSize == -1)
+                    config.pageSize = undefined;
             } else {
-                if (config.store && config.store.pageSize && config.store.pageSize > 0)
+                if (config.store.pageSize && config.store.pageSize > 0)
                     config.pageSize = config.store.pageSize;
                 else
                     config.store.pageSize = config.pageSize = 25;
@@ -71,19 +71,23 @@ Ext.define('Bio.form.ComboBox', {
     },
 
     setValue: function (v) {
-        var me = this;
+        var me = this,
+            vname = me.name;
+        vname = vname + '';
         if (me.bioStoreAssigned === true) {
             var locateVal = v;
             me.tmpValue = locateVal; // lets set temValue? it will returned by getValue while permValueSetted === false
             me.permValueSetted = false;
             if ((v instanceof Array) && (v.length > 0) && v[0].data)
                 locateVal = v[0].data[me.valueField];
-            if (locateVal) {
+            if (Bio.tools.isDefined(locateVal)) {
                 if (!me.store.loading && me.valueField && me.store) {
+                    //console.log('try to locate '+locateVal+' for '+me.name+' combo...');
                     me.store.locate(locateVal, 1,
                         {
                             fn: function (records, eOpts, successful) {
                                 var me = this;
+                                //console.log('location for '+me.name+' combo done - '+successful+'.');
                                 me.superSetValue(locateVal);
                                 me.permValueSetted = true; //
                             },

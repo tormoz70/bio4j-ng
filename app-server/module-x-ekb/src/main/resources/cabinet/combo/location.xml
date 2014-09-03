@@ -5,13 +5,15 @@
   <SQL action="select">
     <text>
       <![CDATA[
-      select a.code as location, a.locname from org$location a
+      select a.code as id, a.locname as caption from org$location a
+       where (:query is null) or (upper(a.locname) like '%'||upper(:query)||'%')
+      order by caption
       ]]>
     </text>
   </SQL>
 
   <fields>
-    <field name="location" type="integer" header="Код" pk="true"/>
-    <field name="locname" type="string" header="Вид размещения"/>
+    <field name="id" type="integer" header="Код" pk="true"/>
+    <field name="caption" type="string" header="Вид размещения"/>
   </fields>
 </cursor>

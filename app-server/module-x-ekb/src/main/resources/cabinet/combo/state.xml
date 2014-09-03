@@ -5,13 +5,15 @@
   <SQL action="select">
     <text>
       <![CDATA[
-      select a.code as state, a.statename from org$state a
+      select a.code as id, a.statename as caption from org$state a
+      where (:query is null) or (upper(a.statename) like '%'||upper(:query)||'%')
+      order by caption
       ]]>
     </text>
   </SQL>
 
   <fields>
-    <field name="state" type="integer" header="Код" hidden="true" pk="true"/>
-    <field name="statename" type="string" header="Состояние" width="250"/>
+    <field name="id" type="integer" header="Код" hidden="true" pk="true"/>
+    <field name="caption" type="string" header="Состояние" width="250"/>
   </fields>
 </cursor>
