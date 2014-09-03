@@ -5,7 +5,7 @@ Ext.define('Ekb.form.OrgDetails', {
     //autoHeight: true,
     baseCls: 'x-panel-body-default-framed',
 
-    height: 700,
+    height: 705,
     width: 800,
     bodyPadding: 0,
     autoScroll: true,
@@ -28,6 +28,7 @@ Ext.define('Ekb.form.OrgDetails', {
             defaults: {
                 margin: '2 0 0 0',
                 defaults: {
+                    margin: '0',
                     anchor: '100%',
                     labelWidth: 90,
                     labelAlign: 'right'
@@ -122,6 +123,7 @@ Ext.define('Ekb.form.OrgDetails', {
             collapsible: false,
             collapsed: false,
             autoHeight: true,
+            padding: '0 5 0 5',
             layout: {
                 type:'vbox',
                 align:'stretch'
@@ -472,7 +474,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     fieldLabel: 'Дата состояния c',
                                     flex: 0,
                                     labelWidth: 120,
-                                    width: 110+120
+                                    width: 127+120
 
                                 },
                                 {
@@ -480,8 +482,8 @@ Ext.define('Ekb.form.OrgDetails', {
                                     name: 'suspended',
                                     fieldLabel: 'по',
                                     flex: 0,
-                                    labelWidth: 30,
-                                    width: 110+30
+                                    labelWidth: 25,
+                                    width: 127+30
                                 }
 
                             ]
@@ -533,35 +535,50 @@ Ext.define('Ekb.form.OrgDetails', {
                                     })
                                 }
                             ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'biocombo',
+                                    labelWidth: 110,
+                                    name: 'time_zone',
+                                    fieldLabel: 'Часовой пояс',
+                                    store: Ext.create('Ext.data.Store', {
+                                        fields: ['id', 'caption'],
+                                        data : [
+                                            {id:-1, caption:"-1"},
+                                            {id:0, caption:"0"},
+                                            {id:2, caption:"+2"},
+                                            {id:3, caption:"+3"},
+                                            {id:4, caption:"+4"},
+                                            {id:5, caption:"+5"},
+                                            {id:6, caption:"+6"},
+                                            {id:7, caption:"+7"},
+                                            {id:8, caption:"+8"}
+                                        ]
+                                    })
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'silence_period',
+                                    fieldLabel: 'Допустимый период молчания [дней]',
+                                    labelWidth: 240
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            items: [
+                                {
+                                    xtype: 'textarea',
+                                    name: 'comments',
+                                    fieldLabel: 'Комментарии',
+                                    labelWidth: 110,
+                                    rows: 1
+                                }
+                            ]
                         }
-//                        {
-//                            xtype: 'fieldcontainer',
-//                            items: [
-//                                {
-//                                    xtype: 'biocombo',
-//                                    labelWidth: 110,
-//                                    name: 'time_zone',
-//                                    fieldLabel: 'Часовой пояс',
-//                                    store: Ext.create('Ext.data.Store', {
-//                                        fields: ['id', 'caption'],
-//                                        data : [
-//                                            {id:"0", caption:"<не определено>"},
-//                                            {id:"1", caption:"требует кап. ремонта"},
-//                                            {id:"2", caption:"не удовлетворительное"},
-//                                            {id:"3", caption:"удовлетворительное"},
-//                                            {id:"4", caption:"хорошее"},
-//                                            {id:"5", caption:"отличное"}
-//                                        ]
-//                                    })
-//                                },
-//                                {
-//                                    xtype: 'textfield',
-//                                    name: 'silence_period',
-//                                    fieldLabel: 'Допустимый период молчания [дней]',
-//                                    labelWidth: 200
-//                                }
-//                            ]
-//                        }
                     ]
                 },
                 {
