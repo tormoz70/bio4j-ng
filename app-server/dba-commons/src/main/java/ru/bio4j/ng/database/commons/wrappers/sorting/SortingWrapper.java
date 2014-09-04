@@ -4,6 +4,9 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
+import ru.bio4j.ng.model.transport.jstore.Sort;
+
+import java.util.List;
 
 import static ru.bio4j.ng.database.api.WrapQueryType.SORTING;
 
@@ -51,7 +54,8 @@ public class SortingWrapper extends AbstractWrapper {
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
         if((cursor.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
-            if(cursor.getSort() != null) {
+            List<Sort> sort = cursor.getSort();
+            if(sort != null && sort.size() > 0) {
                 String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", cursor.getSort());
                 cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
             }

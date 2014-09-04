@@ -49,22 +49,14 @@ Ext.onReady(function () {
                     scope: this,
                     handler: function () {
                         var grd = Ext.getCmp('ekb-orgs-grid');
+                        var seldId = grd.getSelectedId();
                         var win2 = Ext.create('Ext.window.Window', {
                             title: 'Детальная информация по кинотеатру',
                             closable: true,
                             plain: true,
                             layout: 'fit',
                             items: Ext.create('Ekb.form.OrgDetails', {
-                                listeners: {
-                                    afterrender: function() {
-                                        var seldId = grd.getSelectedId();
-                                        var store  = Ext.create('Bio.data.Store', {
-                                            bioCode: 'ekbp@cabinet.get-org'
-                                        });
-                                        store.loadForm(this, seldId);
-                                    }
-                                }
-
+                                ekb: { orgId: seldId }
                             })
                         });
                         win2.show();

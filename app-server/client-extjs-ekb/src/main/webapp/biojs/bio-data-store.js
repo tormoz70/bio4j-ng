@@ -58,7 +58,7 @@ Ext.define('Bio.data.Store', {
         }, me);
     },
 
-    loadForm: function(form, id) {
+    loadForm: function(form, id, callback) {
         var me = this;
         me.load({
             id: id,
@@ -66,6 +66,8 @@ Ext.define('Bio.data.Store', {
                 var f = form.getForm();
                 if(records && (records.length > 0))
                     f.loadRecord(records[0]);
+                if(callback)
+                    callback();
             }
         });
     },

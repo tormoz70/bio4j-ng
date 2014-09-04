@@ -595,39 +595,60 @@ Ext.define('Ekb.form.OrgDetails', {
                     },
                     items: {
                         xtype: 'biogrid',
-                        id: 'ekb-sroom-grid',
-                        //title: 'Default Tab',
+                        id: 'srooms-grid',
                         height: 180,
                         storeCfg: {
                             bioCode:'ekbp@cabinet.org-sroom-list',
                             pageSize: -1,
-                            autoLoad: true,
-                            remoteSort: true,
+                            //autoLoad: true,
+                            //remoteSort: true,
                             listeners: {
                                 beforeload: function(store, operation, eOpts) {
                                     var me = store,
-                                        //frm = Bio.tools.parentForm(me.ownerGrid),
                                         frmCt = me.ownerGrid.findParentBy(function(c) {
                                                 return c.$className == 'Ekb.form.OrgDetails';
                                         }),
                                         frm = frmCt.getForm(),
-                                        orgIdParam = {id_org:(frm ? frm.findField('id_org').getValue() : null)};
+                                        orgIdStr = frm.findField('id_org').getValue(),
+                                        orgId = parseInt(orgIdStr),
+                                        orgIdParam = { id_org: orgId };
                                     console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.objToStr(orgIdParam));
                                     me.bioParams = Bio.tools.setBioParam(me.bioParams, orgIdParam);
                                 }
                             }
 
                         },
-                        tbar: Ext.create('Ext.toolbar.Toolbar', {
+                        columns: [
+                            {header: 'Название', dataIndex: 'showroom', flex:1,
+                                editor: {
+                                    xtype: 'textfield',
+                                    allowBlank: false
+                                }
+                            },
+                            {header: 'Мест', dataIndex: 'place_total',
+                                editor: {
+                                    xtype: 'numberfield',
+                                    allowBlank: false
+                                }
+                            }
+                        ],
+                        selType: 'cellmodel',
+                        plugins: [
+                            Ext.create('Ext.grid.plugin.CellEditing', {
+                                clicksToEdit: 1
+                            })
+                        ],
+                        tbar: {
+                            xtype: 'toolbar',
                             items: [
                                 {
                                     text: 'Добавить',
-                                    scope: this,
+                                    //scope: this,
                                     handler: function () {
                                     }
                                 }
                             ]
-                        })
+                        }
                     }
 
                 },
@@ -637,6 +658,22 @@ Ext.define('Ekb.form.OrgDetails', {
             ]
         }
     ],
+    listeners: {
+        afterrender: function() {
+            var me = this,
+                seldId = (me.ekb ? me.ekb.orgId : null);
+            var store  = Ext.create('Bio.data.Store', {
+                bioCode: 'ekbp@cabinet.get-org'
+            });
+
+            store.loadForm(this, seldId, function() {
+                var sroomGrid = me.queryById('srooms-grid');
+                if(sroomGrid)
+                    sroomGrid.store.load();
+            });
+
+        }
+    },
     buttons: [
         {
             text: 'Сохранить',

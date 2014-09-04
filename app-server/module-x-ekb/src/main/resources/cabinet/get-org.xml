@@ -26,7 +26,6 @@ from givc_org.org o
   left join usrs u on u.usr_uid = o.usr_uid
   left join givc_org.incorg io on io.id_org = o.id_org and io.verstate in ('0', '1', '2')
         ]]></text>
-		<param type="integer" name="org_id" />
 	</SQL>
  	<fields>
 		<field name="id_org" type="integer" header="ID кинотеатра" pk="true"/>
