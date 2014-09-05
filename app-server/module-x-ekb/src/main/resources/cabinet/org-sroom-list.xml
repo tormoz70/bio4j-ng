@@ -23,7 +23,7 @@ SELECT a.id_showr, a.id_org as org_id, a.showroom, a.place_total
   <fields>
       <field name="id_showr" type="integer" header="ID зала" hidden="true" pk="true" />
       <field name="org_id" type="integer" header="ID кинотеатра"  hidden="true"/>
-      <field name="showroom" type="string" header="Название" readOnly="false" width="250"/>
-      <field name="place_total" type="integer" header="Мест" readOnly="false" width="100"/>
+      <field name="showroom" type="string" header="Название" readOnly="false" width="*"/>
+      <field name="place_total" type="integer" header="Мест" readOnly="false" width="150"/>
   </fields>
 </cursor>

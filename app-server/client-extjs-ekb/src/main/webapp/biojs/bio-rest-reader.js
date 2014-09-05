@@ -88,22 +88,12 @@ Ext.define('Bio.data.RestReader', {
             meta = me.getMeta(data);
             if (meta) {
                 me.prepareMeta(meta);
-                me.onMetaChange(meta);
             }
-
-        } else if (data.metaData) {
-            me.onMetaChange(data.metaData);
         }
 
         if(data.exception)
             data.errMessage = data.exception.message;
 
-        /**
-         * @property {Object} jsonData
-         * A copy of this.rawData.
-         * @deprecated Will be removed in Ext JS 5.0. This is just a copy of this.rawData - use that instead.
-         */
-        me.jsonData = data;
         return me.callParent([data]);
     },
 

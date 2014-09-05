@@ -109,7 +109,8 @@ Ext.define('Bio.grid.Panel', {
                     mandatory: f.mandatory,
                     readonly: f.readonly,
                     pk: f.pk,
-                    width: Bio.tools.tryParsInt(f.width),
+                    width: Bio.tools.parsWidthGetWidth(f.width),
+                    flex: Bio.tools.parsWidthGetFlex(f.width),
                     xtype: xtp,
                     format: f.format,
                     editor: (f.readonly !== true) ? (
@@ -130,6 +131,9 @@ Ext.define('Bio.grid.Panel', {
         }, me);
 
         me.reconfigure(store, cols);
+//        var rowEditorPlugin = me.getPlugin('rowEditorPlugin');
+//        if(rowEditorPlugin)
+//            rowEditorPlugin.init(me);
     },
 
     getSelectedId: function() {

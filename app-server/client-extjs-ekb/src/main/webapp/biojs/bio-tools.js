@@ -97,6 +97,17 @@ Bio.tools = function(){
             return v;
         },
 
+        parsWidthGetWidth: function (width) {
+            if(width !== '*')
+                return Bio.tools.tryParsInt(width);
+            return undefined;
+        },
+        parsWidthGetFlex: function (width) {
+            if(width === '*')
+                return 1;
+            return undefined;
+        },
+
 		addEvent: function(target, functionRef, taskType){
 			target.attachEvent(taskType, functionRef);
 		},
