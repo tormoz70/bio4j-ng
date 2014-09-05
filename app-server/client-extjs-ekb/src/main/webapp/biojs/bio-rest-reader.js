@@ -4,27 +4,9 @@ Ext.define('Bio.data.RestReader', {
 
     root: 'packet.rows',
 
-    /**
-     * @cfg {String} record The optional location within the JSON response that the record data itself can be found at.
-     * See the JsonReader intro docs for more details. This is not often needed.
-     */
-
-    /**
-     * @cfg {String} [metaProperty="metaData"]
-     * Name of the property from which to retrieve the `metaData` attribute. See {@link #metaData}.
-     */
     metaProperty: 'packet.metadata',
     totalProperty: 'packet.results',
     messageProperty: 'errMessage',
-
-    /**
-     * @cfg {Boolean} useSimpleAccessors True to ensure that field names/mappings are treated as literals when
-     * reading values.
-     *
-     * For example, by default, using the mapping "foo.bar.baz" will try and read a property foo from the root, then a property bar
-     * from foo, then a property baz from bar. Setting the simple accessors to true will read the property with the name
-     * "foo.bar.baz" direct from the root object.
-     */
     useSimpleAccessors: false,
 
     onMetaChange : function(meta) {
@@ -72,12 +54,6 @@ Ext.define('Bio.data.RestReader', {
             });
     },
 
-    /**
-     * Reads a JSON object and returns a ResultSet. Uses the internal getTotal and getSuccess extractors to
-     * retrieve meta data from the response, and extractData to turn the JSON data into model instances.
-     * @param {Object} data The raw JSON data
-     * @return {Ext.data.ResultSet} A ResultSet containing model instances and meta data about the results
-     */
     readRecords: function(data) {
 //        console.log(data);
         var me = this,

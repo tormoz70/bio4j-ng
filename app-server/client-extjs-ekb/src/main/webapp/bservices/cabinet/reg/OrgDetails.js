@@ -622,7 +622,6 @@ Ext.define('Ekb.form.OrgDetails', {
                         selType: 'rowmodel',
                         plugins: [
                             Ext.create('Ext.grid.plugin.RowEditing', {
-                                pluginId: 'rowEditorPlugin',
                                 //clicksToEdit: 2,
                                 clicksToMoveEditor: 1,
                                 autoCancel: false
