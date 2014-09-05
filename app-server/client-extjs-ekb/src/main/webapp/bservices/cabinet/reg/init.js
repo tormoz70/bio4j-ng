@@ -54,6 +54,7 @@ Ext.onReady(function () {
                             title: 'Детальная информация по кинотеатру',
                             closable: true,
                             plain: true,
+                            modal: true,
                             layout: 'fit',
                             items: Ext.create('Ekb.form.OrgDetails', {
                                 ekb: { orgId: seldId }

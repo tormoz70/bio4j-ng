@@ -595,7 +595,7 @@ Ext.define('Ekb.form.OrgDetails', {
                     },
                     items: {
                         xtype: 'biogrid',
-                        id: 'srooms-grid',
+                        name: 'srooms-grid',
                         height: 180,
                         storeCfg: {
                             bioCode:'ekbp@cabinet.org-sroom-list',
@@ -667,9 +667,11 @@ Ext.define('Ekb.form.OrgDetails', {
             });
 
             store.loadForm(this, seldId, function() {
-                var sroomGrid = me.queryById('srooms-grid');
-                if(sroomGrid)
-                    sroomGrid.store.load();
+                var sroomGrid = me.queryBy(function(c) {
+                    return c.name == 'srooms-grid';
+                });
+                if(Bio.tools.isDefined(sroomGrid) && sroomGrid instanceof Array && sroomGrid.length > 0)
+                    sroomGrid[0].store.load();
             });
 
         }
@@ -694,7 +696,6 @@ Ext.define('Ekb.form.OrgDetails', {
                 }
             }
         },
-
         {
             text: 'Отменить',
             margin: '0 20 25 0',
