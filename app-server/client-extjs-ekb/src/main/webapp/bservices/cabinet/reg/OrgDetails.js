@@ -597,6 +597,7 @@ Ext.define('Ekb.form.OrgDetails', {
                         xtype: 'biogrid',
                         name: 'srooms-grid',
                         height: 180,
+                        columnLines: true,
                         storeCfg: {
                             bioCode:'ekbp@cabinet.org-sroom-list',
                             pageSize: -1,
@@ -618,24 +619,12 @@ Ext.define('Ekb.form.OrgDetails', {
                             }
 
                         },
-                        columns: [
-                            {header: 'Название', dataIndex: 'showroom', flex:1,
-                                editor: {
-                                    xtype: 'textfield',
-                                    allowBlank: false
-                                }
-                            },
-                            {header: 'Мест', dataIndex: 'place_total',
-                                editor: {
-                                    xtype: 'numberfield',
-                                    allowBlank: false
-                                }
-                            }
-                        ],
-                        selType: 'cellmodel',
+                        selType: 'rowmodel',
                         plugins: [
-                            Ext.create('Ext.grid.plugin.CellEditing', {
-                                clicksToEdit: 1
+                            Ext.create('Ext.grid.plugin.RowEditing', {
+                                clicksToEdit: 2,
+                                clicksToMoveEditor: 1,
+                                autoCancel: false
                             })
                         ],
                         tbar: {
@@ -645,6 +634,10 @@ Ext.define('Ekb.form.OrgDetails', {
                                     text: 'Добавить',
                                     //scope: this,
                                     handler: function () {
+                                        var me = this;
+                                        var sroomGrid = me.ownerCt.ownerCt;
+                                        if(Bio.tools.isDefined(sroomGrid))
+                                            sroomGrid.store.add({});
                                     }
                                 }
                             ]

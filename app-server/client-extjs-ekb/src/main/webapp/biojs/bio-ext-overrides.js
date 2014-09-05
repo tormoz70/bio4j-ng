@@ -361,3 +361,11 @@ Ext.Date.monthNames = ["Январь","Февраль","Март","Апрель"
     "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 
 Ext.Date.defaultFormat = "d.m.Y";
+
+
+Ext.override(Ext.grid.RowEditor, {
+    saveBtnText  :  'Применить', //'Update',
+    cancelBtnText:  'Отменить', //'Cancel',
+    errorsText:     'Ошибки', //'Errors',
+    dirtyText:      'Необходимо применить или отменить изменения!' //'You need to commit or cancel your changes'
+});

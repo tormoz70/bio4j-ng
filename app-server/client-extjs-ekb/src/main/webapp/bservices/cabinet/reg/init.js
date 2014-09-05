@@ -20,6 +20,8 @@ Ext.onReady(function () {
     var grid = Ext.create('Bio.grid.Panel', {
         id: 'ekb-orgs-grid',
         title: 'Default Tab',
+        rowLines: true,
+        columnLines: true,
         storeCfg: {
             bioCode:'ekbp@cabinet.org-filtered-list',
             bioParams: [

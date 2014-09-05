@@ -75,24 +75,29 @@ Ext.define('Bio.grid.Panel', {
         var cols = [{xtype: 'rownumberer', text: "#"}];
         Ext.Array.forEach(meta.columns, function (f) {
             if (f && f != undefined && f.hidden === false) {
-                var xtp, rdrr;
+                var xtp, etp, rdrr;
                 switch (f.type) {
                     case "boolean" :
                         xtp = (f.readonly ? 'gridcolumn' : 'checkcolumn');
                         rdrr = bool_renderer;
+                        etp = 'checkboxfield';
                         break;
                     case "date" :
                         xtp = 'datecolumn';
                         rdrr = Ext.util.Format.dateRenderer(f.format);
+                        etp = 'datefield';
                         break;
                     case "integer" :
                         xtp = 'numbercolumn';
+                        etp = 'numberfield';
                         break;
                     case "decimal" :
                         xtp = 'numbercolumn';
+                        etp = 'numberfield';
                         break;
                     default :
                         xtp = 'gridcolumn';
+                        etp = 'textfield';
                         break;
                 }
                 var ttl = f.title;
@@ -107,7 +112,9 @@ Ext.define('Bio.grid.Panel', {
                     width: Bio.tools.tryParsInt(f.width),
                     xtype: xtp,
                     format: f.format,
-                    editor: (f.type === "boolean" ? {xtype: 'checkboxfield', boxLabel: 'Box Label'} : f.editor),
+                    editor: (f.readonly !== true) ? (
+                            Bio.tools.isDefined(f.editor) ? f.editor : {xtype: etp, allowBlank: f.mandatory !== true}
+                        ) : undefined,
 
                     trueText: 'Да',
                     falseText: 'Нет',
