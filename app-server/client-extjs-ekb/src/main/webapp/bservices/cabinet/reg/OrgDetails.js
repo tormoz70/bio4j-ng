@@ -623,7 +623,7 @@ Ext.define('Ekb.form.OrgDetails', {
                         plugins: [
                             Ext.create('Ext.grid.plugin.RowEditing', {
                                 pluginId: 'rowEditorPlugin',
-                                clicksToEdit: 2,
+                                //clicksToEdit: 2,
                                 clicksToMoveEditor: 1,
                                 autoCancel: false
                             })

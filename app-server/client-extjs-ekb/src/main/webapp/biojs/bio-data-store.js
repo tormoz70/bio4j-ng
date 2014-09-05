@@ -54,7 +54,7 @@ Ext.define('Bio.data.Store', {
         me.addListener("metachange", function(store, meta) {
             var grid = config.ownerGrid;
             if(grid)
-                grid.recreateCols(store, meta);
+                grid.recreateCols(meta);
         }, me);
     },
 

@@ -62,7 +62,7 @@ Ext.define('Bio.grid.Panel', {
         }, me);
     },
 
-    recreateCols: function(store, meta) {
+    recreateCols: function(meta) {
         var me = this;
         var bool_renderer = function (value) {
             if (value === true) {
@@ -130,7 +130,7 @@ Ext.define('Bio.grid.Panel', {
             }
         }, me);
 
-        me.reconfigure(store, cols);
+        me.reconfigure(undefined, cols);
 //        var rowEditorPlugin = me.getPlugin('rowEditorPlugin');
 //        if(rowEditorPlugin)
 //            rowEditorPlugin.init(me);
