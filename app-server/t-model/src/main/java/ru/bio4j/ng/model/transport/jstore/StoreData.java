@@ -53,9 +53,9 @@ public class StoreData {
     }
 
     private int indexOfColumn(String columnName) {
-        if(metadata != null && metadata.getColumns() != null)
-            for(int i=0; i<metadata.getColumns().size(); i++){
-                Column c = metadata.getColumns().get(i);
+        if(metadata != null && metadata.getFields() != null)
+            for(int i=0; i<metadata.getFields().size(); i++){
+                Field c = metadata.getFields().get(i);
                 if(c.getName().toUpperCase().equals(columnName.toUpperCase()))
                     return i;
             }

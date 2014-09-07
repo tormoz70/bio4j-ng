@@ -7,7 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -60,18 +61,24 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_DATA_GET, new BioRouteHandler<BioRequestJStoreGet>() {
+            routeMap.put(BioRoute.CRUD_DATASET_GET, new BioRouteHandler<BioRequestJStoreGetDataSet>() {
                 @Override
-                public void handle(BioRequestJStoreGet request, Callback callback) throws Exception {
-                    LOG.debug("Processing {} request...", BioRoute.CRUD_DATA_GET);
-//                        LOG.debug("Lets try to decode {} from json: \n{}", BioRequestJStoreGet.class.getName(), requestBody);
-//                        BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
-                    LOG.debug("BioRequestJStoreGet object restored.");
-//                        request.setOrigJson(requestBody);
-                    BioRespBuilder.Data responseBuilder = dataProvider.getData(request);
+                public void handle(BioRequestJStoreGetDataSet request, Callback callback) throws Exception {
+                    LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_GET);
+                    BioRespBuilder.Data responseBuilder = dataProvider.getDataSet(request);
                     processCallback(responseBuilder, callback);
                 }
             });
+
+            routeMap.put(BioRoute.CRUD_RECORD_GET, new BioRouteHandler<BioRequestJStoreGetRecord>() {
+                @Override
+                public void handle(BioRequestJStoreGetRecord request, Callback callback) throws Exception {
+                    LOG.debug("Processing {} request...", BioRoute.CRUD_RECORD_GET);
+                    BioRespBuilder.Data responseBuilder = dataProvider.getRecord(request);
+                    processCallback(responseBuilder, callback);
+                }
+            });
+
         }
 
         this.redy = true;

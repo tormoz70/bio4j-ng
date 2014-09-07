@@ -19,7 +19,7 @@ public class StoreMetadata {
     /**
      * Описание полей
      */
-    private List<Column> columns;
+    private List<Field> fields;
 
     public boolean getReadonly() {
         return readonly;
@@ -29,8 +29,8 @@ public class StoreMetadata {
         return multiSelection;
     }
 
-    public List<Column> getColumns() {
-        return columns;
+    public List<Field> getFields() {
+        return fields;
     }
 
     public void setReadonly(boolean readonly) {
@@ -41,7 +41,7 @@ public class StoreMetadata {
         this.multiSelection = multiSelection;
     }
 
-    public void setColumns(List<Column> columns) {
-        this.columns = columns;
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
     }
 }

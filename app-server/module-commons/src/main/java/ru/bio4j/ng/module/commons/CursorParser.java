@@ -12,7 +12,7 @@ import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
-import ru.bio4j.ng.model.transport.jstore.Column;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class CursorParser {
     private static final String REGEX_QUOTES_REPLACER = "\\\\\"";
     private static final String QUOTES_PLACEHOLDER = "\\$quote\\$";
 
-    private static void parseCol(List<Column> cols, String colDef) {
+    private static void parseCol(List<Field> cols, String colDef) {
         String attrsList = Regexs.find(colDef, REGEX_ATTRS, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL);
         // Заменяем все внутренние(экранированные) ковычки на QUOTES_PLACEHOLDER
         attrsList = Regexs.replace(attrsList, REGEX_QUOTES_REPLACER, QUOTES_PLACEHOLDER, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
@@ -93,9 +93,9 @@ public class CursorParser {
             throw new IllegalArgumentException("Attribute \"col.name\" not found in descriptor!");
         name = Strings.split(name, ".")[1].trim().toLowerCase();
 
-        Column col = findCol(name, cols);
+        Field col = findCol(name, cols);
         if(col == null) {
-            col = new Column();
+            col = new Field();
             cols.add(col);
             col.setName(name);
             col.setId(cols.size());
@@ -152,10 +152,10 @@ public class CursorParser {
     }
 
     private static void addColsFromSQLDesc(final BioCursor cursor) {
-        List<Column> cols = cursor.getColumns();
+        List<Field> cols = cursor.getFields();
         if(cols == null) {
             cols = new ArrayList<>();
-            cursor.setColumns(cols);
+            cursor.setFields(cols);
         }
         final Matcher matcher = Regexs.match(cursor.getSql(), REGEX_COLS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE+Pattern.DOTALL);
         while (matcher.find()) {
@@ -296,10 +296,10 @@ public class CursorParser {
         }
     }
 
-    private static Column findCol(final String name, final List<Column> cols) {
-        return Lists.first(cols, new DelegateCheck<Column>() {
+    private static Field findCol(final String name, final List<Field> cols) {
+        return Lists.first(cols, new DelegateCheck<Field>() {
             @Override
-            public Boolean callback(Column item) {
+            public Boolean callback(Field item) {
                 return Strings.compare(name, item.getName(), true);
             }
         });
@@ -308,19 +308,19 @@ public class CursorParser {
     private static void addColsFromXml(final BioCursor cursor, final Document document) throws Exception {
         Element sqlElem = Doms.findElem(document, "/cursor/fields");
         NodeList colNodes = sqlElem.getElementsByTagName("field");
-        List<Column> cols = cursor.getColumns();
+        List<Field> cols = cursor.getFields();
         if(cols == null) {
             cols = new ArrayList<>();
-            cursor.setColumns(cols);
+            cursor.setFields(cols);
         }
         for(int i=0; i<colNodes.getLength(); i++) {
             Element paramElem = (Element)colNodes.item(i);
             boolean generate = Converter.toType(Doms.getAttribute(paramElem, "generate", "true", String.class), boolean.class);
             if(generate) {
                 String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
-                Column col = findCol(fieldName, cols);
+                Field col = findCol(fieldName, cols);
                 if (col == null) {
-                    col = new Column();
+                    col = new Field();
                     cols.add(col);
                     col.setName(fieldName);
                 }

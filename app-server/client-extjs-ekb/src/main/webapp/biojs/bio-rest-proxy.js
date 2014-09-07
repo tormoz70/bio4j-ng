@@ -47,7 +47,7 @@ Ext.define('Bio.data.RestProxy', {
             });
         }
 
-        request['jsonData'] = Bio.request.store.GetData.jsonData({
+        request.jsonData = Bio.request.store.GetDataSet.jsonData({
             bioCode: store.bioCode,
             bioParams: params,
             totalCount: store.totalCount,
@@ -58,7 +58,7 @@ Ext.define('Bio.data.RestProxy', {
             id: operation.id
         });
         request.params = {
-            rqt: 'crud.dt.gt'
+            rqt: request.jsonData.rqt
         };
         return request;
     }

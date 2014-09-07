@@ -10,13 +10,11 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 public class JsonUtlTest {
@@ -81,7 +79,7 @@ public class JsonUtlTest {
                                "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.555+0400\"}"+
                 "],"+
                 "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pageSize\":26}";
-        BioRequestJStoreGet request = Jsons.decode(requestBody, BioRequestJStoreGet.class);
+        BioRequestJStoreGetDataSet request = Jsons.decode(requestBody, BioRequestJStoreGetDataSet.class);
         LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
         Date expectedDateTime = Types.parse("1970.03.02T18:43:56.555+0400", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
@@ -118,20 +116,20 @@ public class JsonUtlTest {
     @Test(enabled = true)
     public void bdecode3() throws Exception {
         String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
-        BioRequestJStoreGet rq = Jsons.decode(json, BioRequestJStoreGet.class);
+        BioRequestJStoreGetDataSet rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
         json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[]}";
-        rq = Jsons.decode(json, BioRequestJStoreGet.class);
+        rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
         json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":null}";
-        rq = Jsons.decode(json, BioRequestJStoreGet.class);
+        rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
     }
 
     @Test(enabled = true)
     public void bdecode4() throws Exception {
         String json = "{\"bioCode\":\"ekbp@cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":{}}]}";
-        BioRequest bioRequest = Jsons.decode(json, BioRequestJStoreGet.class);
+        BioRequest bioRequest = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertEquals("org_id", bioRequest.getBioParams().get(0).getName());
         Assert.assertNull(bioRequest.getBioParams().get(0).getValue());
     }

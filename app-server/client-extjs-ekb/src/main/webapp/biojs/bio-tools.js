@@ -133,22 +133,49 @@ Bio.tools = function(){
 			alert(str);
 		},
 		
-		findParentElementByClass:function(node, className){
-			var parentCell = node.parentElement;
-			while(parentCell.className != className){
-				parentCell = parentCell.parentElement;
-				if(parentCell.tagName == "BODY") break;
-			}
-			return (parentCell.className == className) ? parentCell : null;
-		},
-	
-		findChildElementByTagAndClass:function(node, tagName, className){
-			var childTags = node.getElementsByTagName(tagName);
-			for(var i=0; i<childTags.length; i++)
-				if(childTags[i].className == className)
-					return childTags[i];
-			return null;  
-		},
+//		findParentElementByClass:function(node, className){
+//			var parentCell = node.parentElement;
+//			while(parentCell.className != className){
+//				parentCell = parentCell.parentElement;
+//				if(parentCell.tagName == "BODY") break;
+//			}
+//			return (parentCell.className == className) ? parentCell : null;
+//		},
+//
+//		findChildElementByTagAndClass:function(node, tagName, className){
+//			var childTags = node.getElementsByTagName(tagName);
+//			for(var i=0; i<childTags.length; i++)
+//				if(childTags[i].className == className)
+//					return childTags[i];
+//			return null;
+//		},
+
+        parentObjectByClassName: function(fromObj, className) {
+            if(fromObj && fromObj.findParentBy)
+                return fromObj.findParentBy(function(c) {
+                    return c.$className == className;
+                });
+            return undefined;
+        },
+
+        parentFormByClassName: function(comp, className) {
+            if (comp && comp.findParentBy) {
+                var r = comp.findParentBy(function (c) {
+                    return c.$className == className;
+                });
+                return r;
+            }
+            return undefined;
+        },
+
+        childByName: function (comp, name) {
+            var r = comp.queryBy(function(c) {
+                return c.name == name;
+            });
+            if(Bio.tools.isDefined(r) && r instanceof Array && r.length > 0)
+                return r[0];
+            return undefined;
+        },
 
         parentForm: function(comp) {
             var frmEl = (comp && comp.up ? comp.up('form') : null)

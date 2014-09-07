@@ -6,7 +6,7 @@ import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
-import ru.bio4j.ng.model.transport.jstore.Column;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
 import java.io.InputStream;
@@ -20,7 +20,7 @@ public class CursorParserTest {
         String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("test.sql"));
         BioCursor cursor = CursorParser.pars("test", sql);
         Assert.assertTrue(cursor != null);
-        Column col = cursor.getColumns().get(0);
+        Field col = cursor.getFields().get(0);
         Assert.assertEquals(col.getName(), "subdivision");
         Assert.assertEquals(col.getTitle(), "\"Дивизион\"; (miter)");
         Assert.assertEquals(col.isPk(), true);

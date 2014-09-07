@@ -20,9 +20,6 @@ public class FieldImpl implements Field {
     private int sqlType;
     private int id;
 
-    private String caption;
-    private int pkIndex;
-
     public FieldImpl(Class<?> type, int id, String name, int sqlType) {
         this.id = id;
         this.type = type;
@@ -48,26 +45,6 @@ public class FieldImpl implements Field {
     @Override
     public Integer getId() {
         return this.id;
-    }
-
-    @Override
-    public String getCaption() {
-        return this.caption;
-    }
-
-    @Override
-    public void setCaption(String value) {
-        this.caption = value;
-    }
-
-    @Override
-    public int getPkIndex() {
-        return this.pkIndex;
-    }
-
-    @Override
-    public void setPkIndex(int value) {
-        this.pkIndex = value;
     }
 
 }

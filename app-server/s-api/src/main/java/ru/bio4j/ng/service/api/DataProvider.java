@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.api;
 
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 
 /**
  * Our business service. 
@@ -8,5 +9,6 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 public interface DataProvider extends BioService {
 
     String getDataTest() throws Exception;
-    BioRespBuilder.Data getData(final BioRequestJStoreGet bioRequest) throws Exception;
+    BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception;
+    BioRespBuilder.Data getRecord(final BioRequestJStoreGetRecord request) throws Exception;
 }

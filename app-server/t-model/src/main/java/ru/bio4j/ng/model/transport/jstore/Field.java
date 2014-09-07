@@ -5,7 +5,7 @@ import ru.bio4j.ng.model.transport.MetaType;
 /**
  * Описание поля пакета данных
  */
-public class Column {
+public class Field {
 
     private int id;
     /**

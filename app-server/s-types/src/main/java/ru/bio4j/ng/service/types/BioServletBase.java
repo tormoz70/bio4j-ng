@@ -3,29 +3,17 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.BioResponse;
-import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
 import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.SecurityHandler;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class BioServletBase extends HttpServlet {
 

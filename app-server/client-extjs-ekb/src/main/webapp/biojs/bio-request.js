@@ -1,8 +1,9 @@
 Ext.namespace("Bio.request.store");
-Ext.define('Bio.request.store.GetData', {
+Ext.define('Bio.request.store.GetDataSet', {
     singleton:true,
     config: {
 
+        rqt: 'crud.ds.get',
         /**
          * Код запрашиваемого инф. объекта. Фактически - это путь к файлу описания метаданных запроса
          */

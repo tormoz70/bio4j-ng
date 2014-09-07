@@ -606,12 +606,8 @@ Ext.define('Ekb.form.OrgDetails', {
                             listeners: {
                                 beforeload: function(store, operation, eOpts) {
                                     var me = store,
-                                        frmCt = me.ownerGrid.findParentBy(function(c) {
-                                                return c.$className == 'Ekb.form.OrgDetails';
-                                        }),
-                                        frm = frmCt.getForm(),
-                                        orgIdStr = frm.findField('id_org').getValue(),
-                                        orgId = parseInt(orgIdStr),
+                                        frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ekb.form.OrgDetails'),
+                                        orgId = Bio.tools.tryParsInt(frm.findField('id_org').getValue()),
                                         orgIdParam = { id_org: orgId };
                                     console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.objToStr(orgIdParam));
                                     me.bioParams = Bio.tools.setBioParam(me.bioParams, orgIdParam);
@@ -622,6 +618,7 @@ Ext.define('Ekb.form.OrgDetails', {
                         selType: 'rowmodel',
                         plugins: [
                             Ext.create('Ext.grid.plugin.RowEditing', {
+                                pluginId: 'sroomRowEditor',
                                 //clicksToEdit: 2,
                                 clicksToMoveEditor: 1,
                                 autoCancel: false
@@ -635,9 +632,12 @@ Ext.define('Ekb.form.OrgDetails', {
                                     //scope: this,
                                     handler: function () {
                                         var me = this;
-                                        var sroomGrid = me.ownerCt.ownerCt;
-                                        if(Bio.tools.isDefined(sroomGrid))
+                                        var sroomGrid = me.ownerCt.ownerCt,
+                                            editor = sroomGrid.getPlugin('sroomRowEditor');
+                                        if(Bio.tools.isDefined(sroomGrid)) {
                                             sroomGrid.store.insert(0, {});
+                                            editor.startEdit(0, 0);
+                                        }
                                     }
                                 }
                             ]
@@ -651,20 +651,24 @@ Ext.define('Ekb.form.OrgDetails', {
             ]
         }
     ],
+    api: {
+        submit: function() {
+            var me = this;
+        }
+    },
     listeners: {
         afterrender: function() {
             var me = this,
+                store = Ext.create('Bio.data.Store', {
+                    bioCode: 'ekbp@cabinet.get-org',
+                    autoSync: true
+                }),
                 seldId = (me.ekb ? me.ekb.orgId : null);
-            var store  = Ext.create('Bio.data.Store', {
-                bioCode: 'ekbp@cabinet.get-org'
-            });
 
             store.loadForm(this, seldId, function() {
-                var sroomGrid = me.queryBy(function(c) {
-                    return c.name == 'srooms-grid';
-                });
-                if(Bio.tools.isDefined(sroomGrid) && sroomGrid instanceof Array && sroomGrid.length > 0)
-                    sroomGrid[0].store.load();
+                var sroomGrid = Bio.tools.childByName(me, 'srooms-grid');
+                if(sroomGrid && sroomGrid.store)
+                    sroomGrid.store.load();
             });
 
         }
@@ -674,18 +678,21 @@ Ext.define('Ekb.form.OrgDetails', {
             text: 'Сохранить',
             margin: '0 5 25 0',
             handler: function () {
-                var form = this.up('form').getForm(),
+                var me = this,
+                    form = Bio.tools.parentFormByClassName(me, 'Ekb.form.OrgDetails').getForm(),
                     encode = Ext.String.htmlEncode,
                     s = '';
 
-                if (form.isValid()) {
-                    Ext.iterate(form.getValues(), function (key, value) {
-                        value = encode(value);
-
-                        s += Ext.util.Format.format("{0} = {1}<br />", key, value);
-                    }, this);
-
-                    Ext.Msg.alert('Form Values', s);
+                if (form && form.isValid()) {
+//                    Ext.iterate(form.getValues(), function (key, value) {
+//                        value = encode(value);
+//
+//                        s += Ext.util.Format.format("{0} = {1}<br />", key, value);
+//                    }, this);
+//
+//                    Ext.Msg.alert('Form Values', s);
+                    form.updateRecord();
+                    form.submit();
                 }
             }
         },

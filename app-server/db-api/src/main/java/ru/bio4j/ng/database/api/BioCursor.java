@@ -5,8 +5,8 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.jstore.Column;
-import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.model.transport.jstore.*;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class BioCursor {
     private String getrowSql;
     private String preparedSql;
 
-    private List<Column> columns = new ArrayList<>();
+    private List<Field> fields = new ArrayList<>();
     private final List<Param> params = new ArrayList<>();
     private Expression filter;
     private List<Sort> sort;
@@ -71,30 +71,30 @@ public class BioCursor {
         return this;
     }
 
-    public Column findColumn(final String name) {
-        return Lists.first(columns, new DelegateCheck<Column>() {
+    public Field findField(final String name) {
+        return Lists.first(fields, new DelegateCheck<Field>() {
             @Override
-            public Boolean callback(Column item) {
+            public Boolean callback(Field item) {
                 return Strings.compare(name, item.getName(), true);
             }
         });
     }
 
-    public Column findPk() {
-        return Lists.first(columns, new DelegateCheck<Column>() {
+    public Field findPk() {
+        return Lists.first(fields, new DelegateCheck<Field>() {
             @Override
-            public Boolean callback(Column item) {
+            public Boolean callback(Field item) {
                 return item.isPk();
             }
         });
     }
 
-    public List<Column> getColumns() {
-        return columns;
+    public List<Field> getFields() {
+        return fields;
     }
 
-    public void setColumns(List<Column> columns) {
-        this.columns = columns;
+    public void setFields(List<ru.bio4j.ng.model.transport.jstore.Field> fields) {
+        this.fields = fields;
     }
 
 

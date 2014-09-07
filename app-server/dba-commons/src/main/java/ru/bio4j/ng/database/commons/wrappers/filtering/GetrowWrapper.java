@@ -3,7 +3,7 @@ package ru.bio4j.ng.database.commons.wrappers.filtering;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.jstore.Column;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
 import static ru.bio4j.ng.database.api.WrapQueryType.GETROW;
@@ -35,7 +35,7 @@ public class GetrowWrapper extends AbstractWrapper {
      */
     @Override
     public BioCursor wrap(BioCursor cursor) throws Exception {
-        Column pkCol = cursor.findPk();
+        Field pkCol = cursor.findPk();
         if(pkCol == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getBioCode()));
         String whereclause = "(" + pkCol.getName() + " = :" + PKVAL + ")";

@@ -11,7 +11,7 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.oracle.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.service.api.Configurator;
@@ -70,8 +70,8 @@ public abstract class BioModuleBase implements BioModule {
     @Override
     public BioCursor getCursor(BioRequest request) throws Exception {
         BioCursor cursor = getCursor(request.getBioCode());
-        if(request instanceof BioRequestJStoreGet) {
-            final BioRequestJStoreGet r = (BioRequestJStoreGet)request;
+        if(request instanceof BioRequestJStoreGetDataSet) {
+            final BioRequestJStoreGetDataSet r = (BioRequestJStoreGetDataSet)request;
             cursor.setOffset(r.getOffset());
             cursor.setPageSize(r.getPageSize());
             cursor.setLocation(r.getLocation());

@@ -74,6 +74,11 @@ Ext.define('Bio.data.Store', {
         });
     },
 
+    storeForm: function(form) {
+        var me = this;
+        form.updateRecord();
+    },
+
     locateLocal: function(location) {
         var me = this,
             grid = me.ownerGrid,

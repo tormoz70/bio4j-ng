@@ -2,7 +2,8 @@ package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioRequestPing;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -12,7 +13,8 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public enum BioRoute {
     UNKNOWN("unknown", null, null),
     PING("ping", BioRequestPing.class, BioRequestFactory.Ping.class),
-    CRUD_DATA_GET("crud.dt.gt", BioRequestJStoreGet.class, BioRequestFactory.GetData.class);
+    CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
+    CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class);
 
     private String alias;
     private Class<? extends BioRequest> clazz;

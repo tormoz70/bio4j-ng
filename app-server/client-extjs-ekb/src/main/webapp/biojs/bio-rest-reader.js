@@ -9,39 +9,39 @@ Ext.define('Bio.data.RestReader', {
     messageProperty: 'errMessage',
     useSimpleAccessors: false,
 
-    onMetaChange : function(meta) {
-        var me = this,
-            fields = meta.columns,
-            newModel,
-            clientIdProperty;
-
-
-        me.metaData = meta;
-
-
-        me.root = meta.root || me.root;
-        me.idProperty = meta.idProperty || me.idProperty;
-        me.totalProperty = meta.totalProperty || me.totalProperty;
-        me.successProperty = meta.successProperty || me.successProperty;
-        me.messageProperty = meta.messageProperty || me.messageProperty;
-        clientIdProperty = meta.clientIdProperty;
-
-        if (me.model) {
-            me.model.setFields(fields, me.idProperty, clientIdProperty);
-            me.setModel(me.model, true);
-        }
-        else {
-            newModel = Ext.define("Ext.data.reader.Json-Model" + Ext.id(), {
-                extend: 'Ext.data.Model',
-                fields: fields,
-                clientIdProperty: clientIdProperty
-            });
-            if (me.idProperty) {
-                newModel.idProperty = me.idProperty;
-            }
-            me.setModel(newModel, true);
-        }
-    },
+//    onMetaChange : function(meta) {
+//        var me = this,
+//            fields = meta.columns,
+//            newModel,
+//            clientIdProperty;
+//
+//
+//        me.metaData = meta;
+//
+//
+//        me.root = meta.root || me.root;
+//        me.idProperty = meta.idProperty || me.idProperty;
+//        me.totalProperty = meta.totalProperty || me.totalProperty;
+//        me.successProperty = meta.successProperty || me.successProperty;
+//        me.messageProperty = meta.messageProperty || me.messageProperty;
+//        clientIdProperty = meta.clientIdProperty;
+//
+//        if (me.model) {
+//            me.model.setFields(fields, me.idProperty, clientIdProperty);
+//            me.setModel(me.model, true);
+//        }
+//        else {
+//            newModel = Ext.define("Ext.data.reader.Json-Model" + Ext.id(), {
+//                extend: 'Ext.data.Model',
+//                fields: fields,
+//                clientIdProperty: clientIdProperty
+//            });
+//            if (me.idProperty) {
+//                newModel.idProperty = me.idProperty;
+//            }
+//            me.setModel(newModel, true);
+//        }
+//    },
 
 
     prepareMeta: function(meta) {

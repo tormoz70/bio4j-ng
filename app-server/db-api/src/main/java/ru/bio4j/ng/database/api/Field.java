@@ -9,13 +9,4 @@ public interface Field {
 	Class<?> getType();
 
 	Integer getId();
-	
-	String getCaption();
-
-    void setCaption(String value);
-
-	int getPkIndex();
-
-    void setPkIndex(int value);
-
 }

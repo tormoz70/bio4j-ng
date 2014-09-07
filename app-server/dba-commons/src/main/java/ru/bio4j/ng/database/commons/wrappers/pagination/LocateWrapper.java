@@ -3,7 +3,7 @@ package ru.bio4j.ng.database.commons.wrappers.pagination;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.jstore.Column;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
 import static ru.bio4j.ng.database.api.WrapQueryType.LOCATE;
@@ -38,7 +38,7 @@ public class LocateWrapper extends AbstractWrapper {
     public BioCursor wrap(BioCursor cursor) throws Exception {
         if(cursor.getLocation() == null)
             return cursor;
-        Column pkCol = cursor.findPk();
+        Field pkCol = cursor.findPk();
         if(pkCol == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getBioCode()));
         String whereclause = "(" + pkCol.getName() + " = :" + PKVAL + ") AND (rnum$ >= :" + STARTFROM + ")";
