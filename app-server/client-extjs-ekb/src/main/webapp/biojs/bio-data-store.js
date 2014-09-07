@@ -1,7 +1,4 @@
 Ext.namespace("Bio");
-Ext.define('Bio.data.Model', {
-    extend: 'Ext.data.Model'
-});
 
 Ext.define('Bio.data.Store', {
     extend: 'Ext.data.Store',
@@ -13,9 +10,14 @@ Ext.define('Bio.data.Store', {
     },
 
     constructor: function(config) {
-        var me = this;
+        var me = this,
+            implicitModelId = 'Bio.data.Model' + (me.storeId || Ext.id()),
+            implicitModel = Ext.define(implicitModelId, {
+                extend: 'Ext.data.Model'
+            });
+
         config = Ext.apply({
-            model: 'Bio.data.Model',
+            model: implicitModelId,
             proxy: {
                 type: 'biorest'
                 ,reader: {
