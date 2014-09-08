@@ -601,8 +601,6 @@ Ext.define('Ekb.form.OrgDetails', {
                         storeCfg: {
                             bioCode:'ekbp@cabinet.org-sroom-list',
                             pageSize: -1,
-                            //autoLoad: true,
-                            //remoteSort: true,
                             listeners: {
                                 beforeload: function(store, operation, eOpts) {
                                     var me = store,
@@ -652,16 +650,18 @@ Ext.define('Ekb.form.OrgDetails', {
         }
     ],
     api: {
-        submit: function() {
-            var me = this;
+        submit: function(formEl, callback, action, options) {
+            var me = this,
+                store = action.form.getRecord().store;
+            store.save();
         }
     },
     listeners: {
         afterrender: function() {
             var me = this,
                 store = Ext.create('Bio.data.Store', {
-                    bioCode: 'ekbp@cabinet.get-org',
-                    autoSync: true
+                    bioCode: 'ekbp@cabinet.get-org'
+                    //autoSync: true
                 }),
                 seldId = (me.ekb ? me.ekb.orgId : null);
 
@@ -684,13 +684,6 @@ Ext.define('Ekb.form.OrgDetails', {
                     s = '';
 
                 if (form && form.isValid()) {
-//                    Ext.iterate(form.getValues(), function (key, value) {
-//                        value = encode(value);
-//
-//                        s += Ext.util.Format.format("{0} = {1}<br />", key, value);
-//                    }, this);
-//
-//                    Ext.Msg.alert('Form Values', s);
                     form.updateRecord();
                     form.submit();
                 }

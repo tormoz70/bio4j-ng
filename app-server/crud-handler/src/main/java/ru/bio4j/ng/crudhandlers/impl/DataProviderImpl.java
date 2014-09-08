@@ -173,7 +173,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 readStoreData(data, context, conn, cur);
 
                 result.packet(data);
-                return result;
+                return result.exception(null);
             }
         }, cursor);
         return response;
@@ -229,7 +229,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 readStoreData(data, context, conn, cursorDef);
 
                 result.packet(data);
-                return result;
+                return result.exception(null);
             }
         }, cursor);
         return response;

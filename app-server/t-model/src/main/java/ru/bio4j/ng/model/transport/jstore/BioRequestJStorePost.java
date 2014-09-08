@@ -13,25 +13,25 @@ public class BioRequestJStorePost extends BioRequest {
     /**
      * Измененный пакет данных (в случае POST)
      */
-    private StoreData packet;
+    private List<StoreRow> modified;
 
     /**
-     * Может быть передано несколько запросов BioRequestJStorePost
+     * Может быть передано несколько дочерних запросов BioRequestJStorePost
      * выходные параметры каждого из запросов
-     * должны добавляться во входные парамеры последующего
+     * должны добавляться во входные парамеры дочернего
      */
-    private final List<BioRequestJStorePost> bioRequests = new ArrayList<>();
+    private final List<BioRequestJStorePost> children = new ArrayList<>();
 
-    public StoreData getPacket() {
-        return packet;
+    public List<StoreRow> getModified() {
+        return modified;
     }
 
-    public void setPacket(StoreData packet) {
-        this.packet = packet;
+    public void setModified(List<StoreRow> modified) {
+        this.modified = modified;
     }
 
-    public List<BioRequestJStorePost> getBioRequests() {
-        return bioRequests;
+    public List<BioRequestJStorePost> getChildren() {
+        return children;
     }
 }
 

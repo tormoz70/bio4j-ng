@@ -70,6 +70,10 @@ Ext.define('Bio.request.store.GetRecord', {
 
 Ext.define('Bio.request.store.PostData', {
     extend: 'Bio.request.store.Request',
-    singleton:true
+    singleton:true,
 
+    rqt: 'crud.ds.post',
+
+    modified: [],
+    children: []
 });
