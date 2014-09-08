@@ -7,16 +7,16 @@
     <text><![CDATA[
 
 SELECT a.id_showr, a.id_org as org_id, a.showroom, a.place_total
-  FROM givc_org.showrooms a where a.deleted=0 and a.id_org = :id_org
+  FROM givc_org.showrooms_tst a where a.deleted=0 and a.id_org = :id_org
 
     ]]></text>
   </SQL>
     <SQL action="update">
-        <text><![CDATA[begin eorg_help.edit_showrooms1($PRMLIST); end;]]></text>
+        <text><![CDATA[begin eorg_help_tst.edit_showrooms1($PRMLIST); end;]]></text>
     </SQL>
 
     <SQL action="delete">
-        <text><![CDATA[begin eorg_help.showrooms_del(:p_id_showr); end;]]></text>
+        <text><![CDATA[begin eorg_help_tst.showrooms_del(:p_id_showr); end;]]></text>
         <param type="integer" name="p_id_showr"/>
     </SQL>
 

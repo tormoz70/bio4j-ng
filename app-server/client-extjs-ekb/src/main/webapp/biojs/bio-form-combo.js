@@ -35,7 +35,7 @@ Ext.define('Bio.form.ComboBox', {
 
         if (me.bioStoreAssigned === true) {
 
-            me.superSetValue = Ext.Function.bind(Bio.form.ComboBox.superclass.setValue, me);
+            me.superSetValue = Ext.Function.bind(me.superclass.setValue, me);
             config.store.ownerCombo = me;
             if (config.pageSize) {
                 config.store.pageSize = config.pageSize;
@@ -181,7 +181,7 @@ Ext.define('Bio.form.ComboBox', {
         var me = this;
         me.callParent(arguments);
         if (me.bioStoreAssigned === true && me.store.locate && me.valueField && !this.store.loading) {
-            var skipLocate = (queryPlan.query && queryPlan.rawQuery === true);
+            var skipLocate = (queryPlan && queryPlan.query && queryPlan.rawQuery === true);
 
             if(!skipLocate) {
                 var tryLocateValue = me.value;

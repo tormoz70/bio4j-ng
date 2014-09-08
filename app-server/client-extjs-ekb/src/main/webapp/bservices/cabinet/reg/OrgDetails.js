@@ -649,13 +649,13 @@ Ext.define('Ekb.form.OrgDetails', {
             ]
         }
     ],
-    api: {
-        submit: function(formEl, callback, action, options) {
-            var me = this,
-                store = action.form.getRecord().store;
-            store.save();
-        }
-    },
+//    api: {
+//        submit: function(formEl, callback, action, options) {
+//            var me = this,
+//                store = action.form.getRecord().store;
+//            store.save();
+//        }
+//    },
     listeners: {
         afterrender: function() {
             var me = this,
@@ -684,8 +684,11 @@ Ext.define('Ekb.form.OrgDetails', {
                     s = '';
 
                 if (form && form.isValid()) {
-                    form.updateRecord();
-                    form.submit();
+//                    form.updateRecord();
+//                    form.submit();
+                    var sroomGrid = Bio.tools.childByName(form.owner, 'srooms-grid');
+                    if(sroomGrid && sroomGrid.store)
+                        sroomGrid.store.save();
                 }
             }
         },

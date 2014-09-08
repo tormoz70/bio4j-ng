@@ -18,7 +18,7 @@ SELECT o1.*,
       when '2' then 'адрес выверен'
       when '9' then 'выверен'
       end as verstatename
-FROM org$cinemalst o1
+FROM org$cinemalst_tst o1
 WHERE o1.test = 1 AND o1.orgtype in ('p', 's', 'l')
 AND (:SYS_CURUSR_ROLES in ('*','1','2','5','6'))
 AND ((:parent_org_id is null) or (o1.holding_id = :parent_org_id))

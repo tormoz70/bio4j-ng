@@ -118,7 +118,14 @@ Bio.tools = function(){
 				str += obj + '.' + prop + '=' + obj[prop] + '\n';
 			return str;
 		},
-		
+
+        objToArray:function(obj){
+            var result = [];
+            for(var prop in obj)
+                result.push(obj[prop]);
+            return result;
+        },
+
 		showObj:function(obj){
 			alert(this.ObjToStr(obj));
 		},
@@ -133,23 +140,6 @@ Bio.tools = function(){
 			alert(str);
 		},
 		
-//		findParentElementByClass:function(node, className){
-//			var parentCell = node.parentElement;
-//			while(parentCell.className != className){
-//				parentCell = parentCell.parentElement;
-//				if(parentCell.tagName == "BODY") break;
-//			}
-//			return (parentCell.className == className) ? parentCell : null;
-//		},
-//
-//		findChildElementByTagAndClass:function(node, tagName, className){
-//			var childTags = node.getElementsByTagName(tagName);
-//			for(var i=0; i<childTags.length; i++)
-//				if(childTags[i].className == className)
-//					return childTags[i];
-//			return null;
-//		},
-
         parentObjectByClassName: function(fromObj, className) {
             if(fromObj && fromObj.findParentBy)
                 return fromObj.findParentBy(function(c) {

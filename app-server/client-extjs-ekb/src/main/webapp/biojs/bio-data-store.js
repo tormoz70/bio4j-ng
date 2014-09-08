@@ -111,5 +111,55 @@ Ext.define('Bio.data.Store', {
                 callback: callbackFn
             });
         }
+    },
+
+    save: function(options) {
+        var me = this,
+            operations = {},
+            toCreate = me.getNewRecords(),
+            toUpdate = me.getUpdatedRecords(),
+            toDestroy = me.getRemovedRecords();
+
+        if (toCreate.length > 0) {
+            operations.create = toCreate;
+        }
+
+        if (toUpdate.length > 0) {
+            operations.update = toUpdate;
+        }
+
+        if (toDestroy.length > 0) {
+            operations.destroy = toDestroy;
+        }
+
+        if (me.fireEvent('beforesave', operations) !== false) {
+            options = options || {};
+
+            var callback = function(operation) {
+                var hasException = operation.hasException();
+
+                if (hasException) {
+                    me.hasException = true;
+                    me.exceptions.push(operation);
+                    me.fireEvent('exception', me, operation);
+                }
+
+                if (hasException && me.pauseOnException) {
+                    me.pause();
+                } else {
+                    operation.setCompleted();
+                    me.fireEvent('operationcomplete', me, operation);
+                    me.runNextOperation();
+                }
+            };
+
+            me.proxy.doRequest(Ext.apply(options, {
+                action: 'crupdel',
+                operations: operations,
+                allowWrite: function() { return false; }
+            }), callback, me.proxy);
+        }
+
+        return me;
     }
 });

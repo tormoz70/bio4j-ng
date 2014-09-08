@@ -23,7 +23,7 @@ Ext.define('Bio.data.RestProxy', {
                 }
             }
         }
-
+        return params;
     },
 
     buildRequestRead: function(superMethod, operation) {
@@ -65,17 +65,31 @@ Ext.define('Bio.data.RestProxy', {
         return request;
     },
 
-    buildRequestUpdate: function(superMethod, operation) {
+    buildRequestCUD: function(superMethod, operation) {
         var me = this;
         var store = me.store;
         operation.url = Bio.tools.bldBioUrl("/biosrv");
         var request = superMethod(operation);
         request.method = 'POST';
-        var params = me.prepareBioParams(store, operation);
+        var params = me.prepareBioParams(store, operation),
+            operations = operation.operations,
+            rows = [];
+        if(operations)
+            for(var operName in operations) {
+                var oper = operations[operName];
+                oper.forEach(function(r) {
+                    rows.push({
+                        changeType: operName,
+                        class: 'ru.bio4j.ng.model.transport.jstore.StoreRow',
+                        values: Bio.tools.objToArray(r.data)
+                    });
+                });
+            }
 
         request.jsonData = Bio.request.store.PostData.jsonData({
             bioCode: store.bioCode,
-            bioParams: params
+            bioParams: params,
+            modified: rows
         });
 
         return request;
@@ -88,8 +102,8 @@ Ext.define('Bio.data.RestProxy', {
             request;
         if(operation.action == 'read')
             request = me.buildRequestRead(superMethod, operation);
-        else if(operation.action == 'update')
-            request = me.buildRequestUpdate(superMethod, operation);
+        else if(operation.action == 'crupdel')
+            request = me.buildRequestCUD(superMethod, operation);
         if(request) {
             request.params = {
                 rqt: request.jsonData.rqt

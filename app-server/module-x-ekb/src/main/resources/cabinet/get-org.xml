@@ -22,7 +22,7 @@ select
    (select count(1) from givc_org.showrooms sr where sr.id_org = o.id_org and sr.deleted = 0) sroom_cnt0,
    o.silence_period, o.closereason_id,
    o.kladr_code_r, o.kladr_code_np
-from givc_org.org o
+from givc_org.orgtst o
   left join usrs u on u.usr_uid = o.usr_uid
   left join givc_org.incorg io on io.id_org = o.id_org and io.verstate in ('0', '1', '2')
         ]]></text>
