@@ -188,7 +188,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 final BioRespBuilder.Data result = BioRespBuilder.data();
                 result.bioCode(cur.getBioCode());
 
-                String preparedSQL = cur.getPreparedSql();
+                //String preparedSQL = cur.getPreparedSql();
 
                 StoreData data = new StoreData();
                 data.setOffset(cur.getOffset());
@@ -222,7 +222,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 final BioRespBuilder.Data result = BioRespBuilder.data();
                 result.bioCode(cursorDef.getBioCode());
 
-                String preparedSQL = cursorDef.getGetrowSql();
+                //String preparedSQL = cursorDef.getGetrowSql();
                 cursorDef.setParamValue(GetrowWrapper.PKVAL, request.getId());
 
                 StoreData data = new StoreData();
@@ -254,46 +254,47 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Override
     public BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception {
-        LOG.debug("GetDataSet...");
+        LOG.debug("Process {} request...", request);
         try {
             String moduleKey = Utl.extractModuleKey(request.getBioCode());
-            LOG.debug("Now processing request to module \"{}\"...", moduleKey);
             BioModule module = moduleProvider.getModule(moduleKey);
             BioCursor cursor = module.getCursor(request);
-
-            SQLContext ctx = sqlContextProvider.selectContext(module);
-            ctx.getWrappers().wrapCursor(cursor);
-
             final User usr = request.getUser();
             applyCurrentUserParams(usr, cursor);
 
-            if(cursor.getPageSize() < 0)
+            SQLContext ctx = sqlContextProvider.selectContext(module);
+
+            ctx.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor);
+            ctx.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor);
+            ctx.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor);
+            ctx.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor);
+            if(cursor.getPageSize() < 0) {
                 return processCursorAsSelectableSinglePage(usr, ctx, cursor);
-            else
+            }else {
+                ctx.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor);
                 return processCursorAsSelectableWithPagging(usr, request, ctx, cursor);
+            }
         } finally {
-            LOG.debug("GetDataSet - returning response...");
+            LOG.debug("{} - returning response...", request);
         }
     }
 
     @Override
     public BioRespBuilder.Data getRecord(BioRequestJStoreGetRecord request) throws Exception {
-        LOG.debug("GetDataSet...");
+        LOG.debug("Process {} request...", request);
         try {
             String moduleKey = Utl.extractModuleKey(request.getBioCode());
-            LOG.debug("Now processing request to module \"{}\"...", moduleKey);
             BioModule module = moduleProvider.getModule(moduleKey);
             BioCursor cursor = module.getCursor(request);
-
-            SQLContext ctx = sqlContextProvider.selectContext(module);
-            ctx.getWrappers().wrapCursor(cursor);
-
             final User usr = request.getUser();
             applyCurrentUserParams(usr, cursor);
 
+            SQLContext ctx = sqlContextProvider.selectContext(module);
+
+            ctx.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor);
             return processCursorAsSelectableSingleRecord(usr, request, ctx, cursor);
         } finally {
-            LOG.debug("GetDataSet - returning response...");
+            LOG.debug("{} - returning response...", request);
         }
     }
 

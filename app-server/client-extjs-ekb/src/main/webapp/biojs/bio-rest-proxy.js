@@ -47,16 +47,22 @@ Ext.define('Bio.data.RestProxy', {
             });
         }
 
-        request.jsonData = Bio.request.store.GetDataSet.jsonData({
-            bioCode: store.bioCode,
-            bioParams: params,
-            totalCount: store.totalCount,
-            offset: offset,
-            pageSize: operation.limit,
-            sort: sort,
-            location: operation.locate,
-            id: operation.id
-        });
+        if(operation.id)
+            request.jsonData = Bio.request.store.GetRecord.jsonData({
+                bioCode: store.bioCode,
+                bioParams: params,
+                id: operation.id
+            });
+        else
+            request.jsonData = Bio.request.store.GetDataSet.jsonData({
+                bioCode: store.bioCode,
+                bioParams: params,
+                totalCount: store.totalCount,
+                offset: offset,
+                pageSize: operation.limit,
+                sort: sort,
+                location: operation.locate
+            });
         request.params = {
             rqt: request.jsonData.rqt
         };

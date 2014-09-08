@@ -41,7 +41,7 @@ public class GetrowWrapper extends AbstractWrapper {
         String whereclause = "(" + pkCol.getName() + " = :" + PKVAL + ")";
         String sql = template.replace(QUERY, cursor.getSql());
         sql = sql.replace(WHERE_CLAUSE, whereclause);
-        cursor.setGetrowSql(sql);
+        cursor.setPreparedSql(sql);
         return cursor;
     }
 }

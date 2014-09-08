@@ -36,16 +36,15 @@ public class OraWrappersImpl implements Wrappers {
         return w.wrap(cursor);
     }
 
-    @Override
-    public BioCursor wrapCursor(final BioCursor cursor) throws Exception {
-        wrapCursor(cursor, WrapQueryType.FILTERING);
-        wrapCursor(cursor, WrapQueryType.TOTALS);
-        wrapCursor(cursor, WrapQueryType.SORTING);
-        wrapCursor(cursor, WrapQueryType.LOCATE);
-        wrapCursor(cursor, WrapQueryType.PAGING);
-        wrapCursor(cursor, WrapQueryType.GETROW);
-        return cursor;
-    }
+//    public BioCursor wrapCursor(final BioCursor cursor) throws Exception {
+//        wrapCursor(cursor, WrapQueryType.FILTERING);
+//        wrapCursor(cursor, WrapQueryType.TOTALS);
+//        wrapCursor(cursor, WrapQueryType.SORTING);
+//        wrapCursor(cursor, WrapQueryType.LOCATE);
+//        wrapCursor(cursor, WrapQueryType.PAGING);
+//        wrapCursor(cursor, WrapQueryType.GETROW);
+//        return cursor;
+//    }
 
 
     public OraWrappersImpl(String dbmsName) throws Exception {
@@ -74,7 +73,7 @@ public class OraWrappersImpl implements Wrappers {
         return typeWrapperMap;
     }
 
-    public final void register(Class<? extends Wrapper> wrapperClass, Map<WrapQueryType,
+    private final void register(Class<? extends Wrapper> wrapperClass, Map<WrapQueryType,
             Wrapper> typeWrapperMap) throws Exception {
         WrapperType handle = wrapperClass.getAnnotation(WrapperType.class);
         final String query = templates.get(handle.value());
@@ -84,7 +83,8 @@ public class OraWrappersImpl implements Wrappers {
 
     }
 
-    private Wrapper getWrapper(WrapQueryType wrapQueryType) throws SQLException {
+    @Override
+    public Wrapper getWrapper(WrapQueryType wrapQueryType) throws SQLException {
         return wrappers.get(wrapQueryType);
     }
 }

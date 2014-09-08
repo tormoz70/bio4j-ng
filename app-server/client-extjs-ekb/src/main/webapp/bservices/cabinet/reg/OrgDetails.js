@@ -606,7 +606,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             listeners: {
                                 beforeload: function(store, operation, eOpts) {
                                     var me = store,
-                                        frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ekb.form.OrgDetails'),
+                                        frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ekb.form.OrgDetails').getForm(),
                                         orgId = Bio.tools.tryParsInt(frm.findField('id_org').getValue()),
                                         orgIdParam = { id_org: orgId };
                                     console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.objToStr(orgIdParam));

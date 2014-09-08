@@ -29,9 +29,12 @@ public class ModuleProviderImpl extends BioServiceBase implements ModuleProvider
         LOG.debug("About getModule by key - \"{}\"...", key);
         BioModule rslt = modules.get(key);
         if(rslt == null) {
+            LOG.debug("Module \"{}\" not in cache, searching...", key);
             rslt = BioModuleHelper.lookupService(bundleContext, key);
             modules.put(key, rslt);
-        }
+            LOG.debug("Module \"{}\" found and putted in cache.", key);
+        } else
+            LOG.debug("Module \"{}\" found in cache.", key);
         return rslt;
     }
 

@@ -34,7 +34,7 @@ public class BioCursor {
     private final String sql;
     private String totalsSql;
     private String locateSql;
-    private String getrowSql;
+    //private String getrowSql;
     private String preparedSql;
 
     private List<Field> fields = new ArrayList<>();
@@ -172,13 +172,13 @@ public class BioCursor {
         this.locateSql = locateSql;
     }
 
-    public String getGetrowSql() {
-        return getrowSql;
-    }
-
-    public void setGetrowSql(String getrowSql) {
-        this.getrowSql = getrowSql;
-    }
+//    public String getGetrowSql() {
+//        return getrowSql;
+//    }
+//
+//    public void setGetrowSql(String getrowSql) {
+//        this.getrowSql = getrowSql;
+//    }
 
     public Object getLocation() {
         return location;

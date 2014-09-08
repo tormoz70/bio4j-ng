@@ -73,7 +73,7 @@ Ext.define('Bio.grid.Panel', {
             return value;
         };
         var cols = [{xtype: 'rownumberer', text: "#"}];
-        Ext.Array.forEach(meta.columns, function (f) {
+        Ext.Array.forEach(meta.fields, function (f) {
             if (f && f != undefined && f.hidden === false) {
                 var xtp, etp, rdrr;
                 switch (f.type) {
