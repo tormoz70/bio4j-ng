@@ -31,5 +31,12 @@ public abstract class BioRequestFactory implements ObjectFactory {
 
     }
 
+    public static class DataSetPost extends BioRequestFactory {
+        @Override
+        public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+            return null;
+        }
+
+    }
 
 }

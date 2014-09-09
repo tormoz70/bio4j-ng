@@ -6,7 +6,7 @@ Ext.define('Bio.data.Store', {
 
     calcCurPage: function(offset) {
         var me = this;
-        return (me.pageSize > 0) ? Math.trunc(offset / me.pageSize) + 1 : 1;
+        return (me.pageSize > 0) ? Bio.tools.truncDec(offset / me.pageSize) + 1 : 1;
     },
 
     constructor: function(config) {

@@ -9,6 +9,7 @@ import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -75,6 +76,15 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 public void handle(BioRequestJStoreGetRecord request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_RECORD_GET);
                     BioRespBuilder.Data responseBuilder = dataProvider.getRecord(request);
+                    processCallback(responseBuilder, callback);
+                }
+            });
+
+            routeMap.put(BioRoute.CRUD_DATASET_POST, new BioRouteHandler<BioRequestJStorePost>() {
+                @Override
+                public void handle(BioRequestJStorePost request, Callback callback) throws Exception {
+                    LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_POST);
+                    BioRespBuilder.Data responseBuilder = dataProvider.postDataSet(request);
                     processCallback(responseBuilder, callback);
                 }
             });

@@ -311,7 +311,10 @@ Bio.tools = function(){
             if(cb && cbType === "function")
                 cb = { fn: cb };
             return cb;
-        }
+        },
 
+        truncDec: function(number) {
+            return Math[number < 0 ? 'ceil' : 'floor'](number);
+        }
 	}
 }()

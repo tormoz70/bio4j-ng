@@ -121,7 +121,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return totalCount;
     }
 
-    private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGetDataSet request, SQLContext ctx, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectableWithPagging(final User usr, final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as MultiPage!!!");
         final BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
@@ -179,7 +179,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return response;
     }
 
-    private BioRespBuilder.Data processCursorAsSelectableSinglePage(final User usr, SQLContext ctx, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectableSinglePage(final User usr, final SQLContext ctx, final BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as SinglePage!!!");
         BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
@@ -213,7 +213,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     }
 
-    private BioRespBuilder.Data processCursorAsSelectableSingleRecord(final User usr, final BioRequestJStoreGetRecord request, SQLContext ctx, BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectableSingleRecord(final User usr, final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as SinglePage!!!");
         BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
@@ -248,7 +248,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-    private BioRespBuilder.Data processCursorAsExecutable(BioRequest request, BioModule module, BioCursor cursor) {
+    private BioRespBuilder.Data processCursorAsExecutablePost(final User usr, final BioRequestJStorePost request, final SQLContext ctx, final BioCursor cursor) {
         return BioRespBuilder.data();
     }
 
@@ -293,6 +293,24 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
             ctx.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor);
             return processCursorAsSelectableSingleRecord(usr, request, ctx, cursor);
+        } finally {
+            LOG.debug("{} - returning response...", request);
+        }
+    }
+
+    @Override
+    public BioRespBuilder.Data postDataSet(BioRequestJStorePost request) throws Exception {
+        LOG.debug("Process {} request...", request);
+        try {
+            String moduleKey = Utl.extractModuleKey(request.getBioCode());
+            BioModule module = moduleProvider.getModule(moduleKey);
+            BioCursor cursor = module.getCursor(request);
+            final User usr = request.getUser();
+            applyCurrentUserParams(usr, cursor);
+
+            SQLContext ctx = sqlContextProvider.selectContext(module);
+
+            return processCursorAsExecutablePost(usr, request, ctx, cursor);
         } finally {
             LOG.debug("{} - returning response...", request);
         }

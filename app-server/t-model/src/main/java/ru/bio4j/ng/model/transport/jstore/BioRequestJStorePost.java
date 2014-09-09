@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Запрос на сохранение изменений в JStoreClient
+ * Запрос на сохранение изменений в JStore
  */
 public class BioRequestJStorePost extends BioRequest {
 
