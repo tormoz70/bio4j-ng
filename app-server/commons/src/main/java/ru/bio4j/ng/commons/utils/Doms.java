@@ -10,6 +10,9 @@ import ru.bio4j.ng.commons.converter.Converter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by ayrat on 20.05.14.
@@ -43,6 +46,35 @@ public class Doms {
             }
         }
         return null;
+    }
+
+    private static void _findElems(Element from, String path, List<Element> rslt) {
+        NodeList children = from.getChildNodes();
+        if(path.startsWith("/")) {
+            children = from.getOwnerDocument().getChildNodes();
+            path = path.substring(1);
+        }
+        String elemName = Strings.getFirstItem(path, "/");
+        path = Strings.cutFirstItem(path, "/");
+        for(int i=0; i<children.getLength(); i++) {
+            if(children.item(i) instanceof Element && children.item(i).getNodeName().equals(elemName)){
+                if(Strings.isNullOrEmpty(path)) {
+                    rslt.add((Element) children.item(i));
+                    return;
+                }
+                _findElems((Element)children.item(i), path, rslt);
+            }
+        }
+    }
+
+    public static List<Element> findElems(Element from, String path) {
+        if(Strings.isNullOrEmpty(path))
+            return null;
+        if(Strings.compare(path, "/", true))
+            return Arrays.asList(from.getOwnerDocument().getDocumentElement());
+        List<Element> rslt = new ArrayList<>();
+        _findElems(from, path, rslt);
+        return rslt;
     }
 
     public static Element findElem(Document from, String path) {

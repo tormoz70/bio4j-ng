@@ -80,7 +80,6 @@ Ext.define('Bio.data.RestProxy', {
                 oper.forEach(function(r) {
                     rows.push({
                         changeType: operName,
-                        class: 'ru.bio4j.ng.model.transport.jstore.StoreRow',
                         values: Bio.tools.objToArray(r.data)
                     });
                 });

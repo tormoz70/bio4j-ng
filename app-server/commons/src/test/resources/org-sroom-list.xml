@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="true">
+  <SQL action="select">
+    <text><![CDATA[
+
+SELECT a.id_showr, a.id_org as org_id, a.showroom, a.place_total
+  FROM givc_org.showrooms_tst a where a.deleted=0 and a.id_org = :id_org
+
+    ]]></text>
+  </SQL>
+    <SQL action="update">
+        <text><![CDATA[begin eorg_help_tst.edit_showrooms1($PRMLIST); end;]]></text>
+    </SQL>
+
+    <SQL action="delete">
+        <text><![CDATA[begin eorg_help_tst.showrooms_del(:p_id_showr); end;]]></text>
+        <param type="integer" name="p_id_showr"/>
+    </SQL>
+
+  <fields>
+      <field name="id_showr" type="integer" header="ID зала" hidden="true" pk="true" />
+      <field name="org_id" type="integer" header="ID кинотеатра"  hidden="true"/>
+      <field name="showroom" type="string" header="Название" readOnly="false" width="*"/>
+      <field name="place_total" type="integer" header="Мест" readOnly="false" width="150"/>
+  </fields>
+</cursor>

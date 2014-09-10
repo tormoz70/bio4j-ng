@@ -11,6 +11,7 @@ import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -134,4 +135,11 @@ public class JsonUtlTest {
         Assert.assertNull(bioRequest.getBioParams().get(0).getValue());
     }
 
+    private static final String tstPost = "{\"bioCode\":\"ekbp@cabinet.org-sroom-list\",\"bioParams\":[{\"name\":\"id_org\",\"value\":305}],\"modified\":[{\"changeType\":\"update\",\"class\":\"ru.bio4j.ng.model.transport.jstore.StoreRow\",\"values\":[533,305,\"1111\",100]}]}";
+    @Test(enabled = true)
+    public void bdecode5() throws Exception {
+        BioRequest bioRequest = Jsons.decode(tstPost, BioRequestJStorePost.class);
+        Assert.assertEquals("id_org", bioRequest.getBioParams().get(0).getName());
+        Assert.assertEquals(305, bioRequest.getBioParams().get(0).getValue());
+    }
 }

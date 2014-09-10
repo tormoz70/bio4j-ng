@@ -33,5 +33,6 @@ public class BioRequestJStorePost extends BioRequest {
     public List<BioRequestJStorePost> getChildren() {
         return children;
     }
+
 }
 

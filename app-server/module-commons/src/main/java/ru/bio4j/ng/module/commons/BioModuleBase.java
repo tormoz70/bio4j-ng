@@ -46,16 +46,17 @@ public abstract class BioModuleBase implements BioModule {
             InputStream inputStream = url.openStream();
             Document document = loadDocument(inputStream);
             cursor = CursorParser.pars(bioCode, document);
-        } else {
-            url = context.getBundle().getResource(path + ".sql");
-            if(url != null) {
-                LOG.debug("Loading cursor spec from \"{}\"", path + ".sql");
-                InputStream inputStream = url.openStream();
-                String sql = Utl.readStream(inputStream, "WINDOWS-1251");
-                cursor = CursorParser.pars(bioCode, sql);
-            } else
-                throw new Exception(String.format("Resource %s not found in module!", path));
         }
+//        else {
+//            url = context.getBundle().getResource(path + ".sql");
+//            if(url != null) {
+//                LOG.debug("Loading cursor spec from \"{}\"", path + ".sql");
+//                InputStream inputStream = url.openStream();
+//                String sql = Utl.readStream(inputStream, "WINDOWS-1251");
+//                cursor = CursorParser.pars(bioCode, sql);
+//            } else
+//                throw new Exception(String.format("Resource %s not found in module!", path));
+//        }
         return cursor;
     }
 
@@ -77,8 +78,8 @@ public abstract class BioModuleBase implements BioModule {
             cursor.setLocation(r.getLocation());
             cursor.setFilter(r.getFilter());
             cursor.setSort(r.getSort());
-            cursor.setParams(r.getBioParams());
         }
+        cursor.setParams(request.getBioParams());
         return cursor;
     }
 

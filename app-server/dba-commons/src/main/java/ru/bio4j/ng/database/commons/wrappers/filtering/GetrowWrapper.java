@@ -39,7 +39,7 @@ public class GetrowWrapper extends AbstractWrapper {
         if(pkCol == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getBioCode()));
         String whereclause = "(" + pkCol.getName() + " = :" + PKVAL + ")";
-        String sql = template.replace(QUERY, cursor.getSql());
+        String sql = template.replace(QUERY, cursor.getSelectSql());
         sql = sql.replace(WHERE_CLAUSE, whereclause);
         cursor.setPreparedSql(sql);
         return cursor;
