@@ -7,7 +7,7 @@ import ru.bio4j.ng.database.api.WrapperInterpreter;
 /**
  * Base class for all cursor.wrapper
  */
-public abstract class AbstractWrapper implements Wrapper {
+public abstract class AbstractWrapper {
 
     public static final String QUERY = "${QUERY_PLACEHOLDER}";
     public static final String WHERE_CLAUSE = "${WHERECLAUSE_PLACEHOLDER}";

@@ -5,12 +5,12 @@ import ru.bio4j.ng.database.api.BioCursor;
 /**
  * @title Интерфейс обертки запросов
  */
-public interface Wrapper{
+public interface Wrapper<T extends BioCursor.SQLDef> {
 
     /**
      * @title "Оборачивание" запроса
-     * @param cursor
+     * @param sqlDef
      * @return Обернутый запрос
      */
-    BioCursor wrap(BioCursor cursor) throws Exception;
+    T wrap(T sqlDef) throws Exception;
 }

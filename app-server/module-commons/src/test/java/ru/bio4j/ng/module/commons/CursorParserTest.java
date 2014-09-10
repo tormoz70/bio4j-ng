@@ -17,21 +17,21 @@ import java.io.InputStream;
 public class CursorParserTest {
     @Test(enabled = false)
     public void testPars() throws Exception {
-        String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("test.sql"));
-        BioCursor cursor = null; //CursorParser.pars("test", sql);
-        Assert.assertTrue(cursor != null);
-        Field col = cursor.getFields().get(0);
-        Assert.assertEquals(col.getName(), "subdivision");
-        Assert.assertEquals(col.getTitle(), "\"Дивизион\"; (miter)");
-        Assert.assertEquals(col.isPk(), true);
-        Assert.assertEquals(col.isMandatory(), true);
-        Assert.assertEquals(col.isHidden(), true);
-        Assert.assertEquals(col.isReadonly(), true);
-        Assert.assertEquals(col.getAlign(), Alignment.RIGHT);
-        Assert.assertEquals(col.getWidth(), "150");
-        Assert.assertEquals(col.getFormat(), "0,00");
-        Assert.assertEquals(col.getType(), MetaType.UNDEFINED);
-        Assert.assertEquals(cursor.getWrapMode(), BioCursor.WrapMode.SORT.code()+ BioCursor.WrapMode.PAGING.code());
+//        String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("test.sql"));
+//        BioCursor cursor = CursorParser.pars("test", sql);
+//        Assert.assertTrue(cursor != null);
+//        Field col = cursor.getFields().get(0);
+//        Assert.assertEquals(col.getName(), "subdivision");
+//        Assert.assertEquals(col.getTitle(), "\"Дивизион\"; (miter)");
+//        Assert.assertEquals(col.isPk(), true);
+//        Assert.assertEquals(col.isMandatory(), true);
+//        Assert.assertEquals(col.isHidden(), true);
+//        Assert.assertEquals(col.isReadonly(), true);
+//        Assert.assertEquals(col.getAlign(), Alignment.RIGHT);
+//        Assert.assertEquals(col.getWidth(), "150");
+//        Assert.assertEquals(col.getFormat(), "0,00");
+//        Assert.assertEquals(col.getType(), MetaType.UNDEFINED);
+//        Assert.assertEquals(cursor.getWrapMode(), BioCursor.WrapMode.SORT.code()+ BioCursor.WrapMode.PAGING.code());
     }
 
     @Test(enabled = false)

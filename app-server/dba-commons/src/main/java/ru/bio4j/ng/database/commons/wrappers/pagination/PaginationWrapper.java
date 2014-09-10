@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons.wrappers.pagination;
 
+import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
@@ -10,7 +11,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.PAGING;
  * Wrapper для реализации построничной выборки
  */
 @WrapperType(PAGING)
-public class PaginationWrapper extends AbstractWrapper {
+public class PaginationWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
     public static final String OFFSET = "PAGING$OFFSET";
     public static final String LAST = "PAGING$LAST";
@@ -34,17 +35,17 @@ public class PaginationWrapper extends AbstractWrapper {
      * Создает запрос для постраничнеой выборки данных
      */
     @Override
-    public BioCursor wrap(BioCursor cursor) throws Exception {
-        int pageSize = cursor.getPageSize();
+    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
+        int pageSize = sqlDef.getPageSize();
         if(pageSize > 0) {
-            if((cursor.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
-                String sql = template.replace(QUERY, cursor.getPreparedSql());
-                cursor.setPreparedSql(sql);
+            if((sqlDef.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
+                String sql = template.replace(QUERY, sqlDef.getPreparedSql());
+                sqlDef.setPreparedSql(sql);
             }
-            int offset = cursor.getOffset();
-            cursor.setParamValue(OFFSET, offset)
+            int offset = sqlDef.getOffset();
+            sqlDef.setParamValue(OFFSET, offset)
                   .setParamValue(LAST, offset + pageSize);
         }
-        return cursor;
+        return sqlDef;
     }
 }

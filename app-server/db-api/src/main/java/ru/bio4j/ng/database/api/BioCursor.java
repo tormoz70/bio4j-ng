@@ -31,10 +31,24 @@ public class BioCursor {
     }
 
     public static class SQLDef {
-        private String sql;
+        private BioCursor owner;
+        private final String sql;
         private String preparedSql;
 
         private final List<Param> params = new ArrayList<>();
+
+        public SQLDef(String sql) {
+            this.sql = sql;
+            this.preparedSql = this.sql;
+        }
+
+        public Field findPk() {
+            return owner.findPk();
+        }
+
+        public String getBioCode() {
+            return owner.getBioCode();
+        }
 
         public SQLDef setParamValue(String name, Object value, boolean addIfNotExists) {
             try(Paramus paramus = Paramus.set(params)) {
@@ -61,10 +75,6 @@ public class BioCursor {
             return sql;
         }
 
-        public void setSql(String sql) {
-            this.sql = sql;
-        }
-
         public String getPreparedSql() {
             return preparedSql;
         }
@@ -86,6 +96,10 @@ public class BioCursor {
         private Object location;
         private boolean readonly;
         private boolean multySelection;
+
+        public SelectSQLDef(String sql) {
+            super(sql);
+        }
 
         public void setWrapMode(byte wrapMode) {
             this.wrapMode = wrapMode;
@@ -145,7 +159,11 @@ public class BioCursor {
 
     }
 
-    public static class UpdelexSQLDef extends SQLDef { }
+    public static class UpdelexSQLDef extends SQLDef {
+        public UpdelexSQLDef(String sql) {
+            super(sql);
+        }
+    }
 
     private final String bioCode;
 
@@ -183,10 +201,23 @@ public class BioCursor {
 
     public void setSqlDef(Type sqlType, SQLDef sqlDef) {
         sqlDefs.put(sqlType, sqlDef);
+        sqlDef.owner = this;
     }
 
-    public SQLDef getSqlDef(Type sqlType) {
-        return sqlDefs.get(sqlType);
+    public SQLDef getUpdateSqlDef() {
+        return sqlDefs.get(Type.UPDATE);
+    }
+
+    public SQLDef getDeleteSqlDef() {
+        return sqlDefs.get(Type.DELETE);
+    }
+
+    public SQLDef getExecSqlDef() {
+        return sqlDefs.get(Type.EXEC);
+    }
+
+    public SelectSQLDef getSelectSqlDef() {
+        return (SelectSQLDef)sqlDefs.get(Type.SELECT);
     }
 
 

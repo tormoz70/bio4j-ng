@@ -15,10 +15,7 @@ import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CursorParser {
@@ -151,9 +148,9 @@ public class CursorParser {
         }
     }
 
-    private static void addParamsFromXml(final BioCursor cursor, final Element sqlElem) throws Exception {
+    private static void addParamsFromXml(final BioCursor.SQLDef sqlDef, final Element sqlElem) throws Exception {
         NodeList paramNodes = sqlElem.getElementsByTagName("param");
-        try(Paramus p = Paramus.set(cursor.getParams());) {
+        try(Paramus p = Paramus.set(sqlDef.getParams());) {
             for(int i=0; i<paramNodes.getLength(); i++) {
                 Element paramElem = (Element)paramNodes.item(i);
                 String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
@@ -175,32 +172,11 @@ public class CursorParser {
         }
     }
 
-    private static String bkpSubstring(final String str, final String regex, final Stack<BackupPair> bkpSubstrings) {
-        final StringBuffer out = new StringBuffer(str.length());
-        final Matcher matcher = Regexs.match(str, regex, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
-        while (matcher.find()) {
-            String foundSubstr = matcher.group();
-            String placeHolder = "{backup-substr-before-kill-sql-comments-"+bkpSubstrings.size()+"}";
-            bkpSubstrings.push(new BackupPair(placeHolder, foundSubstr));
-            matcher.appendReplacement(out, placeHolder);
-        }
-        matcher.appendTail(out);
-        return out.toString();
-    }
-
-    private static class BackupPair {
-        public String placeholder;
-        public String substring;
-        public BackupPair(String placeholder, String substring) {
-            this.placeholder = placeholder;
-            this.substring = substring;
-        }
-    }
-
-    private static void addParamsFromSQLBody(final BioCursor cursor, final String sql) throws Exception {
+    private static void addParamsFromSQLBody(final BioCursor.SQLDef sqlDef) throws Exception {
+        final String sql = sqlDef.getSql();
         final StringBuffer out = new StringBuffer(sql.length());
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
-        try(Paramus p = Paramus.set(cursor.getParams());) {
+        try(Paramus p = Paramus.set(sqlDef.getParams());) {
             for (String paramActual : paramsNames) {
                 Param param = Param.builder()
                         .name(paramActual)
@@ -259,23 +235,15 @@ public class CursorParser {
         for (Element sqlElem : sqlTextElems) {
             BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
             String sql = sqlElem.getTextContent();
-            switch (curType) {
-                case SELECT :
-                    cursor.setSelectSql(sql);
-                    break;
-                case UPDATE:
-                    cursor.setUpdateSql(sql);
-                    break;
-                case DELETE:
-                    cursor.setDeleteSql(sql);
-                    break;
-                case EXEC:
-                    cursor.setExecSql(sql);
-                    break;
-            }
+            BioCursor.SQLDef sqlDef;
+            if(curType == BioCursor.Type.SELECT)
+                sqlDef = new BioCursor.SelectSQLDef(sql);
+            else
+                sqlDef = new BioCursor.UpdelexSQLDef(sql);
+            cursor.setSqlDef(curType, sqlDef);
 
-            addParamsFromSQLBody(cursor, sql); // добавляем переменные из SQL
-            addParamsFromXml(cursor, sqlElem); // добавляем переменные из XML
+            addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
+            addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
         }
         LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;

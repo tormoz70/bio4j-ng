@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons.wrappers.filtering;
 
+import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.BioError;
@@ -12,7 +13,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.GETROW;
  * Wrapper для реализации постраничной выборки данных
  */
 @WrapperType(GETROW)
-public class GetrowWrapper extends AbstractWrapper {
+public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
     private String template;
     public static final String PKVAL = "GETROW$PKVALUE";
@@ -34,14 +35,14 @@ public class GetrowWrapper extends AbstractWrapper {
      * Собирает запрос для вычисления страницы в которой находится искомая запись
      */
     @Override
-    public BioCursor wrap(BioCursor cursor) throws Exception {
-        Field pkCol = cursor.findPk();
+    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
+        Field pkCol = sqlDef.findPk();
         if(pkCol == null)
-            throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getBioCode()));
+            throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", sqlDef.getBioCode()));
         String whereclause = "(" + pkCol.getName() + " = :" + PKVAL + ")";
-        String sql = template.replace(QUERY, cursor.getSelectSql());
+        String sql = template.replace(QUERY, sqlDef.getSql());
         sql = sql.replace(WHERE_CLAUSE, whereclause);
-        cursor.setPreparedSql(sql);
-        return cursor;
+        sqlDef.setPreparedSql(sql);
+        return sqlDef;
     }
 }

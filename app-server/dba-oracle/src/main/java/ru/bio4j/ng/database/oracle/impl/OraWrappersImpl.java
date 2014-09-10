@@ -25,15 +25,15 @@ public class OraWrappersImpl implements Wrappers {
     private Map<WrapQueryType, Wrapper> wrappers = null;
 
     /**
-     * @param cursor        исходный запрос
+     * @param sqlDef        исходный запрос
      * @param wrapQueryType тип врапера
      * @return "Обернутый" запрос
      * @throws java.sql.SQLException
      * @title "Оборачивает" SQL запрос для возможности фильтрации
      */
-    private BioCursor wrapCursor(final BioCursor cursor, final WrapQueryType wrapQueryType) throws Exception {
+    private BioCursor.SQLDef wrapCursor(final BioCursor.SQLDef sqlDef, final WrapQueryType wrapQueryType) throws Exception {
         Wrapper w = getWrapper(wrapQueryType);
-        return w.wrap(cursor);
+        return w.wrap(sqlDef);
     }
 
 //    public BioCursor wrapCursor(final BioCursor cursor) throws Exception {

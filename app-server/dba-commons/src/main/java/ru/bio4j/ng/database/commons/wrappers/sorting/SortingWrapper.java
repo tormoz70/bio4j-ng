@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.commons.wrappers.sorting;
 
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
@@ -15,7 +16,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.SORTING;
  * @author rad
  */
 @WrapperType(SORTING)
-public class SortingWrapper extends AbstractWrapper {
+public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
     public static final String ORDER_BY_CLAUSE = "${ORDERBYCLAUSE_PLACEHOLDER}";
 
@@ -48,18 +49,18 @@ public class SortingWrapper extends AbstractWrapper {
     /**
      * @title "Оборачивание" запроса в предварительно загруженный запрос
      * @title "О"
-     * @param cursor
+     * @param sqlDef
      * @return "Обернутый" запрос
      */
     @Override
-    public BioCursor wrap(BioCursor cursor) throws Exception {
-        if((cursor.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
-            List<Sort> sort = cursor.getSort();
+    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
+        if((sqlDef.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
+            List<Sort> sort = sqlDef.getSort();
             if(sort != null && sort.size() > 0) {
-                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", cursor.getSort());
-                cursor.setPreparedSql(queryPrefix + cursor.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
+                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sqlDef.getSort());
+                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
             }
         }
-        return cursor;
+        return sqlDef;
     }
 }

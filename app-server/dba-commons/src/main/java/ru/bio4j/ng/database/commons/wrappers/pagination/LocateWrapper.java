@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons.wrappers.pagination;
 
+import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.BioError;
@@ -12,7 +13,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.LOCATE;
  * Wrapper для реализации постраничной выборки данных
  */
 @WrapperType(LOCATE)
-public class LocateWrapper extends AbstractWrapper {
+public class LocateWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
     private String template;
     public static final String PKVAL = "LOCATE$PKVALUE";
@@ -35,16 +36,16 @@ public class LocateWrapper extends AbstractWrapper {
      * Собирает запрос для вычисления страницы в которой находится искомая запись
      */
     @Override
-    public BioCursor wrap(BioCursor cursor) throws Exception {
-        if(cursor.getLocation() == null)
-            return cursor;
-        Field pkCol = cursor.findPk();
+    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
+        if(sqlDef.getLocation() == null)
+            return sqlDef;
+        Field pkCol = sqlDef.findPk();
         if(pkCol == null)
-            throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getBioCode()));
+            throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", sqlDef.getBioCode()));
         String whereclause = "(" + pkCol.getName() + " = :" + PKVAL + ") AND (rnum$ >= :" + STARTFROM + ")";
-        String sql = template.replace(QUERY, cursor.getPreparedSql());
+        String sql = template.replace(QUERY, sqlDef.getPreparedSql());
         sql = sql.replace(WHERE_CLAUSE, whereclause);
-        cursor.setLocateSql(sql);
-        return cursor;
+        sqlDef.setLocateSql(sql);
+        return sqlDef;
     }
 }

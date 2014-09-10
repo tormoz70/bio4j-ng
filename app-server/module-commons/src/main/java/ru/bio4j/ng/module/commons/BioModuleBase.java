@@ -68,20 +68,20 @@ public abstract class BioModuleBase implements BioModule {
         return cursor;
     }
 
-    @Override
-    public BioCursor getCursor(BioRequest request) throws Exception {
-        BioCursor cursor = getCursor(request.getBioCode());
-        if(request instanceof BioRequestJStoreGetDataSet) {
-            final BioRequestJStoreGetDataSet r = (BioRequestJStoreGetDataSet)request;
-            cursor.setOffset(r.getOffset());
-            cursor.setPageSize(r.getPageSize());
-            cursor.setLocation(r.getLocation());
-            cursor.setFilter(r.getFilter());
-            cursor.setSort(r.getSort());
-        }
-        cursor.setParams(request.getBioParams());
-        return cursor;
-    }
+//    @Override
+//    public BioCursor getCursor(BioRequest request) throws Exception {
+//        return getCursor(request.getBioCode());
+//        if(request instanceof BioRequestJStoreGetDataSet) {
+//            final BioRequestJStoreGetDataSet r = (BioRequestJStoreGetDataSet)request;
+//            cursor.getSelectSqlDef().setOffset(r.getOffset());
+//            cursor.getSelectSqlDef().setPageSize(r.getPageSize());
+//            cursor.getSelectSqlDef().setLocation(r.getLocation());
+//            cursor.getSelectSqlDef().setFilter(r.getFilter());
+//            cursor.getSelectSqlDef().setSort(r.getSort());
+//        }
+//        cursor.setParams(request.getBioParams());
+//        return cursor;
+//    }
 
     private static final String SQL_CONTEXT_CONFIG_FILE_NAME = "sql-context.config";
     private Configurator<SQLContextConfig> configurator = new Configurator<>(SQLContextConfig.class);

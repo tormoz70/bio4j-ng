@@ -91,7 +91,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         LOG.debug("Opening Cursor...");
         int totalCount = 0;
         try(SQLCursor c = context.CreateCursor()
-                .init(conn, cursorDef.getPreparedSql(), cursorDef.getParams()).open();) {
+                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParams()).open();) {
             LOG.debug("Cursor opened!!!");
             data.setMetadata(new StoreMetadata());
             List<Field> cols = cursorDef.getFields();
@@ -135,39 +135,39 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 if(totalCount == 0) {
                     LOG.debug("Try calc count of cursor records!!!");
                     try (SQLCursor c = context.CreateCursor()
-                            .init(conn, cur.getTotalsSql(), cur.getParams()).open();) {
+                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
                         if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
                     }
                     LOG.debug("Count of cursor records - {}!!!", totalCount);
                 }
 
-                if(cur.getLocation() != null) {
-                    LOG.debug("Try locate cursor to [{}] record by pk!!!", cur.getLocation());
-                    List<Param> locateParams = Paramus.clone(cur.getParams());
+                if(cur.getSelectSqlDef().getLocation() != null) {
+                    LOG.debug("Try locate cursor to [{}] record by pk!!!", cur.getSelectSqlDef().getLocation());
+                    List<Param> locateParams = Paramus.clone(cur.getSelectSqlDef().getParams());
                     try(Paramus p = Paramus.set(locateParams)){
-                        p.setValue(LocateWrapper.PKVAL, cur.getLocation());
-                        p.setValue(LocateWrapper.STARTFROM, cur.getOffset());
+                        p.setValue(LocateWrapper.PKVAL, cur.getSelectSqlDef().getLocation());
+                        p.setValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
                     }
                     try (SQLCursor c = context.CreateCursor()
-                            .init(conn, cur.getLocateSql(), locateParams).open();) {
+                            .init(conn, cur.getSelectSqlDef().getLocateSql(), locateParams).open();) {
                         if (c.reader().next()) {
                             int locatedPos = c.reader().getValue(1, int.class);
-                            int offset = calcOffset(locatedPos, cur.getPageSize());
-                            LOG.debug("Cursor successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getLocation(), locatedPos, offset);
-                            cur.setOffset(offset);
-                            cur.setParamValue(PaginationWrapper.OFFSET, cur.getOffset())
-                                    .setParamValue(PaginationWrapper.LAST, cur.getOffset() + cur.getPageSize());
+                            int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
+                            LOG.debug("Cursor successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getSelectSqlDef().getLocation(), locatedPos, offset);
+                            cur.getSelectSqlDef().setOffset(offset);
+                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset())
+                                    .setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
                         } else {
-                            LOG.debug("Cursor fail location to [{}] record by pk!!!", cur.getLocation());
-                            result.exception(new BioError.LacationFail(cur.getLocation()));
+                            LOG.debug("Cursor fail location to [{}] record by pk!!!", cur.getSelectSqlDef().getLocation());
+                            result.exception(new BioError.LacationFail(cur.getSelectSqlDef().getLocation()));
                         }
                     }
                 }
 
                 StoreData data = new StoreData();
-                data.setOffset(cur.getOffset());
-                data.setPageSize(cur.getPageSize());
+                data.setOffset(cur.getSelectSqlDef().getOffset());
+                data.setPageSize(cur.getSelectSqlDef().getPageSize());
                 data.setResults(totalCount);
 
                 readStoreData(data, context, conn, cur);
@@ -191,14 +191,14 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 //String preparedSQL = cur.getPreparedSql();
 
                 StoreData data = new StoreData();
-                data.setOffset(cur.getOffset());
-                data.setPageSize(cur.getPageSize());
+                data.setOffset(cur.getSelectSqlDef().getOffset());
+                data.setPageSize(cur.getSelectSqlDef().getPageSize());
                 int totalCount = readStoreData(data, context, conn, cur);
 
                 if(totalCount == 0) {
                     LOG.debug("Max records fetched [{}]! Try calc count of total cursor records!!!", MAX_RECORDS_FETCH_LIMIT);
                     try (SQLCursor c = context.CreateCursor()
-                            .init(conn, cur.getTotalsSql(), cur.getParams()).open();) {
+                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
                         if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
                     }
@@ -223,7 +223,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 result.bioCode(cursorDef.getBioCode());
 
                 //String preparedSQL = cursorDef.getGetrowSql();
-                cursorDef.setParamValue(GetrowWrapper.PKVAL, request.getId());
+                cursorDef.getSelectSqlDef().setParamValue(GetrowWrapper.PKVAL, request.getId());
 
                 StoreData data = new StoreData();
                 readStoreData(data, context, conn, cursorDef);
@@ -240,8 +240,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final String PARAM_CURUSR_ROLES =  "SYS_CURUSR_ROLES";
     private static final String PARAM_CURUSR_GRANTS = "SYS_CURUSR_GRANTS";
 
-    private static void applyCurrentUserParams(User usr, BioCursor cursor) {
-        try(Paramus p = Paramus.set(cursor.getParams())) {
+    private static void applyCurrentUserParams(User usr, BioCursor.SQLDef sqlDef) {
+        try(Paramus p = Paramus.set(sqlDef.getParams())) {
             p.setValue(PARAM_CURUSR_UID, usr.getUid(), false);
             p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), false);
             p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), false);
@@ -252,26 +252,38 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return BioRespBuilder.data();
     }
 
+    private static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreGetDataSet request) {
+        sqlDef.setParams(request.getBioParams());
+        sqlDef.setOffset(request.getOffset());
+        sqlDef.setPageSize(request.getPageSize());
+        sqlDef.setLocation(request.getLocation());
+        sqlDef.setFilter(request.getFilter());
+        sqlDef.setSort(request.getSort());
+    }
+
+
     @Override
     public BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception {
         LOG.debug("Process {} request...", request);
         try {
             String moduleKey = Utl.extractModuleKey(request.getBioCode());
             BioModule module = moduleProvider.getModule(moduleKey);
-            BioCursor cursor = module.getCursor(request);
+            BioCursor cursor = module.getCursor(request.getBioCode());
+            initSelectSqlDef(cursor.getSelectSqlDef(), request);
+
             final User usr = request.getUser();
-            applyCurrentUserParams(usr, cursor);
+            applyCurrentUserParams(usr, cursor.getSelectSqlDef());
 
             SQLContext ctx = sqlContextProvider.selectContext(module);
 
-            ctx.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor);
-            ctx.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor);
-            ctx.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor);
-            ctx.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor);
-            if(cursor.getPageSize() < 0) {
+            ctx.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());
+            ctx.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());
+            ctx.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor.getSelectSqlDef());
+            ctx.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor.getSelectSqlDef());
+            if(cursor.getSelectSqlDef().getPageSize() < 0) {
                 return processCursorAsSelectableSinglePage(usr, ctx, cursor);
             }else {
-                ctx.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor);
+                ctx.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor.getSelectSqlDef());
                 return processCursorAsSelectableWithPagging(usr, request, ctx, cursor);
             }
         } finally {
@@ -285,13 +297,15 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         try {
             String moduleKey = Utl.extractModuleKey(request.getBioCode());
             BioModule module = moduleProvider.getModule(moduleKey);
-            BioCursor cursor = module.getCursor(request);
+            BioCursor cursor = module.getCursor(request.getBioCode());
+            cursor.getSelectSqlDef().setParams(request.getBioParams());
+
             final User usr = request.getUser();
-            applyCurrentUserParams(usr, cursor);
+            applyCurrentUserParams(usr, cursor.getSelectSqlDef());
 
             SQLContext ctx = sqlContextProvider.selectContext(module);
 
-            ctx.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor);
+            ctx.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
             return processCursorAsSelectableSingleRecord(usr, request, ctx, cursor);
         } finally {
             LOG.debug("{} - returning response...", request);
@@ -304,9 +318,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         try {
             String moduleKey = Utl.extractModuleKey(request.getBioCode());
             BioModule module = moduleProvider.getModule(moduleKey);
-            BioCursor cursor = module.getCursor(request);
+            BioCursor cursor = module.getCursor(request.getBioCode());
             final User usr = request.getUser();
-            applyCurrentUserParams(usr, cursor);
+            //applyCurrentUserParams(usr, cursor);
 
             SQLContext ctx = sqlContextProvider.selectContext(module);
 
