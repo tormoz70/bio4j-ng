@@ -50,4 +50,8 @@ public class StoreRow {
         return values.get(col);
     }
 
+    public void setValue(int col, Object value) {
+        values.set(col, value);
+    }
+
 }

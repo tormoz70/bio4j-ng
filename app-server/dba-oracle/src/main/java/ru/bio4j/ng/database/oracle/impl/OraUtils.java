@@ -117,7 +117,7 @@ public class OraUtils implements RDBMSUtils {
                                     "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
                         args.append(((args.length() == 0) ? ":" : ",:") + parName.toLowerCase());
                         p.add(Param.builder()
-                                .name(parName)
+                                .name(parName.toLowerCase())
                                 .type(decodeOraType(parType))
                                 .direction(decodeOraDirection(parDir))
                                 .build());

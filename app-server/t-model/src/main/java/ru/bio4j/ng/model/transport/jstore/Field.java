@@ -1,5 +1,6 @@
 package ru.bio4j.ng.model.transport.jstore;
 
+import flexjson.JSON;
 import ru.bio4j.ng.model.transport.MetaType;
 
 /**
@@ -159,7 +160,18 @@ public class Field {
         this.type = value;
     }
 
+    /**
+     * Field id starts from 1
+     * @return
+     */
     public int getId() { return id; }
+
+    /**
+     * Field index starts from 0
+     * @return
+     */
+    @JSON(include = false)
+    public int getIndex() { return id-1; }
 
     public void setId(int id) { this.id = id; }
 

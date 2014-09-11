@@ -310,31 +310,31 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
+    private static final String STD_PARAM_PREFIX = "p_";
+
     private static void processUpDelRow(StoreRow row, SQLContext ctx, Connection conn, BioCursor cursor) throws Exception {
         SQLStoredProc cmd = ctx.CreateStoredProc();
         RowChangeType changeType = row.getChangeType();
         BioCursor.SQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
         try(Paramus paramus = Paramus.set(sqlDef.getParams())) {
-
             for(Field field : cursor.getFields()) {
                 paramus.add(Param.builder()
-                        .name(field.getName())
-                        .value(row.getValue(field.getId()))
+                        .name(STD_PARAM_PREFIX + field.getName().toLowerCase())
+                        .value(row.getValue(field.getIndex()))
                         .type(field.getType())
                         .build());
             }
-
-//            paramus.add("p_param1", "FTW")
-//                    .add(Param.builder()
-//                            .name("p_param2")
-//                            .type(MetaType.INTEGER)
-//                            .direction(Param.Direction.OUT)
-//                            .build());
             cmd.init(conn, sqlDef.getPreparedSql(), paramus.get());
         }
         cmd.execSQL();
         try(Paramus paramus = Paramus.set(cmd.getParams())) {
-            //leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
+            for(Param p : paramus.get()) {
+                if(Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())){
+                    String fieldName = p.getName().substring(STD_PARAM_PREFIX.length());
+                    Field fld = cursor.findField(fieldName);
+                    row.setValue(fld.getIndex(), p.getValue());
+                }
+            }
         }
     }
 
