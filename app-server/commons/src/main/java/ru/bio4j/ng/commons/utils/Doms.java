@@ -58,11 +58,10 @@ public class Doms {
         path = Strings.cutFirstItem(path, "/");
         for(int i=0; i<children.getLength(); i++) {
             if(children.item(i) instanceof Element && children.item(i).getNodeName().equals(elemName)){
-                if(Strings.isNullOrEmpty(path)) {
+                if(Strings.isNullOrEmpty(path))
                     rslt.add((Element) children.item(i));
-                    return;
-                }
-                _findElems((Element)children.item(i), path, rslt);
+                else
+                    _findElems((Element)children.item(i), path, rslt);
             }
         }
     }

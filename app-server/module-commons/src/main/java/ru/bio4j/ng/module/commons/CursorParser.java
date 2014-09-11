@@ -234,7 +234,7 @@ public class CursorParser {
         List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
         for (Element sqlElem : sqlTextElems) {
             BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
-            String sql = sqlElem.getTextContent();
+            String sql = sqlElem.getTextContent().trim();
             BioCursor.SQLDef sqlDef;
             if(curType == BioCursor.Type.SELECT)
                 sqlDef = new BioCursor.SelectSQLDef(sql);

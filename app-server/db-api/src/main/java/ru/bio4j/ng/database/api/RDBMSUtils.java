@@ -4,5 +4,5 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface RDBMSUtils {
-    String detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException;
+    StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException;
 }

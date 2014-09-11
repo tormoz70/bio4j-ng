@@ -49,4 +49,15 @@ public class DomsTest {
         Assert.assertEquals(updActual, updExpected);
     }
 
+    @Test
+    public void testFindElems3() throws Exception {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org-sroom-list.xml");
+        Document document = Doms.loadDocument(inputStream);
+        List<Element> elements = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
+        Assert.assertEquals(elements.size(), 3);
+        String updExpected = "begin eorg_help_tst.edit_showrooms1($PRMLIST); end;";
+        String updActual = elements.get(1).getTextContent().trim();
+        Assert.assertEquals(updActual, updExpected);
+    }
+
 }

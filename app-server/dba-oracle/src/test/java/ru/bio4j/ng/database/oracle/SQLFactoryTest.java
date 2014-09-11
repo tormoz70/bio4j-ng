@@ -1,5 +1,8 @@
 package ru.bio4j.ng.database.oracle;
 
+import oracle.jdbc.OracleCallableStatement;
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleParameterMetaData;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -15,10 +18,7 @@ import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -198,6 +198,43 @@ public class SQLFactoryTest {
     }
 
     @Test(enabled = true)
+    public void testSQLCommandExecExtParam() throws Exception {
+        try {
+            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+                @Override
+                public Integer exec(SQLContext context, Connection conn) throws Exception {
+                    int leng = 0;
+                    LOG.debug("conn: " + conn);
+
+                    SQLStoredProc cmd = context.CreateStoredProc();
+                    String storedProgName = "test_stored_prop";
+                    try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
+                        paramus.add("p_param1", "FTW")
+                                .add(Param.builder()
+                                        .name("p_param2")
+                                        .type(MetaType.INTEGER)
+                                        .direction(Param.Direction.OUT)
+                                        .build())
+                                .add("p_param3", "ext");
+                        cmd.init(conn, storedProgName, paramus.get());
+                    }
+                    cmd.execSQL();
+                    try(Paramus paramus = Paramus.set(cmd.getParams())) {
+                        leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
+                    }
+                    conn.rollback();
+                    return leng;
+                }
+            });
+            LOG.debug("leng: " + leng);
+            Assert.assertEquals(leng, 3);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
     public void testSQLCommandExecError() throws Exception {
         try {
             context.execBatch(new SQLAction<Object, Object>() {
@@ -259,7 +296,7 @@ public class SQLFactoryTest {
             Assert.fail();
         }
     }
-      
+
     private static <T> T getParamValue(List<Param> params, Class<T> type, String paramName) throws SQLException {
         try {
             return Paramus.set(params).getValueByName(type, paramName, true);

@@ -4,6 +4,7 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.RDBMSUtils;
 import ru.bio4j.ng.database.api.SqlTypeConverter;
+import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -43,7 +44,7 @@ public class DbUtils {
         return converter.read(param.getType(), stringSize, isCallable);
     }
 
-    public String detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException {
         if(rdbmsUtils == null)
             throw new IllegalArgumentException(String.format(INIT_ERRORS_TEMPL, RDBMSUtils.class.getSimpleName()));
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn);

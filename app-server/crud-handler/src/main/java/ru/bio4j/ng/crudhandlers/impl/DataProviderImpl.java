@@ -14,10 +14,7 @@ import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.wrappers.filtering.GetrowWrapper;
 import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.database.commons.wrappers.pagination.PaginationWrapper;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.service.api.*;
@@ -27,7 +24,9 @@ import ru.bio4j.ng.service.types.BioServiceBase;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 @Component
@@ -240,16 +239,15 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final String PARAM_CURUSR_ROLES =  "SYS_CURUSR_ROLES";
     private static final String PARAM_CURUSR_GRANTS = "SYS_CURUSR_GRANTS";
 
-    private static void applyCurrentUserParams(User usr, BioCursor.SQLDef sqlDef) {
-        try(Paramus p = Paramus.set(sqlDef.getParams())) {
-            p.setValue(PARAM_CURUSR_UID, usr.getUid(), false);
-            p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), false);
-            p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), false);
+    private static void applyCurrentUserParams(User usr, BioCursor.SQLDef ... sqlDefs) {
+        for(BioCursor.SQLDef sqlDef : sqlDefs) {
+            if(sqlDef != null)
+                try (Paramus p = Paramus.set(sqlDef.getParams())) {
+                    p.setValue(PARAM_CURUSR_UID, usr.getUid(), false);
+                    p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), false);
+                    p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), false);
+                }
         }
-    }
-
-    private BioRespBuilder.Data processCursorAsExecutablePost(final User usr, final BioRequestJStorePost request, final SQLContext ctx, final BioCursor cursor) {
-        return BioRespBuilder.data();
     }
 
     private static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreGetDataSet request) {
@@ -312,19 +310,74 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
+    private static void processUpDelRow(StoreRow row, SQLContext ctx, Connection conn, BioCursor cursor) throws Exception {
+        SQLStoredProc cmd = ctx.CreateStoredProc();
+        RowChangeType changeType = row.getChangeType();
+        BioCursor.SQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
+        try(Paramus paramus = Paramus.set(sqlDef.getParams())) {
+
+            for(Field field : cursor.getFields()) {
+                paramus.add(Param.builder()
+                        .name(field.getName())
+                        .value(row.getValue(field.getId()))
+                        .type(field.getType())
+                        .build());
+            }
+
+//            paramus.add("p_param1", "FTW")
+//                    .add(Param.builder()
+//                            .name("p_param2")
+//                            .type(MetaType.INTEGER)
+//                            .direction(Param.Direction.OUT)
+//                            .build());
+            cmd.init(conn, sqlDef.getPreparedSql(), paramus.get());
+        }
+        cmd.execSQL();
+        try(Paramus paramus = Paramus.set(cmd.getParams())) {
+            //leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
+        }
+    }
+
+    private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, Connection conn) throws Exception {
+        final User usr = request.getUser();
+        final String moduleKey = Utl.extractModuleKey(request.getBioCode());
+        final BioModule module = moduleProvider.getModule(moduleKey);
+        final BioCursor cursorDef = module.getCursor(request.getBioCode());
+        cursorDef.getSelectSqlDef().setParams(request.getBioParams());
+        applyCurrentUserParams(usr, cursorDef.getUpdateSqlDef(), cursorDef.getDeleteSqlDef());
+
+        final BioRespBuilder.Data result = BioRespBuilder.data();
+        result.bioCode(request.getBioCode());
+
+        for(StoreRow row : request.getModified())
+            processUpDelRow(row, ctx, conn, cursorDef);
+
+        for(BioRequestJStorePost post : request.getChildren())
+            processRequestPost(post, ctx, conn);
+
+        return result.exception(null);
+    }
+
+    private BioRespBuilder.Data processRootRequestPost(final BioRequestJStorePost request) throws Exception {
+        final User usr = request.getUser();
+        final String moduleKey = Utl.extractModuleKey(request.getBioCode());
+        final BioModule module = moduleProvider.getModule(moduleKey);
+        final SQLContext ctx = sqlContextProvider.selectContext(module);
+        BioRespBuilder.Data response = ctx.execBatch(new SQLAction<Object, BioRespBuilder.Data>() {
+            @Override
+            public BioRespBuilder.Data exec(SQLContext context, Connection conn, Object obj) throws Exception {
+                tryPrepareSessionContext(usr.getUid(), conn);
+                return processRequestPost(request, context, conn);
+            }
+        }, null);
+        return response;
+    }
+
     @Override
     public BioRespBuilder.Data postDataSet(BioRequestJStorePost request) throws Exception {
         LOG.debug("Process {} request...", request);
         try {
-            String moduleKey = Utl.extractModuleKey(request.getBioCode());
-            BioModule module = moduleProvider.getModule(moduleKey);
-            BioCursor cursor = module.getCursor(request.getBioCode());
-            final User usr = request.getUser();
-            //applyCurrentUserParams(usr, cursor);
-
-            SQLContext ctx = sqlContextProvider.selectContext(module);
-
-            return processCursorAsExecutablePost(usr, request, ctx, cursor);
+            return processRootRequestPost(request);
         } finally {
             LOG.debug("{} - returning response...", request);
         }

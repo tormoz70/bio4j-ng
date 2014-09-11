@@ -3,8 +3,10 @@ package ru.bio4j.ng.database.commons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.DelegateSQLAction;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
+import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.Connection;
@@ -35,10 +37,14 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
     @Override
 	protected void prepareStatement() throws SQLException {
-        this.preparedSQL = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection);
-        this.preparedSQL = "{call " + this.preparedSQL + "}";
-        this.preparedStatement = this.connection.prepareCall(this.preparedSQL);
-        this.preparedStatement.setQueryTimeout(this.timeout);
+        StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection);
+        try(Paramus p = Paramus.set(sp.getParams())){
+            p.apply(params);
+            params = p.get();
+        }
+        preparedSQL = String.format("{call %s}", sp.getSignature());
+        preparedStatement = this.connection.prepareCall(this.preparedSQL);
+        preparedStatement.setQueryTimeout(this.timeout);
 	}
 	
     @Override
