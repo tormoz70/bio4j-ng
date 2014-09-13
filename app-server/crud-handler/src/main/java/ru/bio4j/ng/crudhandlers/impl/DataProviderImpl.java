@@ -86,7 +86,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return (pg - 1) * pageSize;
     }
 
-    private static int readStoreData(StoreData data, SQLContext context, Connection conn, BioCursor cursorDef) throws Exception {
+    private static int readStoreData(final StoreData data, final SQLContext context, final Connection conn, final BioCursor cursorDef) throws Exception {
         LOG.debug("Opening Cursor...");
         int totalCount = 0;
         try(SQLCursor c = context.CreateCursor()
@@ -239,7 +239,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final String PARAM_CURUSR_ROLES =  "SYS_CURUSR_ROLES";
     private static final String PARAM_CURUSR_GRANTS = "SYS_CURUSR_GRANTS";
 
-    private static void applyCurrentUserParams(User usr, BioCursor.SQLDef ... sqlDefs) {
+    private static void applyCurrentUserParams(final User usr, BioCursor.SQLDef ... sqlDefs) {
         for(BioCursor.SQLDef sqlDef : sqlDefs) {
             if(sqlDef != null)
                 try (Paramus p = Paramus.set(sqlDef.getParams())) {
@@ -290,7 +290,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     @Override
-    public BioRespBuilder.Data getRecord(BioRequestJStoreGetRecord request) throws Exception {
+    public BioRespBuilder.Data getRecord(final BioRequestJStoreGetRecord request) throws Exception {
         LOG.debug("Process {} request...", request);
         try {
             String moduleKey = Utl.extractModuleKey(request.getBioCode());
@@ -312,10 +312,14 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private static final String STD_PARAM_PREFIX = "p_";
 
-    private static void processUpDelRow(StoreRow row, SQLContext ctx, Connection conn, BioCursor cursor) throws Exception {
+    private static void processUpDelRow(final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
         SQLStoredProc cmd = ctx.CreateStoredProc();
         RowChangeType changeType = row.getChangeType();
         BioCursor.SQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
+        if(sqlDef == null && Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType))
+            throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
+        if(sqlDef == null && Arrays.asList(RowChangeType.delete).contains(changeType))
+            throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
         try(Paramus paramus = Paramus.set(sqlDef.getParams())) {
             for(Field field : cursor.getFields()) {
                 paramus.add(Param.builder()
@@ -338,7 +342,19 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-    private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, Connection conn) throws Exception {
+    private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) {
+        if(parentCursorDef != null && parentRow != null)
+            for(Field field : cursorDef.getFields()) {
+                if(row.getValue(field.getIndex()) == null) {
+                    Field parentField = parentCursorDef.findField(field.getName());
+                    Object parentValue = parentRow.getValue(parentField.getIndex());
+                    if(parentField != null && parentValue != null)
+                        row.setValue(field.getIndex(), parentValue);
+                }
+            }
+    }
+
+    private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, StoreRow parentRow) throws Exception {
         final User usr = request.getUser();
         final String moduleKey = Utl.extractModuleKey(request.getBioCode());
         final BioModule module = moduleProvider.getModule(moduleKey);
@@ -349,35 +365,37 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         final BioRespBuilder.Data result = BioRespBuilder.data();
         result.bioCode(request.getBioCode());
 
-        for(StoreRow row : request.getModified())
+        StoreRow firstRow = null;
+        for(StoreRow row : request.getModified()) {
+            applyParentRowToChildren(parentCursorDef, parentRow, cursorDef, row);
             processUpDelRow(row, ctx, conn, cursorDef);
+            if(firstRow == null)
+                firstRow = row;
+        }
 
-        for(BioRequestJStorePost post : request.getChildren())
-            processRequestPost(post, ctx, conn);
+        for(BioRequestJStorePost post : request.getChildren()) {
+            processRequestPost(post, ctx, conn, cursorDef, firstRow);
+        }
 
         return result.exception(null);
     }
 
-    private BioRespBuilder.Data processRootRequestPost(final BioRequestJStorePost request) throws Exception {
-        final User usr = request.getUser();
-        final String moduleKey = Utl.extractModuleKey(request.getBioCode());
-        final BioModule module = moduleProvider.getModule(moduleKey);
-        final SQLContext ctx = sqlContextProvider.selectContext(module);
-        BioRespBuilder.Data response = ctx.execBatch(new SQLAction<Object, BioRespBuilder.Data>() {
-            @Override
-            public BioRespBuilder.Data exec(SQLContext context, Connection conn, Object obj) throws Exception {
-                tryPrepareSessionContext(usr.getUid(), conn);
-                return processRequestPost(request, context, conn);
-            }
-        }, null);
-        return response;
-    }
-
     @Override
-    public BioRespBuilder.Data postDataSet(BioRequestJStorePost request) throws Exception {
+    public BioRespBuilder.Data postDataSet(final BioRequestJStorePost request) throws Exception {
         LOG.debug("Process {} request...", request);
         try {
-            return processRootRequestPost(request);
+            final User usr = request.getUser();
+            final String moduleKey = Utl.extractModuleKey(request.getBioCode());
+            final BioModule module = moduleProvider.getModule(moduleKey);
+            final SQLContext ctx = sqlContextProvider.selectContext(module);
+            BioRespBuilder.Data response = ctx.execBatch(new SQLAction<Object, BioRespBuilder.Data>() {
+                @Override
+                public BioRespBuilder.Data exec(SQLContext context, Connection conn, Object obj) throws Exception {
+                    tryPrepareSessionContext(usr.getUid(), conn);
+                    return processRequestPost(request, context, conn, null, null);
+                }
+            }, null);
+            return response;
         } finally {
             LOG.debug("{} - returning response...", request);
         }

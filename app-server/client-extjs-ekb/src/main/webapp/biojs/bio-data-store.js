@@ -113,24 +113,68 @@ Ext.define('Bio.data.Store', {
         }
     },
 
-    save: function(options) {
+    /**
+     * Если forcePost === true, то даже если не было изменений, то всеравно возвращается первая стора
+     * @param forcePost
+     * @returns {Array}
+     */
+    getPostRows: function(forcePost) {
         var me = this,
             operations = {},
             toCreate = me.getNewRecords(),
             toUpdate = me.getUpdatedRecords(),
-            toDestroy = me.getRemovedRecords();
-
-        if (toCreate.length > 0) {
+            toDestroy = me.getRemovedRecords(),
+            rows = [];
+        if (toCreate.length > 0)
             operations.create = toCreate;
-        }
-
-        if (toUpdate.length > 0) {
+        if (toUpdate.length > 0)
             operations.update = toUpdate;
+        if (toDestroy.length > 0)
+            operations.destroy = toDestroy;
+        for(var operName in operations) {
+            var oper = operations[operName];
+            oper.forEach(function(r) {
+                rows.push({
+                    changeType: operName,
+                    values: Bio.tools.objToArray(r.data)
+                });
+            });
+        }
+        if(rows.length == 0 && forcePost === true) {
+
+        }
+        return rows;
+    },
+
+    getPostData: function(options) {
+        var me = this,
+            slaveStores = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined,
+            slavePostData,
+            forcePost = options.forcePost === true,
+            rows = me.getPostRows(forcePost);
+        options.forcePost = undefined;
+
+        if(slaveStores) {
+            slavePostData = [];
+            for (var store in slaveStores) {
+                var post = store.getPostData(options);
+                if (post)
+                    slavePostData.push(post);
+            }
         }
 
-        if (toDestroy.length > 0) {
-            operations.destroy = toDestroy;
-        }
+        if(rows.length > 0) {
+            return Bio.request.store.PostData.jsonData({
+                bioCode: me.bioCode,
+                modified: rows,
+                slavePostData: slavePostData
+            });
+        } else
+            return undefined;
+    },
+
+    save: function(options) {
+        var me = this;
 
         if (me.fireEvent('beforesave', operations) !== false) {
             options = options || {};
@@ -155,7 +199,7 @@ Ext.define('Bio.data.Store', {
 
             me.proxy.doRequest(Ext.apply(options, {
                 action: 'crupdel',
-                operations: operations,
+                postData: me.getPostData(options),
                 allowWrite: function() { return false; }
             }), callback, me.proxy);
         }

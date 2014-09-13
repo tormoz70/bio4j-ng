@@ -9,16 +9,16 @@ Ext.define('Bio.data.RestProxy', {
         destroy: 'POST'
     },
 
-    prepareBioParams: function(store, operation) {
+    prepareBioParams: function(store, options) {
         var params = store.bioParams;
-        if(operation && operation.params) {
-            for(var p in operation.params){
+        if(options && options.params) {
+            for(var p in options.params){
                 if(!Ext.Array.contains(["page", "start", "limit"], p)) {
                     params = params || [];
                     params.push({
                         type: 'string',
                         name: p,
-                        value: operation.params[p]
+                        value: options.params[p]
                     });
                 }
             }
@@ -26,16 +26,15 @@ Ext.define('Bio.data.RestProxy', {
         return params;
     },
 
-    buildRequestRead: function(superMethod, operation) {
+    buildRequestRead: function(superMethod, options) {
         var me = this;
         var store = me.store;
-        operation.url = Bio.tools.bldBioUrl("/biosrv");
-        var request = superMethod(operation);
+        var request = superMethod(options);
         request.method = 'POST';
-        var offset = ((operation.page - 1) * operation.limit);
-        var params = me.prepareBioParams(store, operation);
+        var offset = ((options.page - 1) * options.limit);
+        var params = me.prepareBioParams(store, options);
 
-        var sort = null, sorters = operation.sorters;
+        var sort = null, sorters = options.sorters;
         if(sorters instanceof Array){
             sort = [];
             sorters.forEach(function(e) {
@@ -46,11 +45,11 @@ Ext.define('Bio.data.RestProxy', {
             });
         }
 
-        if(operation.id)
+        if(options.id)
             request.jsonData = Bio.request.store.GetRecord.jsonData({
                 bioCode: store.bioCode,
                 bioParams: params,
-                id: operation.id
+                id: options.id
             });
         else
             request.jsonData = Bio.request.store.GetDataSet.jsonData({
@@ -58,51 +57,39 @@ Ext.define('Bio.data.RestProxy', {
                 bioParams: params,
                 totalCount: store.totalCount,
                 offset: offset,
-                pageSize: operation.limit,
+                pageSize: options.limit,
                 sort: sort,
-                location: operation.locate
+                location: options.locate
             });
         return request;
     },
 
-    buildRequestCUD: function(superMethod, operation) {
+    buildRequestCUD: function(superMethod, options) {
         var me = this;
-        var store = me.store;
-        operation.url = Bio.tools.bldBioUrl("/biosrv");
-        var request = superMethod(operation);
+        var store = me.store,
+            slaveStores = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined;
+        var request = superMethod(options);
         request.method = 'POST';
-        var params = me.prepareBioParams(store, operation),
-            operations = operation.operations,
-            rows = [];
-        if(operations)
-            for(var operName in operations) {
-                var oper = operations[operName];
-                oper.forEach(function(r) {
-                    rows.push({
-                        changeType: operName,
-                        values: Bio.tools.objToArray(r.data)
-                    });
-                });
-            }
+        var params = me.prepareBioParams(store, options),
+            postData = options.postData;
 
-        request.jsonData = Bio.request.store.PostData.jsonData({
-            bioCode: store.bioCode,
-            bioParams: params,
-            modified: rows
+        request.jsonData = Ext.apply(postData, {
+            bioParams: params
         });
 
         return request;
     },
 
     //inherit docs
-    buildRequest: function(operation) {
+    buildRequest: function(options) {
         var me = this,
             superMethod = Ext.Function.bind(me.superclass.buildRequest, me),
             request;
-        if(operation.action == 'read')
-            request = me.buildRequestRead(superMethod, operation);
-        else if(operation.action == 'crupdel')
-            request = me.buildRequestCUD(superMethod, operation);
+        options.url = Bio.tools.bldBioUrl("/biosrv");
+        if(options.action == 'read')
+            request = me.buildRequestRead(superMethod, options);
+        else if(options.action == 'crupdel')
+            request = me.buildRequestCUD(superMethod, options);
         if(request) {
             request.params = {
                 rqt: request.jsonData.rqt

@@ -27,6 +27,9 @@ from givc_org.orgtst o
   left join givc_org.incorg io on io.id_org = o.id_org and io.verstate in ('0', '1', '2')
         ]]></text>
 	</SQL>
+    <SQL action="update"><text>eorg_tst.edit_cinema</text></SQL>
+
+    <SQL action="delete"><text>eorg_tst.drop_org</text></SQL>
  	<fields>
 		<field name="id_org" type="integer" header="ID кинотеатра" pk="true"/>
         <field name="usr_uid" type="string" header="ID пользователя"/>
