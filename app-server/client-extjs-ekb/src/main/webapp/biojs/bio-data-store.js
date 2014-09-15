@@ -141,33 +141,38 @@ Ext.define('Bio.data.Store', {
             });
         }
         if(rows.length == 0 && forcePost === true) {
-
+            var firstRow = (me.data.items && (me.data.items.length > 0)) ? me.data.items[0].data : undefined;
+            if(firstRow)
+                rows.push({
+                    changeType: 'update',
+                    values: Bio.tools.objToArray(firstRow)
+                });
         }
         return rows;
     },
 
     getPostData: function(options) {
         var me = this,
-            slaveStores = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined,
-            slavePostData,
+            ss = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined,
+            spd,
             forcePost = options.forcePost === true,
             rows = me.getPostRows(forcePost);
         options.forcePost = undefined;
 
-        if(slaveStores) {
-            slavePostData = [];
-            for (var store in slaveStores) {
-                var post = store.getPostData(options);
+        if(ss) {
+            spd = [];
+            ss.forEach(function(s) {
+                var post = s.getPostData({});
                 if (post)
-                    slavePostData.push(post);
-            }
+                    spd.push(post);
+            });
         }
 
         if(rows.length > 0) {
-            return Bio.request.store.PostData.jsonData({
+            return new Bio.request.store.PostData({
                 bioCode: me.bioCode,
                 modified: rows,
-                slavePostData: slavePostData
+                slavePostData: spd
             });
         } else
             return undefined;
@@ -176,15 +181,16 @@ Ext.define('Bio.data.Store', {
     save: function(options) {
         var me = this;
 
-        if (me.fireEvent('beforesave', operations) !== false) {
+        if (me.fireEvent('beforesave', options) !== false) {
             options = options || {};
 
             var callback = function(operation) {
-                var hasException = operation.hasException();
+                var me = this,
+                    hasException = operation.hasException();
 
                 if (hasException) {
                     me.hasException = true;
-                    me.exceptions.push(operation);
+                    //me.exceptions.push(operation);
                     me.fireEvent('exception', me, operation);
                 }
 
@@ -193,15 +199,18 @@ Ext.define('Bio.data.Store', {
                 } else {
                     operation.setCompleted();
                     me.fireEvent('operationcomplete', me, operation);
-                    me.runNextOperation();
+                    //me.runNextOperation();
+                    if(operation.callback && (typeof operation.callback.fn == 'function'))
+                        operation.callback.fn.call(operation.callback.scope || me, operation);
                 }
             };
 
-            me.proxy.doRequest(Ext.apply(options, {
+            var pd = me.getPostData(options);
+            me.proxy.doRequest(new Ext.data.Operation(Ext.apply(options, {
                 action: 'crupdel',
-                postData: me.getPostData(options),
+                postData: pd,
                 allowWrite: function() { return false; }
-            }), callback, me.proxy);
+            })), callback, me.proxy);
         }
 
         return me;

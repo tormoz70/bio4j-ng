@@ -46,13 +46,13 @@ Ext.define('Bio.data.RestProxy', {
         }
 
         if(options.id)
-            request.jsonData = Bio.request.store.GetRecord.jsonData({
+            request.jsonData = new Bio.request.store.GetRecord({
                 bioCode: store.bioCode,
                 bioParams: params,
                 id: options.id
             });
         else
-            request.jsonData = Bio.request.store.GetDataSet.jsonData({
+            request.jsonData = new Bio.request.store.GetDataSet({
                 bioCode: store.bioCode,
                 bioParams: params,
                 totalCount: store.totalCount,
@@ -66,8 +66,7 @@ Ext.define('Bio.data.RestProxy', {
 
     buildRequestCUD: function(superMethod, options) {
         var me = this;
-        var store = me.store,
-            slaveStores = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined;
+        var store = me.store;
         var request = superMethod(options);
         request.method = 'POST';
         var params = me.prepareBioParams(store, options),
@@ -97,6 +96,45 @@ Ext.define('Bio.data.RestProxy', {
             return request;
         } else
             return undefined;
-    }
+    },
 
+    processResponse: function(success, operation, request, response, callback, scope) {
+        var me = this,
+            reader,
+            result;
+
+        if (success === true) {
+            reader = me.getReader();
+
+            reader.applyDefaults = operation.action === 'read';
+
+            result = reader.read(me.extractResponseData(response));
+
+            Ext.apply(operation, {
+                response: response,
+                resultSet: result
+            });
+
+            operation.setCompleted();
+
+            if (result.success !== false) {
+
+                operation.commitRecords(result.records);
+                operation.setSuccessful();
+            } else {
+                operation.setException(result.message);
+                me.fireEvent('exception', this, response, operation);
+            }
+        } else {
+            me.setException(operation, response);
+            me.fireEvent('exception', this, response, operation);
+        }
+
+
+        if (typeof callback == 'function') {
+            callback.call(scope || me, operation);
+        }
+
+        me.afterRequest(request, success);
+    }
 });

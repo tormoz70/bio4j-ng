@@ -20,7 +20,7 @@ public class BioRequestJStorePost extends BioRequest {
      * выходные параметры каждого из запросов
      * должны добавляться во входные парамеры дочернего
      */
-    private final List<BioRequestJStorePost> children = new ArrayList<>();
+    private final List<BioRequestJStorePost> slavePostData = new ArrayList<>();
 
     public List<StoreRow> getModified() {
         return modified;
@@ -30,8 +30,8 @@ public class BioRequestJStorePost extends BioRequest {
         this.modified = modified;
     }
 
-    public List<BioRequestJStorePost> getChildren() {
-        return children;
+    public List<BioRequestJStorePost> getSlavePostData() {
+        return slavePostData;
     }
 
 }

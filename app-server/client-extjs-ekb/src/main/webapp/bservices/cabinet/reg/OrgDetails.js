@@ -691,7 +691,14 @@ Ext.define('Ekb.form.OrgDetails', {
                         var sroomGrid = Bio.tools.childByName(form.owner, 'srooms-grid'),
                             sroomStore = (sroomGrid) ? sroomGrid.store : undefined;
                         store.save({
-                            slaveStores: sroomStore
+                            slaveStores: sroomStore,
+                            forcePost: true,
+                            callback: {
+                                fn: function() {
+                                    var me = this;
+                                },
+                                scope: form
+                            }
                         });
                     }
 //                    form.submit();

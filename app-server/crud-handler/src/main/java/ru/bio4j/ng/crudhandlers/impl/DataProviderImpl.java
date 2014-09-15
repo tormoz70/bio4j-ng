@@ -26,7 +26,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 
 @Component
@@ -354,8 +353,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             }
     }
 
-    private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, StoreRow parentRow) throws Exception {
-        final User usr = request.getUser();
+    private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
+        final User usr = (rootUsr != null) ? rootUsr : request.getUser();
         final String moduleKey = Utl.extractModuleKey(request.getBioCode());
         final BioModule module = moduleProvider.getModule(moduleKey);
         final BioCursor cursorDef = module.getCursor(request.getBioCode());
@@ -373,8 +372,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 firstRow = row;
         }
 
-        for(BioRequestJStorePost post : request.getChildren()) {
-            processRequestPost(post, ctx, conn, cursorDef, firstRow);
+        for(BioRequestJStorePost post : request.getSlavePostData()) {
+            processRequestPost(post, ctx, conn, cursorDef, firstRow, usr);
         }
 
         return result.exception(null);
@@ -392,7 +391,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 @Override
                 public BioRespBuilder.Data exec(SQLContext context, Connection conn, Object obj) throws Exception {
                     tryPrepareSessionContext(usr.getUid(), conn);
-                    return processRequestPost(request, context, conn, null, null);
+                    return processRequestPost(request, context, conn, null, null, null);
                 }
             }, null);
             return response;

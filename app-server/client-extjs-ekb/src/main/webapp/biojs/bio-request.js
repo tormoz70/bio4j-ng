@@ -11,16 +11,19 @@ Ext.define('Bio.request.store.Request', {
      */
     bioParams: undefined,
 
-    jsonData: function(cfg) {
+    constructor: function(config) {
         var me = this;
-        return Ext.apply(me, cfg);
+        Ext.apply(me, config);
     }
+//    jsonData: function(cfg) {
+//        var me = this;
+//        return Ext.apply(me, cfg);
+//    }
 
 });
 
 Ext.define('Bio.request.store.GetDataSet', {
     extend: 'Bio.request.store.Request',
-    singleton:true,
 
     rqt: 'crud.ds.get',
 
@@ -56,7 +59,6 @@ Ext.define('Bio.request.store.GetDataSet', {
 
 Ext.define('Bio.request.store.GetRecord', {
     extend: 'Bio.request.store.Request',
-    singleton:true,
 
     rqt: 'crud.rec.get',
 
@@ -70,10 +72,9 @@ Ext.define('Bio.request.store.GetRecord', {
 
 Ext.define('Bio.request.store.PostData', {
     extend: 'Bio.request.store.Request',
-    singleton:true,
 
     rqt: 'crud.ds.post',
 
     modified: [],
-    children: []
+    slavePostData: []
 });
