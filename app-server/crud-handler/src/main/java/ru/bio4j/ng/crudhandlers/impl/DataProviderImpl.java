@@ -325,7 +325,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                         .name(STD_PARAM_PREFIX + field.getName().toLowerCase())
                         .value(row.getValue(field.getIndex()))
                         .type(field.getType())
-                        .build());
+                        .build(), true);
             }
             cmd.init(conn, sqlDef.getPreparedSql(), paramus.get());
         }
