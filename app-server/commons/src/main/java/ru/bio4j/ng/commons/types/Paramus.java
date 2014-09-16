@@ -210,7 +210,7 @@ public class Paramus implements Closeable {
         return this;
     }
 
-    public Paramus apply(List<Param> params) {
+    public Paramus apply(List<Param> params, boolean applyOnliExists) {
         if ((params != null) && (params != this.get())) {
             for (Param pp : params) {
                 Param local = this.getParam(pp.getName());
@@ -219,13 +219,19 @@ public class Paramus implements Closeable {
                     local.setInnerObject(pp.getInnerObject());
                     if(pp.getType() != MetaType.UNDEFINED)
                         local.setType(pp.getType());
-                    if(pp.getDirection() != local.getDirection())
+                    if(pp.getDirection() != Param.Direction.UNDEFINED)
                         local.setDirection(pp.getDirection());
-                } else
-                    this.add(pp.export(), false);
+                } else {
+                    if(!applyOnliExists)
+                        this.add(pp.export(), false);
+                }
             }
         }
         return this;
+    }
+
+    public Paramus apply(List<Param> params) {
+        return apply(params, false);
     }
 
 	public Object getInnerObjectByName(String name, Boolean ignoreCase) {

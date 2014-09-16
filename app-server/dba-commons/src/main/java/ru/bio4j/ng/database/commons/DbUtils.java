@@ -8,8 +8,12 @@ import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Утилиты для работы с метаданными СУБД
@@ -23,6 +27,7 @@ public class DbUtils {
     }
 
     private static final DbUtils instance = new DbUtils();
+    private static final Map<Integer, String> jdbcMappings = getAllJdbcTypeNames();
 
     public static DbUtils getInstance() {return instance;}
 
@@ -30,6 +35,23 @@ public class DbUtils {
     public void init(SqlTypeConverter converter, RDBMSUtils rdbmsUtils) {
         this.converter = converter;
         this.rdbmsUtils = rdbmsUtils;
+    }
+
+    private static Map<Integer, String> getAllJdbcTypeNames() {
+
+        Map<Integer, String> result = new HashMap<Integer, String>();
+
+        for (Field field : Types.class.getFields()) {
+            try {
+                result.put((Integer) field.get(null), field.getName());
+            } catch (IllegalAccessException ex) {}
+        }
+
+        return result;
+    }
+
+    public String getSqlTypeName(int type) {
+        return jdbcMappings.get(type);
     }
 
     public int paramSqlType(Param param) {

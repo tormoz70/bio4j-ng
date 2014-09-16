@@ -113,7 +113,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     break;
                 }
             }
-            data.getMetadata().setFields(cols);
+            //data.getMetadata().setFields(cols);
             data.setRows(rows);
         }
         return totalCount;
@@ -346,9 +346,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             for(Field field : cursorDef.getFields()) {
                 if(row.getValue(field.getIndex()) == null) {
                     Field parentField = parentCursorDef.findField(field.getName());
-                    Object parentValue = parentRow.getValue(parentField.getIndex());
-                    if(parentField != null && parentValue != null)
-                        row.setValue(field.getIndex(), parentValue);
+                    if(parentField != null) {
+                        Object parentValue = parentRow.getValue(parentField.getIndex());
+                        if (parentValue != null)
+                            row.setValue(field.getIndex(), parentValue);
+                    }
                 }
             }
     }
@@ -372,10 +374,22 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 firstRow = row;
         }
 
-        for(BioRequestJStorePost post : request.getSlavePostData()) {
-            processRequestPost(post, ctx, conn, cursorDef, firstRow, usr);
-        }
 
+        List<BioResponse> slaveRespones = new ArrayList<>();
+        for(BioRequestJStorePost post : request.getSlavePostData()) {
+            BioResponse rsp = processRequestPost(post, ctx, conn, cursorDef, firstRow, usr).build();
+            slaveRespones.add(rsp);
+        }
+        if(slaveRespones.size() > 0)
+        result.slaveRespones(slaveRespones);
+
+        StoreData data = new StoreData();
+        data.setMetadata(new StoreMetadata());
+        List<Field> cols = cursorDef.getFields();
+        data.getMetadata().setFields(cols);
+        data.setRows(request.getModified());
+
+        result.packet(data);
         return result.exception(null);
     }
 

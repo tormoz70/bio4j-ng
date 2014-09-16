@@ -61,6 +61,9 @@ public class SQLFactoryTest {
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
                     cs = conn.prepareCall(sql);
                     cs.execute();
+                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
+                    cs = conn.prepareCall(sql);
+                    cs.execute();
                     return null;
                 }
             });
@@ -81,6 +84,8 @@ public class SQLFactoryTest {
                     cs = conn.prepareCall("drop procedure test_stored_error");
                     cs.execute();
                     cs = conn.prepareCall("drop procedure test_stored_cursor");
+                    cs.execute();
+                    cs = conn.prepareCall("drop procedure test_stored_inout");
                     cs.execute();
                     cs = conn.prepareCall("drop table test_tbl");
                     cs.execute();
@@ -184,6 +189,39 @@ public class SQLFactoryTest {
                     cmd.execSQL();
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
+                    }
+                    conn.rollback();
+                    return leng;
+                }
+            });
+            LOG.debug("leng: " + leng);
+            Assert.assertEquals(leng, 3);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
+    public void testSQLCommandExecINOUTSQL() throws Exception {
+        try {
+            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+                @Override
+                public Integer exec(SQLContext context, Connection conn) throws Exception {
+                    int leng = 0;
+                    LOG.debug("conn: " + conn);
+
+                    SQLStoredProc cmd = context.CreateStoredProc();
+                    try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
+                        paramus.add(Param.builder().name("p_param1").type(MetaType.INTEGER).value(null).build())
+                                .add("p_param2", "QWE")
+                                .add(Param.builder().name("p_param3").type(MetaType.BOOLEAN).value(true).build())
+                                .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value("").build());
+                        cmd.init(conn, "test_stored_inout", paramus.get());
+                    }
+                    cmd.execSQL();
+                    try(Paramus paramus = Paramus.set(cmd.getParams())) {
+                        leng = Utl.nvl(paramus.getParamValue("p_param1", Integer.class), 0);
                     }
                     conn.rollback();
                     return leng;

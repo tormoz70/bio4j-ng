@@ -6,7 +6,7 @@
     <SQL action="select">
         <text><![CDATA[
 SELECT a.id_showr, a.id_org as org_id, a.showroom, a.place_total
-  FROM givc_org.showrooms_tst a where a.deleted=0 and a.id_org = :id_org
+  FROM givc_org.showrooms_tst a where a.deleted=0 and a.id_org = :org_id
         ]]></text>
     </SQL>
     <SQL action="update"><text>eorg_help_tst.edit_showrooms1</text></SQL>

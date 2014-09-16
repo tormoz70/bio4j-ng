@@ -39,7 +39,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	protected void prepareStatement() throws SQLException {
         StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection);
         try(Paramus p = Paramus.set(sp.getParams())){
-            p.apply(params);
+            p.apply(params, true);
             params = p.get();
         }
         preparedSQL = String.format("{call %s}", sp.getSignature());

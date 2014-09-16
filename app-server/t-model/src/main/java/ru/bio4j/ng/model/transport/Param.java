@@ -3,6 +3,7 @@ package ru.bio4j.ng.model.transport;
 public class Param {
 
     public static enum Direction {
+        UNDEFINED,
         IN,
         OUT,
         INOUT;
@@ -26,7 +27,7 @@ public class Param {
         private Object innerObject = null;
         private MetaType type = MetaType.UNDEFINED;
         private int size = 0;
-        private Direction direction = Direction.IN;
+        private Direction direction = Direction.UNDEFINED;
 
         public static Param copy(Param copyFrom) {
             return new Builder()

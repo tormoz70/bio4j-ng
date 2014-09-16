@@ -92,6 +92,7 @@ public class BioRespBuilder {
         private StoreData packet;
         private Sort sort;
         private Expression filter;
+        private List<BioResponse> slaveRespones;
 
 
         public Data bioCode(String value) {
@@ -123,6 +124,12 @@ public class BioRespBuilder {
             return this;
         }
 
+        public Data slaveRespones(List<BioResponse> value) {
+            slaveRespones = value;
+            return this;
+        }
+
+
         @Override
         public BioResponse build() {
             BioResponse response = super.build();
@@ -132,6 +139,7 @@ public class BioRespBuilder {
             response.setPacket(packet);
             response.setSort(sort);
             response.setFilter(filter);
+            response.setSlaveRespones(slaveRespones);
             return response;
         }
 

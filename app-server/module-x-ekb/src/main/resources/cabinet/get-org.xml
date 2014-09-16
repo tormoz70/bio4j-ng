@@ -6,7 +6,7 @@
 	<SQL action="select">
 		<text><![CDATA[
 select
-   o.id_org, u.role_id as user_group, o.usr_uid, o.ogrn, o.inn, o.orgname, o.pasport,
+   o.id_org as org_id, u.role_id as user_group, o.usr_uid, o.ogrn, o.inn, o.orgname, o.pasport,
    o.physic_person, o.orgtype, o.kladr_code, o.address,
    decode(o.id_org, 5630, -1, o.holding_id) holding_id,
    o.email, o.dog_num, o.dog_date, o.phone_fax, o.respons_person, o.glavbuch_name,
@@ -31,7 +31,7 @@ from givc_org.orgtst o
 
     <SQL action="delete"><text>eorg_tst.drop_org</text></SQL>
  	<fields>
-		<field name="id_org" type="integer" header="ID кинотеатра" pk="true"/>
+		<field name="org_id" type="integer" header="ID кинотеатра" pk="true"/>
         <field name="usr_uid" type="string" header="ID пользователя"/>
         <field name="user_group" type="integer" header="ID роли"/>
         <field name="ogrn" type="string" header="ОГРН"/>

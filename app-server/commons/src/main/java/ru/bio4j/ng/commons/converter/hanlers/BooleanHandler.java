@@ -59,7 +59,7 @@ public class BooleanHandler extends TypeHandlerBase implements TypeHandler<Boole
         else if (targetTypeWrapped == String.class)
             return (T) (value ? "true" : "false");
         else if (targetTypeWrapped == Character.class)
-            return (T) (value ? new Character('T') : new Character('F'));
+            return (T) (value ? "1" : "0");
         else if (targetTypeWrapped == byte[].class)
             Types.nop();
         throw new ConvertValueException(value, genericType, targetTypeWrapped);

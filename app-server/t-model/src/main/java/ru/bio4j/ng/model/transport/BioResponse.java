@@ -58,6 +58,11 @@ public class BioResponse {
     private Sort sort;
 
     /**
+     * Ответы от дочерних post-запросов
+     */
+    private List<BioResponse> slaveRespones;
+
+    /**
      * Фильтрация, которая использовалясь при запросе к БД
      */
     private Expression filter;
@@ -134,4 +139,11 @@ public class BioResponse {
         this.user = user;
     }
 
+    public List<BioResponse> getSlaveRespones() {
+        return slaveRespones;
+    }
+
+    public void setSlaveRespones(List<BioResponse> slaveRespones) {
+        this.slaveRespones = slaveRespones;
+    }
 }

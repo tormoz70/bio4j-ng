@@ -19,8 +19,9 @@ public class SqlTypeConverterImpl implements SqlTypeConverter {
     public Class<?> write (int sqlType, int charSize) {
         switch (sqlType) {
             case java.sql.Types.CHAR :
-            case java.sql.Types.VARCHAR :
             case java.sql.Types.NCHAR :
+                return Character.class;
+            case java.sql.Types.VARCHAR :
             case java.sql.Types.NVARCHAR :
             case java.sql.Types.CLOB :
             case java.sql.Types.NCLOB :

@@ -17,7 +17,7 @@ Ext.define('Ekb.form.OrgDetails', {
     items: [
         {
             xtype: 'hiddenfield',
-            name: 'id_org'
+            name: 'org_id'
         },
         {
             xtype: 'fieldset',
@@ -605,8 +605,8 @@ Ext.define('Ekb.form.OrgDetails', {
                                 beforeload: function(store, operation, eOpts) {
                                     var me = store,
                                         frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ekb.form.OrgDetails').getForm(),
-                                        orgId = Bio.tools.tryParsInt(frm.findField('id_org').getValue()),
-                                        orgIdParam = { id_org: orgId };
+                                        orgId = Bio.tools.tryParsInt(frm.findField('org_id').getValue()),
+                                        orgIdParam = { org_id: orgId };
                                     console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.objToStr(orgIdParam));
                                     me.bioParams = Bio.tools.setBioParam(me.bioParams, orgIdParam);
                                 }
