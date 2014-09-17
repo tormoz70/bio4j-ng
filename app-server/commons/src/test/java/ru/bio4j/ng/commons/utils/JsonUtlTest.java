@@ -12,11 +12,11 @@ import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
+import ru.bio4j.ng.model.transport.jstore.StoreData;
+import ru.bio4j.ng.model.transport.jstore.StoreRow;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 public class JsonUtlTest {
     private static final Logger LOG = LoggerFactory.getLogger(Utl.class);
@@ -141,5 +141,28 @@ public class JsonUtlTest {
         BioRequest bioRequest = Jsons.decode(tstPost, BioRequestJStorePost.class);
         Assert.assertEquals("id_org", bioRequest.getBioParams().get(0).getName());
         Assert.assertEquals(305, bioRequest.getBioParams().get(0).getValue());
+    }
+
+    @Test(enabled = true)
+    public void bencode6() throws Exception {
+        StoreData data = new StoreData();
+        List<StoreRow> rows = new ArrayList<>();
+        StoreRow row = new StoreRow();
+        row.setData(new HashMap<String, Object>());
+        row.setValue("field1", "qwe");
+        row.setValue("field2", 123);
+        rows.add(row);
+        row = new StoreRow();
+        row.setData(new HashMap<String, Object>());
+        row.setValue("field1", "asd");
+        row.setValue("field2", 321);
+        rows.add(row);
+        data.setRows(rows);
+
+        String json = Jsons.encode(data);
+
+        StoreData dataRe = Jsons.decode(json, StoreData.class);
+
+        Assert.assertNotNull(dataRe);
     }
 }

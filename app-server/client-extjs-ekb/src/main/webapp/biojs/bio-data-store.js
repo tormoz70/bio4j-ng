@@ -11,7 +11,7 @@ Ext.define('Bio.data.Store', {
 
     constructor: function(config) {
         var me = this,
-            implicitModelId = 'Bio.data.Model' + (me.storeId || Ext.id()),
+            implicitModelId = 'Bio.data.Model-' + (me.storeId || Ext.id()),
             implicitModel = Ext.define(implicitModelId, {
                 extend: 'Ext.data.Model'
             });
@@ -135,8 +135,9 @@ Ext.define('Bio.data.Store', {
             var oper = operations[operName];
             oper.forEach(function(r) {
                 rows.push({
+                    internalId: r.data.internalId,
                     changeType: operName,
-                    values: Bio.tools.objToArray(r.data)
+                    data: r.data
                 });
             });
         }
@@ -144,8 +145,9 @@ Ext.define('Bio.data.Store', {
             var firstRow = (me.data.items && (me.data.items.length > 0)) ? me.data.items[0].data : undefined;
             if(firstRow)
                 rows.push({
+                    internalId: firstRow.internalId,
                     changeType: 'update',
-                    values: Bio.tools.objToArray(firstRow)
+                    data: firstRow
                 });
         }
         return rows;

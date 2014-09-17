@@ -1,6 +1,6 @@
 package ru.bio4j.ng.model.transport.jstore;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Строка с данными
@@ -10,7 +10,7 @@ public class StoreRow {
     /**
      * используется при добавлении новой записи
      */
-    private String internalROWUID;
+    private String internalId;
 
     /**
      * Тип изменения
@@ -20,14 +20,14 @@ public class StoreRow {
     /**
      * Значения в строках
      */
-    private List<Object> values;
+    private Map<String, Object> data;
 
-    public String getInternalROWUID() {
-        return internalROWUID;
+    public String getInternalId() {
+        return internalId;
     }
 
-    public void setInternalROWUID(String internalROWUID) {
-        this.internalROWUID = internalROWUID;
+    public void setInternalId(String internalId) {
+        this.internalId = internalId;
     }
 
     public RowChangeType getChangeType() {
@@ -38,20 +38,24 @@ public class StoreRow {
         this.changeType = changeType;
     }
 
-    public List<Object> getValues() {
-        return values;
+    public Map<String, Object> getData() {
+        return data;
     }
 
-    public void setValues(List<Object> values) {
-        this.values = values;
+    public void setData(Map<String, Object> data) {
+        this.data = data;
     }
 
-    public Object getValue(int col) {
-        return values.get(col);
+    public Object getValue(String name) {
+        if(data == null)
+            throw new IllegalArgumentException("Attribute \"data\" is null!");
+        return data.get(name.toLowerCase());
     }
 
-    public void setValue(int col, Object value) {
-        values.set(col, value);
+    public void setValue(String name, Object value) {
+        if(data == null)
+            throw new IllegalArgumentException("Attribute \"data\" is null!");
+        data.put(name, value);
     }
 
 }

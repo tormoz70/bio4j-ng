@@ -1,6 +1,6 @@
 package ru.bio4j.ng.database.commons;
 
-import ru.bio4j.ng.database.api.Field;
+import ru.bio4j.ng.database.api.DBField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
  * Time: 18:17
  * To change this template use File | Settings | File Templates.
  */
-public class FieldImpl implements Field {
-    private static final Logger LOG = LoggerFactory.getLogger(FieldImpl.class);
+public class DBFieldImpl implements DBField {
+    private static final Logger LOG = LoggerFactory.getLogger(DBFieldImpl.class);
 
     private String name;
     private Class<?> type;
     private int sqlType;
     private int id;
 
-    public FieldImpl(Class<?> type, int id, String name, int sqlType) {
+    public DBFieldImpl(Class<?> type, int id, String name, int sqlType) {
         this.id = id;
         this.type = type;
         this.name = name.toUpperCase();

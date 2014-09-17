@@ -1,6 +1,6 @@
 package ru.bio4j.ng.database.api;
 
-public interface Field {
+public interface DBField {
 
 	String getName();
 

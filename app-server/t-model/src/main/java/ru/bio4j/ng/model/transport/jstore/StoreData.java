@@ -44,28 +44,19 @@ public class StoreData {
         return metadata;
     }
 
-    public Object getValue(int i, int j) {
-        final StoreRow storeRow = rows.get(i);
+    public Object getValue(int row, int fieldIndex) {
+        final StoreRow storeRow = rows.get(row);
+        final String fieldName = metadata.getFields().get(fieldIndex).getName();
         if (storeRow != null) {
-            return storeRow.getValue(j);
+            return storeRow.getValue(fieldName);
         }
         return null;
     }
 
-    private int indexOfColumn(String columnName) {
-        if(metadata != null && metadata.getFields() != null)
-            for(int i=0; i<metadata.getFields().size(); i++){
-                Field c = metadata.getFields().get(i);
-                if(c.getName().toUpperCase().equals(columnName.toUpperCase()))
-                    return i;
-            }
-        return -1;
-    }
-
-    public Object getValue(int row, String columnName) {
+    public Object getValue(int row, String fieldName) {
         final StoreRow storeRow = rows.get(row);
         if (storeRow != null) {
-            return storeRow.getValue(indexOfColumn(columnName));
+            return storeRow.getValue(fieldName);
         }
         return null;
     }

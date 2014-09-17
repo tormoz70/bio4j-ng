@@ -11,12 +11,12 @@ public interface SQLReader {
 
     ResultSet getResultSet();
 
-    List<Field> getFields();
+    List<DBField> getFields();
 
     Long getRowPos();
 
-    Field getField(int fieldId);
-    Field getField(String fieldName);
+    DBField getField(int fieldId);
+    DBField getField(String fieldName);
 
     boolean isDBNull(String fieldName);
     boolean isDBNull(int fieldId);

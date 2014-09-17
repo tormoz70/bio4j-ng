@@ -17,6 +17,11 @@ public class StoreMetadata {
     private boolean multiSelection;
 
     /**
+     * Имя id-поля
+     */
+    private String idProperty;
+
+    /**
      * Описание полей
      */
     private List<Field> fields;
@@ -43,5 +48,20 @@ public class StoreMetadata {
 
     public void setFields(List<Field> fields) {
         this.fields = fields;
+        if(this.idProperty == null && this.fields != null && this.fields.size() > 0) {
+            for(Field field : this.fields)
+                if(field.isPk()) {
+                    this.idProperty = field.getName().toLowerCase();
+                    break;
+                }
+        }
+    }
+
+    public String getIdProperty() {
+        return idProperty;
+    }
+
+    public void setIdProperty(String idProperty) {
+        this.idProperty = idProperty;
     }
 }

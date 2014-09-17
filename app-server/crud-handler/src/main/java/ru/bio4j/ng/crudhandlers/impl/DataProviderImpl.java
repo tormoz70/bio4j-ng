@@ -23,9 +23,7 @@ import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 @Component
@@ -92,20 +90,20 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParams()).open();) {
             LOG.debug("Cursor opened!!!");
             data.setMetadata(new StoreMetadata());
-            List<Field> cols = cursorDef.getFields();
-            data.getMetadata().setFields(cols);
+            List<Field> fields = cursorDef.getFields();
+            data.getMetadata().setFields(fields);
             List<StoreRow> rows = new ArrayList<>();
             while(c.reader().next()) {
                 StoreRow r = new StoreRow();
-                List<Object> vals = new ArrayList<>();
-                for (Field col : cols) {
-                    ru.bio4j.ng.database.api.Field f = c.reader().getField(col.getName());
+                Map<String, Object> vals = new HashMap<>();
+                for (Field field : fields) {
+                    DBField f = c.reader().getField(field.getName());
                     if (f != null)
-                        vals.add(c.reader().getValue(f.getId()));
+                        vals.put(field.getName().toLowerCase(), c.reader().getValue(f.getId()));
                     else
-                        vals.add(null);
+                        vals.put(field.getName().toLowerCase(), null);
                 }
-                r.setValues(vals);
+                r.setData(vals);
                 rows.add(r);
                 totalCount = rows.size();
                 if(totalCount >= MAX_RECORDS_FETCH_LIMIT) {
@@ -323,7 +321,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             for(Field field : cursor.getFields()) {
                 paramus.add(Param.builder()
                         .name(STD_PARAM_PREFIX + field.getName().toLowerCase())
-                        .value(row.getValue(field.getIndex()))
+                        .value(row.getValue(field.getName()))
                         .type(field.getType())
                         .build(), true);
             }
@@ -335,7 +333,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 if(Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())){
                     String fieldName = p.getName().substring(STD_PARAM_PREFIX.length());
                     Field fld = cursor.findField(fieldName);
-                    row.setValue(fld.getIndex(), p.getValue());
+                    row.setValue(fld.getName().toLowerCase(), p.getValue());
                 }
             }
         }
@@ -344,12 +342,12 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) {
         if(parentCursorDef != null && parentRow != null)
             for(Field field : cursorDef.getFields()) {
-                if(row.getValue(field.getIndex()) == null) {
+                if(row.getValue(field.getName()) == null) {
                     Field parentField = parentCursorDef.findField(field.getName());
                     if(parentField != null) {
-                        Object parentValue = parentRow.getValue(parentField.getIndex());
+                        Object parentValue = parentRow.getValue(parentField.getName());
                         if (parentValue != null)
-                            row.setValue(field.getIndex(), parentValue);
+                            row.setValue(field.getName().toLowerCase(), parentValue);
                     }
                 }
             }

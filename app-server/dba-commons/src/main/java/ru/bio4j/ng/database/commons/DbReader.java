@@ -3,7 +3,7 @@ package ru.bio4j.ng.database.commons;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.Field;
+import ru.bio4j.ng.database.api.DBField;
 import ru.bio4j.ng.database.api.SQLReader;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class DbReader implements SQLReader {
 
     private long currentFetchedRowPosition = 0L;
     private ResultSet resultSet;
-    private List<Field> fields;
+    private List<DBField> fields;
     private List<Object> rowValues;
 
     public DbReader(ResultSet resultSet) {
@@ -63,14 +63,14 @@ public class DbReader implements SQLReader {
                     }
                     String fieldName =  metadata.getColumnName(i);
                     int sqlType = metadata.getColumnType(i);
-                    Field field = new FieldImpl(type, i, fieldName, sqlType);
+                    DBField field = new DBFieldImpl(type, i, fieldName, sqlType);
                     this.fields.add(field);
                 }
             }
             this.rowValues = new ArrayList<>(this.fields.size());
             for (int i = 0; i < this.fields.size(); i++)
                 this.rowValues.add(null);
-            for (Field field : this.fields) {
+            for (DBField field : this.fields) {
                 int valueIndex = field.getId() - 1;
                 Object value;
                 if(field.getSqlType() == Types.CLOB){
@@ -96,7 +96,7 @@ public class DbReader implements SQLReader {
     }
 
     @Override
-    public List<Field> getFields() {
+    public List<DBField> getFields() {
         return this.fields;
     }
 
@@ -120,16 +120,16 @@ public class DbReader implements SQLReader {
     private final String EXMSG_ParamIsNull = "Обязательный параметр [%s] пуст!";
 
     @Override
-    public Field getField(String fieldName) {
+    public DBField getField(String fieldName) {
         if (Strings.isNullOrEmpty(fieldName))
             throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
-        for(Field f : fields)
+        for(DBField f : fields)
             if(f.getName().toUpperCase().equals(fieldName.toUpperCase()))
                 return f;
         return null;
     }
     @Override
-    public Field getField(int fieldId) {
+    public DBField getField(int fieldId) {
         if((fieldId > 0) && (fieldId <= this.rowValues.size()))
             return this.fields.get(fieldId - 1);
         throw new IllegalArgumentException(String.format(EXMSG_IndexOutOfBounds, fieldId));
@@ -152,7 +152,7 @@ public class DbReader implements SQLReader {
         if(Strings.isNullOrEmpty(fieldName))
             throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
 
-        Field fld = this.getField(fieldName);
+        DBField fld = this.getField(fieldName);
         if(fld != null)
             return getValue(fld.getId(), type);
         else
@@ -172,7 +172,7 @@ public class DbReader implements SQLReader {
         if(Strings.isNullOrEmpty(fieldName))
             throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
 
-        Field fld = this.getField(fieldName);
+        DBField fld = this.getField(fieldName);
         if(fld != null)
             return getValue(fld.getId());
         else
