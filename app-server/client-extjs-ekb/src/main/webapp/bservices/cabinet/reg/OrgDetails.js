@@ -665,7 +665,7 @@ Ext.define('Ekb.form.OrgDetails', {
                 }),
                 seldId = (me.ekb ? me.ekb.orgId : null);
 
-            store.loadForm(this, seldId, function() {
+            me.loadData(store, seldId, function() {
                 var sroomGrid = Bio.tools.childByName(me, 'srooms-grid');
                 if(sroomGrid && sroomGrid.store)
                     sroomGrid.store.load();
@@ -679,30 +679,16 @@ Ext.define('Ekb.form.OrgDetails', {
             margin: '0 5 25 0',
             handler: function () {
                 var me = this,
-                    form = Bio.tools.parentFormByClassName(me, 'Ekb.form.OrgDetails').getForm(),
-                    encode = Ext.String.htmlEncode,
-                    s = '';
+                    form = Bio.tools.parentFormByClassName(me, 'Ekb.form.OrgDetails');
 
-                if (form && form.isValid()) {
-                    form.updateRecord();
-                    var rec = form.getRecord();
-                        store = rec.store;
-                    if(store) {
-                        var sroomGrid = Bio.tools.childByName(form.owner, 'srooms-grid'),
-                            sroomStore = (sroomGrid) ? sroomGrid.store : undefined;
-                        store.save({
-                            slaveStores: sroomStore,
-                            forcePost: true,
-                            callback: {
-                                fn: function() {
-                                    var me = this;
-                                },
-                                scope: form
-                            }
-                        });
+                form.postData({
+                    callback: {
+                        fn: function() {
+                            var me = this;
+                        },
+                        scope: form
                     }
-//                    form.submit();
-                }
+                });
             }
         },
         {

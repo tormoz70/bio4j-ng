@@ -167,6 +167,13 @@ Bio.tools = function(){
             return undefined;
         },
 
+        childByClassName: function (comp, className) {
+            var r = comp.queryBy(function(c) {
+                return c.$className == className;
+            });
+            return r;
+        },
+
         parentForm: function(comp) {
             var frmEl = (comp && comp.up ? comp.up('form') : null)
             return (frmEl && frmEl.getForm ? frmEl.getForm() : null);
@@ -295,14 +302,7 @@ Bio.tools = function(){
         },
     
         tryDecode: function(jsonStr){
-          var obj = null;
-          try {
-            obj = Ext.decode(jsonStr);
-          }
-          catch (e) {
-            obj = null;
-          }
-          return obj
+          return Ext.decode(jsonStr, true);
         },
     
         wrapCallback: function(callback){

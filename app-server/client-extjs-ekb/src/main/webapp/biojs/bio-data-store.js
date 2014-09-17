@@ -17,6 +17,7 @@ Ext.define('Bio.data.Store', {
             });
 
         config = Ext.apply({
+            storeId: config.bioCode + "-" + Ext.id(),
             model: implicitModelId,
             proxy: {
                 type: 'biorest'
@@ -60,24 +61,31 @@ Ext.define('Bio.data.Store', {
         }, me);
     },
 
-    loadForm: function(form, id, callback) {
-        var me = this;
-        me.load({
-            id: id,
-            callback: function(records, operation, success) {
-                var f = form.getForm();
-                if(records && (records.length > 0))
-                    f.loadRecord(records[0]);
-                if(callback)
-                    callback();
-            }
-        });
-    },
+//    loadForm: function(form, id, callback) {
+//        var me = this;
+//        me.load({
+//            id: id,
+//            callback: function(records, operation, success) {
+//                var f = form.getForm();
+//                f.trackResetOnLoad = true;
+//                if(records && (records.length > 0)) {
+//                    f.loadRecord(records[0]);
+//                    f.resetOriginal();
+//                    //f.reset();
+//                }
+//                if(callback)
+//                    callback();
+//            }
+//        });
+//    },
 
-    storeForm: function(form) {
-        var me = this;
-        form.updateRecord();
-    },
+//    storeForm: function(form) {
+//        var me = this;
+//        if(form.isDirty())
+//            form.updateRecord();
+//        else
+//            Ext.MessageBox.showDialog("Нет изменений!!!");
+//    },
 
     locateLocal: function(location) {
         var me = this,
@@ -155,29 +163,38 @@ Ext.define('Bio.data.Store', {
 
     getPostData: function(options) {
         var me = this,
-            ss = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined,
-            spd,
+            slaveStores = (options.slaveStores) ? (options.slaveStores instanceof Array ? options.slaveStores : [options.slaveStores]) : undefined,
+            slavePostData,
             forcePost = options.forcePost === true,
             rows = me.getPostRows(forcePost);
         options.forcePost = undefined;
 
-        if(ss) {
-            spd = [];
-            ss.forEach(function(s) {
+        if(slaveStores) {
+            slavePostData = [];
+            slaveStores.forEach(function(s) {
                 var post = s.getPostData({});
                 if (post)
-                    spd.push(post);
+                    slavePostData.push(post);
             });
         }
 
         if(rows.length > 0) {
             return new Bio.request.store.PostData({
+                storeId: me.storeId,
                 bioCode: me.bioCode,
                 modified: rows,
-                slavePostData: spd
+                slavePostData: slavePostData
             });
         } else
             return undefined;
+    },
+
+    commitSaved: function(operation) {
+        // TODO update data in client datasets from response !!!!
+
+
+
+        operation.setCompleted();
     },
 
     save: function(options) {
@@ -194,9 +211,8 @@ Ext.define('Bio.data.Store', {
                 callback: function(operation) {
                     var me = this;
 
-                    // TODO update data in client datasets from response !!!!
+                    me.commitSaved(operation);
 
-                    operation.setCompleted();
                     me.fireEvent('savecomplete', me, operation);
                     if(operation.callback && (typeof operation.callback.fn == 'function'))
                         operation.callback.fn.call(operation.callback.scope || me, operation);
