@@ -184,33 +184,23 @@ Ext.define('Bio.data.Store', {
         if (me.fireEvent('beforesave', options) !== false) {
             options = options || {};
 
-            var callback = function(operation) {
-                var me = this,
-                    hasException = operation.hasException();
-
-                if (hasException) {
-                    me.hasException = true;
-                    //me.exceptions.push(operation);
-                    me.fireEvent('exception', me, operation);
-                }
-
-                if (hasException && me.pauseOnException) {
-                    me.pause();
-                } else {
-                    operation.setCompleted();
-                    me.fireEvent('operationcomplete', me, operation);
-                    //me.runNextOperation();
-                    if(operation.callback && (typeof operation.callback.fn == 'function'))
-                        operation.callback.fn.call(operation.callback.scope || me, operation);
-                }
-            };
-
             var pd = me.getPostData(options);
             me.proxy.doRequest(new Ext.data.Operation(Ext.apply(options, {
                 action: 'crupdel',
                 postData: pd,
-                allowWrite: function() { return false; }
-            })), callback, me.proxy);
+                //allowWrite: function() { return false; },
+                callback: function(operation) {
+                    var me = this;
+
+                    // TODO update data in client datasets from response !!!!
+
+                    operation.setCompleted();
+                    me.fireEvent('savecomplete', me, operation);
+                    if(operation.callback && (typeof operation.callback.fn == 'function'))
+                        operation.callback.fn.call(operation.callback.scope || me, operation);
+                },
+                scope: me
+            })));
         }
 
         return me;

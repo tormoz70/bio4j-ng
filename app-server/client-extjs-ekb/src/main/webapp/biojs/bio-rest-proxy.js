@@ -100,41 +100,30 @@ Ext.define('Bio.data.RestProxy', {
 
     processResponse: function(success, operation, request, response, callback, scope) {
         var me = this,
-            reader,
-            result;
+            reader, responseData, result;
 
-        if (success === true) {
-            reader = me.getReader();
-
-            reader.applyDefaults = operation.action === 'read';
-
-            result = reader.read(me.extractResponseData(response));
-
-            Ext.apply(operation, {
-                response: response,
-                resultSet: result
-            });
-
-            operation.setCompleted();
-
-            if (result.success !== false) {
-
-                operation.commitRecords(result.records);
-                operation.setSuccessful();
-            } else {
-                operation.setException(result.message);
-                me.fireEvent('exception', this, response, operation);
-            }
-        } else {
-            me.setException(operation, response);
-            me.fireEvent('exception', this, response, operation);
+        if(operation.action !== 'crupdel') {
+            me.callParent(arguments);
+            return;
         }
 
 
-        if (typeof callback == 'function') {
-            callback.call(scope || me, operation);
+        responseData =  data = Ext.decode(response.responseText);//me.extractResponseData(response);
+
+        Ext.apply(operation, {
+            response: response,
+            responseData: responseData
+        });
+
+        if (success !== true) {
+            me.fireEvent('exception', this, operation);
         }
 
-        me.afterRequest(request, success);
+
+        if (typeof operation.callback == 'function') {
+            operation.callback.call(operation.scope || me, operation);
+        }
+
+        //me.afterRequest(request, success);
     }
 });
