@@ -8,6 +8,12 @@ import static java.util.Collections.unmodifiableList;
  * Пакет данных
  */
 public class StoreData {
+
+    /**
+     * id объекта Store на клиенте, которому предназначен данный ответ
+     */
+    private String storeId;
+
     /**
      * Начальная позиция
      */
@@ -91,5 +97,13 @@ public class StoreData {
 
     public void setResults(int results) {
         this.results = results;
+    }
+
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 }

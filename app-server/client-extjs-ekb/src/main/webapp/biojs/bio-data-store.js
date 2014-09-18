@@ -61,32 +61,6 @@ Ext.define('Bio.data.Store', {
         }, me);
     },
 
-//    loadForm: function(form, id, callback) {
-//        var me = this;
-//        me.load({
-//            id: id,
-//            callback: function(records, operation, success) {
-//                var f = form.getForm();
-//                f.trackResetOnLoad = true;
-//                if(records && (records.length > 0)) {
-//                    f.loadRecord(records[0]);
-//                    f.resetOriginal();
-//                    //f.reset();
-//                }
-//                if(callback)
-//                    callback();
-//            }
-//        });
-//    },
-
-//    storeForm: function(form) {
-//        var me = this;
-//        if(form.isDirty())
-//            form.updateRecord();
-//        else
-//            Ext.MessageBox.showDialog("Нет изменений!!!");
-//    },
-
     locateLocal: function(location) {
         var me = this,
             grid = me.ownerGrid,
@@ -141,21 +115,21 @@ Ext.define('Bio.data.Store', {
             operations.destroy = toDestroy;
         for(var operName in operations) {
             var oper = operations[operName];
-            oper.forEach(function(r) {
+            Ext.Array.forEach(oper, function(r) {
                 rows.push({
-                    internalId: r.data.internalId,
-                    changeType: operName,
+                    internalId: r.id,
+                    changeType: (operName == 'destroy' ? 'delete' : operName),
                     data: r.data
                 });
             });
         }
         if(rows.length == 0 && forcePost === true) {
-            var firstRow = (me.data.items && (me.data.items.length > 0)) ? me.data.items[0].data : undefined;
+            var firstRow = (me.data.items && (me.data.items.length > 0)) ? me.data.items[0] : undefined;
             if(firstRow)
                 rows.push({
-                    internalId: firstRow.internalId,
+                    internalId: firstRow.id,
                     changeType: 'update',
-                    data: firstRow
+                    data: firstRow.data
                 });
         }
         return rows;
@@ -171,7 +145,7 @@ Ext.define('Bio.data.Store', {
 
         if(slaveStores) {
             slavePostData = [];
-            slaveStores.forEach(function(s) {
+            Ext.Array.forEach(slaveStores, function(s) {
                 var post = s.getPostData({});
                 if (post)
                     slavePostData.push(post);
@@ -180,8 +154,8 @@ Ext.define('Bio.data.Store', {
 
         if(rows.length > 0) {
             return new Bio.request.store.PostData({
-                storeId: me.storeId,
                 bioCode: me.bioCode,
+                storeId: me.storeId,
                 modified: rows,
                 slavePostData: slavePostData
             });
@@ -189,16 +163,10 @@ Ext.define('Bio.data.Store', {
             return undefined;
     },
 
-    commitSaved: function(operation) {
-        // TODO update data in client datasets from response !!!!
-
-
-
-        operation.setCompleted();
-    },
-
     save: function(options) {
-        var me = this;
+        var me = this,
+            callback = options.callback,
+            callbackScope = options.scope;
 
         if (me.fireEvent('beforesave', options) !== false) {
             options = options || {};
@@ -211,11 +179,8 @@ Ext.define('Bio.data.Store', {
                 callback: function(operation) {
                     var me = this;
 
-                    me.commitSaved(operation);
-
                     me.fireEvent('savecomplete', me, operation);
-                    if(operation.callback && (typeof operation.callback.fn == 'function'))
-                        operation.callback.fn.call(operation.callback.scope || me, operation);
+                    Bio.tools.processCallback(callback, callbackScope || me, operation);
                 },
                 scope: me
             })));

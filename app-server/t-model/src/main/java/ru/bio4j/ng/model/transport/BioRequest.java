@@ -36,6 +36,11 @@ public class BioRequest {
     private String bioCode;
 
     /**
+     * id объекта Store на клиенте, который послал данный запрос
+     */
+    private String storeId;
+
+    /**
      * параметры информационного объекта
      */
     private List<Param> bioParams;
@@ -93,4 +98,11 @@ public class BioRequest {
         this.requestType = requestType;
     }
 
+    public String getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
+    }
 }

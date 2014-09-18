@@ -37,7 +37,7 @@ Ext.define('Bio.data.RestProxy', {
         var sort = null, sorters = options.sorters;
         if(sorters instanceof Array){
             sort = [];
-            sorters.forEach(function(e) {
+            Ext.Array.forEach(sorters, function(e) {
                 sort.push({
                     fieldName: e.property,
                     direction: e.direction
@@ -48,12 +48,14 @@ Ext.define('Bio.data.RestProxy', {
         if(options.id)
             request.jsonData = new Bio.request.store.GetRecord({
                 bioCode: store.bioCode,
+                storeId: store.storeId,
                 bioParams: params,
                 id: options.id
             });
         else
             request.jsonData = new Bio.request.store.GetDataSet({
                 bioCode: store.bioCode,
+                storeId: store.storeId,
                 bioParams: params,
                 totalCount: store.totalCount,
                 offset: offset,
@@ -108,7 +110,7 @@ Ext.define('Bio.data.RestProxy', {
         }
 
 
-        responseData =  data = Ext.decode(response.responseText);//me.extractResponseData(response);
+        responseData =  data = Ext.decode(response.responseText);
 
         Ext.apply(operation, {
             response: response,

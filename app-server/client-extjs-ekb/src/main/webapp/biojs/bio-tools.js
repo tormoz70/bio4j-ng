@@ -112,7 +112,7 @@ Bio.tools = function(){
 			target.attachEvent(taskType, functionRef);
 		},
 	
-		objToStr:function(obj){
+		dumpObject:function(obj){
 			var str = "";
 			for(var prop in obj)
 				str += obj + '.' + prop + '=' + obj[prop] + '\n';
@@ -311,6 +311,15 @@ Bio.tools = function(){
             if(cb && cbType === "function")
                 cb = { fn: cb };
             return cb;
+        },
+
+        processCallback: function(callback, scope, args) {
+            if(callback) {
+                if(typeof callback == 'function')
+                    callback.call(scope || me, args);
+                if (typeof callback.fn == 'function')
+                    callback.fn.call(callback.scope || scope, args);
+            }
         },
 
         truncDec: function(number) {

@@ -598,6 +598,9 @@ Ext.define('Ekb.form.OrgDetails', {
                         name: 'srooms-grid',
                         height: 180,
                         columnLines: true,
+                        selModel: {
+                            mode: 'MULTI'
+                        },
                         storeCfg: {
                             bioCode:'ekbp@cabinet.org-sroom-list',
                             pageSize: -1,
@@ -607,7 +610,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                         frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ekb.form.OrgDetails').getForm(),
                                         orgId = Bio.tools.tryParsInt(frm.findField('org_id').getValue()),
                                         orgIdParam = { org_id: orgId };
-                                    console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.objToStr(orgIdParam));
+                                    console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.dumpObject(orgIdParam));
                                     me.bioParams = Bio.tools.setBioParam(me.bioParams, orgIdParam);
                                 }
                             }
@@ -627,7 +630,6 @@ Ext.define('Ekb.form.OrgDetails', {
                             items: [
                                 {
                                     text: 'Добавить',
-                                    //scope: this,
                                     handler: function () {
                                         var me = this;
                                         var sroomGrid = me.ownerCt.ownerCt,
@@ -635,6 +637,19 @@ Ext.define('Ekb.form.OrgDetails', {
                                         if(Bio.tools.isDefined(sroomGrid)) {
                                             sroomGrid.store.insert(0, {});
                                             editor.startEdit(0, 0);
+                                        }
+                                    }
+                                },
+                                {
+                                    text: 'Удалить',
+                                    handler: function () {
+                                        var me = this;
+                                        var sroomGrid = me.ownerCt.ownerCt,
+                                            editor = sroomGrid.getPlugin('sroomRowEditor');
+                                        if(Bio.tools.isDefined(sroomGrid)) {
+                                            var selection = sroomGrid.getView().getSelectionModel().getSelection();
+                                            if (selection)
+                                                sroomGrid.store.remove(selection);
                                         }
                                     }
                                 }
@@ -683,8 +698,11 @@ Ext.define('Ekb.form.OrgDetails', {
 
                 form.postData({
                     callback: {
-                        fn: function() {
+                        fn: function(operation) {
                             var me = this;
+                            //alert("Saved!!!");
+                            if(operation.responseData.success === true)
+                                me.up('window').close();
                         },
                         scope: form
                     }
@@ -696,6 +714,7 @@ Ext.define('Ekb.form.OrgDetails', {
             margin: '0 20 25 0',
             handler: function () {
                 this.up('form').getForm().reset();
+                this.up('window').close();
             }
         }
     ]

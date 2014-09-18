@@ -305,69 +305,6 @@ Ext.override(Ext.toolbar.Paging, {
     }
 });
 
-Ext.override(Ext.form.Panel, {
-    /*
-     * resets originalValue in all fields
-     * which makes isDirty false
-     */
-    resetOriginal: function(){
-        var fields = this.getForm().getFields();
-        for(var i = 0; i < this.getForm().getFields().length; ++i){
-            fields.items[i].resetOriginalValue();
-        }
-    },
-
-    loadData: function(store, id, callback, scope) {
-        var me = this;
-        store.load({
-            id: id,
-            callback: function(records, operation, success) {
-                var f = me.getForm();
-                me.trackResetOnLoad = true;
-                if(records && (records.length > 0)) {
-                    me.getForm().loadRecord(records[0]);
-                    me.resetOriginal();
-                }
-                if(callback && typeof callback == 'function')
-                    callback.call(scope || me, records, operation, success);
-            }
-        });
-    },
-
-    postData: function(options) {
-        var me = this;
-
-        if (me && me.isValid() && me.isDirty()) {
-            me.updateRecord();
-            var rec = me.getRecord();
-            store = rec.store;
-            if(store) {
-                var innerGrids = Bio.tools.childByClassName(me.owner, 'Bio.grid.Panel'),
-                    innerStores = [];
-                if(innerGrids && innerGrids instanceof Array)
-                    innerGrids.forEach(function(g) { sroomStore.push(g); });
-
-                store.save({
-                    slaveStores: innerStores,
-                    forcePost: true,
-                    callback: options.callback
-                });
-            }
-        } else
-            Ext.Msg.show({
-                title: "Сохранение",
-                msg: "Нет чего сохранять!!!",
-                width: 300,
-                buttons: Ext.Msg.OK,
-                multiline: true,
-                fn: Ext.emptyFn(),
-                //animateTarget: 'addAddressBtn',
-                icon: Ext.window.MessageBox.INFO
-            });
-    }
-
-});
-
 // Localization
 
 Ext.override(Ext.view.AbstractView, {

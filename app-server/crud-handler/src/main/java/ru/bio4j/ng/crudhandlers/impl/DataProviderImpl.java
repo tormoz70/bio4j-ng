@@ -162,6 +162,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 }
 
                 StoreData data = new StoreData();
+                data.setStoreId(request.getStoreId());
                 data.setOffset(cur.getSelectSqlDef().getOffset());
                 data.setPageSize(cur.getSelectSqlDef().getPageSize());
                 data.setResults(totalCount);
@@ -175,7 +176,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         return response;
     }
 
-    private BioRespBuilder.Data processCursorAsSelectableSinglePage(final User usr, final SQLContext ctx, final BioCursor cursor) throws Exception {
+    private BioRespBuilder.Data processCursorAsSelectableSinglePage(final User usr, final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor) throws Exception {
         LOG.debug("Try open Cursor as SinglePage!!!");
         BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
             @Override
@@ -187,6 +188,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 //String preparedSQL = cur.getPreparedSql();
 
                 StoreData data = new StoreData();
+                data.setStoreId(request.getStoreId());
                 data.setOffset(cur.getSelectSqlDef().getOffset());
                 data.setPageSize(cur.getSelectSqlDef().getPageSize());
                 int totalCount = readStoreData(data, context, conn, cur);
@@ -222,6 +224,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 cursorDef.getSelectSqlDef().setParamValue(GetrowWrapper.PKVAL, request.getId());
 
                 StoreData data = new StoreData();
+                data.setStoreId(request.getStoreId());
                 readStoreData(data, context, conn, cursorDef);
 
                 result.packet(data);
@@ -276,7 +279,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             ctx.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor.getSelectSqlDef());
             ctx.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor.getSelectSqlDef());
             if(cursor.getSelectSqlDef().getPageSize() < 0) {
-                return processCursorAsSelectableSinglePage(usr, ctx, cursor);
+                return processCursorAsSelectableSinglePage(usr, request, ctx, cursor);
             }else {
                 ctx.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor.getSelectSqlDef());
                 return processCursorAsSelectableWithPagging(usr, request, ctx, cursor);
@@ -373,15 +376,16 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
 
 
-        List<BioResponse> slaveRespones = new ArrayList<>();
+        List<BioResponse> slaveResponses = new ArrayList<>();
         for(BioRequestJStorePost post : request.getSlavePostData()) {
             BioResponse rsp = processRequestPost(post, ctx, conn, cursorDef, firstRow, usr).build();
-            slaveRespones.add(rsp);
+            slaveResponses.add(rsp);
         }
-        if(slaveRespones.size() > 0)
-        result.slaveRespones(slaveRespones);
+        if(slaveResponses.size() > 0)
+            result.slaveResponses(slaveResponses);
 
         StoreData data = new StoreData();
+        data.setStoreId(request.getStoreId());
         data.setMetadata(new StoreMetadata());
         List<Field> cols = cursorDef.getFields();
         data.getMetadata().setFields(cols);

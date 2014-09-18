@@ -7,7 +7,6 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BioRespBuilder {
@@ -92,7 +91,7 @@ public class BioRespBuilder {
         private StoreData packet;
         private Sort sort;
         private Expression filter;
-        private List<BioResponse> slaveRespones;
+        private List<BioResponse> slaveResponses;
 
 
         public Data bioCode(String value) {
@@ -124,8 +123,8 @@ public class BioRespBuilder {
             return this;
         }
 
-        public Data slaveRespones(List<BioResponse> value) {
-            slaveRespones = value;
+        public Data slaveResponses(List<BioResponse> value) {
+            slaveResponses = value;
             return this;
         }
 
@@ -139,7 +138,7 @@ public class BioRespBuilder {
             response.setPacket(packet);
             response.setSort(sort);
             response.setFilter(filter);
-            response.setSlaveRespones(slaveRespones);
+            response.setSlaveResponses(slaveResponses);
             return response;
         }
 

@@ -1,11 +1,9 @@
 package ru.bio4j.ng.model.transport;
 
-import flexjson.JSON;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,7 +58,7 @@ public class BioResponse {
     /**
      * Ответы от дочерних post-запросов
      */
-    private List<BioResponse> slaveRespones;
+    private List<BioResponse> slaveResponses;
 
     /**
      * Фильтрация, которая использовалясь при запросе к БД
@@ -139,11 +137,11 @@ public class BioResponse {
         this.user = user;
     }
 
-    public List<BioResponse> getSlaveRespones() {
-        return slaveRespones;
+    public List<BioResponse> getSlaveResponses() {
+        return slaveResponses;
     }
 
-    public void setSlaveRespones(List<BioResponse> slaveRespones) {
-        this.slaveRespones = slaveRespones;
+    public void setSlaveResponses(List<BioResponse> slaveResponses) {
+        this.slaveResponses = slaveResponses;
     }
 }

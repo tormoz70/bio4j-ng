@@ -11,6 +11,11 @@ Ext.define('Bio.request.store.Request', {
      */
     bioParams: undefined,
 
+    /**
+     * id объекта Store, который послал данный запрос
+     */
+    storeId: undefined,
+
     constructor: function(config) {
         var me = this;
         Ext.apply(me, config);
