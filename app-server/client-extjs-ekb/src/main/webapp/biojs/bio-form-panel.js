@@ -90,11 +90,14 @@ Ext.override(Ext.form.Panel, {
                 if(innerGrids && innerGrids instanceof Array)
                     Ext.Array.forEach(innerGrids, function(g) { innerStores.push(g.store); });
 
+                Ext.MessageBox.wait("Сохранение...", "Подождите");
+
                 store.save({
                     slaveStores: innerStores,
                     forcePost: true,
                     callback: {
                         fn: function (operation) {
+                            Ext.MessageBox.hide();
                             me.processResponse(operation);
                             Bio.tools.processCallback(options.callback, options.scope || me, operation);
                         },
