@@ -60,7 +60,7 @@ Ext.define('Bio.grid.Panel', {
     metaIsChanged: function(meta) {
         var me = this,
             oldColumns = me.columnManager.columns,
-            fieldIndex, fieldsFound = 0;
+            fieldIndex, fieldsFound = 0, fieldsCount = 0;
         if(oldColumns.length == 0)
             return true;
         Ext.Array.forEach(oldColumns, function(c0) {
@@ -73,7 +73,11 @@ Ext.define('Bio.grid.Panel', {
                     fieldsFound++;
             }
         });
-        return meta.fields.length != fieldsFound;
+        Ext.Array.forEach(meta.fields, function (f) {
+            if(f.hidden !== true)
+                fieldsCount++;
+        });
+        return fieldsCount != fieldsFound;
     },
 
     recreateCols: function(store, meta) {
