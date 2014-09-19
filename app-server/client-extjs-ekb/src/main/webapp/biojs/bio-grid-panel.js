@@ -50,20 +50,37 @@ Ext.define('Bio.grid.Panel', {
         me.callParent(arguments);
 
         // adding system event handlers
-        me.addListener("headerclick", function (ct, column, e, t, eOpts) {
-            //var me = this;
-            //alert('Chpok!');
-            //me.bbar.doRefresh();
-        }, me);
+//        me.addListener("headerclick", function (ct, column, e, t, eOpts) {
+//        }, me);
+//
+//        me.addListener("afterrender", function (eOpts) {
+//        }, me);
+    },
 
-        me.addListener("afterrender", function (eOpts) {
-            //var me = this;
-            //me.store.load();
-        }, me);
+    metaIsChanged: function(meta) {
+        var me = this,
+            oldColumns = me.columnManager.columns,
+            fieldIndex, fieldsFound = 0;
+        if(oldColumns.length == 0)
+            return true;
+        Ext.Array.forEach(oldColumns, function(c0) {
+            if(c0.xtype != 'rownumberer') {
+                field = Ext.Array.findBy(meta.fields, function (f) {
+                    return f.name.toLowerCase() == c0.dataIndex.toLowerCase() &&
+                            f.type.toLowerCase() == c0.type.toLowerCase();
+                });
+                if(fieldIndex != -1)
+                    fieldsFound++;
+            }
+        });
+        return meta.fields.length != fieldsFound;
     },
 
     recreateCols: function(store, meta) {
         var me = this;
+        if(!me.metaIsChanged(meta))
+            return;
+
         var bool_renderer = function (value) {
             if (value === true) {
                 return "<img src='" + Bio.app.APP_URL + "/biojs/res/checked.gif' />";
@@ -72,7 +89,7 @@ Ext.define('Bio.grid.Panel', {
             }
             return value;
         };
-        var cols = [{xtype: 'rownumberer', text: "#"}];
+        var cols = [{xtype: 'rownumberer', text: "#", resizable: true, width: 30}];
         Ext.Array.forEach(meta.fields, function (f) {
             if (f && f != undefined && f.hidden === false) {
                 var xtp, etp, rdrr;
