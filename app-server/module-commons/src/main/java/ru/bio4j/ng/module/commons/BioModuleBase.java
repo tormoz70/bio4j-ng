@@ -47,16 +47,6 @@ public abstract class BioModuleBase implements BioModule {
             Document document = loadDocument(inputStream);
             cursor = CursorParser.pars(bioCode, document);
         }
-//        else {
-//            url = context.getBundle().getResource(path + ".sql");
-//            if(url != null) {
-//                LOG.debug("Loading cursor spec from \"{}\"", path + ".sql");
-//                InputStream inputStream = url.openStream();
-//                String sql = Utl.readStream(inputStream, "WINDOWS-1251");
-//                cursor = CursorParser.pars(bioCode, sql);
-//            } else
-//                throw new Exception(String.format("Resource %s not found in module!", path));
-//        }
         return cursor;
     }
 
@@ -67,21 +57,6 @@ public abstract class BioModuleBase implements BioModule {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
         return cursor;
     }
-
-//    @Override
-//    public BioCursor getCursor(BioRequest request) throws Exception {
-//        return getCursor(request.getBioCode());
-//        if(request instanceof BioRequestJStoreGetDataSet) {
-//            final BioRequestJStoreGetDataSet r = (BioRequestJStoreGetDataSet)request;
-//            cursor.getSelectSqlDef().setOffset(r.getOffset());
-//            cursor.getSelectSqlDef().setPageSize(r.getPageSize());
-//            cursor.getSelectSqlDef().setLocation(r.getLocation());
-//            cursor.getSelectSqlDef().setFilter(r.getFilter());
-//            cursor.getSelectSqlDef().setSort(r.getSort());
-//        }
-//        cursor.setParams(request.getBioParams());
-//        return cursor;
-//    }
 
     private static final String SQL_CONTEXT_CONFIG_FILE_NAME = "sql-context.config";
     private Configurator<SQLContextConfig> configurator = new Configurator<>(SQLContextConfig.class);
