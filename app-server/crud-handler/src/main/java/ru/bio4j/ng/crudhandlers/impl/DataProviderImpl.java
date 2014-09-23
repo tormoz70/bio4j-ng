@@ -111,7 +111,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                     break;
                 }
             }
-            //data.getMetadata().setFields(cols);
             data.setRows(rows);
         }
         return totalCount;
@@ -264,7 +263,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     public BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception {
         LOG.debug("Process {} request...", request);
         try {
-            String moduleKey = Utl.extractModuleKey(request.getBioCode());
+            String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
             BioModule module = moduleProvider.getModule(moduleKey);
             BioCursor cursor = module.getCursor(request.getBioCode());
             initSelectSqlDef(cursor.getSelectSqlDef(), request);
@@ -293,7 +292,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     public BioRespBuilder.Data getRecord(final BioRequestJStoreGetRecord request) throws Exception {
         LOG.debug("Process {} request...", request);
         try {
-            String moduleKey = Utl.extractModuleKey(request.getBioCode());
+            String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
             BioModule module = moduleProvider.getModule(moduleKey);
             BioCursor cursor = module.getCursor(request.getBioCode());
             cursor.getSelectSqlDef().setParams(request.getBioParams());
@@ -358,7 +357,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
-        final String moduleKey = Utl.extractModuleKey(request.getBioCode());
+        final String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
         final BioModule module = moduleProvider.getModule(moduleKey);
         final BioCursor cursorDef = module.getCursor(request.getBioCode());
         cursorDef.getSelectSqlDef().setParams(request.getBioParams());
@@ -400,7 +399,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         LOG.debug("Process {} request...", request);
         try {
             final User usr = request.getUser();
-            final String moduleKey = Utl.extractModuleKey(request.getBioCode());
+            final String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
             final BioModule module = moduleProvider.getModule(moduleKey);
             final SQLContext ctx = sqlContextProvider.selectContext(module);
             BioRespBuilder.Data response = ctx.execBatch(new SQLAction<Object, BioRespBuilder.Data>() {
@@ -416,28 +415,28 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-    @Override
-    public String getDataTest() throws Exception {
-        SQLContext globalSQLContext = sqlContextProvider.globalContext();
-        return globalSQLContext.execBatch(new SQLActionScalar<String>() {
-            @Override
-            public String exec(SQLContext context, Connection conn) throws Exception {
-            StringBuilder rslt = new StringBuilder();
-            LOG.debug("Opening cursor...");
-            try(SQLCursor c = context.CreateCursor()
-                .init(conn, "select username from user_users", null)
-                .open()) {
-                LOG.debug("Cursor opened...");
-                while (c.reader().next()){
-                    LOG.debug("Reading field USERNAME...");
-                    String s = c.reader().getValue("USERNAME", String.class);
-                    rslt.append(s+";");
-                }
-            }
-            return rslt.toString();
-            }
-        });
-    }
+//    @Override
+//    public String getDataTest() throws Exception {
+//        SQLContext globalSQLContext = sqlContextProvider.globalContext();
+//        return globalSQLContext.execBatch(new SQLActionScalar<String>() {
+//            @Override
+//            public String exec(SQLContext context, Connection conn) throws Exception {
+//            StringBuilder rslt = new StringBuilder();
+//            LOG.debug("Opening cursor...");
+//            try(SQLCursor c = context.CreateCursor()
+//                .init(conn, "select username from user_users", null)
+//                .open()) {
+//                LOG.debug("Cursor opened...");
+//                while (c.reader().next()){
+//                    LOG.debug("Reading field USERNAME...");
+//                    String s = c.reader().getValue("USERNAME", String.class);
+//                    rslt.append(s+";");
+//                }
+//            }
+//            return rslt.toString();
+//            }
+//        });
+//    }
 
     @Validate
     public void doStart() throws Exception {

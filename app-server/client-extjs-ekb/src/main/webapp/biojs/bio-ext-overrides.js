@@ -92,6 +92,11 @@ Ext.override(Ext.data.Connection, {
 
     request : function(options) {
         var me = this;
+        var gp = {
+            bm: Bio.app.APP_MODULE_KEY
+        };
+        Ext.apply(options.params, gp);
+
         return Bio.login.getUser({
             fn: function(usr) {
                 var o = Ext.apply({}, options);

@@ -9,7 +9,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
  */
 public interface DataProvider extends BioService {
 
-    String getDataTest() throws Exception;
+//    String getDataTest() throws Exception;
     BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception;
     BioRespBuilder.Data getRecord(final BioRequestJStoreGetRecord request) throws Exception;
     BioRespBuilder.Data postDataSet(final BioRequestJStorePost request) throws Exception;

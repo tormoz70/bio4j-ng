@@ -100,7 +100,7 @@ Ext.define('Ekb.form.OrgDetails', {
                         {
                             xtype: 'biocombo', name: 'holding_id',
                             minChars: 0,
-                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.holding'}),
+                            store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.holding'}),
                             valueField: 'org_id', displayField: 'org_name',
                             fieldLabel: "Киносеть", allowBlank: true,
                             queryParam: 'orgname',
@@ -145,7 +145,7 @@ Ext.define('Ekb.form.OrgDetails', {
                         {
                             xtype: 'biocombo', name: 'kladr_code_r',
                             minChars: 0,
-                            store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.region'}),
+                            store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.region'}),
                             valueField: 'region_uid', displayField: 'region',
                             fieldLabel: "Регион", allowBlank: true,
                             margin: '0',
@@ -168,7 +168,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             xtype: 'biocombo', name: 'kladr_code_np',
                             minChars: 0,
                             store: Ext.create('Bio.data.Store', {
-                                bioCode: 'ekbp@cabinet.combo.city',
+                                bioCode: 'cabinet.combo.city',
                                 listeners: {
                                     beforeload: function(store, operation, eOpts) {
                                         var me = store,
@@ -200,7 +200,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             xtype: 'biocombo', name: 'kladr_code',
                             minChars: 0,
                             store: Ext.create('Bio.data.Store', {
-                                bioCode: 'ekbp@cabinet.combo.street',
+                                bioCode: 'cabinet.combo.street',
                                 listeners: {
                                     beforeload: function(store, operation, eOpts) {
                                         var me = store,
@@ -424,7 +424,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     name: 'id_prop',
                                     fieldLabel: 'Форма собственности',
                                     flex: 0,
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.prop'}),
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.prop'}),
                                     matchFieldWidth: false,
                                     listConfig: {
                                         width: 380
@@ -470,7 +470,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     name: 'state',
                                     fieldLabel: 'Состояние',
                                     pageSize: -1,
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.state'})
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.state'})
                                 },
                                 {
                                     xtype: 'datefield',
@@ -501,7 +501,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     name: 'closereason_id',
                                     fieldLabel: 'Прим. к сост.',
                                     pageSize: -1,
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.close-reason'})
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.close-reason'})
                                 },
                                 {
                                     xtype: 'biocombo',
@@ -509,7 +509,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     name: 'location',
                                     fieldLabel: 'Расположение',
                                     pageSize: -1,
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.location'})
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.location'})
                                 }
                             ]
                         },
@@ -521,7 +521,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                     labelWidth: 110,
                                     name: 'id_vnd',
                                     fieldLabel: 'Поставщик ПО',
-                                    store: Ext.create('Bio.data.Store', {bioCode: 'ekbp@cabinet.combo.soft-vendor'})
+                                    store: Ext.create('Bio.data.Store', {bioCode: 'cabinet.combo.soft-vendor'})
                                 },
                                 {
                                     xtype: 'biocombo',
@@ -602,7 +602,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             mode: 'MULTI'
                         },
                         storeCfg: {
-                            bioCode:'ekbp@cabinet.org-sroom-list',
+                            bioCode:'cabinet.org-sroom-list',
                             pageSize: -1,
                             listeners: {
                                 beforeload: function(store, operation, eOpts) {
@@ -675,7 +675,7 @@ Ext.define('Ekb.form.OrgDetails', {
         afterrender: function() {
             var me = this,
                 store = Ext.create('Bio.data.Store', {
-                    bioCode: 'ekbp@cabinet.get-org'
+                    bioCode: 'cabinet.get-org'
                     //autoSync: true
                 }),
                 seldId = (me.ekb ? me.ekb.orgId : null);

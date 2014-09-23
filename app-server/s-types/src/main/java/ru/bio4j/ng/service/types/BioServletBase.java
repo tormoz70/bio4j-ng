@@ -18,6 +18,7 @@ import java.io.*;
 public class BioServletBase extends HttpServlet {
 
     public final static String BIODEBUG_PARAM_NAME = "bioDebug";
+    public final static String MODULE_PARAM_NAME = "bm";
     public final static String UID_PARAM_NAME = "uid";
     public final static String FORWARD_URL_PARAM_NAME = "forwardURL";
 

@@ -23,7 +23,7 @@ Ext.onReady(function () {
         rowLines: true,
         columnLines: true,
         storeCfg: {
-            bioCode:'ekbp@cabinet.org-filtered-list',
+            bioCode:'cabinet.org-filtered-list',
             bioParams: [
                 {
                     name:"prm1",

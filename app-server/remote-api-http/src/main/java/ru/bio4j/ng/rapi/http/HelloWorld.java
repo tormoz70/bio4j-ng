@@ -28,7 +28,7 @@ public class HelloWorld extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         try {
-            userName = this.owner.getDataProvider().getDataTest();
+            userName = null; //this.owner.getDataProvider().getDataTest();
             response.getWriter().append("OK. UserName: " + userName);
             LOG.debug("Request processed (Method:GET). UserName: " + userName);
 

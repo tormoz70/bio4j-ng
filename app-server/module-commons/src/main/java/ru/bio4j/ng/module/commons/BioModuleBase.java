@@ -55,6 +55,8 @@ public abstract class BioModuleBase implements BioModule {
     @Override
     public BioCursor getCursor(String bioCode) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
+        if(cursor == null)
+            throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getSelfModuleKey()));
         return cursor;
     }
 

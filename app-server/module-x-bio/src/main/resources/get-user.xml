@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="false">
+	<SQL action="select">
+		<text><![CDATA[
+                
+        ]]></text>
+	</SQL>
+ 	<fields>
+		<field name="org_id" type="integer" header="ID кинотеатра" pk="true"/>
+        <field name="usr_uid" type="string" header="ID пользователя"/>
+        <field name="user_group" type="integer" header="ID роли"/>
+        <field name="ogrn" type="string" header="ОГРН"/>
+        <field name="inn" type="string" header="ИНН" />
+        <field name="orgname" type="string" header="Кинотеатр"/>
+        <field name="pasport" type="string" header="Паспорт"/>
+        <field name="physic_person" type="boolean" header="Физ.лицо"/>
+        <field name="orgtype" type="string" header="Тип организации"/>
+        <field name="kladr_code_r" type="string"/>
+        <field name="kladr_code_np" type="string"/>
+        <field name="kladr_code" type="string"/>
+        <field name="address" type="string"/>
+        <field name="holding_id" type="integer" header="ID Киносети"/>
+        <field name="hldname" type="string" header="Название киносети"/>
+        <field name="email" type="string" header="Email"/>
+        <field name="dog_num" type="string" header="Регистрационный номер (РН)"/>
+        <field name="dog_date" type="date" header="Дата формирования РН"/>
+        <field name="phone_fax" type="string" header="Телефон/факс"/>
+        <field name="respons_person" type="string" header="Ответственное лицо"/>
+        <field name="glavbuch_name" type="string" header="ФИО главного бухгалтера кинотеатра"/>
+        <field name="glavbuch_email" type="string" header="E-mail бухгалтерии"/>
+        <field name="glavbuch_phone" type="string" header="Телефон бухгалтерии"/>
+        <field name="autoinfo_phone" type="string" header="Телефон автоинформатора"/>
+        <field name="org_www" type="string" header="Сайт"/>
+        <field name="automatic" type="boolean" header="Наличие автоматизации системы продажи билетов"/>
+        <field name="id_prop" type="integer" header="Id формы собственности"/>
+        <field name="original_dog" type="boolean" header="Наличие оригинала регистрационной карты"/>
+        <field name="state" type="integer" header="Код состояния"/>
+        <field name="state_date" type="date" header="Дата смены состояния"/>
+        <field name="location" type="integer" header="Код расположения"/>
+        <field name="test" type="boolean" header="Тестовый"/>
+        <field name="modern" type="boolean" header="Современный"/>
+        <field name="registred" type="boolean" header="Зарегистрирован"/>
+        <field name="id_vnd" type="integer" header="Id Поставщика ПО"/>
+        <field name="closereason_id" type="integer" header="Id причины закрытия" useNull="false"/>
+        <field name="time_zone" type="integer" header="Часовой пояс"/>
+        <field name="comments" type="string" header="Комментарии"/>
+        <field name="mechanic_list" type="string" header="Оборудование"/>
+        <field name="orgname_jur" type="string" header="Наименование юридического лица"/>
+        <field name="address_jur" type="string" header="Адрес юридического лица"/>
+        <field name="state_mat" type="string" header="Имущественное состояние"/>
+        <field name="suspended" type="date" format="dd.MM.yyyy" header="Приостановлен до"/>
+        <field name="recid_io" type="integer"/>
+        <field name="address_io" type="string"/>
+        <field name="orgname_io" type="string"/>
+        <field name="sroomcount_io" type="string"/>
+        <field name="placecount_io" type="string"/>
+        <field name="ttlspace_io" type="string"/>
+        <field name="statemat_io" type="string"/>
+        <field name="equipment_io" type="string"/>
+        <field name="builtyear_io" type="string"/>
+        <field name="note_io" type="string"/>
+        <field name="cinemacntnear_io" type="string"/>
+        <field name="project_io" type="string"/>
+        <field name="verstate" type="string"/>
+        <field name="sroom_cnt" type="integer"/>
+        <field name="splace_cnt" type="integer"/>
+        <field name="space_ttl" type="decimal"/>
+        <field name="sroom_cnt0" type="integer"/>
+        <field name="silence_period" type="integer"/>
+    </fields>
+</cursor>
+

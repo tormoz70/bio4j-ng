@@ -1,4 +1,4 @@
-package ru.bio4j.ng.module.ekb.impl;
+package ru.bio4j.ng.module.cmon.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
@@ -13,11 +13,11 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
 @Provides(specifications = BioModule.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
-                value = "ekbp",
+                value = "cmon",
                 type = "java.lang.String"
         )})
-public class EkbApplicationImpl extends BioModuleBase {
-    private static final Logger LOG = LoggerFactory.getLogger(EkbApplicationImpl.class);
+public class CmonApplicationImpl extends BioModuleBase {
+    private static final Logger LOG = LoggerFactory.getLogger(CmonApplicationImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;
@@ -29,7 +29,7 @@ public class EkbApplicationImpl extends BioModuleBase {
 
     @Override
     protected String getSelfModuleKey() {
-        return "ekbp";
+        return "cmon";
     }
 
     @Context
@@ -43,7 +43,7 @@ public class EkbApplicationImpl extends BioModuleBase {
 
     @Override
     public String getDescription() {
-        return "E-Kinobilet application";
+        return "CMON application";
     }
 
 

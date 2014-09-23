@@ -78,9 +78,10 @@ public class SecurityFilter implements Filter {
             LOG.debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
             initSecurityHandler(req.getServletContext());
+            final String moduleKey = req.getParameter(BioServletBase.MODULE_PARAM_NAME);
             final String uid = req.getParameter(BioServletBase.UID_PARAM_NAME);
             if(securityHandler != null) {
-                User user = securityHandler.getUser(uid);
+                User user = securityHandler.getUser(moduleKey, uid);
                 processUser(user, req, resp, chn);
             } else {
                 final String destination = this.forwardURL+"?uid="+uid;

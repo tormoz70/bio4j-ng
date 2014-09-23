@@ -18,12 +18,12 @@ Ext.onReady(function () {
     Ext.tip.QuickTipManager.init();
 
     var grid = Ext.create('Bio.grid.Panel', {
-        id: 'ekb-orgs-grid',
+        id: 'cmon-orgs-grid',
         title: 'Default Tab',
         rowLines: true,
         columnLines: true,
         storeCfg: {
-            bioCode:'ekbp@cabinet.org-filtered-list',
+            bioCode:'cabinet.org-filtered-list',
             bioParams: [
                 {
                     name:"prm1",
@@ -50,7 +50,7 @@ Ext.onReady(function () {
                     text: 'Детали',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-orgs-grid');
+                        var grd = Ext.getCmp('cmon-orgs-grid');
                         var seldId = grd.getSelectedId();
                         var win2 = Ext.create('Ext.window.Window', {
                             title: 'Детальная информация по кинотеатру',

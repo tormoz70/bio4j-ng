@@ -18,10 +18,10 @@ Ext.onReady(function () {
     Ext.tip.QuickTipManager.init();
 
     var grid = Ext.create('Bio.grid.Panel', {
-        id: 'ekb-films-grid',
+        id: 'cmon-films-grid',
         title: 'Default Tab',
         storeCfg: {
-            bioCode:'ekbp@cabinet.film-registry',
+            bioCode:'cabinet.film-registry',
             bioParams: [
                 {
                     name:"prm1",
@@ -47,7 +47,7 @@ Ext.onReady(function () {
                     text: 'Детали',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-films-grid');
+                        var grd = Ext.getCmp('cmon-films-grid');
                         var win2 = Ext.create('Ext.window.Window', {
                             //autoHeight: true,
                             height: 600,

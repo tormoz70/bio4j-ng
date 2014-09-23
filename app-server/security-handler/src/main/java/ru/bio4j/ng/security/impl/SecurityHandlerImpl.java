@@ -7,10 +7,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.BioCursor;
-import ru.bio4j.ng.database.api.SQLActionScalar;
-import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLCursor;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioModule;
@@ -58,7 +55,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     }
 
     @Override
-    public User getUser(final String loginOrUid) throws Exception {
+    public User getUser(final String moduleKey, final String loginOrUid) throws Exception {
         if(isNullOrEmpty(loginOrUid))
             throw new BioError.Login.BadLogin();
         final String uid = loginOrUid.contains("/") ? null : loginOrUid;
@@ -76,34 +73,34 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         if(!login.equals("root/root"))
             throw new BioError.Login.BadLogin();
 
-        BioModule module = moduleProvider.getModule("bio");
-        BioCursor cursor = module.getCursor("bio@get-user");
-        SQLContext globalSQLContext = sqlContextProvider.globalContext();
-        User newUsr = globalSQLContext.execBatch(new SQLActionScalar<User>() {
+        final BioModule module = moduleProvider.getModule(moduleKey);
+        final BioModule bioModule = moduleProvider.getModule("bio");
+        final BioCursor cursor = bioModule.getCursor("get-user");
+        final SQLContext sqlContext = sqlContextProvider.selectContext(module);
+        User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
             @Override
-            public User exec(SQLContext context, Connection conn) throws Exception {
-            LOG.debug("User {} logging in...", login);
-            try(SQLCursor c = context.CreateCursor()
-                    .init(conn, "select username from user_users", null)
-                    .open()) {
-                if (c.reader().next()){
-                    LOG.debug("User found!");
-                    String s = c.reader().getValue("USERNAME", String.class);
-                    User usr = new User();
-                    usr.setUid("test-user-uid");
-                    usr.setLogin("root");
-                    usr.setFio("Test User FIO");
-                    usr.setRoles("*");
-                    usr.setGrants("*"
-                    );
-                    LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
-                    return usr;
+            public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                LOG.debug("User {} logging in...", login);
+                try(SQLCursor c = context.CreateCursor()
+                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), null)
+                        .open()) {
+                    if (c.reader().next()){
+                        LOG.debug("User found!");
+                        String s = c.reader().getValue("USERNAME", String.class);
+                        User usr = new User();
+                        usr.setUid("test-user-uid");
+                        usr.setLogin("root");
+                        usr.setFio("Test User FIO");
+                        usr.setRoles("*");
+                        usr.setGrants("*");
+                        LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
+                        return usr;
+                    }
                 }
+                LOG.debug("User not found!");
+                return null;
             }
-            LOG.debug("User not found!");
-            return null;
-            }
-        });
+        }, cursor);
         storeUser(newUsr);
         return newUsr;
     }

@@ -40,9 +40,10 @@ public class BioServletApiBase extends BioServletBase {
         final HttpServletRequest rqst = request;
         final HttpServletResponse rspns = response;
         final String method = rqst.getMethod();
+        final String moduleKey = rqst.getParameter(MODULE_PARAM_NAME);
         final String userUID = rqst.getParameter(UID_PARAM_NAME);
 
-        final User usr = securityHandler.getUser(userUID);
+        final User usr = securityHandler.getUser(moduleKey, userUID);
 
         final String requestType = rqst.getParameter(REQUEST_TYPE_PARAM_NAME);
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
@@ -73,6 +74,7 @@ public class BioServletApiBase extends BioServletBase {
                     " - Error: {}", bioRequestJson, e.getMessage());
             throw e;
         }
+        bioRequest.setModuleKey(moduleKey);
         bioRequest.setRequestType(requestType);
         bioRequest.setUser(usr);
 

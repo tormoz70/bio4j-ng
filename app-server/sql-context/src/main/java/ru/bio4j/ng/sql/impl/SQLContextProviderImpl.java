@@ -20,12 +20,12 @@ import ru.bio4j.ng.service.types.BioServiceBase;
 public class SQLContextProviderImpl extends BioServiceBase implements SQLContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(SQLContextProviderImpl.class);
 
-    private SQLContext globalSQLContext;
-
-    @Override
-    public SQLContext globalContext() throws Exception {
-        return globalSQLContext;
-    }
+//    private SQLContext globalSQLContext;
+//
+//    @Override
+//    public SQLContext globalContext() throws Exception {
+//        return globalSQLContext;
+//    }
 
     @Override
     public SQLContext selectContext(BioModule module) throws Exception {
@@ -33,7 +33,7 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
         SQLContext ctx = module.getSQLContext();
         if(ctx == null) {
             LOG.debug("Local sqlContext not defined. Global sqlContext will be used.");
-            ctx = globalSQLContext;
+            //ctx = globalSQLContext;
         } else
             LOG.debug("Local sqlContext defined and will be used.");
 
@@ -52,18 +52,18 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
             return;
         }
 
-        if(globalSQLContext == null) {
-            LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
-            try {
-                SQLContextConfig cfg = new SQLContextConfig();
-                Utl.applyValuesToBean(configProvider.getConfig(), cfg);
-                globalSQLContext = SQLContextFactory.create(cfg);
-            } catch (Exception e) {
-                LOG.error("Error while creating SQLContext!", e);
-            }
-        } else {
-
-        }
+//        if(globalSQLContext == null) {
+//            LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
+//            try {
+//                SQLContextConfig cfg = new SQLContextConfig();
+//                Utl.applyValuesToBean(configProvider.getConfig(), cfg);
+//                globalSQLContext = SQLContextFactory.create(cfg);
+//            } catch (Exception e) {
+//                LOG.error("Error while creating SQLContext!", e);
+//            }
+//        } else {
+//
+//        }
 
         this.redy = true;
         LOG.debug("Started");

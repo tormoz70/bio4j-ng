@@ -8,6 +8,8 @@ import java.util.List;
  */
 public class BioRequest {
 
+    private String moduleKey;
+
     /**
      * Тип запроса - используется для мапинга на router
      */
@@ -104,5 +106,13 @@ public class BioRequest {
 
     public void setStoreId(String storeId) {
         this.storeId = storeId;
+    }
+
+    public String getModuleKey() {
+        return moduleKey;
+    }
+
+    public void setModuleKey(String moduleKey) {
+        this.moduleKey = moduleKey;
     }
 }

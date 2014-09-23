@@ -116,26 +116,26 @@ public class JsonUtlTest {
 
     @Test(enabled = true)
     public void bdecode3() throws Exception {
-        String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
+        String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
         BioRequestJStoreGetDataSet rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
-        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[]}";
+        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[]}";
         rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
-        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"ekbp@cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":null}";
+        json = "{\"bioModuleKey\":\"\",\"bioCode\":\"cabinet.film-registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":null}";
         rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
     }
 
     @Test(enabled = true)
     public void bdecode4() throws Exception {
-        String json = "{\"bioCode\":\"ekbp@cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":{}}]}";
+        String json = "{\"bioCode\":\"cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":{}}]}";
         BioRequest bioRequest = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertEquals("org_id", bioRequest.getBioParams().get(0).getName());
         Assert.assertNull(bioRequest.getBioParams().get(0).getValue());
     }
 
-    private static final String tstPost = "{\"bioCode\":\"ekbp@cabinet.org-sroom-list\",\"bioParams\":[{\"name\":\"id_org\",\"value\":305}],\"modified\":[{\"changeType\":\"update\",\"class\":\"ru.bio4j.ng.model.transport.jstore.StoreRow\",\"values\":[533,305,\"1111\",100]}]}";
+    private static final String tstPost = "{\"bioCode\":\"cabinet.org-sroom-list\",\"bioParams\":[{\"name\":\"id_org\",\"value\":305}],\"modified\":[{\"changeType\":\"update\",\"class\":\"ru.bio4j.ng.model.transport.jstore.StoreRow\",\"values\":[533,305,\"1111\",100]}]}";
     @Test(enabled = true)
     public void bdecode5() throws Exception {
         BioRequest bioRequest = Jsons.decode(tstPost, BioRequestJStorePost.class);
