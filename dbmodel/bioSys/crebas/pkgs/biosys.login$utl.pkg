@@ -59,6 +59,8 @@ IS
     );
     type usr_tbl is table of usr_rec;
 
+    procedure init_defaults_data;
+
     procedure set_context_value(p_name in varchar2, p_value in varchar2);
 
     function get_context_value(p_name in varchar2) return varchar2;
@@ -93,6 +95,13 @@ IS
 
     function generate_pwd return varchar2;
 
+    procedure updins_role(
+        p_role_uid in urole.role_uid%type,
+        p_aname in urole.aname%type,
+        p_is_sys in urole.is_sys%type,
+        p_adesc in urole.adesc%type);
+
+    function get_usr(p_login in varchar2) return usr_tbl pipelined;
 END;
 /
 CREATE OR REPLACE PACKAGE BODY biosys.login$utl
@@ -360,73 +369,18 @@ IS
     return null;
   end;
 
-  function get_usr(p_usr_uid in t_uid) return usr_tbl pipelined
+  function get_usr(p_login in varchar2) return usr_tbl pipelined
   is
-    --v_group_id number(18) := -1;
+    v_usr_uid t_uid;
     vOrgRec org_rec;
     vRslt usr_rec;
     v_is_dbg pls_integer;
   begin
-
-
-    --dbms_output.put_line('v_org_id:'||v_org_id||', v_group_id:'||v_group_id);
-    /*select a.*
-      into vOrgRec
-      from usr u
-        left join org a on a.org_id = u.org_id
-     where u.usr_uid = upper(p_usr_uid);*/
-
-    select
-    u.usr_uid,                    -- uid пользователя
-    u.usr_login,                  -- Логин пользователя
-    u.fio_fam,                    -- Фамилия пользователя
-    u.fio_fname,                  -- Имя пользователя
-    u.fio_sname,                  -- Отчество пользователя
-    u.reg_date,                   -- Дата регистрации
-    get_usr_roles(u.usr_uid),     -- список ролей пользователя (разделитель ';')
-    get_usr_grants(u.usr_uid),    -- список разрешений пользователя (разделитель ';')
-    u.email_addr,                 -- список эл. адресов пользователя
-    u.usr_phone,                  -- список телефонов пользователя
-    u.org_id,                     -- id подразделения пользователя
-    o.aname,                      -- имя подразделения пользователя
-    o.adesc,                      -- описание подразделения пользователя
-    get_org_path(u.org_id),       -- (вычисляемое) - путь подразделения пользователя (описание)
-    get_org_idpath(u.org_id),     -- (вычисляемое) - путь подразделения пользователя (ids)
-    o.usr_uid,                    -- (вычисляемое) - UID пользователя - владельца рабочего пространства
-    confirmed,                    -- Согласован
-    garbaged,                     -- В корзине
-    '0',                          -- (вычисляемое) - Заблокирован
-    usr_has_role(u.usr_uid, cs_role_debug) as is_debug,              -- (вычисляемое) - '1' - имеет роль debug
-    usr_has_role(u.usr_uid, cs_role_admin) as is_admin,              -- (вычисляемое) - '1' - имеет роль admin
-    usr_has_role(u.usr_uid, cs_role_wsadmin) as is_wsadmin,          -- (вычисляемое) - '1' - имеет роль wsowner - владелец рабочего пространства
-    usr_has_role(u.usr_uid, cs_role_bioroot) as is_bioroot,          -- (вычисляемое) - '1' - имеет роль bioroot
-    extinfo                       -- Доп инф.
-    into vRslt
-    from usr u
-      left join (
-        select o1.*, w.usr_uid from org o1
-          inner join uworkspace w on w.workspace_id = o1.workspace_id
-      ) o on o.org_id = u.org_id
-
-    where u.usr_uid = upper(p_usr_uid);
-
+    check_login(p_login, v_usr_uid);
+    select * into vRslt
+      from usrs u
+     where u.usr_uid = upper(v_usr_uid);
     pipe row(vRslt);
-  end;
-
-  procedure get_login(p_usr_uid in varchar2, v_login out varchar2, v_password out varchar2)
-  is
-  begin
-    select a.usr_login, a.usr_pwd
-      into v_login, v_password
-      from usr a
-     where a.usr_uid = upper(p_usr_uid);
-     v_password := login$utl.decrypt_pwd(v_password);
-  exception
-    when NO_DATA_FOUND then
-    begin
-      v_login := null;
-      v_password := null;
-    end;
   end;
 
   procedure set_context_value(p_name in varchar2, p_value in varchar2)
@@ -471,8 +425,8 @@ IS
     updins_role(cs_role_debug, 'Тестировщик', '0', 'Доступ к отладочной информации');
     updins_role(cs_role_admin, 'Суперпользователь', '0', 'Неограниченный доступ ко всем функциям системы, кроме управления доступом');
     updins_role(cs_role_wsadmin, 'Владелец', '0', 'Неограниченный доступ ко всем функциям системы, включая управления доступом');
-    --updins_role(cs_role_user, 'Пользователь', '0', 'Обычный пользователь');
-    --updins_role(cs_role_guest, 'Гость', '0', 'Гость');
+    updins_role(cs_role_user, 'Пользователь', '0', 'Обычный пользователь');
+    updins_role(cs_role_guest, 'Гость', '0', 'Гость');
 
     -- создаем системного пространство "biows"
     insert into uworkspace(workspace_id, usr_uid, aname, adesc)

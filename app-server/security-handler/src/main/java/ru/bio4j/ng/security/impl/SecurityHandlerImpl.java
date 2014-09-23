@@ -70,8 +70,16 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                 throw new BioError.Login.LoginExpired();
         }
 
-        if(!login.equals("root/root"))
-            throw new BioError.Login.BadLogin();
+        if(login.equals("root/root")) {
+            User usr = new User();
+            usr.setUid("test-user-uid");
+            usr.setLogin("root");
+            usr.setFio("Test User FIO");
+            usr.setRoles("*");
+            usr.setGrants("*");
+            storeUser(usr);
+            return usr;
+        }
 
         final BioModule module = moduleProvider.getModule(moduleKey);
         final BioModule bioModule = moduleProvider.getModule("bio");
@@ -81,18 +89,19 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             @Override
             public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
                 LOG.debug("User {} logging in...", login);
+                cur.getSelectSqlDef().setParamValue("p_login", login);
                 try(SQLCursor c = context.CreateCursor()
-                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), null)
+                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
                         .open()) {
                     if (c.reader().next()){
                         LOG.debug("User found!");
                         String s = c.reader().getValue("USERNAME", String.class);
                         User usr = new User();
-                        usr.setUid("test-user-uid");
-                        usr.setLogin("root");
-                        usr.setFio("Test User FIO");
-                        usr.setRoles("*");
-                        usr.setGrants("*");
+                        usr.setUid(c.reader().getValue("usr_uid", String.class));
+                        usr.setLogin(c.reader().getValue("usr_login", String.class));
+                        usr.setFio(c.reader().getValue("usr_fio", String.class));
+                        usr.setRoles(c.reader().getValue("usr_roles", String.class));
+                        usr.setGrants(c.reader().getValue("usr_grants", String.class));
                         LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
                         return usr;
                     }
@@ -101,6 +110,8 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                 return null;
             }
         }, cursor);
+        if(newUsr == null)
+            throw new BioError.Login.BadLogin();
         storeUser(newUsr);
         return newUsr;
     }
