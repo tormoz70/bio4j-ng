@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.bio4j.ng</groupId>
     <artifactId>app-server</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -15,8 +15,8 @@
         <distr.depends>${distr.base}/dependencies</distr.depends>
         <distr.bundles>${distr.depends}/bundle</distr.bundles>
         <distr.install>${distr.depends}/install</distr.install>
-        <distr.modules>${distr.depends}/modules</distr.modules>
         <distr.webapps>${distr.depends}/webapps</distr.webapps>
+        <distr.modules>${distr.depends}/modules</distr.modules>
         <distr.deploy>../as-distribution/target</distr.deploy>
 
         <testng.version>6.7</testng.version>
@@ -344,31 +344,38 @@
                 <!--bio-modules-->
                 <module>module-commons</module>
                 <module>module-provider</module>
-                <module>module-x-bio</module>
 
                 <!-- Special services -->
                 <!-- Distribution -->
                 <!--<module>as-distribution</module>-->
                 <module>as-distribution-as</module>
                 <!--<module>test-rmi-client</module>-->
+
+                <module>modules-x</module>
+                <module>as-distribution-modules</module>
+                <module>clients-extjs</module>
             </modules>
         </profile>
         <profile>
             <id>distr-cli</id>
             <modules>
-                <module>client-extjs-ekb</module>
-                <module>client-extjs-cmon</module>
+                <!--<module>client-extjs-ekb</module>-->
+                <!--<module>client-extjs-cmon</module>-->
                 <module>as-distribution-cli</module>
             </modules>
         </profile>
-        <profile>
-            <id>distr-ekb</id>
-            <modules>
-                <module>module-x-ekb</module>
-                <module>module-x-cmon</module>
-                <module>as-distribution-ekb</module>
-            </modules>
-        </profile>
+        <!--<profile>-->
+            <!--<id>distr-ekb</id>-->
+            <!--<modules>-->
+                <!--<module>as-distribution-ekb</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-cmon</id>-->
+            <!--<modules>-->
+                <!--<module>as-distribution-cmon</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
         <profile>
             <id>dev</id>
             <properties>

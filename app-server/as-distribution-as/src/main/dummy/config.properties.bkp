@@ -59,6 +59,7 @@ felix.auto.start.3=\
   file:${distr.bundles}/bio4j-ng-router-${project.version}.jar \
   file:${distr.bundles}/bio4j-ng-rapi-http-${project.version}.jar \
   file:${distr.bundles}/bio4j-ng-module-ekb-${project.version}.jar
+  file:${distr.bundles}/bio4j-ng-module-cmon-${project.version}.jar
 
 
 #  file:${distr.bundles}/bio4j-ng-ehcache-${project.version}.jar \

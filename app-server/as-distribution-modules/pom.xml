@@ -1,0 +1,87 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<parent>
+        <groupId>ru.bio4j.ng</groupId>
+        <artifactId>app-server</artifactId>
+        <version>0.2-SNAPSHOT</version>
+	</parent>
+    <artifactId>as-distribution-modules</artifactId>
+    <packaging>pom</packaging>
+    <properties>
+        <distr.deploy>../../as-distribution/target</distr.deploy>
+        <module-x.name>undefined</module-x.name>
+    </properties>
+
+    <build>
+        <finalName>bio4j-ng-as</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+
+                                    <artifactItem>
+                                        <groupId>${parent.groupId}</groupId>
+                                        <artifactId>${module-x.name}</artifactId>
+                                        <version>${project.version}</version>
+                                        <type>jar</type>
+                                        <overWrite>true</overWrite>
+                                        <outputDirectory>${distr.modules}</outputDirectory>
+                                    </artifactItem>
+
+                                </artifactItems>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>bin</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptors>
+                                    <descriptor>src/main/descriptors/bin.xml</descriptor>
+                                </descriptors>
+                                <appendAssemblyId>false</appendAssemblyId>
+                                <tarLongFileMode>gnu</tarLongFileMode>
+                                <outputDirectory>${distr.deploy}</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>distr-ekb</id>
+            <modules>
+                <module>ekb-distr</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>distr-cmon</id>
+            <modules>
+                <module>cmon-distr</module>
+            </modules>
+        </profile>
+    </profiles>
+
+</project>

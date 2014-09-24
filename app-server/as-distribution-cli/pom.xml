@@ -4,7 +4,7 @@
 	<parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>app-server</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.2-SNAPSHOT</version>
 	</parent>
     <artifactId>as-distribution-cli</artifactId>
     <packaging>pom</packaging>
@@ -29,6 +29,14 @@
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-client-extjs-ekb</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.webapps}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-client-extjs-cmon</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
