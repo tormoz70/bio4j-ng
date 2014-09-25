@@ -61,7 +61,7 @@ Ext.define('Bio.grid.Panel', {
         var me = this,
             oldColumns = me.columnManager.columns,
             fieldIndex, fieldsFound = 0, fieldsCount = 0;
-        if(oldColumns.length == 0)
+        if(!Bio.tools.isDefined(oldColumns) || oldColumns.length == 0)
             return true;
         Ext.Array.forEach(oldColumns, function(c0) {
             if(c0.xtype != 'rownumberer') {

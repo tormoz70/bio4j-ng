@@ -37,21 +37,21 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
 
     private ConcurrentMap<String, User> onlineUsers = new ConcurrentHashMap<>();
 
-    private void storeUser(User user) throws Exception {
+    private void storeUser(final User user) throws Exception {
         User existsUser = onlineUsers.get(user.getUid());
         if(existsUser != null) {
             Utl.applyValuesToBean(user, existsUser);
             return;
         }
-        onlineUsers.put(user.getUid(), user);
+        onlineUsers.put(String.format("%s-%s", user.getModuleKey(), user.getUid()), user);
     }
 
-    private User userIsOnline(String userUID) {
-        return onlineUsers.get(userUID);
+    private User userIsOnline(final String moduleKey, final String userUID) {
+        return onlineUsers.get(String.format("%s-%s", moduleKey, userUID));
     }
 
-    private User removeUser(String userUID) {
-        return onlineUsers.remove(userUID);
+    private User removeUser(final String moduleKey, final String userUID) {
+        return onlineUsers.remove(String.format("%s-%s", moduleKey, userUID));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         final String login = loginOrUid.contains("/") ? loginOrUid : null;
 
         if(!isNullOrEmpty(uid)){
-            User onlineUser = userIsOnline(uid);
+            User onlineUser = userIsOnline(moduleKey, uid);
             if(onlineUser != null){
                 LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", uid, onlineUser.getLogin());
                 return onlineUser;
@@ -72,6 +72,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
 
         if(login.equals("root/root")) {
             User usr = new User();
+            usr.setModuleKey(moduleKey);
             usr.setUid("test-user-uid");
             usr.setLogin("root");
             usr.setFio("Test User FIO");
@@ -94,9 +95,8 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                         .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
                         .open()) {
                     if (c.reader().next()){
-                        LOG.debug("User found!");
-                        String s = c.reader().getValue("USERNAME", String.class);
                         User usr = new User();
+                        usr.setModuleKey(moduleKey);
                         usr.setUid(c.reader().getValue("usr_uid", String.class));
                         usr.setLogin(c.reader().getValue("usr_login", String.class));
                         usr.setFio(c.reader().getValue("usr_fio", String.class));
@@ -117,8 +117,8 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     }
 
     @Override
-    public void logoff(String uid) throws Exception {
-        removeUser(uid);
+    public void logoff(final String moduleKey, final String uid) throws Exception {
+        removeUser(moduleKey, uid);
     }
 
     @Validate

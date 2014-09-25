@@ -11,7 +11,7 @@ Ext.require([
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Реестр кинотеатров]";
+    document.title = document.title + " - [Монитор]";
 //    alert("Redy!!!");
     Ext.ns('Ekb');
 

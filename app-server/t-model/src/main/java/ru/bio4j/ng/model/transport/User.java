@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport;
 
 public class User {
+    private String moduleKey;
     private String uid;
     private String login;
     private String fio;
@@ -45,5 +46,13 @@ public class User {
 
     public void setGrants(String grants) {
         this.grants = grants;
+    }
+
+    public String getModuleKey() {
+        return moduleKey;
+    }
+
+    public void setModuleKey(String moduleKey) {
+        this.moduleKey = moduleKey;
     }
 }

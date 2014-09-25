@@ -11,7 +11,7 @@ Ext.require([
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Справочник фильмов]";
+    document.title = document.title + " - [Классификаторы]";
 //    alert("Redy!!!");
     Ext.ns('Ekb');
 

@@ -359,23 +359,9 @@
         <profile>
             <id>distr-cli</id>
             <modules>
-                <!--<module>client-extjs-ekb</module>-->
-                <!--<module>client-extjs-cmon</module>-->
                 <module>as-distribution-cli</module>
             </modules>
         </profile>
-        <!--<profile>-->
-            <!--<id>distr-ekb</id>-->
-            <!--<modules>-->
-                <!--<module>as-distribution-ekb</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>distr-cmon</id>-->
-            <!--<modules>-->
-                <!--<module>as-distribution-cmon</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
         <profile>
             <id>dev</id>
             <properties>

@@ -9,7 +9,7 @@
                     usr_uid, usr_login,
                     fio_fam || ' ' || fio_name || ' ' || fio_mname as usr_fio,
                     usr_roles, usr_grants
-                from table(biosys.login$utl.get_usr(p_login))
+                from table(biosys.login$utl.get_usr(:p_login))
         ]]></text>
 	</SQL>
  	<fields>

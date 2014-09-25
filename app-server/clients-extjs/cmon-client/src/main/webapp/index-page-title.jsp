@@ -3,7 +3,7 @@
         <h1 id="pagetitle">
             <table>
                 <td>
-                    <a href="http://ekinobilet.ru" id="logo">
+                    <a href="https://bitbucket.org/tormoz70/bio4j-ng/wiki/Home" id="logo">
                         <img height="160" width="160" src="<%=request.getContextPath()%>/shared/images/smart_home_big.png" alt="КИНОБИЛЕТ"/>
                     </a>
                 </td>

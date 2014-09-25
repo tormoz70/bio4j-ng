@@ -180,7 +180,7 @@ Bio.tools = function(){
         },
 
         isDefined: function(v) {
-            return (typeof v !== 'undefined') && (v !== null);
+            return (v !== null) && (typeof v !== 'undefined');
         },
 		
 		calcXY_Left : 0,

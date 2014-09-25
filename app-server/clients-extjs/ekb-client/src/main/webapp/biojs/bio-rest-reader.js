@@ -10,6 +10,12 @@ Ext.define('Bio.data.RestReader', {
     messageProperty: 'errMessage',
     useSimpleAccessors: false,
 
+    getResponseData: function(response) {
+        var data;
+        data = Ext.decode(response.responseText);
+        return this.readRecords(data);
+    },
+
     readRecords: function(data) {
 //        console.log(data);
         var me = this;

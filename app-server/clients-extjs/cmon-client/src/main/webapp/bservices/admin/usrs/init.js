@@ -2,7 +2,7 @@ Ext.Loader.setConfig({enabled: true});
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Отчеты]";
+    document.title = document.title + " - [Пользователи]";
 
     var hideMask = function () {
         Ext.get('loading').remove();

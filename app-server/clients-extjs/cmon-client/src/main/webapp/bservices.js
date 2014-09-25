@@ -6,12 +6,12 @@ Ekb.catalog = {
             "items": [
                 {
                     "text": "Регистрация",
-                    "url": "bservices/cabinet/reg/index.jsp",
+                    "url": "bservices/cabinet/monitor/index.jsp",
                     "icon": "kitchensink.gif",
-                    "desc": "Регистрационная карта"
+                    "desc": "Монитор"
                 },
                 {
-                    "text": "Протоколы загрузки",
+                    "text": "Протоколы",
                     "url": "bservices/cabinet/protocols/index.jsp",
                     "icon": "feeds.png",
                     "desc": "Протоколы загрузки данных"
@@ -28,19 +28,33 @@ Ekb.catalog = {
             "title": "НСИ",
             "items": [
                 {
-                    "text": "Справочник фильмов",
-                    "url": "bservices/nsi/films/index.jsp",
+                    "text": "Классификаторы",
+                    "url": "bservices/nsi/dicts/index.jsp",
                     "icon": "soap-grid.png",
-                    "desc": "Каталог всех фильмов и прокатных удостоверений ..."
+                    "desc": "Редактор всех классификаторов"
                 },
                 {
                     "text": "Справочник адресов",
                     "url": "bservices/nsi/kladr/index.jsp",
                     "icon": "amf-grid.png",
-                    "desc": "Справочник адресов на базе КЛАДР ..."
+                    "desc": "Справочник адресов"
                 }
             ]
 
+        },
+        {
+            "title": "Администрирование",
+            "items": [
+                {
+                    "text": "Пользователи",
+                    "url": "bservices/admin/usrs/index.jsp",
+                    "icon": "soap-grid.png",
+                    "desc": "Редактор всех классификаторов"
+                }
+
+            ]
+
         }
+
     ]
 };
