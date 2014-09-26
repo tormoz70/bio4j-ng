@@ -28,17 +28,21 @@ Ext.override(Ext.form.Panel, {
     },
 
     applyResponseToStore: function(response, store) {
-        var responseRows = response.packet.rows,
-            recIndex, rec, fld;
-        Ext.Array.forEach(responseRows, function(r) {
-            recIndex = store.findBy(function(r0){ return r0.id == r.internalId; });
-            if(recIndex != -1) {
-                rec = store.getAt(recIndex);
-                for (fld in r.data)
-                    if (fld) rec.set(fld, r.data[fld]);
-                rec.commit();
-            }
-        });
+        if(Bio.tools.isDefined(response.packet)) {
+            var responseRows = response.packet.rows,
+                recIndex, rec, fld;
+            Ext.Array.forEach(responseRows, function (r) {
+                recIndex = store.findBy(function (r0) {
+                    return r0.id == r.internalId;
+                });
+                if (recIndex != -1) {
+                    rec = store.getAt(recIndex);
+                    for (fld in r.data)
+                        if (fld) rec.set(fld, r.data[fld]);
+                    rec.commit();
+                }
+            });
+        }
     },
 
     processResponse: function(operation) {
