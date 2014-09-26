@@ -378,6 +378,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
         List<BioResponse> slaveResponses = new ArrayList<>();
         for(BioRequestJStorePost post : request.getSlavePostData()) {
+            post.setModuleKey(request.getModuleKey()); // forward moduleKey
             BioResponse rsp = processRequestPost(post, ctx, conn, cursorDef, firstRow, usr).build();
             slaveResponses.add(rsp);
         }
