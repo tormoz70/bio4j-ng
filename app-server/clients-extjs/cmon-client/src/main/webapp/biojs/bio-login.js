@@ -7,8 +7,8 @@ Ext.define('Bio.login', {
                 Bio.app.curUsr = {};
             Ext.apply(Bio.app.curUsr, user);
             Bio.app.curUsr.login = null;
-            Bio.cooks.setCookie("cUserUID", user.uid);
-            Bio.cooks.setCookie("cUserName", user.name);
+            //Bio.cooks.setCookie("cUserUID", user.uid);
+            Bio.cooks.setCookie("cUserName", user.login);
         }
     },
 
@@ -20,7 +20,7 @@ Ext.define('Bio.login', {
     },
     removeLastSuccessUserStore: function() {
         Bio.cooks.deleteCookie("cUserUID");
-        Bio.cooks.deleteCookie("cUserName");
+        //Bio.cooks.deleteCookie("cUserName");
     },
 
     showDialog: function (callback) {
@@ -31,11 +31,11 @@ Ext.define('Bio.login', {
     getUser: function(callback) {
         var me = this;
         var usr = Bio.app.curUsr;
-        if(usr)
+        if(Bio.tools.isDefined(usr))
             Ext.callback(callback.fn, callback.scope, [usr]);
         else {
             var storedUserUID = me.restoreLastSuccessUserUID();
-            if(storedUserUID) {
+            if(Bio.tools.isDefined(storedUserUID)) {
                 usr = new Bio.User({uid:storedUserUID});
                 Ext.callback(callback.fn, callback.scope, [usr]);
                 return;

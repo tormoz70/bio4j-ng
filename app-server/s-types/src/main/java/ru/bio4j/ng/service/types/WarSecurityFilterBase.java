@@ -82,6 +82,7 @@ public class WarSecurityFilterBase implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
+        resp.setCharacterEncoding("UTF-8");
         final HttpServletRequest req = (HttpServletRequest) request;
         final String servletPath = req.getServletPath();
         final HttpSession session = req.getSession();

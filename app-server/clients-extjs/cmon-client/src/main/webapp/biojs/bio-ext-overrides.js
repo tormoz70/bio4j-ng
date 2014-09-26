@@ -188,6 +188,9 @@ Ext.override(Ext.data.Connection, {
                 success = false;
                 Bio.dlg.showErr("Ошибка", "Unknown response recived. responseText: " + (response.responseText || "<null>"), 400, 300, null);
             }
+        } else if (response.timedout === true) {
+            success = false;
+            Bio.dlg.showErr("Ошибка", "Истекло время ожидания ответа!", 400, 300, null);
         } else {
             success = false;
             Bio.dlg.showErr("Ошибка", "ResponseText is empty!", 400, 300, null);

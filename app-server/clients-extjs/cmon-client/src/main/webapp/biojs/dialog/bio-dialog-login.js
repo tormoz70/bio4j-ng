@@ -7,7 +7,8 @@ Ext.define('Bio.dialog.Login', {
     constructor: function(config) {
         var me = this;
 
-        var storedUserName = Bio.login.restoreLastSuccessUserName() || "";
+        var storedUserName = Bio.login.restoreLastSuccessUserName();
+        storedUserName =  storedUserName || "*";
         var storedUserPwd = "bio23";
 
         me.form = new Ext.form.Panel({

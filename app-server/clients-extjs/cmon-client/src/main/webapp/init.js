@@ -1,6 +1,10 @@
 Ext.require('*');
 Ext.onReady(function() {
 
+    //Bio.cooks.setCookie("FTW", "qwe");
+    //var ftw = Bio.cooks.getCookie("FTW");
+    //alert(ftw);
+
     Ext.ns('Ekb');
     Ext.define('Ekb.RootPanel', {
         extend: 'Ext.view.View',
