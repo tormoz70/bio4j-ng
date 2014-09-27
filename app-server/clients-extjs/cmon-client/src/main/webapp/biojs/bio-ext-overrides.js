@@ -379,3 +379,37 @@ Ext.override(Ext.grid.RowEditor, {
     errorsText:     'Ошибки', //'Errors',
     dirtyText:      'Необходимо применить или отменить изменения!' //'You need to commit or cancel your changes'
 });
+
+
+
+Ext.override(Ext.view.View, {
+    setHighlightedItem: function(item){
+        var me = this,
+            highlighted = me.highlightedItem,
+            overItemCls = me.overItemCls,
+            beforeOverItemCls = me.beforeOverItemCls,
+            previous;
+
+        if (highlighted != item){
+            if (highlighted) {
+                Ext.fly(highlighted).removeCls(overItemCls);
+                previous = highlighted.previousSibling;
+                if (beforeOverItemCls && previous) {
+                    Ext.fly(previous).removeCls(beforeOverItemCls);
+                }
+                me.fireEvent('unhighlightitem', me, highlighted);
+            }
+
+            me.highlightedItem = item;
+
+            if (item) {
+                Ext.fly(item).addCls(me.overItemCls);
+                previous = item.previousSibling;
+                if (beforeOverItemCls && previous) {
+                    Ext.fly(previous).addCls(beforeOverItemCls);
+                }
+                me.fireEvent('highlightitem', me, item);
+            }
+        }
+    }
+});

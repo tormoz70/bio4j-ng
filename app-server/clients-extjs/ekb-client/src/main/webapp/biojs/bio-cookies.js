@@ -8,14 +8,21 @@ Ext.namespace("Bio");
 // * an argument defaults when it is assigned null as a placeholder
 // * a null placeholder is not required for trailing omitted arguments
 Bio.cooks = {
-	setCookie:function(name, value, expires, path, domain, secure) {
-        var curCookie = name + "=" + escape(value) +
-                ((expires) ? "; expires=" + expires.toGMTString() : "") +
-                ((path) ? "; path=" + path : "") +
-                ((domain) ? "; domain=" + domain : "") +
-                ((secure) ? "; secure" : "");
-        if ((name + "=" + escape(value)).length <= 4000)
+	setCookie:function(name, value) {
+        var expires = new Date();
+        expires.setMonth(expires.getMonth()+1);
+
+        var path = Bio.app.APP_URL,
+            keyVal = name + "=" + encodeURI(value),
+            curCookie = keyVal +
+                "; expires=" + expires.toGMTString() +
+                "; path=" + path;
+
+        if (keyVal.length <= 4000)
           document.cookie = curCookie;
+
+//        var path = Bio.app.APP_URL;
+//        Ext.util.Cookies.set(name, value, cdt, path);
 	},
 
 // name - name of the desired cookie
@@ -27,21 +34,26 @@ Bio.cooks = {
         var cookieEndIndex = document.cookie.indexOf(";", cookieStartIndex + prefix.length);
         if (cookieEndIndex == -1)
           cookieEndIndex = document.cookie.length;
-        return unescape(document.cookie.substring(cookieStartIndex + prefix.length, cookieEndIndex));
+        return decodeURI(document.cookie.substring(cookieStartIndex + prefix.length, cookieEndIndex));
+
+        //var path = Bio.app.APP_URL;
+        //return Ext.util.Cookies.get(name);
 	},
 
 // name - name of the cookie
 // [path] - path of the cookie (must be same as path used to create cookie)
 // [domain] - domain of the cookie (must be same as domain used to create cookie)
 // * path and domain default if assigned null or omitted if no explicit argument proceeds
-	deleteCookie:function(name, path, domain) {
+	deleteCookie:function(name) {
         if (this.getCookie(name)) {
-          document.cookie = name + "=" + 
+          var path = Bio.app.APP_URL
+          document.cookie = name + "=" +
 	          ((path) ? "; path=" + path : "") +
-	          ((domain) ? "; domain=" + domain : "") +
 	          "; expires=Thu, 01-Jan-70 00:00:01 GMT";
         }
-	},
+//        var path = Bio.app.APP_URL
+//        Ext.util.Cookies.clear(name, path);
+    },
 
 // date - any instance of the Date object
 // * you should hand all instances of the Date object to this function for "repairs"

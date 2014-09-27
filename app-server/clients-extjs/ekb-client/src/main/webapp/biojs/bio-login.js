@@ -7,36 +7,20 @@ Ext.define('Bio.login', {
                 Bio.app.curUsr = {};
             Ext.apply(Bio.app.curUsr, user);
             Bio.app.curUsr.login = null;
-//            var cdt = new Date();
-//            var vm = cdt.getMonth();
-//            vm++;
-//            cdt.setMonth(vm);
-//            if (Bio.cooks) {
-//                Bio.cooks.setCookie("cUserUID", user.uid, cdt);
-//                Bio.cooks.setCookie("cUserName", user.name, cdt);
-//            }
-            Ext.util.Cookies.set("cUserUID", user.uid);
-            Ext.util.Cookies.set("cUserName", user.name);
+            //Bio.cooks.setCookie("cUserUID", user.uid);
+            Bio.cooks.setCookie("cUserName", user.login);
         }
     },
 
     restoreLastSuccessUserName: function() {
-//        if (Bio.cooks)
-//            return Bio.cooks.getCookie("cUserName");
-        return Ext.util.Cookies.get('cUserName');
+        return Bio.cooks.getCookie('cUserName');
     },
     restoreLastSuccessUserUID: function() {
-//        if (Bio.cooks)
-//            return Bio.cooks.getCookie("cUserUID");
-        return Ext.util.Cookies.get('cUserUID');
+        return Bio.cooks.getCookie('cUserUID');
     },
-    removeLastSuccessUserName: function() {
-//        if (Bio.cooks) {
-//            Bio.cooks.deleteCookie("cUserUID");
-//            Bio.cooks.deleteCookie("cUserName");
-//        }
-        Ext.util.Cookies.clear("cUserUID");
-        Ext.util.Cookies.clear("cUserName");
+    removeLastSuccessUserStore: function() {
+        Bio.cooks.deleteCookie("cUserUID");
+        //Bio.cooks.deleteCookie("cUserName");
     },
 
     showDialog: function (callback) {
@@ -47,11 +31,11 @@ Ext.define('Bio.login', {
     getUser: function(callback) {
         var me = this;
         var usr = Bio.app.curUsr;
-        if(usr)
+        if(Bio.tools.isDefined(usr))
             Ext.callback(callback.fn, callback.scope, [usr]);
         else {
             var storedUserUID = me.restoreLastSuccessUserUID();
-            if(storedUserUID) {
+            if(Bio.tools.isDefined(storedUserUID)) {
                 usr = new Bio.User({uid:storedUserUID});
                 Ext.callback(callback.fn, callback.scope, [usr]);
                 return;
@@ -74,13 +58,13 @@ Ext.define('Bio.login', {
             if (bioResponse.exception) {
                 if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
                     Bio.app.curUsr = undefined;
-                    me.removeLastSuccessUserName();
+                    me.removeLastSuccessUserStore();
                     Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
                     return false;
                 }
                 if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
                     Bio.app.curUsr = undefined;
-                    me.removeLastSuccessUserName();
+                    me.removeLastSuccessUserStore();
                     if (callback) {
                         var cb = Bio.tools.wrapCallback(callback);
                         Ext.callback(cb.fn, cb.scope, [

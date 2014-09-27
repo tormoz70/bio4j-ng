@@ -56,7 +56,6 @@ Ext.define('Bio.form.ComboBox', {
         me.callParent(arguments);
     },
 
-
     permValueSetted: true,
     tmpValue: undefined,
 

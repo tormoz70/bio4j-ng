@@ -7,7 +7,7 @@ Ext.define('Bio.login', {
                 Bio.app.curUsr = {};
             Ext.apply(Bio.app.curUsr, user);
             Bio.app.curUsr.login = null;
-            //Bio.cooks.setCookie("cUserUID", user.uid);
+            Bio.cooks.setCookie("cUserUID", user.uid);
             Bio.cooks.setCookie("cUserName", user.login);
         }
     },

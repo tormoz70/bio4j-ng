@@ -12,7 +12,7 @@ Ext.onReady(function() {
         autoHeight   : true,
         frame        : false,
         cls          : 'bservices',
-        itemSelector : 'dl',
+        itemSelector : 'dd',
         overItemCls  : 'over',
         trackOver    : true,
         tpl          : Ext.create('Ext.XTemplate',
