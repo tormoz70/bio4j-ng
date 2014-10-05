@@ -47,13 +47,14 @@ Ext.onReady(function () {
         tbar: Ext.create('Ext.toolbar.Toolbar', {
             items: [
                 {
-                    text: 'Детали',
+                    text: 'Создать',
                     scope: this,
                     handler: function () {
                         var grd = Ext.getCmp('ekb-orgs-grid');
-                        var seldId = grd.getSelectedId();
+                        var seldId = null;
                         var win2 = Ext.create('Ext.window.Window', {
-                            title: 'Детальная информация по кинотеатру',
+                            title: 'Новый кинотеатр',
+                            closeAction: 'destroy',
                             closable: true,
                             plain: true,
                             modal: true,
@@ -62,14 +63,40 @@ Ext.onReady(function () {
                                 ekb: { orgId: seldId }
                             })
                         });
+                        win2.addListener("close", function (panel, eOpts) {
+                            grd.store.reload();
+                        });
+                        win2.show();
+                    }
+                },
+                {
+                    text: 'Детали',
+                    scope: this,
+                    handler: function () {
+                        var grd = Ext.getCmp('ekb-orgs-grid');
+                        var seldId = grd.getSelectedId();
+                        var win2 = Ext.create('Ext.window.Window', {
+                            title: 'Детальная информация по кинотеатру',
+                            closeAction: 'destroy',
+                            closable: true,
+                            plain: true,
+                            modal: true,
+                            layout: 'fit',
+                            items: Ext.create('Ekb.form.OrgDetails', {
+                                ekb: { orgId: seldId }
+                            })
+                        });
+                        win2.addListener("close", function (panel, eOpts) {
+                            grd.store.reload();
+                        });
                         win2.show();
                     }
                 },
                 {
                     // search box
-                    id: 'txtId2Locate',
-                    xtype:'textfield',
-                    value   : "enter id..."
+                    id:     'txtId2Locate',
+                    xtype:  'textfield',
+                    value:  "enter id..."
                 },
                 {
                     // filter button

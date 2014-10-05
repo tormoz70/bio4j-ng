@@ -45,7 +45,7 @@ Ext.define('Bio.data.RestProxy', {
             });
         }
 
-        if(options.id)
+        if(Ext.isDefined(options.id))
             request.jsonData = new Bio.request.store.GetRecord({
                 bioCode: store.bioCode,
                 storeId: store.storeId,

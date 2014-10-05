@@ -526,6 +526,7 @@ Ext.define('Ekb.form.OrgDetails', {
                                 {
                                     xtype: 'biocombo',
                                     labelWidth: 110,
+                                    allowBlank: false,
                                     name: 'state_mat',
                                     fieldLabel: 'Имущ. состояние',
                                     store: Ext.create('Ext.data.Store', {
@@ -680,9 +681,10 @@ Ext.define('Ekb.form.OrgDetails', {
                 }),
                 seldId = (me.ekb ? me.ekb.orgId : null);
 
-            me.loadData(store, seldId, function() {
+
+            me.loadData(store, seldId, function () {
                 var sroomGrid = Bio.tools.childByName(me, 'srooms-grid');
-                if(sroomGrid && sroomGrid.store)
+                if (sroomGrid && sroomGrid.store)
                     sroomGrid.store.load();
             });
 
