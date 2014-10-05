@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="true">
+    <SQL action="select"><text><![CDATA[
+SELECT a.mcounter_id, a.aname, a.adesc, a.graduation, a.units
+  FROM mcounter a
+ WHERE a.isdeleted = '0'
+ ORDER BY aname
+    ]]></text></SQL>
+
+    <fields>
+        <field name="mcounter_id" type="integer" header="ID" pk="true" format="0"/>
+        <field name="aname" type="string" header="Наименование" align="left" width="200"/>
+        <field name="adesc" type="string" header="Описание" align="left" width="200"/>
+        <field name="graduation" type="decimal" header="Цена деления" width="80"/>
+        <field name="units" type="string" header="Ед. изм" width="30"/>
+    </fields>
+</cursor>

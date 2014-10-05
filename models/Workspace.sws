@@ -7,8 +7,8 @@
 		<Model Expanded="Yes" ID="{EC84154E-E134-4B14-B69D-51DBA5B6A8F3}" Loaded="No" Name="handlers" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="handlers.bpm"/>
 		<Model Expanded="Yes" ID="{5E2F362C-7241-4F0B-9C04-809C0C76528D}" Loaded="No" Name="oom-seq-longpooling" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="oom-seq-longpooling.oom"/>
 		<Model Expanded="Yes" ID="{BFDF025D-EB76-4066-B5A8-F6687370ACB7}" Loaded="No" Name="usecase (autentication).v3" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="usecase (autentication).v3.bpm"/>
-		<Model Expanded="Yes" ID="{822679D4-D0CC-46C7-9671-BCD45934116E}" Loaded="No" Name="Application Architecture_1" Type="{5215C79E-A9A1-4738-A627-36DA432EFE29}" URL="/data/prjs/CB/out/Application Architecture_1.eam"/>
-		<Model Expanded="Yes" ID="{BFDF025D-EB76-4066-B5A8-F6687370ACB7}" Name="usecase (autentication).v4" Selected="Yes" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="usecase (autentication).v4.bpm"/>
+		<Model Expanded="Yes" ID="{BFDF025D-EB76-4066-B5A8-F6687370ACB7}" Loaded="No" Name="usecase (autentication).v4" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="usecase (autentication).v4.bpm"/>
+		<Model Expanded="Yes" ID="{A5EC4CDE-B07A-46F1-B8CB-9B1BA66E1FE5}" Name="ObjectOrientedModel_1" Selected="Yes" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="ObjectOrientedModel_1.oom"/>
 	</Local>
 	<BrowserModule Name="Repository"/>
 </Workspace>

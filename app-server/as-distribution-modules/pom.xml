@@ -69,19 +69,19 @@
         </pluginManagement>
     </build>
 
-    <profiles>
-        <profile>
-            <id>distr-ekb</id>
-            <modules>
-                <module>ekb-distr</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>distr-cmon</id>
-            <modules>
-                <module>cmon-distr</module>
-            </modules>
-        </profile>
-    </profiles>
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>distr-ekb</id>-->
+            <!--<modules>-->
+                <!--<module>ekb-distr</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-cmon</id>-->
+            <!--<modules>-->
+                <!--<module>cmon-distr</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+    <!--</profiles>-->
 
 </project>

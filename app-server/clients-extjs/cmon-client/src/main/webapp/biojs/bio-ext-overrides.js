@@ -382,154 +382,180 @@ Ext.override(Ext.grid.RowEditor, {
 
 
 
-Ext.override(Ext.view.View, {
-
-    afterRender: function(){
-        var me = this,
-            onMouseOverOut = me.mouseOverOutBuffer ? me.onMouseOverOut : me.handleMouseOverOrOut,
-            targetEl = me.getTargetEl();
-
-        me.callParent();
-        me.mon(targetEl, {
-            scope: me,
-
-            freezeEvent: true,
-            click: me.handleEvent,
-            mousedown: me.handleEvent,
-            mouseup: me.handleEvent,
-            dblclick: me.handleEvent,
-            contextmenu: me.handleEvent,
-            keydown: me.handleEvent,
-            mouseover: onMouseOverOut,
-            mouseout:  onMouseOverOut
-        });
-    },
-
-    getRecord: function(node){
-        var me = this,
-            nodeDom = Ext.getDom(node),
-            data = this.dataSource.data,
-            rslt = data.getByKey(nodeDom.viewRecordId);
-        return rslt;
-    },
-
-    processUIEvent: function(e) {
-
-
-
-        if (!Ext.getBody().isAncestor(e.target)) {
-            return;
-        }
-
-        var me = this,
-            //item = e.getTarget(me.getItemSelector(), me.getTargetEl()),
-            item = e.getTarget('dd', me.getTargetEl()),
-            map = this.statics().EventMap,
-            index, record,
-            type = e.type,
-            newType = e.type,
-            sm;
-
-
-
-        if (e.newType) {
-            newType = e.newType;
-            //item = e.item;
-        }
-
-
-
-        if (!item && type == 'keydown') {
-            sm = me.getSelectionModel();
-            record = sm.lastFocused || sm.getLastSelected();
-            if (record) {
-                item = me.getNode(record, true);
-            }
-        }
-
-        if (item) {
-            if (!record) {
-                record = me.getRecord(item);
-            }
-            index = me.indexInStore ? me.indexInStore(record) : me.indexOf(item);
-
-
-
-
-            if (!record || me.processItemEvent(record, item, index, e) === false) {
-                return false;
-            }
-
-            if (
-                (me['onBeforeItem' + map[newType]](record, item, index, e) === false) ||
-                (me.fireEvent('beforeitem' + newType, me, record, item, index, e) === false) ||
-                (me['onItem' + map[newType]](record, item, index, e) === false)
-                ) {
-                return false;
-            }
-
-            me.fireEvent('item' + newType, me, record, item, index, e);
-        }
-        else {
-            if (
-                (me.processContainerEvent(e) === false) ||
-                (me['onBeforeContainer' + map[type]](e) === false) ||
-                (me.fireEvent('beforecontainer' + type, me, e) === false) ||
-                (me['onContainer' + map[type]](e) === false)
-                ) {
-                return false;
-            }
-
-            me.fireEvent('container' + type, me, e);
-        }
-
-        return true;
-    },
-
-    setHighlightedItem: function(item){
-        var me = this,
-            highlighted = me.highlightedItem,
-            overItemCls = me.overItemCls,
-            beforeOverItemCls = me.beforeOverItemCls,
-            previous;
-
-        if (highlighted != item){
-            if (highlighted) {
-                Ext.fly(highlighted).removeCls(overItemCls);
-                previous = highlighted.previousSibling;
-                if (beforeOverItemCls && previous) {
-                    Ext.fly(previous).removeCls(beforeOverItemCls);
-                }
-                me.fireEvent('unhighlightitem', me, highlighted);
-            }
-
-            me.highlightedItem = item;
-
-            if (item) {
-                Ext.fly(item).addCls(me.overItemCls);
-                previous = item.previousSibling;
-                if (beforeOverItemCls && previous) {
-                    Ext.fly(previous).addCls(beforeOverItemCls);
-                }
-                me.fireEvent('highlightitem', me, item);
-            }
-        }
-    },
-
-    updateIndexes : function(startIndex, endIndex) {
-        var nodes = this.all.elements,
-            records = this.getViewRange(),
-            i;
-
-        startIndex = startIndex || 0;
-        endIndex = endIndex || ((endIndex === 0) ? 0 : (nodes.length - 1));
-        for (i = startIndex; i <= endIndex; i++) {
-            nodes[i].viewIndex = i;
-            nodes[i].viewRecordId = records[i].internalId;
-            if (!nodes[i].boundView) {
-                nodes[i].boundView = this.id;
-            }
-        }
-    }
-
-});
+//Ext.override(Ext.view.View, {
+//
+//    afterRender: function(){
+//        var me = this,
+//            onMouseOverOut = me.mouseOverOutBuffer ? me.onMouseOverOut : me.handleMouseOverOrOut,
+//            targetEl = me.getTargetEl();
+//
+//        me.callParent();
+//        me.mon(targetEl, {
+//            scope: me,
+//
+//            freezeEvent: true,
+//            click: me.handleEvent,
+//            mousedown: me.handleEvent,
+//            mouseup: me.handleEvent,
+//            dblclick: me.handleEvent,
+//            contextmenu: me.handleEvent,
+//            keydown: me.handleEvent,
+//            mouseover: onMouseOverOut,
+//            mouseout:  onMouseOverOut
+//        });
+//    },
+//
+//    getRecord: function(node){
+//        var me = this,
+//            nodeDom = Ext.getDom(node),
+//            data = this.dataSource.data,
+//            rslt = data.getByKey(nodeDom.viewRecordId);
+//        return rslt;
+//    },
+//
+//    processUIEvent: function(e) {
+//
+//
+//
+//        if (!Ext.getBody().isAncestor(e.target)) {
+//            return;
+//        }
+//
+//        var me = this,
+//            item = e.getTarget(me.getItemSelector(), me.getTargetEl()),
+//            //item = e.getTarget('dd', me.getTargetEl()),
+//            map = this.statics().EventMap,
+//            index, record,
+//            type = e.type,
+//            newType = e.type,
+//            sm;
+//
+//
+//
+//        if (e.newType) {
+//            newType = e.newType;
+//            //item = e.item;
+//        }
+//
+//
+//
+//        if (!item && type == 'keydown') {
+//            sm = me.getSelectionModel();
+//            record = sm.lastFocused || sm.getLastSelected();
+//            if (record) {
+//                item = me.getNode(record, true);
+//            }
+//        }
+//
+//        if (item) {
+//            if (!record) {
+//                record = me.getRecord(item);
+//            }
+//            index = me.indexInStore ? me.indexInStore(record) : me.indexOf(item);
+//
+//
+//
+//
+//            if (!record || me.processItemEvent(record, item, index, e) === false) {
+//                return false;
+//            }
+//
+//            if (
+//                (me['onBeforeItem' + map[newType]](record, item, index, e) === false) ||
+//                (me.fireEvent('beforeitem' + newType, me, record, item, index, e) === false) ||
+//                (me['onItem' + map[newType]](record, item, index, e) === false)
+//                ) {
+//                return false;
+//            }
+//
+//            me.fireEvent('item' + newType, me, record, item, index, e);
+//        }
+//        else {
+//            if (
+//                (me.processContainerEvent(e) === false) ||
+//                (me['onBeforeContainer' + map[type]](e) === false) ||
+//                (me.fireEvent('beforecontainer' + type, me, e) === false) ||
+//                (me['onContainer' + map[type]](e) === false)
+//                ) {
+//                return false;
+//            }
+//
+//            me.fireEvent('container' + type, me, e);
+//        }
+//
+//        return true;
+//    },
+//
+//    setHighlightedItem: function(item){
+//        var me = this,
+//            highlighted = me.highlightedItem,
+//            overItemCls = me.overItemCls,
+//            beforeOverItemCls = me.beforeOverItemCls,
+//            previous;
+//
+//        if (highlighted != item){
+//            if (highlighted) {
+//                Ext.fly(highlighted).removeCls(overItemCls);
+//                previous = highlighted.previousSibling;
+//                if (beforeOverItemCls && previous) {
+//                    Ext.fly(previous).removeCls(beforeOverItemCls);
+//                }
+//                me.fireEvent('unhighlightitem', me, highlighted);
+//            }
+//
+//            me.highlightedItem = item;
+//
+//            if (item) {
+//                Ext.fly(item).addCls(me.overItemCls);
+//                previous = item.previousSibling;
+//                if (beforeOverItemCls && previous) {
+//                    Ext.fly(previous).addCls(beforeOverItemCls);
+//                }
+//                me.fireEvent('highlightitem', me, item);
+//            }
+//        }
+//    },
+//
+//    updateIndexes : function(startIndex, endIndex) {
+//        var nodes = this.all.elements,
+//            records = this.getViewRange(),
+//            i;
+//
+//        startIndex = startIndex || 0;
+//        endIndex = endIndex || ((endIndex === 0) ? 0 : (nodes.length - 1));
+//        for (i = startIndex; i <= endIndex; i++) {
+//            nodes[i].viewIndex = i;
+//            nodes[i].viewRecordId = records[i].internalId;
+//            if (!nodes[i].boundView) {
+//                nodes[i].boundView = this.id;
+//            }
+//        }
+//    },
+//
+//    handleMouseOverOrOut: function(e) {
+//        var me = this,
+//            isMouseout = e.type === 'mouseout',
+//            method = isMouseout ? e.getRelatedTarget : e.getTarget,
+//            nowOverItem = method.call(e, me.itemSelector) || method.call(e, me.dataRowSelector);
+//
+//
+//        if (!me.mouseOverItem || nowOverItem !== me.mouseOverItem) {
+//
+//
+//            if (me.mouseOverItem) {
+//                e.item = me.mouseOverItem;
+//                e.newType = 'mouseleave';
+//                me.handleEvent(e);
+//            }
+//
+//
+//            me.mouseOverItem = nowOverItem;
+//            if (me.mouseOverItem) {
+//                e.item = me.mouseOverItem;
+//                e.newType = 'mouseenter';
+//                me.handleEvent(e);
+//            }
+//        }
+//    }
+//
+//});

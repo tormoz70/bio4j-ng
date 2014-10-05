@@ -63,19 +63,5 @@
     <modules>
         <module>bio-module</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>distr-cmon</id>
-            <modules>
-                <module>cmon-module</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>distr-ekb</id>
-            <modules>
-                <module>ekb-module</module>
-            </modules>
-        </profile>
-    </profiles>
 
 </project>

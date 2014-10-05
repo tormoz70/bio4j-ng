@@ -368,5 +368,21 @@
                 <bioDebug>true</bioDebug>
             </properties>
         </profile>
+        <profile>
+            <id>distr-ekb</id>
+            <modules>
+                <module>modules-x/ekb-module</module>
+                <module>as-distribution-modules/ekb-distr</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>distr-cmon</id>
+            <modules>
+                <module>modules-x/cmon-module</module>
+                <module>as-distribution-modules/cmon-distr</module>
+            </modules>
+        </profile>
+
+
     </profiles>
 </project>
