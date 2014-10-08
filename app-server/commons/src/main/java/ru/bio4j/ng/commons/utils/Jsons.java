@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Jsons {
-	public static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+	public static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     public static class ExceptionTransformer extends AbstractTransformer {
 

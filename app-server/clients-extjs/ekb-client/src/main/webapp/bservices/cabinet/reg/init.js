@@ -64,7 +64,9 @@ Ext.onReady(function () {
                             })
                         });
                         win2.addListener("close", function (panel, eOpts) {
-                            grd.store.reload();
+                            var form = panel.down('form'),
+                                data = form.getForm().getRecord().data;
+                            grd.store.locate(data.org_id, 1);
                         });
                         win2.show();
                     }

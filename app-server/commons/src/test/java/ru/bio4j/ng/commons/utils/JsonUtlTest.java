@@ -77,13 +77,13 @@ public class JsonUtlTest {
                 "\"bioParams\":[{\"name\":\"param1\",\"value\":\"123\"},"+
                                "{\"name\":\"param2\",\"value\":null},"+
                                "{\"name\":\"param3\",\"value\":123},"+
-                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.555+0400\"}"+
+                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56\"}"+
                 "],"+
                 "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pageSize\":26}";
         BioRequestJStoreGetDataSet request = Jsons.decode(requestBody, BioRequestJStoreGetDataSet.class);
         LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
-        Date expectedDateTime = Types.parse("1970.03.02T18:43:56.555+0400", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
+        Date expectedDateTime = Types.parse("1970.03.02T18:43:56+0400", "yyyy.MM.dd'T'HH:mm:ss");
         LOG.debug("expectedDateTime: {}", expectedDateTime);
 
         TimeZone timeZone = TimeZone.getDefault();

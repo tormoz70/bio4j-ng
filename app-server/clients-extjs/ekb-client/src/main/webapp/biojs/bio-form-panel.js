@@ -91,7 +91,7 @@ Ext.override(Ext.form.Panel, {
 
         if ((me && me.isValid()) && (me.isDirty() || me.innerStoresHasChanges())) {
             me.updateRecord();
-            store = me.getRecord().store;
+            var store = me.getRecord().store;
             if(store) {
                 var innerGrids = Bio.tools.childByClassName(me, 'Bio.grid.Panel'),
                     innerStores = [];

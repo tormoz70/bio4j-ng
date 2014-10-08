@@ -45,7 +45,7 @@ public class SqlTypeConverterImpl implements SqlTypeConverter {
                 return Byte[].class;
             case java.sql.Types.DATE :
             case java.sql.Types.TIMESTAMP :
-                return Date.class;
+                return java.sql.Date.class;
             default:
                 return Object.class;
         }
