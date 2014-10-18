@@ -128,7 +128,6 @@ Ext.define('Bio.login', {
 //            icon: Ext.MessageBox.QUESTION
 //        });
 //    }
-
 });
 
 //Bio.login = new Bio.Login();

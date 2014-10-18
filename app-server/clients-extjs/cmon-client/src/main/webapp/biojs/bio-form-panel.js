@@ -15,14 +15,18 @@ Ext.override(Ext.form.Panel, {
         store.load({
             id: id,
             callback: function(records, operation, success) {
-                var f = me.getForm();
+                var store = this,
+                    f = me.getForm();
                 me.trackResetOnLoad = true;
-                if(records && (records.length > 0)) {
-                    me.getForm().loadRecord(records[0]);
+                if(store.data.items.length == 0)
+                    store.insert(0, {});
+                var rec = store.data.items[0];
+                if(rec) {
+                    me.getForm().loadRecord(rec);
                     me.resetOriginal();
                 }
                 if(callback && typeof callback == 'function')
-                    callback.call(scope || me, records, operation, success);
+                    callback.call(scope || me, rec, operation, success);
             }
         });
     },
@@ -87,7 +91,7 @@ Ext.override(Ext.form.Panel, {
 
         if ((me && me.isValid()) && (me.isDirty() || me.innerStoresHasChanges())) {
             me.updateRecord();
-            store = me.getRecord().store;
+            var store = me.getRecord().store;
             if(store) {
                 var innerGrids = Bio.tools.childByClassName(me, 'Bio.grid.Panel'),
                     innerStores = [];
