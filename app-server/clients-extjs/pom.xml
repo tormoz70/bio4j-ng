@@ -182,6 +182,7 @@
             <modules>
                 <module>ekb-client</module>
                 <module>cmon-client</module>
+                <module>acstudio-client</module>
             </modules>
         </profile>
     </profiles>
