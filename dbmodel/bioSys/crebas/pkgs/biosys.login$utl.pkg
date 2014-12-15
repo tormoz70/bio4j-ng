@@ -57,6 +57,7 @@ IS
         is_bioroot                  t_flag,     -- (вычисляемое) - '1' - имеет роль bioroot
         extinfo                     t_text      -- Доп инф.
     );
+
     type usr_tbl is table of usr_rec;
 
     procedure init_defaults_data;
@@ -102,6 +103,10 @@ IS
         p_adesc in urole.adesc%type);
 
     function get_usr(p_login in varchar2) return usr_tbl pipelined;
+    function ugrant_exists(p_grant_uid in t_uid2) return number;
+
+    function encrypt_pwd(p_usr_pwd in varchar2) return varchar2;
+
 END;
 /
 CREATE OR REPLACE PACKAGE BODY biosys.login$utl

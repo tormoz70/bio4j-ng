@@ -1,48 +1,63 @@
 Ext.Loader.setConfig({enabled: true});
 Ext.Loader.setPath('Ext.ux', '../../../ux');
-//Ext.Loader.setPath('Ekb.grid', './');
-Ext.Loader.setPath('Ekb.form', '.');
+Ext.Loader.setPath('Bio.admin', '.');
 Ext.require([
     'Ext.ux.PreviewPlugin'
-    //'Ekb.form.FilmDetails'
 ]);
 
-//alert("Required loaded!");
+
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Реестр кинотеатров]";
-//    alert("Redy!!!");
-    Ext.ns('Ekb');
+    document.title = document.title + " - [Управление пользователями]";
+
+    Ext.ns('Bio.admin');
 
     Ext.tip.QuickTipManager.init();
 
     var grid = Ext.create('Bio.grid.Panel', {
-        id: 'ekb-orgs-grid',
-        title: 'Default Tab',
+        id: 'bio-admin-usrs-grid',
+        title: 'Пользователи',
         rowLines: true,
         columnLines: true,
         storeCfg: {
             bioCode:'cabinet.org-filtered-list',
+            bioParams: [
+                {
+                    name:"prm1",
+                    value:"qwe"
+                },
+                {
+                    name:"prm2",
+                    value:"asd"
+                }
+            ],
+            //pageSize: -1,
             autoLoad: true,
             remoteSort: true
         },
+//        columns: [
+//            {
+//                dataIndex: 'cre_date',
+//                renderer : Ext.util.Format.dateRenderer('m/d/Y')
+//            }
+//        ],
         tbar: Ext.create('Ext.toolbar.Toolbar', {
             items: [
                 {
                     text: 'Создать',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-orgs-grid');
+                        var grd = Ext.getCmp('bio-admin-usrs-grid');
                         var seldId = null;
                         var win2 = Ext.create('Ext.window.Window', {
-                            title: 'Новый кинотеатр',
+                            title: 'Новый пользователь',
                             closeAction: 'destroy',
                             closable: true,
                             plain: true,
                             modal: true,
                             layout: 'fit',
-                            items: Ext.create('Ekb.form.OrgDetails', {
+                            items: Ext.create('Bio.admin.UsrDetails', {
                                 ekb: { orgId: seldId }
                             })
                         });
@@ -58,16 +73,16 @@ Ext.onReady(function () {
                     text: 'Детали',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-orgs-grid');
+                        var grd = Ext.getCmp('bio-admin-usrs-grid');
                         var seldId = grd.getSelectedId();
                         var win2 = Ext.create('Ext.window.Window', {
-                            title: 'Детальная информация по кинотеатру',
+                            title: 'Детальная информация по пользователю',
                             closeAction: 'destroy',
                             closable: true,
                             plain: true,
                             modal: true,
                             layout: 'fit',
-                            items: Ext.create('Ekb.form.OrgDetails', {
+                            items: Ext.create('Bio.admin.UsrDetails', {
                                 ekb: { orgId: seldId }
                             })
                         });

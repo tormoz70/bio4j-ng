@@ -1,8 +1,8 @@
 Connected.
-old  58:   schema_ddl('&datapath', 'BIOSYS', true);
-new  58:   schema_ddl('/ora/oradata/MICEXDB', 'BIOSYS', true);
-old  59:   schema_ddl('&datapath', 'BIOSYS');
-new  59:   schema_ddl('/ora/oradata/MICEXDB', 'BIOSYS');
+old  67:   schema_ddl('&datapath', 'BIOSYS', true);
+new  67:   schema_ddl('/ora/oradata/MICEXDB', 'BIOSYS', true);
+old  68:   schema_ddl('&datapath', 'BIOSYS');
+new  68:   schema_ddl('/ora/oradata/MICEXDB', 'BIOSYS');
 
 PL/SQL procedure successfully completed.
 
@@ -70,7 +70,17 @@ Grant succeeded.
 Grant succeeded.
 
 
-PL/SQL procedure successfully completed.
+Grant succeeded.
+
+BEGIN DBMS_NETWORK_ACL_ADMIN.DROP_ACL(acl => 'send_mail.xml'); END;
+
+*
+ERROR at line 1:
+ORA-31001: Invalid resource handle or path name "/sys/acls/send_mail.xml" 
+ORA-06512: at "XDB.DBMS_XDB", line 355 
+ORA-06512: at "SYS.DBMS_NETWORK_ACL_ADMIN", line 470 
+ORA-06512: at line 1 
+
 
 
 PL/SQL procedure successfully completed.
@@ -472,7 +482,7 @@ Package body created.
 Package created.
 
 
-Package body created.
+Warning: Package Body created with compilation errors.
 
 
 Package created.

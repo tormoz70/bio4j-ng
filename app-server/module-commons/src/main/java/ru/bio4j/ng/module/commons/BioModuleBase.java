@@ -87,12 +87,12 @@ public abstract class BioModuleBase implements BioModule {
         service.schedule(new Runnable() {
             @Override
             public void run() {
-                String selfModuleKey = getSelfModuleKey();
-                LOG.debug("Sending event [bio-module-updated] for module \"{}\"...", selfModuleKey);
-                Map<String, Object> props = new HashMap<>();
-                props.put("bioModuleKey", selfModuleKey);
-                getEventAdmin().postEvent(new Event("bio-module-updated", props));
-                LOG.debug("Event sent.");
+            String selfModuleKey = getSelfModuleKey();
+            LOG.debug("Sending event [bio-module-updated] for module \"{}\"...", selfModuleKey);
+            Map<String, Object> props = new HashMap<>();
+            props.put("bioModuleKey", selfModuleKey);
+            getEventAdmin().postEvent(new Event("bio-module-updated", props));
+            LOG.debug("Event sent.");
             }
         }, 1, TimeUnit.SECONDS);
 

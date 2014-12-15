@@ -3,6 +3,7 @@
 
 prompt create views...
 @@bioSys\crebas\views\org_path.sql 
+@@bioSys\crebas\views\usrs.sql 
 prompt views created.
 prompt create packages...
 @@bioSys\crebas\pkgs\biosys.login$utl.pkg

@@ -13,7 +13,7 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
 @Provides(specifications = BioModule.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
-                value = "ekb",
+                value = "acstudio",
                 type = "java.lang.String"
         )})
 public class EkbApplicationImpl extends BioModuleBase {
@@ -29,7 +29,7 @@ public class EkbApplicationImpl extends BioModuleBase {
 
     @Override
     protected String getSelfModuleKey() {
-        return "ekb";
+        return "acstudio";
     }
 
     @Context
@@ -43,7 +43,7 @@ public class EkbApplicationImpl extends BioModuleBase {
 
     @Override
     public String getDescription() {
-        return "E-Kinobilet application";
+        return "ACStudio application";
     }
 
 

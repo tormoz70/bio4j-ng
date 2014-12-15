@@ -45,4 +45,11 @@ public class BioApplicationImpl extends BioModuleBase {
         return "Bio inner application module";
     }
 
+    @Validate
+    public void start() throws Exception {
+        LOG.debug("Starting...");
+        fireEventModuleUpdated();
+        LOG.debug("Started");
+    }
+
 }

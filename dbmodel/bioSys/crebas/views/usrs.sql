@@ -1,5 +1,4 @@
---alter session set current_schema = BIOSYS;
-create or replace view usrs as
+create or replace force view BIOSYS.usrs as
 select
     u.usr_uid,                    -- uid пользователя
     u.usr_login,                  -- Логин пользователя

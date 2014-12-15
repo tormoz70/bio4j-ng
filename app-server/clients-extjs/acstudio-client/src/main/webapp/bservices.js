@@ -41,6 +41,18 @@ Ekb.catalog = {
                 }
             ]
 
+        },
+        {
+            "title": "Администрирование",
+            "items": [
+                {
+                    "text": "Пользователи",
+                    "url": "bservices/admin/usr/index.jsp",
+                    "icon": "kitchensink.gif",
+                    "desc": "Управление пользователями"
+                }
+            ]
+
         }
     ]
 };

@@ -55,6 +55,14 @@ Ext.define('Bio.dialog.Base', {
 
     showDialog: function () {
         this.show();
+    },
+
+    findField: function(fieldName) {
+        var me = this;
+        var fld = me.form.items.find(function (c) {
+            return (c.name) && (c.name === fieldName);
+        });
+        return fld;
     }
 
 });

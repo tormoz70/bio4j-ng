@@ -2,6 +2,8 @@ declare
   procedure schema_ddl(p_data_location in varchar2, p_user_name in varchar2, p_drop_only in boolean default false)
   is
     cs_init_pwd varchar2(30) := 'j125';
+    v_sql varchar2(32000);
+    v_data_location_is_asm boolean := substr(p_data_location, 1, 1) = '+';
     v_ts_data varchar2(30) := upper(p_user_name)||'_DATA';
     v_ts_indx varchar2(30) := upper(p_user_name)||'_INDX';
     function ts_exists(pp_ts_name in varchar2) return number
@@ -39,10 +41,17 @@ declare
       return;
     end if;
     if ts_exists(v_ts_data) = 0 then
-      execute immediate 'CREATE TABLESPACE '||v_ts_data||' DATAFILE '''||p_data_location||'/'||v_ts_data||'.ORA'' SIZE 100M';
+      v_sql := 'CREATE TABLESPACE '||v_ts_data||' DATAFILE '''||
+        (case when v_data_location_is_asm then p_data_location else p_data_location||'/'||v_ts_data||'.ORA' end)
+        ||''' SIZE 100M';
+      execute immediate v_sql;
     end if;
     if ts_exists(v_ts_indx) = 0 then
-      execute immediate 'CREATE TABLESPACE '||v_ts_indx||' DATAFILE '''||p_data_location||'/'||v_ts_indx||'.ORA'' SIZE 100M';
+      --execute immediate 'CREATE TABLESPACE '||v_ts_indx||' DATAFILE '''||p_data_location||'/'||v_ts_indx||'.ORA'' SIZE 100M';
+      v_sql := 'CREATE TABLESPACE '||v_ts_indx||' DATAFILE '''||
+        (case when v_data_location_is_asm then p_data_location else p_data_location||'/'||v_ts_indx||'.ORA' end)
+        ||''' SIZE 100M';
+      execute immediate v_sql;
     end if;
     if user_exists(p_user_name) = 0 then
       execute immediate 'CREATE USER '||upper(p_user_name)||'
@@ -104,9 +113,13 @@ GRANT EXECUTE ON utl_smtp TO biosys
 GRANT SELECT ANY TABLE TO biosys
 /
 
+/*
 exec DBMS_NETWORK_ACL_ADMIN.DROP_ACL(acl => 'send_mail.xml');
 exec DBMS_NETWORK_ACL_ADMIN.CREATE_ACL(acl => 'send_mail.xml',description => 'send_mail ACL',principal => 'BIOSYS',is_grant => true,privilege => 'connect');
 exec DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(acl => 'send_mail.xml',principal => 'BIOSYS',is_grant  => true,privilege => 'resolve');
 exec DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(acl => 'send_mail.xml',host => 'mail.givc.ru'); 
 commit;
+
+select * from USER_NETWORK_ACL_PRIVILEGES;
+*/
 

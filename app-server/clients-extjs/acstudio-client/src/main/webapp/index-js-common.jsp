@@ -53,6 +53,7 @@
         <script type="text/javascript" src="<%=APP_URL%>/biojs/dialog/bio-dialog-base.js"></script>
         <script type="text/javascript" src="<%=APP_URL%>/biojs/dialog/bio-dialog-message.js"></script>
         <script type="text/javascript" src="<%=APP_URL%>/biojs/dialog/bio-dialog-login.js"></script>
+        <script type="text/javascript" src="<%=APP_URL%>/biojs/dialog/bio-dialog-regUser.js"></script>
         <script type="text/javascript" src="<%=APP_URL%>/biojs/bio-dlg.js"></script>
         <script type="text/javascript" src="<%=APP_URL%>/biojs/bio-tools.js"></script>
         <script type="text/javascript" src="<%=APP_URL%>/biojs/bio-login.js"></script>

@@ -50,6 +50,11 @@ Ext.define('Bio.dialog.Login', {
                     height: 30,
                     text: "Отмена",
                     handler: me.doCancel.bind(me)
+                },
+                {
+                    height: 30,
+                    text: "Зарегистрировать...",
+                    handler: me.doRegister.bind(me)
                 }
             ]
         });
@@ -75,14 +80,6 @@ Ext.define('Bio.dialog.Login', {
         me.callParent([config]);
     },
 
-    findField: function(fieldName) {
-        var me = this;
-        var fld = me.form.items.find(function (c) {
-            return (c.name) && (c.name === fieldName);
-        });
-        return fld;
-    },
-
     transaction: null,
     lastLogin: null,
     doOK: function (sender) {
@@ -104,6 +101,16 @@ Ext.define('Bio.dialog.Login', {
             modalResult: 0,
             login: null
         });
+    },
+
+    doRegister: function () {
+        var me = this;
+        me.closeDialog({
+            modalResult: 0,
+            login: null
+        });
+        var dialog = new Bio.dialog.RegUser({callback: me.closeCallbacks});
+        dialog.showDialog();
     },
 
     focuseControl: function () {
