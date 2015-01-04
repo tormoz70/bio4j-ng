@@ -404,24 +404,23 @@ public class Utl {
         return (T)bundleContext.getService(bundleContext.getServiceReference(serviceInterface));
     }
 
-//    public static String extractModuleKey(String bioCode) {
-//        String[] bioCodeParts = Strings.split(bioCode, "@");
-//        if(bioCodeParts.length == 2)
-//            return bioCodeParts[0];
-//        return null;
-//    }
-//    public static String extractBioPath(String bioCode) {
-//        String[] bioCodeParts = Strings.split(bioCode, "@");
-//        if(bioCodeParts.length == 2) {
-//            String path = "/" + bioCodeParts[1].replace(".", "/");
-//            return path;
-//        }
-//        return null;
-//    }
-
-    public static String extractBioPath(String bioCode) {
-        return "/" + bioCode.replace(".", "/");
+    public static String extractModuleKey(String bioCode) {
+        String[] bioCodeParts = Strings.split(bioCode, "@");
+        if(bioCodeParts.length == 2)
+            return bioCodeParts[0];
+        return null;
     }
+    public static String extractBioPath(String bioCode) {
+        String[] bioCodeParts = Strings.split(bioCode, "@");
+        if(bioCodeParts.length == 2) {
+            String path = "/" + bioCodeParts[1].replace(".", "/");
+            return path;
+        } else if(bioCodeParts.length == 1) {
+            return "/" + bioCode.replace(".", "/");
+        }
+        return null;
+    }
+
 
 }
 

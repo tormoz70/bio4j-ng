@@ -264,8 +264,11 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     public BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
+            String altModuleKey = Utl.extractModuleKey(request.getBioCode());
+            String defaultModuleKey = request.getModuleKey();
+            String moduleKey = (Strings.isNullOrEmpty(altModuleKey) ? defaultModuleKey : altModuleKey);
             BioModule module = moduleProvider.getModule(moduleKey);
+
             BioCursor cursor = module.getCursor(request.getBioCode());
             initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
@@ -273,6 +276,10 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             applyCurrentUserParams(usr, cursor.getSelectSqlDef());
 
             SQLContext ctx = sqlContextProvider.selectContext(module);
+            if(ctx == null) {
+                BioModule ctxModule = moduleProvider.getModule(defaultModuleKey);
+                ctx = sqlContextProvider.selectContext(ctxModule);
+            }
 
             ctx.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());
             ctx.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());

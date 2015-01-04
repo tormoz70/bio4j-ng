@@ -6,7 +6,8 @@
         <artifactId>app-server</artifactId>
         <version>0.2-SNAPSHOT</version>
     </parent>
-	<artifactId>flexjson</artifactId>
+
+    <artifactId>flexjson</artifactId>
     <packaging>bundle</packaging>
     <name>FlexJson Lib</name>
     <description>FlexJson Library Bio Mod</description>

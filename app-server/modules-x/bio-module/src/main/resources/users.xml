@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="false">
+	<SQL action="select">
+		<text><![CDATA[
+SELECT a.usr_uid, a.login_name, a.fio, a.contacts
+  FROM GIVCADMIN.USRS a
+        ]]></text>
+	</SQL>
+ 	<fields>
+        <field name="usr_uid" type="string" pk="true" header="ID"/>
+        <field name="login_name" type="string" header="Login"/>
+        <field name="fio" type="string" header="FIO"/>
+        <field name="contacts" type="string" header="Contacts"/>
+    </fields>
+</cursor>
+

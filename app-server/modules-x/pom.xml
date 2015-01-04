@@ -60,8 +60,4 @@
         </dependency>
     </dependencies>
 
-    <modules>
-        <module>bio-module</module>
-    </modules>
-
 </project>

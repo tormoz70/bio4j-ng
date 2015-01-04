@@ -68,11 +68,18 @@ public abstract class BioModuleBase implements BioModule {
         if(sqlContext == null && !localSQLContextIsInited) {
             localSQLContextIsInited = true;
             BundleContext bundleContext = bundleContext();
-            InputStream inputStream = bundleContext.getBundle().getResource(SQL_CONTEXT_CONFIG_FILE_NAME).openStream();
-            if(inputStream != null) {
-                configurator.load(inputStream);
-                sqlContext = SQLContextFactory.create(configurator.getConfig());
-            }
+            String selfModuleKey = getSelfModuleKey();
+            LOG.debug("Getting SQLContext for module \"{}\"...", selfModuleKey);
+            URL url = bundleContext.getBundle().getResource(SQL_CONTEXT_CONFIG_FILE_NAME);
+            if (url != null) {
+                InputStream inputStream = url.openStream();
+                if (inputStream != null) {
+                    configurator.load(inputStream);
+                    sqlContext = SQLContextFactory.create(configurator.getConfig());
+                    LOG.debug("Context description for module \"{}\" loaded from file \"{}\".", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
+                }
+            } else
+                LOG.debug("File \"{}\" not found for module \"{}\"...", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
         }
         return sqlContext;
     }

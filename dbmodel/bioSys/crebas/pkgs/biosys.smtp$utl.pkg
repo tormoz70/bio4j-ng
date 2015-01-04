@@ -1,5 +1,4 @@
-CREATE OR REPLACE 
-PACKAGE biosys.smtp$utl 
+CREATE OR REPLACE PACKAGE biosys.smtp$utl
 IS
 
     PROCEDURE send (p_mailhost       IN VARCHAR2,
@@ -16,15 +15,14 @@ IS
                     p_message_html   IN CLOB default EMPTY_CLOB(),
                     p_encoding       IN VARCHAR2 default 'windows-1251',
                     p_filename       IN VARCHAR2 DEFAULT NULL,
-                    p_binaryfile     IN BLOB DEFAULT EMPTY_BLOB()
+                    p_binaryfile     IN BLOB DEFAULT EMPTY_BLOB(),
+                    p_filename2      IN VARCHAR2 DEFAULT NULL,
+                    p_binaryfile2    IN BLOB DEFAULT EMPTY_BLOB()
                     );
 
 END;
 /
-
-
-CREATE OR REPLACE 
-PACKAGE BODY biosys.smtp$utl
+CREATE OR REPLACE PACKAGE BODY biosys.smtp$utl
 IS
   crlf                      VARCHAR2(2)  := CHR(13) || CHR(10);
   -- A unique string that demarcates boundaries of parts in a multi-part email
@@ -33,12 +31,16 @@ IS
   boundary_0         CONSTANT VARCHAR2 (256) := 'bnd-0-'||sys_guid()||'';
   boundary_1         CONSTANT VARCHAR2 (256) := 'bnd-1-'||sys_guid()||'';
   boundary_2         CONSTANT VARCHAR2 (256) := 'bnd-2-'||sys_guid()||'';
+  boundary_3         CONSTANT VARCHAR2 (256) := 'bnd-3-'||sys_guid()||'';
 
   cur_boundary_1     CONSTANT VARCHAR2 (256) := '--' || boundary_1;
   last_boundary_1    CONSTANT VARCHAR2 (256) := '--' || boundary_1 || '--';
 
   cur_boundary_2     CONSTANT VARCHAR2 (256) := '--' || boundary_2;
   last_boundary_2    CONSTANT VARCHAR2 (256) := '--' || boundary_2 || '--';
+
+  --cur_boundary_3     CONSTANT VARCHAR2 (256) := '--' || boundary_3;
+  --last_boundary_3    CONSTANT VARCHAR2 (256) := '--' || boundary_3 || '--';
 
   procedure wr_data (p_conn       IN OUT NOCOPY UTL_SMTP.connection,
                         p_text       IN VARCHAR2)
@@ -168,7 +170,9 @@ IS
                   p_message_html   IN CLOB default EMPTY_CLOB(),
                   p_encoding       IN VARCHAR2 default 'windows-1251',
                   p_filename       IN VARCHAR2 DEFAULT NULL,
-                  p_binaryfile     IN BLOB DEFAULT EMPTY_BLOB()
+                  p_binaryfile     IN BLOB DEFAULT EMPTY_BLOB(),
+                  p_filename2      IN VARCHAR2 DEFAULT NULL,
+                  p_binaryfile2    IN BLOB DEFAULT EMPTY_BLOB()
                   )
   IS
     v_conn                         UTL_SMTP.connection;
@@ -248,16 +252,30 @@ IS
     end if;
     wr_data (v_conn, last_boundary_2||crlf);
 
-    if p_filename is not null then
-      wr_data (v_conn, cur_boundary_1||crlf);
-      wr_blob (v_conn, p_filename, p_binaryfile, p_encoding);
-      wr_data (v_conn, last_boundary_1||crlf);
-    else
-      wr_data (v_conn, last_boundary_1||crlf);
+    if (p_filename is not null) or (p_filename2 is not null) then
+        if p_filename2 is not null then
+          wr_data (v_conn, cur_boundary_1||crlf);
+          wr_blob (v_conn, p_filename, p_binaryfile, p_encoding);
+        end if;
+        if p_filename2 is not null then
+          wr_data (v_conn, cur_boundary_1||crlf);
+          wr_blob (v_conn, p_filename2, p_binaryfile2, p_encoding);
+        end if;
+        wr_data (v_conn, last_boundary_1||crlf);
     end if;
 
     UTL_SMTP.close_data (v_conn);
     UTL_SMTP.quit (v_conn);
+  exception
+    when others then
+    begin
+        --UTL_SMTP.close_data (v_conn);
+        UTL_SMTP.quit (v_conn);
+        raise;
+    --exception
+    --    when others then
+    --        null;
+    end;
   END;
 
   PROCEDURE send (p_mailhost       IN VARCHAR2,
@@ -274,17 +292,18 @@ IS
                   p_message_html   IN CLOB default EMPTY_CLOB(),
                   p_encoding       IN VARCHAR2 default 'windows-1251',
                   p_filename       IN VARCHAR2 DEFAULT NULL,
-                  p_binaryfile     IN BLOB DEFAULT EMPTY_BLOB()
+                  p_binaryfile     IN BLOB DEFAULT EMPTY_BLOB(),
+                  p_filename2      IN VARCHAR2 DEFAULT NULL,
+                  p_binaryfile2    IN BLOB DEFAULT EMPTY_BLOB()
                   )
   is
   begin
     for c in (select * from table(ai$utl.split_str(p_recipient, ';'))) loop
       send0(p_mailhost, p_username, p_password, p_port, p_sender,
         p_sender_name, c.column_value, p_ccrecipient, p_bccrecipient, p_subject, p_message_text,
-          p_message_html, p_encoding, p_filename, p_binaryfile);
+          p_message_html, p_encoding, p_filename, p_binaryfile, p_filename2, p_binaryfile2);
     end loop;
   end;
 
 END;
 /
-

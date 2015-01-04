@@ -23,7 +23,8 @@ Ext.onReady(function () {
         rowLines: true,
         columnLines: true,
         storeCfg: {
-            bioCode:'cabinet.org-filtered-list',
+            //bioCode:'ekb@cabinet.org-filtered-list',
+            bioCode:'bio@users',
             autoLoad: true,
             remoteSort: true
         },

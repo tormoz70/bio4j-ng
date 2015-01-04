@@ -76,19 +76,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!--<version>${compiler-plugin-version}</version>-->
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
         </plugins>
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <!--<version>${compiler-plugin-version}</version>-->
-                    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -318,10 +318,17 @@
 
     <profiles>
         <profile>
-            <id>distr-as</id>
+            <id>dev</id>
+            <properties>
+                <bioDebug>true</bioDebug>
+            </properties>
+        </profile>
+    </profiles>
+        <!--<profile>-->
+            <!--<id>distr-as</id>-->
             <modules>
                 <!-- Common services -->
-                <module>dependency-security-filter</module>
+                <!--<module>dependency-security-filter</module>-->
                 <module>flexjson</module>
                 <module>t-model</module>
                 <module>commons</module>
@@ -354,42 +361,51 @@
                 <module>modules-x</module>
                 <module>as-distribution-modules</module>
                 <module>clients-extjs</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>distr-cli</id>
-            <modules>
-                <module>as-distribution-cli</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <bioDebug>true</bioDebug>
-            </properties>
-        </profile>
-        <profile>
-            <id>distr-ekb</id>
-            <modules>
+
+                <module>modules-x/bio-module</module>
+                <module>as-distribution-modules/bio-distr</module>
+
                 <module>modules-x/ekb-module</module>
                 <module>as-distribution-modules/ekb-distr</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>distr-cmon</id>
-            <modules>
+
                 <module>modules-x/cmon-module</module>
                 <module>as-distribution-modules/cmon-distr</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>distr-acstudio</id>
-            <modules>
+
                 <module>modules-x/acstudio-module</module>
                 <module>as-distribution-modules/acstudio-distr</module>
+
+                <module>as-distribution-cli</module>
+
             </modules>
-        </profile>
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-cli</id>-->
+            <!--<modules>-->
+                <!--<module>as-distribution-cli</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-ekb</id>-->
+            <!--<modules>-->
+                <!--<module>modules-x/ekb-module</module>-->
+                <!--<module>as-distribution-modules/ekb-distr</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-cmon</id>-->
+            <!--<modules>-->
+                <!--<module>modules-x/cmon-module</module>-->
+                <!--<module>as-distribution-modules/cmon-distr</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-acstudio</id>-->
+            <!--<modules>-->
+                <!--<module>modules-x/acstudio-module</module>-->
+                <!--<module>as-distribution-modules/acstudio-distr</module>-->
+            <!--</modules>-->
+        <!--</profile>-->
 
 
-    </profiles>
+    <!--</profiles>-->
 </project>

@@ -83,50 +83,50 @@
             </plugins>
         </pluginManagement>
     </build>
-    <profiles>
-        <profile>
-            <id>wab-package</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-servlet_3.0_spec</artifactId>
-                    <scope>provided</scope>
-                </dependency>
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>wab-package</id>-->
+            <!--<dependencies>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.osgi</groupId>-->
+                    <!--<artifactId>org.osgi.core</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>org.apache.geronimo.specs</groupId>-->
+                    <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
 
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>bio4j-ng-stypes</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>bio4j-ng-sapi</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>bio4j-ng-commons</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>bio4j-ng-tmodel</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>flexjson</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>war-package</id>
+                <!--<dependency>-->
+                    <!--<groupId>${project.groupId}</groupId>-->
+                    <!--<artifactId>bio4j-ng-stypes</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>${project.groupId}</groupId>-->
+                    <!--<artifactId>bio4j-ng-sapi</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>${project.groupId}</groupId>-->
+                    <!--<artifactId>bio4j-ng-commons</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>${project.groupId}</groupId>-->
+                    <!--<artifactId>bio4j-ng-tmodel</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+                <!--<dependency>-->
+                    <!--<groupId>${project.groupId}</groupId>-->
+                    <!--<artifactId>flexjson</artifactId>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+            <!--</dependencies>-->
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>war-package</id>-->
             <dependencies>
                 <dependency>
                     <groupId>org.osgi</groupId>
@@ -176,15 +176,15 @@
                     <scope>compile</scope>
                 </dependency>
             </dependencies>
-        </profile>
-        <profile>
-            <id>distr-cli</id>
+        <!--</profile>-->
+        <!--<profile>-->
+            <!--<id>distr-cli</id>-->
             <modules>
                 <module>ekb-client</module>
-                <module>cmon-client</module>
-                <module>acstudio-client</module>
+                <!--<module>cmon-client</module>-->
+                <!--<module>acstudio-client</module>-->
             </modules>
-        </profile>
-    </profiles>
+        <!--</profile>-->
+    <!--</profiles>-->
 
 </project>
