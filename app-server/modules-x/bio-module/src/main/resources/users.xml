@@ -13,7 +13,7 @@ SELECT a.usr_uid, a.login_name, a.fio, a.contacts
         <field name="usr_uid" type="string" pk="true" header="ID"/>
         <field name="login_name" type="string" header="Login"/>
         <field name="fio" type="string"><![CDATA[ФИО]]></field>
-        <field name="contacts" type="string" header="Contacts"/>
+        <field name="contacts" type="string">Контакты</field>
     </fields>
 </cursor>
 

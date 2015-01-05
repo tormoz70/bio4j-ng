@@ -316,8 +316,13 @@
 
     </dependencies>
 
-        <!--<profile>-->
-            <!--<id>distr-as</id>-->
+        <modules>
+             <module>dummy</module>
+        </modules>
+
+    <profiles>
+        <profile>
+            <id>distr-as</id>
             <modules>
                 <!-- Common services -->
                 <!--<module>dependency-security-filter</module>-->
@@ -350,8 +355,8 @@
                 <module>as-distribution-as</module>
                 <!--<module>test-rmi-client</module>-->
 
-                <module>modules-x</module>
-                <module>as-distribution-modules</module>
+                <!--<module>modules-x</module>-->
+                <!--<module>as-distribution-modules</module>-->
                 <module>clients-extjs</module>
 
                 <!--<module>modules-x/bio-module</module>-->
@@ -369,9 +374,8 @@
                 <module>as-distribution-cli</module>
 
             </modules>
+        </profile>
 
-
-    <profiles>
         <profile>
             <id>dev</id>
             <properties>

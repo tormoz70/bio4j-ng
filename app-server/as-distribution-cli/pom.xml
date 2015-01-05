@@ -50,7 +50,6 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.webapps}</outputDirectory>
                                 </artifactItem>
-
                             </artifactItems>
                         </configuration>
                     </execution>
