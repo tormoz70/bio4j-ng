@@ -316,14 +316,6 @@
 
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <bioDebug>true</bioDebug>
-            </properties>
-        </profile>
-    </profiles>
         <!--<profile>-->
             <!--<id>distr-as</id>-->
             <modules>
@@ -362,22 +354,66 @@
                 <module>as-distribution-modules</module>
                 <module>clients-extjs</module>
 
-                <module>modules-x/bio-module</module>
-                <module>as-distribution-modules/bio-distr</module>
+                <!--<module>modules-x/bio-module</module>-->
+                <!--<module>as-distribution-modules/bio-distr</module>-->
 
-                <module>modules-x/ekb-module</module>
-                <module>as-distribution-modules/ekb-distr</module>
+                <!--<module>modules-x/ekb-module</module>-->
+                <!--<module>as-distribution-modules/ekb-distr</module>-->
 
-                <module>modules-x/cmon-module</module>
-                <module>as-distribution-modules/cmon-distr</module>
+                <!--<module>modules-x/cmon-module</module>-->
+                <!--<module>as-distribution-modules/cmon-distr</module>-->
 
-                <module>modules-x/acstudio-module</module>
-                <module>as-distribution-modules/acstudio-distr</module>
+                <!--<module>modules-x/acstudio-module</module>-->
+                <!--<module>as-distribution-modules/acstudio-distr</module>-->
 
                 <module>as-distribution-cli</module>
 
             </modules>
-        <!--</profile>-->
+
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <bioDebug>true</bioDebug>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>distr-module-bio</id>
+            <modules>
+                <module>modules-x/bio-module</module>
+                <module>as-distribution-modules/bio-distr</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>distr-module-ekb</id>
+            <modules>
+                <module>modules-x/ekb-module</module>
+                <module>as-distribution-modules/ekb-distr</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>distr-module-cmon</id>
+            <modules>
+                <module>modules-x/cmon-module</module>
+                <module>as-distribution-modules/cmon-distr</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>distr-module-acstudio</id>
+            <modules>
+                <module>modules-x/acstudio-module</module>
+                <module>as-distribution-modules/acstudio-distr</module>
+            </modules>
+        </profile>
+
+    </profiles>
+
+    <!--</profile>-->
         <!--<profile>-->
             <!--<id>distr-cli</id>-->
             <!--<modules>-->

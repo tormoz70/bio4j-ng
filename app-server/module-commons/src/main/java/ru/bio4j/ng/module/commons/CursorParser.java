@@ -214,7 +214,11 @@ public class CursorParser {
                 }
                 col.setId(i + 1);
                 col.setFormat(Doms.getAttribute(paramElem, "format", null, String.class));
-                String header = Doms.getAttribute(paramElem, "header", fieldName, String.class);
+                String header = Doms.getAttribute(paramElem, "header", null, String.class);
+                if(Strings.isNullOrEmpty(header))
+                    header = paramElem.getTextContent();
+                if(Strings.isNullOrEmpty(header))
+                    header = fieldName;
                 col.setTitle(header);
                 col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
                 col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
