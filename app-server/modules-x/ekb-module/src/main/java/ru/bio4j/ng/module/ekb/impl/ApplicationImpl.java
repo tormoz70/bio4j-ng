@@ -1,4 +1,4 @@
-package ru.bio4j.ng.module.cmon.impl;
+package ru.bio4j.ng.module.ekb.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
@@ -13,11 +13,11 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
 @Provides(specifications = BioModule.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
-                value = "acstudio",
+                value = "ekb",
                 type = "java.lang.String"
         )})
-public class EkbApplicationImpl extends BioModuleBase {
-    private static final Logger LOG = LoggerFactory.getLogger(EkbApplicationImpl.class);
+public class ApplicationImpl extends BioModuleBase {
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;
@@ -29,7 +29,7 @@ public class EkbApplicationImpl extends BioModuleBase {
 
     @Override
     protected String getSelfModuleKey() {
-        return "acstudio";
+        return "ekb";
     }
 
     @Context
@@ -43,7 +43,7 @@ public class EkbApplicationImpl extends BioModuleBase {
 
     @Override
     public String getDescription() {
-        return "ACStudio application";
+        return "E-Kinobilet application";
     }
 
 

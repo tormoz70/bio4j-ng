@@ -57,7 +57,6 @@ IS
         is_bioroot                  t_flag,     -- (вычисляемое) - '1' - имеет роль bioroot
         extinfo                     t_text      -- Доп инф.
     );
-
     type usr_tbl is table of usr_rec;
 
     procedure init_defaults_data;

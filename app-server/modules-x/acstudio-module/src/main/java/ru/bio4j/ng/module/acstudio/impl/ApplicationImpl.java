@@ -1,4 +1,4 @@
-package ru.bio4j.ng.module.bio.impl;
+package ru.bio4j.ng.module.acstudio.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
@@ -13,11 +13,11 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
 @Provides(specifications = BioModule.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
-                value = "bio",
+                value = "acstudio",
                 type = "java.lang.String"
         )})
-public class BioApplicationImpl extends BioModuleBase {
-    private static final Logger LOG = LoggerFactory.getLogger(BioApplicationImpl.class);
+public class ApplicationImpl extends BioModuleBase {
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;
@@ -29,7 +29,7 @@ public class BioApplicationImpl extends BioModuleBase {
 
     @Override
     protected String getSelfModuleKey() {
-        return "bio";
+        return "acstudio";
     }
 
     @Context
@@ -40,10 +40,12 @@ public class BioApplicationImpl extends BioModuleBase {
         return bundleContext;
     }
 
+
     @Override
     public String getDescription() {
-        return "Bio inner application module";
+        return "ACStudio application";
     }
+
 
     @Validate
     public void start() throws Exception {

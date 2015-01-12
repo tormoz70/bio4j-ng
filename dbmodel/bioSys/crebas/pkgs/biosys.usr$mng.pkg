@@ -1,5 +1,4 @@
-CREATE OR REPLACE 
-PACKAGE biosys.usr$mng
+CREATE OR REPLACE PACKAGE biosys.usr$mng
 IS
 
     cs_dont_change_field varchar2(100) := 'BIOSYS_DONT_CHANGE_FIELD';
@@ -15,12 +14,24 @@ IS
 
     procedure usr_restore(p_usr_uid in varchar2);
 
+    procedure modrec(
+      p_usr_uid in out varchar2,
+      p_usr_login in varchar2,
+      p_usr_pwd in varchar2,
+      p_email_addr in varchar2,
+      p_workspace_id in number,
+      p_org_id in number,
+      p_fio_fam in varchar2,
+      p_fio_fname in varchar2,
+      p_fio_sname in varchar2,
+      p_usr_phone in varchar2,
+      p_confirmed in number,
+      p_extinfo in varchar2
+    );
+
 END; -- Package spec
 /
-
-
-CREATE OR REPLACE 
-PACKAGE BODY biosys.usr$mng
+CREATE OR REPLACE PACKAGE BODY biosys.usr$mng
 IS
   subtype t_uid           is varchar2(32);
 
@@ -154,4 +165,3 @@ IS
 
 END;
 /
-

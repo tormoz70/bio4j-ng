@@ -16,8 +16,8 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
                 value = "cmon",
                 type = "java.lang.String"
         )})
-public class CmonApplicationImpl extends BioModuleBase {
-    private static final Logger LOG = LoggerFactory.getLogger(CmonApplicationImpl.class);
+public class ApplicationImpl extends BioModuleBase {
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;

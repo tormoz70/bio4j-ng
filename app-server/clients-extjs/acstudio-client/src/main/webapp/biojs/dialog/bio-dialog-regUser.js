@@ -152,11 +152,11 @@ Ext.define('Bio.dialog.RegUser', {
             buttons:[
                 {
                     text: "Сохранить",
-                    handler: this.doOK
+                    handler: me.doOK.bind(me)
                 },
                 {
                     text: "Отмена",
-                    handler: this.doCancel
+                    handler: me.doCancel.bind(me)
                 }
             ]
         });
@@ -187,21 +187,38 @@ Ext.define('Bio.dialog.RegUser', {
     doOK: function (sender) {
         var me = this;
 
-        var userNameFld = me.findField("FA_USER_NAME");
-        var userPasswordFld = me.findField("FA_PASSWORD");
+        //var userNameFld = me.findField("FA_USER_NAME");
+        //var userPasswordFld = me.findField("FA_PASSWORD");
 
-        var userName = (userNameFld) ? userNameFld.getValue() : null;
-        var userPassword = (userPasswordFld) ? userPasswordFld.getValue() : null;
-        me.closeDialog({
-            modalResult: 1,
-            login: userName+"/"+userPassword
+        //var userName = (userNameFld) ? userNameFld.getValue() : null;
+        //var userPassword = (userPasswordFld) ? userPasswordFld.getValue() : null;
+        //me.closeDialog({
+        //    modalResult: 1,
+        //    login: userName+"/"+userPassword
+        //});
+
+        var form = Bio.tools.parentFormByClassName(me, 'Bio.dialog.RegUser');
+
+        form.postData({
+            callback: {
+                fn: function(operation) {
+                    var me = this;
+                    //alert("Saved!!!");
+                    if(operation.responseData.success === true)
+                        me.up('window').close();
+                },
+                scope: form
+            }
         });
+
+
+
     },
 
     doCancel: function () {
         this.closeDialog({
-            modalResult: 0,
-            login: null
+            modalResult: 0//,
+            //login: null
         });
     },
 

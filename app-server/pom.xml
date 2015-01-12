@@ -316,13 +316,12 @@
 
     </dependencies>
 
-        <modules>
-             <module>dummy</module>
-        </modules>
-
     <profiles>
         <profile>
             <id>distr-as</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <!-- Common services -->
                 <!--<module>dependency-security-filter</module>-->
