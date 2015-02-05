@@ -54,10 +54,14 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         return onlineUsers.remove(String.format("%s-%s", moduleKey, userUID));
     }
 
+    private static final String PUBLIC_USER_UID = "$biopub$";
+    private static final String ROOT_USER_UID = "root/root";
+
     @Override
     public User getUser(final String moduleKey, final String loginOrUid) throws Exception {
         if(isNullOrEmpty(loginOrUid))
             throw new BioError.Login.BadLogin();
+
         final String uid = loginOrUid.contains("/") ? null : loginOrUid;
         final String login = loginOrUid.contains("/") ? loginOrUid : null;
 
@@ -70,12 +74,24 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                 throw new BioError.Login.LoginExpired();
         }
 
-        if(login.equals("root/root")) {
+        if(PUBLIC_USER_UID.equals(loginOrUid.toLowerCase())) {
             User usr = new User();
             usr.setModuleKey(moduleKey);
             usr.setUid("test-user-uid");
             usr.setLogin("root");
             usr.setFio("Test User FIO");
+            usr.setRoles("*");
+            usr.setGrants("*");
+            storeUser(usr);
+            return usr;
+        }
+
+        if(ROOT_USER_UID.equals(loginOrUid.toLowerCase())) {
+            User usr = new User();
+            usr.setModuleKey(moduleKey);
+            usr.setUid("root-user-uid");
+            usr.setLogin("root");
+            usr.setFio("Root User FIO");
             usr.setRoles("*");
             usr.setGrants("*");
             storeUser(usr);

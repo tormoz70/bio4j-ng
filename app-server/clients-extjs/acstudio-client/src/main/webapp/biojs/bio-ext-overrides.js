@@ -91,23 +91,39 @@ Ext.override(Ext.data.Connection, {
     },
 
     request : function(options) {
-        var me = this;
+        var me = this, bioPubLogin = "$biopub$";
         var gp = {
             bm: Bio.app.APP_MODULE_KEY
         };
         Ext.apply(options.params, gp);
+        var bioCode = (options && options.jsonData ? options.jsonData.bioCode : null),
+            isBiosysRequest = false;
+        if (Bio.tools.isDefined(bioCode)) {
+            isBiosysRequest = Ext.String.startsWith(bioCode, bioPubLogin+".");
+            bioCode = bioCode.substr((bioPubLogin+".").length);
+            options.jsonData.bioCode = bioCode;
+        }
 
-        return Bio.login.getUser({
-            fn: function(usr) {
-                var o = Ext.apply({}, options);
-                var p = {
-                    uid : usr.login||usr.uid
-                };
-                Ext.apply(o.params, p);
-                return me.request0(o);
-            },
-            scope: me
-        });
+
+        if (isBiosysRequest === true) {
+            var o = Ext.apply({}, options);
+            var p = {
+                uid : bioPubLogin
+            };
+            Ext.apply(o.params, p);
+            return me.request0(options);
+        } else
+            return Bio.login.getUser({
+                fn: function(usr) {
+                    var o = Ext.apply({}, options);
+                    var p = {
+                        uid : usr.login||usr.uid
+                    };
+                    Ext.apply(o.params, p);
+                    return me.request0(o);
+                },
+                scope: me
+            });
     },
 
     onComplete0 : function(request, xdrResult) {

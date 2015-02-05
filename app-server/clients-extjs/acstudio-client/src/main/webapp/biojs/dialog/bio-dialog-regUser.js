@@ -11,7 +11,7 @@ Ext.define('Bio.dialog.RegUser', {
         var storedUserPwd = "root";
 
         me.form = new Ext.form.Panel({
-            url: 'dummy.php',
+            //url: 'dummy.php',
             frame: true,
             bodyStyle: 'padding:5px 5px 0',
             autoWidth: true,
@@ -149,6 +149,17 @@ Ext.define('Bio.dialog.RegUser', {
                     }]
                 }
             ],
+            listeners: {
+                afterrender: function() {
+                    var me = this,
+                        store = Ext.create('Bio.data.Store', {
+                            bioCode: '$biopub$.bio@users'
+                        }),
+                        seldId = (me.bio ? me.bio.userId : null);
+                    me.loadData(store, seldId, function () {
+                    });
+                }
+            },
             buttons:[
                 {
                     text: "Сохранить",
@@ -197,7 +208,7 @@ Ext.define('Bio.dialog.RegUser', {
         //    login: userName+"/"+userPassword
         //});
 
-        var form = Bio.tools.parentFormByClassName(me, 'Bio.dialog.RegUser');
+        var form = me.form;
 
         form.postData({
             callback: {
