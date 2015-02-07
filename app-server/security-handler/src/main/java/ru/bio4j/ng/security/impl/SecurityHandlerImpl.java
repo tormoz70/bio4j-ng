@@ -54,8 +54,10 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         return onlineUsers.remove(String.format("%s-%s", moduleKey, userUID));
     }
 
-    private static final String PUBLIC_USER_UID = "$biopub$";
-    private static final String ROOT_USER_UID = "root/root";
+    private static final String PUBLIC_USER_LOGIN = "$biopub$";
+    private static final String PUBLIC_USER_UID = "public-user-uid";
+    private static final String ROOT_USER_LOGIN = "root/root";
+    private static final String ROOT_USER_UID = "root-user-uid";
 
     @Override
     public User getUser(final String moduleKey, final String loginOrUid) throws Exception {
@@ -74,27 +76,33 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                 throw new BioError.Login.LoginExpired();
         }
 
-        if(PUBLIC_USER_UID.equals(loginOrUid.toLowerCase())) {
-            User usr = new User();
-            usr.setModuleKey(moduleKey);
-            usr.setUid("test-user-uid");
-            usr.setLogin("root");
-            usr.setFio("Test User FIO");
-            usr.setRoles("*");
-            usr.setGrants("*");
-            storeUser(usr);
+        if(PUBLIC_USER_LOGIN.equals(loginOrUid.toLowerCase())) {
+            User usr = userIsOnline(moduleKey, PUBLIC_USER_UID);
+            if(usr == null) {
+                usr = new User();
+                usr.setModuleKey(moduleKey);
+                usr.setUid(PUBLIC_USER_UID);
+                usr.setLogin(PUBLIC_USER_LOGIN);
+                usr.setFio("Public User FIO");
+                usr.setRoles("*");
+                usr.setGrants("*");
+                storeUser(usr);
+            }
             return usr;
         }
 
-        if(ROOT_USER_UID.equals(loginOrUid.toLowerCase())) {
-            User usr = new User();
-            usr.setModuleKey(moduleKey);
-            usr.setUid("root-user-uid");
-            usr.setLogin("root");
-            usr.setFio("Root User FIO");
-            usr.setRoles("*");
-            usr.setGrants("*");
-            storeUser(usr);
+        if(ROOT_USER_LOGIN.equals(loginOrUid.toLowerCase())) {
+            User usr = userIsOnline(moduleKey, ROOT_USER_UID);
+            if(usr == null) {
+                usr = new User();
+                usr.setModuleKey(moduleKey);
+                usr.setUid(ROOT_USER_UID);
+                usr.setLogin("root");
+                usr.setFio("Root User FIO");
+                usr.setRoles("*");
+                usr.setGrants("*");
+                storeUser(usr);
+            }
             return usr;
         }
 
