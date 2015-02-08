@@ -91,35 +91,36 @@ Ext.override(Ext.data.Connection, {
     },
 
     request : function(options) {
-        var me = this, bioPubLogin = "$biopub$";
+        var me = this;//, bioPubLogin = "$bio-anonymous$";
         var gp = {
             bm: Bio.app.APP_MODULE_KEY
         };
         Ext.apply(options.params, gp);
-        var bioCode = (options && options.jsonData ? options.jsonData.bioCode : null),
-            isBiosysRequest = false;
-        if (Bio.tools.isDefined(bioCode)) {
-            isBiosysRequest = Ext.String.startsWith(bioCode, bioPubLogin+".");
-            bioCode = bioCode.substr((bioPubLogin+".").length);
-            options.jsonData.bioCode = bioCode;
-        }
+        var bioCode = (options && options.jsonData ? options.jsonData.bioCode : null);
+            //isBiosysRequest = false;
+//        if (Bio.tools.isDefined(bioCode)) {
+//            isBiosysRequest = Ext.String.startsWith(bioCode, bioPubLogin+".");
+//            bioCode = bioCode.substr((bioPubLogin+".").length);
+//            options.jsonData.bioCode = bioCode;
+//        }
 
 
-        if (isBiosysRequest === true) {
-            var o = Ext.apply({}, options);
-            var p = {
-                uid : bioPubLogin
-            };
-            Ext.apply(o.params, p);
-            return me.request0(options);
-        } else
+//        if (isBiosysRequest === true) {
+//            var o = Ext.apply({}, options);
+//            var p = {
+//                uid : bioPubLogin
+//            };
+//            Ext.apply(o.params, p);
+//            return me.request0(o);
+//        } else
             return Bio.login.getUser({
                 fn: function(usr) {
                     var o = Ext.apply({}, options);
                     var p = {
+                        biocd : bioCode,
                         uid : usr.login||usr.uid
                     };
-                    Ext.apply(o.params, p);
+                    o.params = Ext.apply(o.params, p);
                     return me.request0(o);
                 },
                 scope: me

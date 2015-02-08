@@ -13,6 +13,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
+import ru.bio4j.ng.service.types.BioServletBase;
 
 import java.sql.Connection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,8 +55,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         return onlineUsers.remove(String.format("%s-%s", moduleKey, userUID));
     }
 
-    private static final String PUBLIC_USER_LOGIN = "$biopub$";
-    private static final String PUBLIC_USER_UID = "public-user-uid";
+    private static final String BIO_ANONYMOUS_USER_UID = "bio-anonymous-user-uid";
     private static final String ROOT_USER_LOGIN = "root/root";
     private static final String ROOT_USER_UID = "root-user-uid";
 
@@ -76,14 +76,14 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
                 throw new BioError.Login.LoginExpired();
         }
 
-        if(PUBLIC_USER_LOGIN.equals(loginOrUid.toLowerCase())) {
-            User usr = userIsOnline(moduleKey, PUBLIC_USER_UID);
+        if(BioServletBase.BIO_ANONYMOUS_USER_LOGIN.equals(loginOrUid.toLowerCase())) {
+            User usr = userIsOnline(moduleKey, BIO_ANONYMOUS_USER_UID);
             if(usr == null) {
                 usr = new User();
                 usr.setModuleKey(moduleKey);
-                usr.setUid(PUBLIC_USER_UID);
-                usr.setLogin(PUBLIC_USER_LOGIN);
-                usr.setFio("Public User FIO");
+                usr.setUid(BIO_ANONYMOUS_USER_UID);
+                usr.setLogin(BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
+                usr.setFio("Anonymous User");
                 usr.setRoles("*");
                 usr.setGrants("*");
                 storeUser(usr);

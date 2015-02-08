@@ -1,6 +1,8 @@
 package ru.bio4j.ng.commons.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -40,7 +42,7 @@ public class Strings {
 	 * @param delimiters - список возможных разделителей
 	 * @return - массив подстрок
 	 */
-	public static String[] split(String str, String[] delimiters) {
+	public static String[] split(String str, String ... delimiters) {
 		if (!isNullOrEmpty(str)) {
 			if ((delimiters != null) && (delimiters.length > 0)) {
 				String line = str;
@@ -49,7 +51,8 @@ public class Strings {
 					final String csDlmtrPG = "#inner_pg_delimeter_str#";
 					for (String delimeter : delimiters)
 						line = line.replace(delimeter, csDlmtrPG);
-				} else
+                    dlmtr = csDlmtrPG;
+                } else
 					dlmtr = delimiters[0];
 				List<String> lst = new ArrayList<String>();
 				int item_bgn = 0;
@@ -69,23 +72,13 @@ public class Strings {
 			return new String[] {};
 	}
 
-    public static String[] split(String str, char[] delimiters) {
+    public static String[] split(String str, char ... delimiters) {
         String[] d = new String[delimiters.length];
         for(int i=0; i<delimiters.length; i++){
             d[i] = ""+delimiters[i];
         }
         return split(str, d);
     }
-
-	/**
-	 * Разбивает строку на подстроки с заданным разделителем
-	 * @param str - строка, которую необходимо разбить
-	 * @param delimiter - разделитель
-	 * @return - массив подстрок
-	 */
-	public static String[] split(String str, String delimiter) {
-		return split(str, new String[] { delimiter });
-	}
 
     public static String getFirstItem(String list, String delimiter) {
         if(isNullOrEmpty(list))

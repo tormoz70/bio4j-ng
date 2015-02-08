@@ -46,6 +46,10 @@
             <param-name>forwardURL</param-name>
             <param-value>http://localhost:9090/login</param-value>
         </init-param>
+        <init-param>
+            <param-name>publicAreas</param-name>
+            <param-value>bio@users</param-value>
+        </init-param>
     </filter>
     <!--Mapping-->
     <servlet-mapping>

@@ -14,8 +14,8 @@ public class BioServletLoginBase extends BioServletBase {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        String moduleKey = request.getParameter(BioServletBase.MODULE_PARAM_NAME);
-        String login = request.getParameter(BioServletBase.UID_PARAM_NAME);
+        String moduleKey = request.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
+        String login = request.getParameter(BioServletBase.QRY_PARAM_NAME_UID);
         brsp.user(securityHandler.getUser(moduleKey, login))
             .exception((brsp.getUser() != null ? null : new BioError.Login.BadLogin()));
         return brsp;

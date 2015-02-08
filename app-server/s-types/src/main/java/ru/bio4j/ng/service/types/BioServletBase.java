@@ -17,10 +17,13 @@ import java.io.*;
 
 public class BioServletBase extends HttpServlet {
 
-    public final static String BIODEBUG_PARAM_NAME = "bioDebug";
-    public final static String MODULE_PARAM_NAME = "bm";
-    public final static String UID_PARAM_NAME = "uid";
-    public final static String FORWARD_URL_PARAM_NAME = "forwardURL";
+    public final static String SCFG_PARAM_NAME_BIODEBUG = "bioDebug";
+    public final static String SCFG_PARAM_NAME_FORWARD_URL = "forwardURL";
+    public final static String SCFG_PARAM_NAME_PUBLIC_AREAS = "publicAreas";
+    public final static String QRY_PARAM_NAME_MODULE = "bm";
+    public final static String QRY_PARAM_NAME_BIOCODE = "biocd";
+    public final static String QRY_PARAM_NAME_UID = "uid";
+    public static final String BIO_ANONYMOUS_USER_LOGIN = "$bio-anonymous$";
 
     protected Logger LOG;
 

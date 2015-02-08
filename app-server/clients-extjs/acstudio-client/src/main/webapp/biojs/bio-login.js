@@ -5,7 +5,7 @@ Ext.define('Bio.login', {
         if(user) {
             if(!Bio.app.curUsr)
                 Bio.app.curUsr = {};
-            Ext.apply(Bio.app.curUsr, user);
+            Bio.app.curUsr = Ext.apply(Bio.app.curUsr, user);
             Bio.app.curUsr.login = null;
             //Bio.cooks.setCookie("cUserUID", user.uid);
             Bio.cooks.setCookie("cUserName", user.login);
@@ -18,7 +18,7 @@ Ext.define('Bio.login', {
     restoreLastSuccessUserUID: function() {
         return Bio.cooks.getCookie('cUserUID');
     },
-    removeLastSuccessUserStore: function() {
+    removeLastSuccessUserUIDStore: function() {
         Bio.cooks.deleteCookie("cUserUID");
         //Bio.cooks.deleteCookie("cUserName");
     },
@@ -58,13 +58,13 @@ Ext.define('Bio.login', {
             if (bioResponse.exception) {
                 if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
                     Bio.app.curUsr = undefined;
-                    me.removeLastSuccessUserStore();
+                    me.removeLastSuccessUserUIDStore();
                     Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
                     return false;
                 }
                 if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
                     Bio.app.curUsr = undefined;
-                    me.removeLastSuccessUserStore();
+                    me.removeLastSuccessUserUIDStore();
                     if (callback) {
                         var cb = Bio.tools.wrapCallback(callback);
                         Ext.callback(cb.fn, cb.scope, [

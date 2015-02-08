@@ -1,7 +1,6 @@
 package ru.bio4j.ng.service.types;
 
 
-import flexjson.ObjectFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -30,8 +29,8 @@ public class BioServletApiBase extends BioServletBase {
         }
     }
 
-    protected static final String REQUEST_TYPE_PARAM_NAME = "rqt";
-    protected static final String JSON_DATA_PARAM_NAME = "jsonData";
+    protected static final String QRY_PARAM_NAME_REQUEST_TYPE = "rqt";
+    protected static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
 
 
     protected void doRoute(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -40,17 +39,17 @@ public class BioServletApiBase extends BioServletBase {
         final HttpServletRequest rqst = request;
         final HttpServletResponse rspns = response;
         final String method = rqst.getMethod();
-        final String moduleKey = rqst.getParameter(MODULE_PARAM_NAME);
-        final String userUID = rqst.getParameter(UID_PARAM_NAME);
+        final String moduleKey = rqst.getParameter(QRY_PARAM_NAME_MODULE);
+        final String userUID = rqst.getParameter(QRY_PARAM_NAME_UID);
 
         final User usr = securityHandler.getUser(moduleKey, userUID);
 
-        final String requestType = rqst.getParameter(REQUEST_TYPE_PARAM_NAME);
+        final String requestType = rqst.getParameter(QRY_PARAM_NAME_REQUEST_TYPE);
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
         if(isNullOrEmpty(requestType))
-            throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", REQUEST_TYPE_PARAM_NAME));
+            throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", QRY_PARAM_NAME_REQUEST_TYPE));
 
-        String jsonDataAsQueryParam = rqst.getParameter(JSON_DATA_PARAM_NAME);
+        String jsonDataAsQueryParam = rqst.getParameter(QRY_PARAM_NAME_JSON_DATA);
         StringBuilder jd = new StringBuilder();
         if(!isNullOrEmpty(jsonDataAsQueryParam))
             jd.append(jsonDataAsQueryParam);
@@ -61,10 +60,6 @@ public class BioServletApiBase extends BioServletBase {
         BioRequest bioRequest;
         String bioRequestJson = jd.toString();
         try {
-//            Class<? extends BioRequestFactory> factory = BioRoute.getType(requestType).getFactory();
-//            if(factory == null)
-//                throw new Exception(String.format("BioRequestFactory for requestType \"%s\" not found!", requestType));
-//            bioRequest = Jsons.decode(bioRequestJson, factory.newInstance());
             Class<? extends BioRequest> clazz = BioRoute.getType(requestType).getClazz();
             if(clazz == null)
                 throw new Exception(String.format("Clazz for requestType \"%s\" not found!", requestType));

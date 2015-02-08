@@ -18,17 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class WarSecurityFilterBase implements Filter {
     private Logger LOG;
 
     private boolean bioDebug = false;
     private String forwardURL = null;
+    private Set<String> publicAreas = new HashSet();
     private String errorPage;
 
-    private void error(String s, Throwable e) {
+    private void log_error(String s, Throwable e) {
         if(LOG != null)
             LOG.error(s, e);
     }
@@ -42,15 +42,27 @@ public class WarSecurityFilterBase implements Filter {
         debug(s, null);
     }
 
+    private void initPublicAreas(String publicArea) {
+        publicAreas.clear();
+        publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG = LoggerFactory.getLogger(this.getClass());
         debug("init...");
         if (filterConfig != null) {
-            bioDebug = Strings.compare(filterConfig.getInitParameter(BioServletBase.BIODEBUG_PARAM_NAME), "true", true);
-            forwardURL = filterConfig.getInitParameter(BioServletBase.FORWARD_URL_PARAM_NAME);
+            bioDebug = Strings.compare(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_BIODEBUG), "true", true);
+            forwardURL = filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_FORWARD_URL);
+            String publicArea = filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS);
+            initPublicAreas(publicArea);
             errorPage = filterConfig.getInitParameter("error_page");
-            debug("errorPage - {}.", errorPage);
+            debug(" Config : {" +
+                  "   -- bioDebug : {}\n"+
+                  "   -- forwardURL : {}\n"+
+                  "   -- publicAreas : {}\n"+
+                  "   -- errorPage : {}\n" +
+                  " }", bioDebug, forwardURL, publicArea, errorPage);
         }
         debug("init - done.");
     }
@@ -66,16 +78,20 @@ public class WarSecurityFilterBase implements Filter {
         }
     }
 
-    private void processUser(User user, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (user != null) {
             Map<String, String[]> extraParams = new TreeMap<>();
             extraParams.putAll(request.getParameterMap());
-            extraParams.put(BioServletBase.UID_PARAM_NAME, new String[] {user.getUid()});
-            HttpServletRequest wrappedRequest = new BioWrappedRequest(request, extraParams);
-            chain.doFilter(wrappedRequest, response);
-        } else
+            extraParams.put(BioServletBase.QRY_PARAM_NAME_UID, new String[] {user.getUid()});
+            return new BioWrappedRequest(request, extraParams);
+        } else {
             BioServletBase.writeError(BioRespBuilder.anError().exception(new BioError.Login.BadLogin()), response, bioDebug);
+            return request;
+        }
+    }
 
+    private boolean detectWeAreInPublicAreas(String bioCode) {
+        return publicAreas.contains(bioCode);
     }
 
     @Override
@@ -92,11 +108,14 @@ public class WarSecurityFilterBase implements Filter {
             debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
             initSecurityHandler(req.getServletContext());
-            final String moduleKey = req.getParameter(BioServletBase.MODULE_PARAM_NAME);
-            final String uid = req.getParameter(BioServletBase.UID_PARAM_NAME);
-            if(securityHandler != null) {
+            final String moduleKey = req.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
+            final String bioCode = req.getParameter(BioServletBase.QRY_PARAM_NAME_BIOCODE);
+            final boolean weAreInPublicAreas = detectWeAreInPublicAreas(bioCode);
+            final String uid = (weAreInPublicAreas ? BioServletBase.BIO_ANONYMOUS_USER_LOGIN : req.getParameter(BioServletBase.QRY_PARAM_NAME_UID));
+            if (securityHandler != null) {
                 User user = securityHandler.getUser(moduleKey, uid);
-                processUser(user, req, resp, chn);
+                HttpServletRequest wrappedRequest = processUser(user, req, resp);
+                chn.doFilter(wrappedRequest, resp);
             } else {
                 final String destination = String.format("%s?bm=%s&uid=%s", this.forwardURL, moduleKey, uid);
                 try {
@@ -107,22 +126,22 @@ public class WarSecurityFilterBase implements Filter {
                             BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
                             if (bresp.isSuccess()) {
                                 User user = bresp.getUser();
-                                processUser(user, req, resp, chn);
+                                HttpServletRequest wrappedRequest = processUser(user, req, resp);
+                                chn.doFilter(wrappedRequest, resp);
                             } else {
                                 BioServletBase.writeError(BioRespBuilder.anError().exception(bresp.getException()), resp, bioDebug);
-                                error("An error while checking User!", bresp.getException());
+                                log_error("An error while checking User!", bresp.getException());
                             }
                         }
                     });
                 } catch (Exception e) {
                     throw new BioError(String.format("Unexpected error while forwarding getUser-request to the BioServer! Message: %s", e.getMessage()), e);
                 }
-
             }
 
         } catch (Exception e) {
             BioServletBase.writeError(BioRespBuilder.anError().exception(BioError.wrap(e)), resp, bioDebug);
-            error("Unexpected error while filtering (Level-1)!", e);
+            log_error("Unexpected error while filtering (Level-1)!", e);
         }
     }
 

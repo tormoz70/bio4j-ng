@@ -27,8 +27,8 @@ public class WarServletApiBase extends BioServletApiBase {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException{
         super.init(servletConfig);
-        bioDebug = Strings.compare(servletConfig.getInitParameter(BioServletBase.BIODEBUG_PARAM_NAME), "true", true);
-        forwardURL = servletConfig.getInitParameter(BioServletBase.FORWARD_URL_PARAM_NAME);
+        bioDebug = Strings.compare(servletConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_BIODEBUG), "true", true);
+        forwardURL = servletConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_FORWARD_URL);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class WarServletApiBase extends BioServletApiBase {
         final String queryString = Httpc.getQueryString(request);
         final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
 
-        String jsonDataAsQueryParam = request.getParameter(JSON_DATA_PARAM_NAME);
+        String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
         StringBuilder jd = new StringBuilder();
         if(!isNullOrEmpty(jsonDataAsQueryParam))
             jd.append(jsonDataAsQueryParam);

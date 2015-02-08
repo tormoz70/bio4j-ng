@@ -153,7 +153,7 @@ Ext.define('Bio.dialog.RegUser', {
                 afterrender: function() {
                     var me = this,
                         store = Ext.create('Bio.data.Store', {
-                            bioCode: '$biopub$.bio@users'
+                            bioCode: 'bio@users'
                         }),
                         seldId = (me.bio ? me.bio.userId : null);
                     me.loadData(store, seldId, function () {

@@ -41,6 +41,13 @@ public class StringUtlTest {
 		Assert.assertEquals(strs[2], "zxc");
 	}
 
+    @Test
+    public void split1() {
+        String[] strs = Strings.split("qwe asd xcv.tyu asd@fgh", ' ', ',', ';');
+        Assert.assertEquals(strs[0], "qwe");
+        Assert.assertEquals(strs[3], "asd@fgh");
+    }
+
 	@Test
 	public void isNullOrEmpty() {
 		Assert.assertEquals(Strings.isNullOrEmpty(null), true);
