@@ -113,18 +113,28 @@ Ext.override(Ext.data.Connection, {
 //            Ext.apply(o.params, p);
 //            return me.request0(o);
 //        } else
-            return Bio.login.getUser({
-                fn: function(usr) {
-                    var o = Ext.apply({}, options);
-                    var p = {
-                        biocd : bioCode,
-                        uid : usr.login||usr.uid
-                    };
-                    o.params = Ext.apply(o.params, p);
-                    return me.request0(o);
-                },
-                scope: me
-            });
+//            return Bio.login.getUser({
+//                fn: function(usr) {
+//                    var o = Ext.apply({}, options);
+//                    var p = {
+//                        biocd : bioCode,
+//                        uid : usr.login||usr.uid
+//                    };
+//                    o.params = Ext.apply(o.params, p);
+//                    return me.request0(o);
+//                },
+//                scope: me
+//            });
+
+        var o = Ext.apply({}, options);
+        var p = { biocd : bioCode };
+        o.params = Ext.apply(o.params, p);
+        if(Bio.app && Bio.app.curUsr) {
+            p = { uid : Bio.app.curUsr.login || Bio.app.curUsr.uid };
+            o.params = Ext.apply(o.params, p);
+        }
+        return me.request0(o);
+
     },
 
     onComplete0 : function(request, xdrResult) {
