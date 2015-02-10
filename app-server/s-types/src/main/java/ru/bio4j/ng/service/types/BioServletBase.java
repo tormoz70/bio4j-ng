@@ -4,6 +4,7 @@ package ru.bio4j.ng.service.types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -12,6 +13,7 @@ import ru.bio4j.ng.service.api.SecurityHandler;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
@@ -56,6 +58,20 @@ public class BioServletBase extends HttpServlet {
         if(configProvider == null)
             throw new IllegalArgumentException("ConfigProvider not defined!");
         bioDebug = configProvider.getConfig().isBioDebug();
+    }
+
+    public static class BioQueryParams {
+        public String moduleKey;
+        public String bioCode;
+        public String loginOrUid;
+    }
+
+    public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) {
+        BioQueryParams result = new BioQueryParams();
+        result.moduleKey = request.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
+        result.bioCode = request.getParameter(BioServletBase.QRY_PARAM_NAME_BIOCODE);
+        result.loginOrUid = request.getParameter(BioServletBase.QRY_PARAM_NAME_UID);
+        return result;
     }
 
     private static void writeResponse(String brespJson, HttpServletResponse response) throws IOException {

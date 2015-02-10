@@ -67,6 +67,11 @@ public class BioError extends Exception {
                 super(message);
             }
         }
+//        public static class LoginGet extends BioError.Login {
+//            public LoginGet() {
+//                super();
+//            }
+//        }
     }
 
     public static class BadIODescriptor extends BioError {

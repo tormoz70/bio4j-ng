@@ -87,6 +87,7 @@ Ext.onReady(function() {
 //        scope: this,
 //        fn: doOnLogin
 //    });
+    alert("Am waiting for you!");
     Ext.Ajax.request({
         url: Bio.tools.bldBioUrl("/biosrv"),
         params: {rqt: 'ping'},

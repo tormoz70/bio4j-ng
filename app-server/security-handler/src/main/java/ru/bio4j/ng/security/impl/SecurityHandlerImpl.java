@@ -55,33 +55,18 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         return onlineUsers.remove(String.format("%s-%s", moduleKey, userUID));
     }
 
-    private static final String BIO_ANONYMOUS_USER_UID = "bio-anonymous-user-uid";
+    //private static final String BIO_ANONYMOUS_USER_UID = "bio-anonymous-user-uid";
     private static final String ROOT_USER_LOGIN = "root/root";
     private static final String ROOT_USER_UID = "root-user-uid";
 
-    @Override
-    public User getUser(final String moduleKey, final String loginOrUid) throws Exception {
-        if(isNullOrEmpty(loginOrUid))
-            throw new BioError.Login.BadLogin();
-
-        final String uid = loginOrUid.contains("/") ? null : loginOrUid;
-        final String login = loginOrUid.contains("/") ? loginOrUid : null;
-
-        if(!isNullOrEmpty(uid)){
-            User onlineUser = userIsOnline(moduleKey, uid);
-            if(onlineUser != null){
-                LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", uid, onlineUser.getLogin());
-                return onlineUser;
-            } else
-                throw new BioError.Login.LoginExpired();
-        }
-
-        if(BioServletBase.BIO_ANONYMOUS_USER_LOGIN.equals(loginOrUid.toLowerCase())) {
-            User usr = userIsOnline(moduleKey, BIO_ANONYMOUS_USER_UID);
+    private User detectAnonymouse(String moduleKey, String userUidOrLogin) throws Exception {
+        if(BioServletBase.BIO_ANONYMOUS_USER_LOGIN.equals(userUidOrLogin.toLowerCase())) {
+            // Используется для открытых пространств
+            User usr = userIsOnline(moduleKey, BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
             if(usr == null) {
                 usr = new User();
                 usr.setModuleKey(moduleKey);
-                usr.setUid(BIO_ANONYMOUS_USER_UID);
+                usr.setUid(BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
                 usr.setLogin(BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
                 usr.setFio("Anonymous User");
                 usr.setRoles("*");
@@ -90,8 +75,37 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             }
             return usr;
         }
+        return null;
+    }
 
-        if(ROOT_USER_LOGIN.equals(loginOrUid.toLowerCase())) {
+    @Override
+    public User getUser(final String moduleKey, final String userUid) throws Exception {
+        if(isNullOrEmpty(userUid))
+            return null;
+
+        User anonymouseUser = detectAnonymouse(moduleKey, userUid);
+        if(anonymouseUser != null)
+            return anonymouseUser;
+
+        User onlineUser = userIsOnline(moduleKey, userUid);
+        if(onlineUser != null){
+            LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", userUid, onlineUser.getLogin());
+            return onlineUser;
+        } else
+            throw new BioError.Login.LoginExpired();
+    }
+
+    @Override
+    public User login(final String moduleKey, final String login) throws Exception {
+        if(isNullOrEmpty(login))
+            throw new BioError.Login.BadLogin();
+
+        User anonymouseUser = detectAnonymouse(moduleKey, login);
+        if(anonymouseUser != null)
+            return anonymouseUser;
+
+        if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
+            // Встроенная учетка
             User usr = userIsOnline(moduleKey, ROOT_USER_UID);
             if(usr == null) {
                 usr = new User();

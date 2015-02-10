@@ -25,7 +25,7 @@ public class WarSecurityFilterBase implements Filter {
 
     private boolean bioDebug = false;
     private String forwardURL = null;
-    private Set<String> publicAreas = new HashSet();
+    //private Set<String> publicAreas = new HashSet();
     private String errorPage;
 
     private void log_error(String s, Throwable e) {
@@ -42,10 +42,7 @@ public class WarSecurityFilterBase implements Filter {
         debug(s, null);
     }
 
-    private void initPublicAreas(String publicArea) {
-        publicAreas.clear();
-        publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
-    }
+    private BioLoginProcessor loginProcessor = new BioLoginProcessor();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -54,15 +51,13 @@ public class WarSecurityFilterBase implements Filter {
         if (filterConfig != null) {
             bioDebug = Strings.compare(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_BIODEBUG), "true", true);
             forwardURL = filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_FORWARD_URL);
-            String publicArea = filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS);
-            initPublicAreas(publicArea);
+            loginProcessor.initPublicAreas(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS));
             errorPage = filterConfig.getInitParameter("error_page");
             debug(" Config : {" +
                   "   -- bioDebug : {}\n"+
                   "   -- forwardURL : {}\n"+
-                  "   -- publicAreas : {}\n"+
                   "   -- errorPage : {}\n" +
-                  " }", bioDebug, forwardURL, publicArea, errorPage);
+                  " }", bioDebug, forwardURL, errorPage);
         }
         debug("init - done.");
     }
@@ -76,6 +71,7 @@ public class WarSecurityFilterBase implements Filter {
                 securityHandler = null;
             }
         }
+        loginProcessor.setSecurityHandler(securityHandler);
     }
 
     private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -88,10 +84,6 @@ public class WarSecurityFilterBase implements Filter {
             BioServletBase.writeError(BioRespBuilder.anError().exception(new BioError.Login.BadLogin()), response, bioDebug);
             return request;
         }
-    }
-
-    private boolean detectWeAreInPublicAreas(String bioCode) {
-        return publicAreas.contains(bioCode);
     }
 
     @Override
@@ -108,16 +100,18 @@ public class WarSecurityFilterBase implements Filter {
             debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
             initSecurityHandler(req.getServletContext());
-            final String moduleKey = req.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
-            final String bioCode = req.getParameter(BioServletBase.QRY_PARAM_NAME_BIOCODE);
-            final boolean weAreInPublicAreas = detectWeAreInPublicAreas(bioCode);
-            final String uid = (weAreInPublicAreas ? BioServletBase.BIO_ANONYMOUS_USER_LOGIN : req.getParameter(BioServletBase.QRY_PARAM_NAME_UID));
+            BioServletBase.BioQueryParams prms = BioServletBase.decodeBioQueryParams(req);
+            //final String moduleKey = req.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
+            //final String bioCode = req.getParameter(BioServletBase.QRY_PARAM_NAME_BIOCODE);
+            //final boolean weAreInPublicAreas = Strings.isNullOrEmpty(bioCode) || detectWeAreInPublicAreas(bioCode);
+            //final String loginOrUid = (weAreInPublicAreas ? BioServletBase.BIO_ANONYMOUS_USER_LOGIN : req.getParameter(BioServletBase.QRY_PARAM_NAME_UID));
             if (securityHandler != null) {
-                User user = securityHandler.getUser(moduleKey, uid);
+                //User user = securityHandler.getUser(moduleKey, uid);
+                User user = loginProcessor.login(prms);
                 HttpServletRequest wrappedRequest = processUser(user, req, resp);
                 chn.doFilter(wrappedRequest, resp);
             } else {
-                final String destination = String.format("%s?bm=%s&uid=%s", this.forwardURL, moduleKey, uid);
+                final String destination = String.format("%s?bm=%s&uid=%s", this.forwardURL, prms.moduleKey, prms.loginOrUid);
                 try {
                     Httpc.requestJson(destination, new Httpc.Callback() {
                         @Override

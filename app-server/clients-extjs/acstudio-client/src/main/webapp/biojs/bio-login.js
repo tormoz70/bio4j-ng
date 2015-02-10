@@ -51,33 +51,6 @@ Ext.define('Bio.login', {
                 }
             });
         }
-    },
-
-    processUser: function(bioResponse, callback) {
-        var me = this;
-        if (bioResponse) {
-            if (bioResponse.exception) {
-                if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
-                    me.removeLastSuccessUserUIDStore();
-                    Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
-                    return false;
-                }
-                if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
-                    me.removeLastSuccessUserUIDStore();
-                    if (callback) {
-                        var cb = Bio.tools.wrapCallback(callback);
-                        Ext.callback(cb.fn, cb.scope, [
-                            {modalResult: 1}
-                        ]);
-                    }
-                    return false;
-                }
-            }
-            if (bioResponse.user)
-                me.storeLastSuccessUser(bioResponse.user);
-            return true;
-        }
-        return false;
     }
 
 //    doOnLogedout: function (options, success, response) {
