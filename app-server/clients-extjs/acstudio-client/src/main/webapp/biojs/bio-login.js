@@ -19,6 +19,7 @@ Ext.define('Bio.login', {
         return Bio.cooks.getCookie('cUserUID');
     },
     removeLastSuccessUserUIDStore: function() {
+        Bio.app.curUsr = undefined;
         Bio.cooks.deleteCookie("cUserUID");
         //Bio.cooks.deleteCookie("cUserName");
     },
@@ -57,13 +58,11 @@ Ext.define('Bio.login', {
         if (bioResponse) {
             if (bioResponse.exception) {
                 if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
-                    Bio.app.curUsr = undefined;
                     me.removeLastSuccessUserUIDStore();
                     Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
                     return false;
                 }
                 if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
-                    Bio.app.curUsr = undefined;
                     me.removeLastSuccessUserUIDStore();
                     if (callback) {
                         var cb = Bio.tools.wrapCallback(callback);
