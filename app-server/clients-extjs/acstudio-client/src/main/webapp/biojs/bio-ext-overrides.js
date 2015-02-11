@@ -223,7 +223,7 @@ Ext.override(Ext.data.Connection, {
                 return false;
             }
             if (bioResponse.user)
-                me.storeLastSuccessUser(bioResponse.user);
+                Bio.login.storeLastSuccessUser(bioResponse.user);
             return true;
         }
         return false;
@@ -263,6 +263,8 @@ Ext.override(Ext.data.Connection, {
                 success = success && me.processUser(options, bioResponse, function(r) {
                     me.request(r.options);
                 });
+                if(!success)
+                    return;
                 // show unknown error
                 if(bioResponse && bioResponse.success === false && bioResponse.exception && bioResponse.exception.class == "ru.bio4j.ng.model.transport.BioError") {
                     success = false;
