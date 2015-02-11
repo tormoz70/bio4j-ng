@@ -111,7 +111,7 @@ public class WarSecurityFilterBase implements Filter {
                 HttpServletRequest wrappedRequest = processUser(user, req, resp);
                 chn.doFilter(wrappedRequest, resp);
             } else {
-                final String destination = String.format("%s?bm=%s&uid=%s", this.forwardURL, prms.moduleKey, prms.loginOrUid);
+                final String destination = String.format("%s?bm=%s&uid=%s&biocd=%s", this.forwardURL, prms.moduleKey, prms.loginOrUid, prms.bioCode);
                 try {
                     Httpc.requestJson(destination, new Httpc.Callback() {
                         @Override

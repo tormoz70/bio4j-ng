@@ -43,11 +43,8 @@ public class BioLoginProcessor {
 
         User usr = securityHandler.getUser(prms.moduleKey, uid);
         if(usr == null)
-            securityHandler.login(prms.moduleKey, login);
+            usr = securityHandler.login(prms.moduleKey, login);
 
-//        brsp.user(usr)
-//                .exception((brsp.getUser() != null ? null : new BioError.Login.BadLogin()));
-//        return brsp;
         return usr;
     }
 

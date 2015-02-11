@@ -176,7 +176,7 @@ Ext.override(Ext.data.Connection, {
 //        return response;
 //    },
 
-    processUser: function(bioResponse, callback) {
+    processUser: function(options, bioResponse, callback) {
         var me = this;
         if (bioResponse) {
             if (bioResponse.exception) {
@@ -201,15 +201,26 @@ Ext.override(Ext.data.Connection, {
                         fn: function(usr) {
                             var o = Ext.apply({}, options);
                             var p = {
-                                biocd : bioCode,
+                                //biocd : bioCode,
                                 uid : usr.login||usr.uid
                             };
                             o.params = Ext.apply(o.params, p);
-                            return me.request(o);
+                            //return me.request(o);
+
+                            if (callback) {
+                                var cb = Bio.tools.wrapCallback(callback);
+                                Ext.callback(cb.fn, cb.scope, [
+                                    {
+                                        modalResult: 1,
+                                        options: o
+                                    }
+                                ]);
+                            }
                         },
                         scope: me
                     });
                 }
+                return false;
             }
             if (bioResponse.user)
                 me.storeLastSuccessUser(bioResponse.user);
@@ -249,8 +260,8 @@ Ext.override(Ext.data.Connection, {
         if(response.responseText) {
             var bioResponse = Ext.decode(response.responseText);
             if (bioResponse) {
-                success = success && me.processUser(bioResponse, function(dr) {
-                    me.request(options);
+                success = success && me.processUser(options, bioResponse, function(r) {
+                    me.request(r.options);
                 });
                 // show unknown error
                 if(bioResponse && bioResponse.success === false && bioResponse.exception && bioResponse.exception.class == "ru.bio4j.ng.model.transport.BioError") {
