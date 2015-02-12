@@ -97,34 +97,6 @@ Ext.override(Ext.data.Connection, {
         };
         Ext.apply(options.params, gp);
         var bioCode = (options && options.jsonData ? options.jsonData.bioCode : null);
-            //isBiosysRequest = false;
-//        if (Bio.tools.isDefined(bioCode)) {
-//            isBiosysRequest = Ext.String.startsWith(bioCode, bioPubLogin+".");
-//            bioCode = bioCode.substr((bioPubLogin+".").length);
-//            options.jsonData.bioCode = bioCode;
-//        }
-
-
-//        if (isBiosysRequest === true) {
-//            var o = Ext.apply({}, options);
-//            var p = {
-//                uid : bioPubLogin
-//            };
-//            Ext.apply(o.params, p);
-//            return me.request0(o);
-//        } else
-//            return Bio.login.getUser({
-//                fn: function(usr) {
-//                    var o = Ext.apply({}, options);
-//                    var p = {
-//                        biocd : bioCode,
-//                        uid : usr.login||usr.uid
-//                    };
-//                    o.params = Ext.apply(o.params, p);
-//                    return me.request0(o);
-//                },
-//                scope: me
-//            });
 
         var o = Ext.apply({}, options);
         if(Bio.tools.isDefined(bioCode)) {
@@ -135,77 +107,25 @@ Ext.override(Ext.data.Connection, {
             p = { uid : Bio.app.curUsr.login || Bio.app.curUsr.uid };
             o.params = Ext.apply(o.params, p);
         }
+        if(!Bio.app.waitMaskVisible)
+            Bio.app.waitMaskShow("Выполняется запрос...");
         return me.request0(o);
 
     },
-
-//    onComplete0 : function(request, xdrResult) {
-//        var me = this,
-//            options = request.options,
-//            result,
-//            success,
-//            response;
-//
-//        try {
-//            result = me.parseStatus(request.xhr.status);
-//        } catch (e) {
-//            // in some browsers we can't access the status if the readyState is not 4, so the request has failed
-//            result = {
-//                success : false,
-//                isException : false
-//            };
-//
-//        }
-//        success = me.isXdr ? xdrResult : result.success;
-//
-//        if (success) {
-//            response = me.createResponse(request);
-//            me.fireEvent('requestcomplete', me, response, options);
-//            Ext.callback(options.success, options.scope, [response, options]);
-//        } else {
-//            if (result.isException || request.aborted || request.timedout) {
-//                response = me.createException(request);
-//            } else {
-//                response = me.createResponse(request);
-//            }
-//            me.fireEvent('requestexception', me, response, options);
-//            Ext.callback(options.failure, options.scope, [response, options]);
-//        }
-//        Ext.callback(options.callback, options.scope, [options, success, response]);
-//        delete me.requests[request.id];
-//        return response;
-//    },
 
     processUser: function(options, bioResponse, callback) {
         var me = this;
         if (bioResponse) {
             if (bioResponse.exception) {
-//                if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") {
-//                    me.removeLastSuccessUserUIDStore();
-//                    Bio.dlg.showMsg("Вход", "Ошибка в имени или пароле пользователя!", 400, 120, callback);
-//                    return false;
-//                }
-//                if (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired") {
-//                    me.removeLastSuccessUserUIDStore();
-//                    if (callback) {
-//                        var cb = Bio.tools.wrapCallback(callback);
-//                        Ext.callback(cb.fn, cb.scope, [
-//                            {modalResult: 1}
-//                        ]);
-//                    }
-//                    return false;
-//                }
                 if ((bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") ||
                     (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired")){
                     Bio.login.getUser({
                         fn: function(usr) {
                             var o = Ext.apply({}, options);
                             var p = {
-                                //biocd : bioCode,
                                 uid : usr.login||usr.uid
                             };
                             o.params = Ext.apply(o.params, p);
-                            //return me.request(o);
 
                             if (callback) {
                                 var cb = Bio.tools.wrapCallback(callback);
@@ -219,14 +139,15 @@ Ext.override(Ext.data.Connection, {
                         },
                         scope: me
                     });
+                    return false;
                 }
-                return false;
+                return true;
             }
             if (bioResponse.user)
                 Bio.login.storeLastSuccessUser(bioResponse.user);
             return true;
         }
-        return false;
+        return true;
     },
 
     onComplete : function(request, xdrResult) {
@@ -257,10 +178,10 @@ Ext.override(Ext.data.Connection, {
                 response = me.createResponse(request);
         }
 
-        if(response.responseText) {
+        if(success && response.responseText) {
             var bioResponse = Ext.decode(response.responseText);
             if (bioResponse) {
-                success = success && me.processUser(options, bioResponse, function(r) {
+                success = me.processUser(options, bioResponse, function(r) {
                     me.request(r.options);
                 });
                 if(!success)

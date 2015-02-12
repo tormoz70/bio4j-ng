@@ -30,7 +30,7 @@ public class BioServletLoginBase extends BioServletBase {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
-        String publicArea = servletConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS);
+        String publicArea = "bio@users"; //servletConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS);
         loginProcessor.initPublicAreas(publicArea);
 //        initPublicAreas(publicArea);
     }

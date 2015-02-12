@@ -14,18 +14,25 @@ Ext.define('Bio.Application', {
         Ext.apply(me, config);
     },
 
-    myWaitMask : undefined,
-    waitMaskShow: function(message){
-        if(this.myWaitMask == undefined)
-            this.myWaitMask = new Ext.LoadMask(Ext.getBody(), {msg:message});
+    waitMask : undefined,
+    waitMaskVisible : false,
+    waitMaskShow: function(message, target){
+        var me = this;
+        if(me.waitMask == undefined)
+            me.waitMask = new Ext.LoadMask({
+                target:target || Ext.getBody() , msg:message, toFrontOnShow:true
+            });
         else
-            this.myWaitMask.msg = message;
-        this.myWaitMask.show();
+            me.waitMask.msg = message;
+        me.waitMask.show();
+        me.waitMaskVisible = true;
     },
 
     waitMaskHide: function(){
-        if(this.myWaitMask != undefined)
-            this.myWaitMask.hide();
+        var me = this;
+        if(me.waitMask != undefined)
+            me.waitMask.hide();
+        me.waitMaskVisible = false;
     }
 
 });

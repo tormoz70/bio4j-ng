@@ -58,26 +58,26 @@ Ext.define('Bio.dialog.RegUser', {
                                 fieldLabel: "Пароль",
                                 name: "FA_PASSWORD",
                                 inputType: "password",
-                                allowBlank: false
+                                allowBlank: true
                             }, {
                                 fieldLabel: "Повтор пароля",
                                 name: "FA_PASSWORD1",
                                 inputType: "password",
-                                allowBlank: false
+                                allowBlank: true
                             }]
                         }, {
                             items: [{
                                 fieldLabel: "Фамилия",
                                 name: "FA_FIO_FAM",
-                                allowBlank: false
+                                allowBlank: true
                             }, {
                                 fieldLabel: "Имя",
                                 name: "FA_FIO_NAME",
-                                allowBlank: false
+                                allowBlank: true
                             }, {
                                 fieldLabel: "Отчество",
                                 name: "FA_FIO_SNAME",
-                                allowBlank: false
+                                allowBlank: true
                             }]
                         }]
                     }]
@@ -108,7 +108,7 @@ Ext.define('Bio.dialog.RegUser', {
                             autoWidth:false,
                             fieldLabel: "Организация",
                             name: "FA_ORG",
-                            allowBlank: false
+                            allowBlank: true
                         }
                     ]
                 },{
@@ -143,7 +143,7 @@ Ext.define('Bio.dialog.RegUser', {
                                 name: "FA_EMAIL",
                                 vtype: "email",
                                 vtypeText: "Введен некоректный адрес электронной почты!",
-                                allowBlank: false
+                                allowBlank: true
                             }]
                         }]
                     }]
@@ -209,6 +209,8 @@ Ext.define('Bio.dialog.RegUser', {
         //});
 
         var form = me.form;
+
+        //Bio.app.waitMaskShow("Сохранение...", me);
 
         form.postData({
             callback: {

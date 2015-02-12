@@ -259,27 +259,36 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         sqlDef.setSort(request.getSort());
     }
 
+    private BioModule getActualModule(final BioRequest request) throws Exception {
+        String altModuleKey = Utl.extractModuleKey(request.getBioCode());
+        String defaultModuleKey = request.getModuleKey();
+        String moduleKey = (Strings.isNullOrEmpty(altModuleKey) ? defaultModuleKey : altModuleKey);
+        return moduleProvider.getModule(moduleKey);
+    }
+
+    private SQLContext getActualContext(final BioRequest request, final BioModule module) throws Exception {
+        SQLContext ctx = sqlContextProvider.selectContext(module);
+        if (ctx == null) {
+            String defaultModuleKey = request.getModuleKey();
+            BioModule ctxModule = moduleProvider.getModule(defaultModuleKey);
+            ctx = sqlContextProvider.selectContext(ctxModule);
+        }
+        return ctx;
+    }
+
 
     @Override
     public BioRespBuilder.Data getDataSet(final BioRequestJStoreGetDataSet request) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            String altModuleKey = Utl.extractModuleKey(request.getBioCode());
-            String defaultModuleKey = request.getModuleKey();
-            String moduleKey = (Strings.isNullOrEmpty(altModuleKey) ? defaultModuleKey : altModuleKey);
-            BioModule module = moduleProvider.getModule(moduleKey);
+            final BioModule module = getActualModule(request);
+            final SQLContext ctx = getActualContext(request, module);
 
             BioCursor cursor = module.getCursor(request.getBioCode());
             initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
             final User usr = request.getUser();
             applyCurrentUserParams(usr, cursor.getSelectSqlDef());
-
-            SQLContext ctx = sqlContextProvider.selectContext(module);
-            if(ctx == null) {
-                BioModule ctxModule = moduleProvider.getModule(defaultModuleKey);
-                ctx = sqlContextProvider.selectContext(ctxModule);
-            }
 
             ctx.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());
             ctx.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());
@@ -300,15 +309,13 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     public BioRespBuilder.Data getRecord(final BioRequestJStoreGetRecord request) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
-            String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
-            BioModule module = moduleProvider.getModule(moduleKey);
+            final BioModule module = getActualModule(request);
+            final SQLContext ctx = getActualContext(request, module);
             BioCursor cursor = module.getCursor(request.getBioCode());
             cursor.getSelectSqlDef().setParams(request.getBioParams());
 
             final User usr = request.getUser();
             applyCurrentUserParams(usr, cursor.getSelectSqlDef());
-
-            SQLContext ctx = sqlContextProvider.selectContext(module);
 
             ctx.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
             return processCursorAsSelectableSingleRecord(usr, request, ctx, cursor);
@@ -365,8 +372,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
-        final String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
-        final BioModule module = moduleProvider.getModule(moduleKey);
+        final BioModule module = getActualModule(request);
         final BioCursor cursorDef = module.getCursor(request.getBioCode());
         cursorDef.getSelectSqlDef().setParams(request.getBioParams());
         applyCurrentUserParams(usr, cursorDef.getUpdateSqlDef(), cursorDef.getDeleteSqlDef());
@@ -408,9 +414,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         LOG.debug("Process postDataSet for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
-            final String moduleKey = request.getModuleKey(); //Utl.extractModuleKey(request.getBioCode());
-            final BioModule module = moduleProvider.getModule(moduleKey);
-            final SQLContext ctx = sqlContextProvider.selectContext(module);
+            final BioModule module = getActualModule(request);
+            final SQLContext ctx = getActualContext(request, module);
             BioRespBuilder.Data response = ctx.execBatch(new SQLAction<Object, BioRespBuilder.Data>() {
                 @Override
                 public BioRespBuilder.Data exec(SQLContext context, Connection conn, Object obj) throws Exception {

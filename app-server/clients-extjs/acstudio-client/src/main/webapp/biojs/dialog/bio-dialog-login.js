@@ -109,8 +109,12 @@ Ext.define('Bio.dialog.Login', {
             modalResult: 0,
             login: null
         });
-        var dialog = new Bio.dialog.RegUser({callback: me.closeCallbacks});
-        dialog.showDialog();
+        Ext.defer(function() { //, delay, scope, args);
+            var dialog = new Bio.dialog.RegUser({callback: me.closeCallbacks});
+            dialog.showDialog();
+        }, 100);
+        //var dialog = new Bio.dialog.RegUser({callback: me.closeCallbacks});
+        //dialog.showDialog();
     },
 
     focuseControl: function () {
