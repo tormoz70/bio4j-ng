@@ -156,7 +156,11 @@ Ext.define('Bio.dialog.RegUser', {
                             bioCode: 'bio@users'
                         }),
                         seldId = (me.bio ? me.bio.userId : null);
+                    //me.mask("Загрузка...", me.msgCls);
+//                    var target = me.getMaskTarget();
+//                    target.mask.apply(target, ["Загрузка..."]);
                     me.loadData(store, seldId, function () {
+                        //me.unmask();
                     });
                 }
             },

@@ -87,7 +87,8 @@ Ext.onReady(function() {
 //        scope: this,
 //        fn: doOnLogin
 //    });
-    alert("Am waiting for you!");
+    //alert("Am waiting for you!");
+    Bio.login.removeLastSuccessUserUIDStore();
     Ext.Ajax.request({
         url: Bio.tools.bldBioUrl("/biosrv"),
         params: {rqt: 'ping'},

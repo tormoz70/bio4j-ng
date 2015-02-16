@@ -107,8 +107,8 @@ Ext.override(Ext.data.Connection, {
             p = { uid : Bio.app.curUsr.login || Bio.app.curUsr.uid };
             o.params = Ext.apply(o.params, p);
         }
-        if(!Bio.app.waitMaskVisible)
-            Bio.app.waitMaskShow("Выполняется запрос...");
+        //if(!Bio.app.waitMaskVisible)
+        //    Bio.app.waitMaskShow("Выполняется запрос...");
         return me.request0(o);
 
     },
@@ -119,6 +119,7 @@ Ext.override(Ext.data.Connection, {
             if (bioResponse.exception) {
                 if ((bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") ||
                     (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired")){
+
                     Bio.login.getUser({
                         fn: function(usr) {
                             var o = Ext.apply({}, options);
@@ -386,3 +387,33 @@ Ext.override(Ext.grid.RowEditor, {
     dirtyText:      'Необходимо применить или отменить изменения!' //'You need to commit or cancel your changes'
 });
 
+//Ext.override(Ext.LoadMask, {
+//
+//    show: function() {
+//
+//        if (this.isElement) {
+//            this.ownerCt.mask(this.useMsg ? this.msg : '', this.msgCls);
+//            this.fireEvent('show', this);
+//            return;
+//        }
+//        this.callParent(arguments);
+//        this.setZIndex(99999);
+//    }
+//
+//});
+
+Ext.override(Ext.AbstractComponent, {
+
+    mask: function() {
+        var box = this.lastBox,
+            target = this.getMaskTarget(),
+            args = arguments || [];
+
+
+        if (box) {
+            args[2] = box.height;
+        }
+        target.mask.apply(target, args);
+    }
+
+});

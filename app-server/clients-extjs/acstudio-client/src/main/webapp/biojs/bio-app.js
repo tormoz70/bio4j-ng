@@ -18,13 +18,25 @@ Ext.define('Bio.Application', {
     waitMaskVisible : false,
     waitMaskShow: function(message, target){
         var me = this;
-        if(me.waitMask == undefined)
+        if(me.waitMask == undefined) {
             me.waitMask = new Ext.LoadMask({
-                target:target || Ext.getBody() , msg:message, toFrontOnShow:true
+                contentEl: "loading-mask", focusOnToFront: true,
+                target: target || Ext.getBody(), msg: message, toFrontOnShow: true
             });
-        else
+            //me.waitMask.el.dom.style.zIndex = '99999';
+//            me.waitMask.on("show", function(eOpts) {
+//                var m = this.maskEl; //Ext.get("bio-global-root-mask");
+//                m.dom.style.zIndex = '99999';
+////                m = Ext.getBody().down(".x-mask-msg");
+////                m.dom.style.zIndex = '99999';
+//            }, me.waitMask);
+        } else
             me.waitMask.msg = message;
         me.waitMask.show();
+        //var m = me.waitMask.maskEl;
+        //m.dom.style.zIndex = '99999';
+        //me.waitMask.setZIndex(99999);
+        //me.waitMask.getMaskEl().setStyle('zIndex', 99999 - 1);
         me.waitMaskVisible = true;
     },
 
@@ -34,6 +46,7 @@ Ext.define('Bio.Application', {
             me.waitMask.hide();
         me.waitMaskVisible = false;
     }
+
 
 });
 

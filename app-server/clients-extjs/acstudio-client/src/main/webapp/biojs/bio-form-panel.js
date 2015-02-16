@@ -12,9 +12,11 @@ Ext.override(Ext.form.Panel, {
 
     loadData: function(store, id, callback, scope) {
         var me = this;
+        me.mask("Загрузка...", me.msgCls);
         store.load({
             id: id,
             callback: function(records, operation, success) {
+                me.unmask();
                 var store = this,
                     f = me.getForm();
                 me.trackResetOnLoad = true;
