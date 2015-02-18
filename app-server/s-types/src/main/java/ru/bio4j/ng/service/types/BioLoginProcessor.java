@@ -41,10 +41,16 @@ public class BioLoginProcessor {
         final String uid = prms.loginOrUid.contains("/") ? null : prms.loginOrUid;
         final String login = prms.loginOrUid.contains("/") ? prms.loginOrUid : null;
 
-        User usr = securityHandler.getUser(prms.moduleKey, uid);
-        if(usr == null)
+        User usr;
+        if(!Strings.isNullOrEmpty(uid)) {
+            try {
+                usr = securityHandler.getUser(prms.moduleKey, uid);
+            } catch (BioError.Login.LoginExpired e) {
+                throw new BioError.Login.LoginGet();
+            }
+        } else {
             usr = securityHandler.login(prms.moduleKey, login);
-
+        }
         return usr;
     }
 

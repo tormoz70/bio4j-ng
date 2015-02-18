@@ -128,6 +128,9 @@
         </profile>
         <profile>
             <id>war-package</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.osgi</groupId>
@@ -180,18 +183,27 @@
         </profile>
         <profile>
             <id>distr-module-ekb</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>ekb-client</module>
             </modules>
         </profile>
         <profile>
             <id>distr-module-cmon</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>cmon-client</module>
             </modules>
         </profile>
         <profile>
             <id>distr-module-acstudio</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>acstudio-client</module>
             </modules>

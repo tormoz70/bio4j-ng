@@ -114,12 +114,13 @@ Ext.override(Ext.data.Connection, {
     },
 
     processUser: function(options, bioResponse, callback) {
+        var CS_LOGIN_ERRORS = "ru.bio4j.ng.model.transport.BioError$Login$";
         var me = this;
         if (bioResponse) {
             if (bioResponse.exception) {
-                if ((bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$BadLogin") ||
-                    (bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired")){
-
+                if (bioResponse.exception.class.substr(0, CS_LOGIN_ERRORS.length) === CS_LOGIN_ERRORS) {
+                    if(bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginGet")
+                        Bio.login.removeLastSuccessUserUIDStore();
                     Bio.login.getUser({
                         fn: function(usr) {
                             var o = Ext.apply({}, options);

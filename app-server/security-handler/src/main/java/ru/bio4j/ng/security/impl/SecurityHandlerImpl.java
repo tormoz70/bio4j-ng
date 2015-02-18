@@ -81,7 +81,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     @Override
     public User getUser(final String moduleKey, final String userUid) throws Exception {
         if(isNullOrEmpty(userUid))
-            return null;
+            throw new BioError.Login.BadLogin();
 
         User anonymouseUser = detectAnonymouse(moduleKey, userUid);
         if(anonymouseUser != null)

@@ -377,6 +377,9 @@
 
         <profile>
             <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <bioDebug>true</bioDebug>
             </properties>
@@ -384,6 +387,9 @@
 
         <profile>
             <id>distr-module-bio</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>modules-x/bio-module</module>
                 <module>as-distribution-modules/bio-distr</module>
@@ -392,6 +398,9 @@
 
         <profile>
             <id>distr-module-ekb</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>modules-x/ekb-module</module>
                 <module>as-distribution-modules/ekb-distr</module>
@@ -400,6 +409,9 @@
 
         <profile>
             <id>distr-module-cmon</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>modules-x/cmon-module</module>
                 <module>as-distribution-modules/cmon-distr</module>
@@ -408,6 +420,9 @@
 
         <profile>
             <id>distr-module-acstudio</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>modules-x/acstudio-module</module>
                 <module>as-distribution-modules/acstudio-distr</module>
