@@ -103,6 +103,9 @@ Ext.override(Ext.data.Connection, {
             var p = { biocd: bioCode };
             options.params = Ext.apply(o.params, p);
         }
+        Bio.login.restoreLastSuccessUser(function(u) {
+            Bio.app.curUsr = u;
+        });
         if(Bio.app && Bio.app.curUsr) {
             p = { uid : Bio.app.curUsr.login || Bio.app.curUsr.uid };
             o.params = Ext.apply(o.params, p);
@@ -119,7 +122,7 @@ Ext.override(Ext.data.Connection, {
         if (bioResponse) {
             if (bioResponse.exception) {
                 if (bioResponse.exception.class.substr(0, CS_LOGIN_ERRORS.length) === CS_LOGIN_ERRORS) {
-                    if(bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginGet")
+                    if(bioResponse.exception.class === "ru.bio4j.ng.model.transport.BioError$Login$LoginExpired")
                         Bio.login.removeLastSuccessUserUIDStore();
                     Bio.login.getUser({
                         fn: function(usr) {

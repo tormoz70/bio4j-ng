@@ -4,7 +4,7 @@ Ext.define('Bio.login', {
     storeLastSuccessUser: function(user) {
         if(user) {
             if(!Bio.app.curUsr)
-                Bio.app.curUsr = {};
+                Bio.app.curUsr = new Bio.User();
             Bio.app.curUsr = Ext.apply(Bio.app.curUsr, user);
             Bio.app.curUsr.login = null;
             Bio.cooks.setCookie("cUserUID", user.uid);
@@ -17,6 +17,21 @@ Ext.define('Bio.login', {
     },
     restoreLastSuccessUserUID: function() {
         return Bio.cooks.getCookie('cUserUID');
+    },
+    restoreLastSuccessUser: function(callback) {
+        var me = this,
+            storedUserUID = me.restoreLastSuccessUserUID(),
+            storedUserName = me.restoreLastSuccessUserName;
+
+        if(Bio.tools.isDefined(storedUserUID)) {
+            usr = new Bio.User({uid:storedUserUID, name:storedUserName});
+            if(callback) {
+                var cb = Bio.tools.wrapCallback(callback);
+                Ext.callback(cb.fn, cb.scope, [usr]);
+            }
+            return true;
+        }
+        return false;
     },
     removeLastSuccessUserUIDStore: function() {
         Bio.app.curUsr = undefined;
@@ -32,15 +47,11 @@ Ext.define('Bio.login', {
     getUser: function(callback) {
         var me = this;
         var usr = Bio.app.curUsr;
-        if(Bio.tools.isDefined(usr))
+        if(Bio.tools.isDefined(usr) && callback)
             Ext.callback(callback.fn, callback.scope, [usr]);
         else {
-            var storedUserUID = me.restoreLastSuccessUserUID();
-            if(Bio.tools.isDefined(storedUserUID)) {
-                usr = new Bio.User({uid:storedUserUID});
-                Ext.callback(callback.fn, callback.scope, [usr]);
+            if(me.restoreLastSuccessUser(function(u) { usr = u; }))
                 return;
-            }
             Bio.login.showDialog({
                 fn: function(dr) {
                     if(dr.modalResult === 1) {

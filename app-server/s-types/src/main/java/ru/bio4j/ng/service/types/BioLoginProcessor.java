@@ -43,11 +43,7 @@ public class BioLoginProcessor {
 
         User usr;
         if(!Strings.isNullOrEmpty(uid)) {
-            try {
-                usr = securityHandler.getUser(prms.moduleKey, uid);
-            } catch (BioError.Login.LoginExpired e) {
-                throw new BioError.Login.LoginGet();
-            }
+            usr = securityHandler.getUser(prms.moduleKey, uid);
         } else {
             usr = securityHandler.login(prms.moduleKey, login);
         }
