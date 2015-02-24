@@ -14,29 +14,14 @@ public class BioLoginProcessor {
 
     private SecurityHandler securityHandler;
 
-    private Set<String> publicAreas = new HashSet();
-
     public void setSecurityHandler(SecurityHandler securityHandler) {
         this.securityHandler = securityHandler;
-    }
-
-    public void initPublicAreas(String publicArea) {
-        publicAreas.clear();
-        if(!Strings.isNullOrEmpty(publicArea))
-            publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
-    }
-
-    private boolean detectWeAreInPublicAreas(String bioCode) {
-        return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
     }
 
     public User login(BioServletBase.BioQueryParams prms) throws Exception {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        final boolean weAreInPublicAreas = detectWeAreInPublicAreas(prms.bioCode);
-        if(weAreInPublicAreas)
-            prms.loginOrUid = BioServletBase.BIO_ANONYMOUS_USER_LOGIN;
 
         final String uid = prms.loginOrUid.contains("/") ? null : prms.loginOrUid;
         final String login = prms.loginOrUid.contains("/") ? prms.loginOrUid : null;

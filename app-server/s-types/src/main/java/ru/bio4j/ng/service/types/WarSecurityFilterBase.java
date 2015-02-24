@@ -25,7 +25,7 @@ public class WarSecurityFilterBase implements Filter {
 
     private boolean bioDebug = false;
     private String forwardURL = null;
-    //private Set<String> publicAreas = new HashSet();
+    private Set<String> publicAreas = new HashSet();
     private String errorPage;
 
     private void log_error(String s, Throwable e) {
@@ -44,6 +44,12 @@ public class WarSecurityFilterBase implements Filter {
 
     private BioLoginProcessor loginProcessor = new BioLoginProcessor();
 
+    private void initPublicAreas(String publicArea) {
+        publicAreas.clear();
+        if(!Strings.isNullOrEmpty(publicArea))
+            publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG = LoggerFactory.getLogger(this.getClass());
@@ -51,7 +57,7 @@ public class WarSecurityFilterBase implements Filter {
         if (filterConfig != null) {
             bioDebug = Strings.compare(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_BIODEBUG), "true", true);
             forwardURL = filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_FORWARD_URL);
-            loginProcessor.initPublicAreas(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS));
+            initPublicAreas(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS));
             errorPage = filterConfig.getInitParameter("error_page");
             debug(" Config : {" +
                   "   -- bioDebug : {}\n"+
@@ -86,6 +92,17 @@ public class WarSecurityFilterBase implements Filter {
         }
     }
 
+    private boolean detectWeAreInPublicAreas(String bioCode) {
+        return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
+    }
+
+    private void processBadLoginError(final HttpServletResponse resp) throws IOException {
+        BioError.Login.BadLogin e = new BioError.Login.BadLogin();
+        BioServletBase.writeError(BioRespBuilder.anError().exception(e), resp, bioDebug);
+        log_error("An error while checking User!", e);
+
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
@@ -101,15 +118,15 @@ public class WarSecurityFilterBase implements Filter {
 
             initSecurityHandler(req.getServletContext());
             BioServletBase.BioQueryParams prms = BioServletBase.decodeBioQueryParams(req);
-            //final String moduleKey = req.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
-            //final String bioCode = req.getParameter(BioServletBase.QRY_PARAM_NAME_BIOCODE);
-            //final boolean weAreInPublicAreas = Strings.isNullOrEmpty(bioCode) || detectWeAreInPublicAreas(bioCode);
-            //final String loginOrUid = (weAreInPublicAreas ? BioServletBase.BIO_ANONYMOUS_USER_LOGIN : req.getParameter(BioServletBase.QRY_PARAM_NAME_UID));
+            final boolean weAreInPublicAreas = Strings.isNullOrEmpty(prms.bioCode) || detectWeAreInPublicAreas(prms.bioCode);
             if (securityHandler != null) {
-                //User user = securityHandler.getUser(moduleKey, uid);
                 User user = loginProcessor.login(prms);
-                HttpServletRequest wrappedRequest = processUser(user, req, resp);
-                chn.doFilter(wrappedRequest, resp);
+                if (user.isAnonymouse() && !weAreInPublicAreas)
+                    processBadLoginError(resp);
+                else {
+                    HttpServletRequest wrappedRequest = processUser(user, req, resp);
+                    chn.doFilter(wrappedRequest, resp);
+                }
             } else {
                 final String destination = String.format("%s?bm=%s&uid=%s&biocd=%s", this.forwardURL, prms.moduleKey, prms.loginOrUid, prms.bioCode);
                 try {
@@ -120,8 +137,12 @@ public class WarSecurityFilterBase implements Filter {
                             BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
                             if (bresp.isSuccess()) {
                                 User user = bresp.getUser();
-                                HttpServletRequest wrappedRequest = processUser(user, req, resp);
-                                chn.doFilter(wrappedRequest, resp);
+                                if (user.isAnonymouse() && !weAreInPublicAreas)
+                                    processBadLoginError(resp);
+                                else {
+                                    HttpServletRequest wrappedRequest = processUser(user, req, resp);
+                                    chn.doFilter(wrappedRequest, resp);
+                                }
                             } else {
                                 BioServletBase.writeError(BioRespBuilder.anError().exception(bresp.getException()), resp, bioDebug);
                                 log_error("An error while checking User!", bresp.getException());

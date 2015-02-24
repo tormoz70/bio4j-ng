@@ -60,14 +60,14 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     private static final String ROOT_USER_UID = "root-user-uid";
 
     private User detectAnonymouse(String moduleKey, String userUidOrLogin) throws Exception {
-        if(BioServletBase.BIO_ANONYMOUS_USER_LOGIN.equals(userUidOrLogin.toLowerCase())) {
+        if(User.BIO_ANONYMOUS_USER_LOGIN.equals(userUidOrLogin.toLowerCase())) {
             // Используется для открытых пространств
-            User usr = userIsOnline(moduleKey, BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
+            User usr = userIsOnline(moduleKey, User.BIO_ANONYMOUS_USER_LOGIN);
             if(usr == null) {
                 usr = new User();
                 usr.setModuleKey(moduleKey);
-                usr.setUid(BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
-                usr.setLogin(BioServletBase.BIO_ANONYMOUS_USER_LOGIN);
+                usr.setUid(User.BIO_ANONYMOUS_USER_LOGIN);
+                usr.setLogin(User.BIO_ANONYMOUS_USER_LOGIN);
                 usr.setFio("Anonymous User");
                 usr.setRoles("*");
                 usr.setGrants("*");

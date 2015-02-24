@@ -20,24 +20,10 @@ public class BioServletLoginBase extends BioServletBase {
 
     private BioLoginProcessor loginProcessor = new BioLoginProcessor();
 
-//    private Set<String> publicAreas = new HashSet();
-//
-//    private void initPublicAreas(String publicArea) {
-//        publicAreas.clear();
-//        publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
-//    }
-
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
-        String publicArea = "bio@users"; //servletConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS);
-        loginProcessor.initPublicAreas(publicArea);
-//        initPublicAreas(publicArea);
     }
-
-//    private boolean detectWeAreInPublicAreas(String bioCode) {
-//        return publicAreas.contains(bioCode);
-//    }
 
     protected BioRespBuilder.Login doLogin(HttpServletRequest request) throws Exception {
         BioRespBuilder.Login brsp =  BioRespBuilder.login();
@@ -45,16 +31,6 @@ public class BioServletLoginBase extends BioServletBase {
             throw new IllegalArgumentException("SecurityHandler not defined!");
         loginProcessor.setSecurityHandler(securityHandler);
         BioQueryParams prms = decodeBioQueryParams(request);
-//        final boolean weAreInPublicAreas = Strings.isNullOrEmpty(prms.bioCode) || detectWeAreInPublicAreas(prms.bioCode);
-//        if(weAreInPublicAreas)
-//            prms.loginOrUid = BioServletBase.BIO_ANONYMOUS_USER_LOGIN;
-//
-//        final String uid = prms.loginOrUid.contains("/") ? null : prms.loginOrUid;
-//        final String login = prms.loginOrUid.contains("/") ? prms.loginOrUid : null;
-//
-//        User usr = securityHandler.getUser(prms.moduleKey, uid);
-//        if(usr == null)
-//            securityHandler.login(prms.moduleKey, login);
 
         User usr = loginProcessor.login(prms);
         brsp.user(usr)

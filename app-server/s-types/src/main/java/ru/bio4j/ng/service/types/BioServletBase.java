@@ -7,10 +7,12 @@ import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.SecurityHandler;
 
+import javax.jws.soap.SOAPBinding;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +27,6 @@ public class BioServletBase extends HttpServlet {
     public final static String QRY_PARAM_NAME_MODULE = "bm";
     public final static String QRY_PARAM_NAME_BIOCODE = "biocd";
     public final static String QRY_PARAM_NAME_UID = "uid";
-    public static final String BIO_ANONYMOUS_USER_LOGIN = "$bio-anonymous$";
 
     protected Logger LOG;
 
@@ -71,6 +72,8 @@ public class BioServletBase extends HttpServlet {
         result.moduleKey = request.getParameter(BioServletBase.QRY_PARAM_NAME_MODULE);
         result.bioCode = request.getParameter(BioServletBase.QRY_PARAM_NAME_BIOCODE);
         result.loginOrUid = request.getParameter(BioServletBase.QRY_PARAM_NAME_UID);
+        if(Strings.isNullOrEmpty(result.loginOrUid))
+            result.loginOrUid = User.BIO_ANONYMOUS_USER_LOGIN;
         return result;
     }
 
