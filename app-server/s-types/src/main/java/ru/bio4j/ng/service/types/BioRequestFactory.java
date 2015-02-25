@@ -15,6 +15,14 @@ public abstract class BioRequestFactory implements ObjectFactory {
 
     }
 
+    public static class Logout extends BioRequestFactory {
+        @Override
+        public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+            return null;
+        }
+
+    }
+
     public static class GetDataSet extends BioRequestFactory {
         @Override
         public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {

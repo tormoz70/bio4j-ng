@@ -45,8 +45,24 @@ Ext.define('Bio.Application', {
         if(me.waitMask != undefined)
             me.waitMask.hide();
         me.waitMaskVisible = false;
-    }
+    },
 
+    ping: function(callback){
+        Ext.Ajax.request({
+            url: Bio.tools.bldBioUrl("/biosrv"),
+            params: {rqt: 'ping'},
+            callback: callback
+        });
+
+    },
+
+    logout: function(callback){
+        Ext.Ajax.request({
+            url: Bio.tools.bldBioUrl("/biosrv"),
+            params: {rqt: 'logout'},
+            callback: callback
+        });
+    }
 
 });
 

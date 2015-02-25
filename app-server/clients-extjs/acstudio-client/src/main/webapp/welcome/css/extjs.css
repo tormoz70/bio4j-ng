@@ -164,9 +164,9 @@ ul.features li,  .content-box ul li, .side-box ul li {
 
 div.side-box {
     width: 200px;
-    background: #f3f3f3;
-    border: 1px solid #ddd;
-    padding: 15px;
+    background: transparent;
+    border: 0px solid #ddd;
+    padding: 0px;
     font-size: 12px;
     zoom: 1;
 }

@@ -64,41 +64,41 @@ Ext.onReady(function() {
         c.id = 'bsrv-' + i;
     }
 
-    var doOnLogin = function(options, success, response){
+    //alert("Am waiting for you!");
+    //Bio.login.removeLastSuccessUserUIDStore();
+    Bio.app.ping(function(options, success, response){
 
         if(success === true) {
             var store = Ext.create('Ext.data.Store', {
-                fields     : ['id', 'title', 'items'],
-                data       : catalog
+                fields: ['id', 'title', 'items'],
+                data: catalog
             });
 
             Ext.create('Ekb.RootPanel', {
-                renderTo   : 'root-container',
-                store : store
+                renderTo: 'root-container',
+                store: store
             });
 
-            var tpl = Ext.create('Ext.XTemplate',
-                //'<tpl for="."><li><a href="#{id}">{title:stripTags}</a></li></tpl>'
-                '<tpl for="."><li>',
-                '<a href="#" onclick="eval({handler});">{title:stripTags}</a>',
-                '</li></tpl>'
-            );
-            tpl.overwrite('bservices-menu', bmenu);
+            var p = new Ext.Panel({
+                renderTo: 'bservices-menu',
+                frame: true,
+                margin: "0 0 0 0",
+                layout: {
+                    type: "anchor",
+                    align: "center"
+                }
+            });
+            bmenu.forEach(function(itm){
+                p.items.add(new Ext.Button({
+                    text: itm.title,
+                    margin: "0 0 5 0",
+                    anchor: '100%',
+                    height: 30,
+                    handler:itm.handler}));
+                p.updateLayout();
+            });
         }
-    }
-
-//    Bio.login.showDialog({
-//        scope: this,
-//        fn: doOnLogin
-//    });
-    alert("Am waiting for you!");
-    //Bio.login.removeLastSuccessUserUIDStore();
-    Ext.Ajax.request({
-        url: Bio.tools.bldBioUrl("/biosrv"),
-        params: {rqt: 'ping'},
-        callback:doOnLogin
     });
-
 
     var bodyStyle = document.body.style,
         headerEl  = Ext.get('hd'),

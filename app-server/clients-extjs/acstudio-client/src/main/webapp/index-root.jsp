@@ -12,8 +12,8 @@
         </div>
 
         <div class="right-column">
-            <div class="side-box">
-                <ul id="bservices-menu" class="features"></ul>
+            <div id="bservices-menu" class="side-box">
+                <%--<ul id="bservices-menu" class="features"></ul>--%>
             </div>
         </div>
     </div>

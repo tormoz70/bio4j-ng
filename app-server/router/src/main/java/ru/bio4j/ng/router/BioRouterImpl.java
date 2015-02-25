@@ -13,6 +13,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
 import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.BioRoute;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
@@ -27,6 +28,8 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
     private Map<BioRoute, BioRouteHandler> routeMap;
 
+    @Requires
+    private SecurityHandler securityHandler;
     @Requires
     private DataProvider dataProvider;
 
@@ -57,6 +60,17 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.PING, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, Callback callback) throws Exception {
+                    BioRespBuilder.Data responseBuilder = BioRespBuilder.data();
+                    processCallback(responseBuilder, callback);
+                }
+            });
+
+            routeMap.put(BioRoute.LOGOUT, new BioRouteHandler<BioRequest>() {
+                @Override
+                public void handle(BioRequest request, Callback callback) throws Exception {
+                    final String moduleKey = request.getModuleKey();
+                    final String userUID = request.getUser().getUid();
+                    securityHandler.logoff(moduleKey, userUID);
                     BioRespBuilder.Data responseBuilder = BioRespBuilder.data();
                     processCallback(responseBuilder, callback);
                 }
