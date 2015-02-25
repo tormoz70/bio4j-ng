@@ -58,7 +58,7 @@ public class User {
         this.moduleKey = moduleKey;
     }
 
-    public Boolean isAnonymouse() {
+    public Boolean isAnonymous() {
         return BIO_ANONYMOUS_USER_LOGIN.equals(login);
     }
 }

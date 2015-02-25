@@ -34,7 +34,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Context
     private BundleContext bundleContext;
-//    private SQLContext globalSQLContext;
 
     @Requires
     private SecurityHandler securityHandler;
@@ -185,8 +184,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 final BioRespBuilder.Data result = BioRespBuilder.data();
                 result.bioCode(cur.getBioCode());
 
-                //String preparedSQL = cur.getPreparedSql();
-
                 StoreData data = new StoreData();
                 data.setStoreId(request.getStoreId());
                 data.setOffset(cur.getSelectSqlDef().getOffset());
@@ -220,7 +217,6 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 final BioRespBuilder.Data result = BioRespBuilder.data();
                 result.bioCode(cursorDef.getBioCode());
 
-                //String preparedSQL = cursorDef.getGetrowSql();
                 cursorDef.getSelectSqlDef().setParamValue(GetrowWrapper.PKVAL, request.getId());
 
                 StoreData data = new StoreData();
@@ -429,33 +425,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         }
     }
 
-//    @Override
-//    public String getDataTest() throws Exception {
-//        SQLContext globalSQLContext = sqlContextProvider.globalContext();
-//        return globalSQLContext.execBatch(new SQLActionScalar<String>() {
-//            @Override
-//            public String exec(SQLContext context, Connection conn) throws Exception {
-//            StringBuilder rslt = new StringBuilder();
-//            LOG.debug("Opening cursor...");
-//            try(SQLCursor c = context.CreateCursor()
-//                .init(conn, "select username from user_users", null)
-//                .open()) {
-//                LOG.debug("Cursor opened...");
-//                while (c.reader().next()){
-//                    LOG.debug("Reading field USERNAME...");
-//                    String s = c.reader().getValue("USERNAME", String.class);
-//                    rslt.append(s+";");
-//                }
-//            }
-//            return rslt.toString();
-//            }
-//        });
-//    }
-
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
-        //WrappersImpl.getInstance().init("oracle");
         this.redy = true;
         LOG.debug("Started");
     }

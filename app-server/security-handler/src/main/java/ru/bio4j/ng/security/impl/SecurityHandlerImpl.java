@@ -13,7 +13,6 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
-import ru.bio4j.ng.service.types.BioServletBase;
 
 import java.sql.Connection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,7 +58,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     private static final String ROOT_USER_LOGIN = "root/root";
     private static final String ROOT_USER_UID = "root-user-uid";
 
-    private User detectAnonymouse(String moduleKey, String userUidOrLogin) throws Exception {
+    private User detectAnonymous(String moduleKey, String userUidOrLogin) throws Exception {
         if(User.BIO_ANONYMOUS_USER_LOGIN.equals(userUidOrLogin.toLowerCase())) {
             // Используется для открытых пространств
             User usr = userIsOnline(moduleKey, User.BIO_ANONYMOUS_USER_LOGIN);
@@ -83,9 +82,11 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         if(isNullOrEmpty(userUid))
             throw new BioError.Login.BadLogin();
 
-        User anonymouseUser = detectAnonymouse(moduleKey, userUid);
-        if(anonymouseUser != null)
-            return anonymouseUser;
+        User anonymousUser = detectAnonymous(moduleKey, userUid);
+        if(anonymousUser != null) {
+            LOG.debug("Anonymouse User with uid \"{}\" logged in.", userUid);
+            return anonymousUser;
+        }
 
         User onlineUser = userIsOnline(moduleKey, userUid);
         if(onlineUser != null){
@@ -100,9 +101,11 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
         if(isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
 
-        User anonymouseUser = detectAnonymouse(moduleKey, login);
-        if(anonymouseUser != null)
-            return anonymouseUser;
+        User anonymousUser = detectAnonymous(moduleKey, login);
+        if(anonymousUser != null) {
+            LOG.debug("Anonymouse User with login \"{}\" logged in.", login);
+            return anonymousUser;
+        }
 
         if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
             // Встроенная учетка

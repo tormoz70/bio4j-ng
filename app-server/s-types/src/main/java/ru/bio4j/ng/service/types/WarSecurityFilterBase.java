@@ -117,13 +117,14 @@ public class WarSecurityFilterBase implements Filter {
             debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
             initSecurityHandler(req.getServletContext());
-            BioServletBase.BioQueryParams prms = BioServletBase.decodeBioQueryParams(req);
-            final boolean weAreInPublicAreas = Strings.isNullOrEmpty(prms.bioCode) || detectWeAreInPublicAreas(prms.bioCode);
+            final BioServletBase.BioQueryParams prms = BioServletBase.decodeBioQueryParams(req);
+            final boolean weAreInPublicAreas = detectWeAreInPublicAreas(prms.bioCode);
             if (securityHandler != null) {
                 User user = loginProcessor.login(prms);
-                if (user.isAnonymouse() && !weAreInPublicAreas)
+                if (user.isAnonymous() && !weAreInPublicAreas) {
+                    debug("Anonymous not in public area for bioCode \"{}\"!", prms.bioCode);
                     processBadLoginError(resp);
-                else {
+                } else {
                     HttpServletRequest wrappedRequest = processUser(user, req, resp);
                     chn.doFilter(wrappedRequest, resp);
                 }
@@ -137,9 +138,10 @@ public class WarSecurityFilterBase implements Filter {
                             BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
                             if (bresp.isSuccess()) {
                                 User user = bresp.getUser();
-                                if (user.isAnonymouse() && !weAreInPublicAreas)
+                                if (user.isAnonymous() && !weAreInPublicAreas) {
+                                    debug("Anonymous not in public area for bioCode \"{}\"!", prms.bioCode);
                                     processBadLoginError(resp);
-                                else {
+                                } else {
                                     HttpServletRequest wrappedRequest = processUser(user, req, resp);
                                     chn.doFilter(wrappedRequest, resp);
                                 }

@@ -50,7 +50,8 @@ public class BioRespBuilder {
         public BioResponse build() {
             BioResponse response = new BioResponse();
             response.setSuccess(success);
-            response.setUser(user);
+            if(!user.isAnonymous())
+                response.setUser(user);
             response.setException(this.exception);
             return response;
         }
