@@ -57,7 +57,8 @@ Ext.onReady(function() {
         }
     });
 
-    var catalog = Ekb.catalog.groups;
+    var catalog = Ekb.catalog.groups,
+        bmenu = Ekb.bmenu.groups;
 
     for (var i = 0, c; c = catalog[i]; i++) {
         c.id = 'bsrv-' + i;
@@ -77,9 +78,12 @@ Ext.onReady(function() {
             });
 
             var tpl = Ext.create('Ext.XTemplate',
-                '<tpl for="."><li><a href="#{id}">{title:stripTags}</a></li></tpl>'
+                //'<tpl for="."><li><a href="#{id}">{title:stripTags}</a></li></tpl>'
+                '<tpl for="."><li>',
+                '<a href="#" onclick="eval({handler});">{title:stripTags}</a>',
+                '</li></tpl>'
             );
-            tpl.overwrite('bservices-menu', catalog);
+            tpl.overwrite('bservices-menu', bmenu);
         }
     }
 

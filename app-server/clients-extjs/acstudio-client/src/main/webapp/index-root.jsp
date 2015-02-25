@@ -2,6 +2,7 @@
     <div id="bd">
         <div style="display:none;">
             <script type="text/javascript" src="bservices.js"></script>
+            <script type="text/javascript" src="bmenu.js"></script>
             <script type="text/javascript" src="init.js"></script>
         </div>
 
