@@ -4,10 +4,10 @@ Ekb.bmenu = {
         {
             title: "Выход",
             handler: function() {
-                Ext.MessageBox.confirm('Выход', 'Вы действительно хотите закрыть сеанс?', function(btn){
+                Ext.MessageBox.confirm('Выход', 'Вы действительно хотите завершить сеанс?', function(btn){
                     if(btn === 'yes') {
                         Bio.app.logout(function() {
-                            alert('OK!');
+                            alert('Сеанс завершен!');
                         });
 
                     } else {
