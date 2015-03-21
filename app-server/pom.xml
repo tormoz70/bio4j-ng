@@ -24,10 +24,10 @@
         <!-- Main libs -->
         <!-- Felix -->
         <felix.shell.verion>1.4.3</felix.shell.verion>
-        <felix.webconsole.version>4.0.0</felix.webconsole.version>
+        <!--<felix.webconsole.version>4.0.0</felix.webconsole.version>-->
         <!-- OSGi -->
-        <osgi.core.version>4.3.1</osgi.core.version>
-        <osgi.compendium.version>4.3.1</osgi.compendium.version>
+        <osgi.core.version>5.0.0</osgi.core.version>
+        <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <osgi.ipojo.version>1.11.2</osgi.ipojo.version>
         <osgi.ipojo.event.version>1.8.0</osgi.ipojo.event.version>
 
@@ -42,7 +42,7 @@
         <janino.version>2.5.10</janino.version>
 
         <!-- Others -->
-        <json.version>1.0.0</json.version>
+        <!--<json.version>1.0.0</json.version>-->
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.jsp-api.version>2.3.0</javax.jsp-api.version>
         <geronimo-servlet_3.0_spec.version>1.0</geronimo-servlet_3.0_spec.version>
@@ -50,15 +50,15 @@
         <opensaml.verion>2.6.0</opensaml.verion>
 
         <!-- maven plugin -->
-        <bundle-plugin-version>2.4.0</bundle-plugin-version>
-        <deploy-plugin-version>2.7</deploy-plugin-version>
-        <assembly-plugin-version>2.4</assembly-plugin-version>
-        <surefire-plugin-version>2.16</surefire-plugin-version>
-        <remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>
-        <compiler-plugin-version>3.1</compiler-plugin-version>
-        <release-plugin-version>2.4.1</release-plugin-version>
-        <war-plugi-version>2.4</war-plugi-version>
-        <antrun-plugin-version>1.7</antrun-plugin-version>
+        <bundle-plugin-version>2.5.3</bundle-plugin-version>
+        <deploy-plugin-version>2.8.2</deploy-plugin-version>
+        <!--<assembly-plugin-version>2.4</assembly-plugin-version>-->
+        <!--<surefire-plugin-version>2.16</surefire-plugin-version>-->
+        <!--<remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>-->
+        <!--<compiler-plugin-version>3.1</compiler-plugin-version>-->
+        <!--<release-plugin-version>2.4.1</release-plugin-version>-->
+        <war-plugi-version>2.6</war-plugi-version>
+        <antrun-plugin-version>1.8</antrun-plugin-version>
 
 	</properties>
 
@@ -116,6 +116,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-ipojo-plugin</artifactId>
+                    <version>${osgi.ipojo.version}</version>
                     <executions>
                         <execution>
                             <goals>
@@ -198,12 +199,12 @@
             </dependency>
 			<!-- Other stuff -->
 
-            <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>${json.version}</version>
-                <scope>provided</scope>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.json</groupId>-->
+                <!--<artifactId>json</artifactId>-->
+                <!--<version>${json.version}</version>-->
+                <!--<scope>provided</scope>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-servlet_3.0_spec</artifactId>
