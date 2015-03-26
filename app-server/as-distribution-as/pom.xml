@@ -34,11 +34,12 @@
         <log4j.version>1.2.17</log4j.version>
 
         <pax.jetty.version>9.0.7.v20131107</pax.jetty.version>
-        <pax.http.version>4.0.0-SNAPSHOT</pax.http.version>
+        <pax.http.version>4.0.0</pax.http.version>
         <pax.url.version>1.4.2</pax.url.version>
         <pax.swissbox.version>1.7.0</pax.swissbox.version>
         <ops4j.base.version>1.4.0</ops4j.base.version>
         <biz.aQute.bnd.version>2.1.0</biz.aQute.bnd.version>
+        <xbean.version>3.18</xbean.version>
 
         <xalan.version>2.7.1</xalan.version>
 
@@ -216,14 +217,14 @@
                                     <outputDirectory>${distr.bundles}</outputDirectory>
                                 </artifactItem>
 
-                                <artifactItem>
-                                    <groupId>org.json</groupId>
-                                    <artifactId>json</artifactId>
-                                    <version>${json.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.json</groupId>-->
+                                    <!--<artifactId>json</artifactId>-->
+                                    <!--<version>${json.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>commons-io</groupId>
                                     <artifactId>commons-io</artifactId>
@@ -322,7 +323,7 @@
                                 <artifactItem>
                                     <groupId>org.ow2.asm</groupId>
                                     <artifactId>asm-all</artifactId>
-                                    <version>4.1</version>
+                                    <version>5.0.3</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.bundles}</outputDirectory>
@@ -330,7 +331,7 @@
                                 <artifactItem>
                                     <groupId>org.apache.xbean</groupId>
                                     <artifactId>xbean-bundleutils</artifactId>
-                                    <version>3.16</version>
+                                    <version>${xbean.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.bundles}</outputDirectory>
@@ -346,7 +347,7 @@
                                 <artifactItem>
                                     <groupId>org.apache.xbean</groupId>
                                     <artifactId>xbean-reflect</artifactId>
-                                    <version>3.16</version>
+                                    <version>${xbean.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.bundles}</outputDirectory>
@@ -354,7 +355,7 @@
                                 <artifactItem>
                                     <groupId>org.apache.xbean</groupId>
                                     <artifactId>xbean-finder</artifactId>
-                                    <version>3.16</version>
+                                    <version>${xbean.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.bundles}</outputDirectory>
@@ -942,25 +943,25 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target name="deploy xsd schemas to web server">
-                                <copy todir="d:/www/bio4j.ru/biodef-repo">
-                                    <fileset dir="src/main/biodef" includes="**/*" />
-                                </copy>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-antrun-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>generate-resources</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<target name="deploy xsd schemas to web server">-->
+                                <!--<copy todir="d:/www/bio4j.ru/biodef-repo">-->
+                                    <!--<fileset dir="src/main/biodef" includes="**/*" />-->
+                                <!--</copy>-->
+                            <!--</target>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>
