@@ -19,8 +19,6 @@
         <distr.modules>${distr.depends}/modules</distr.modules>
         <distr.deploy>../as-distribution/target</distr.deploy>
 
-        <testng.version>6.7</testng.version>
-
         <!-- Main libs -->
         <!-- Felix -->
         <felix.shell.verion>1.4.3</felix.shell.verion>
