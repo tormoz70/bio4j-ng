@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd">
+  <SQL action="select">
+    <text>
+      <![CDATA[
+select a.tkldr_uid as region_uid, a.tkldr_name || ' ' || t.sname as region
+  from reg$tkladr0 a
+    inner join REG$TKLADRTP0 t on t.tkldrtp_id = a.tkldrtp_id
+where a.prnt_tkldr_uid is null and a.tkldr_uid like '__00000000000'
+  and ((:region is null) or (upper(a.tkldr_name) like '%'||upper(:region)||'%'))
+order by region
+      ]]>
+    </text>
+  </SQL>
+
+  <fields>
+    <field name="region_uid" type="string" pk="true"/>
+    <field name="region" type="string"/>
+  </fields>
+</cursor>

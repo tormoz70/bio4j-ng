@@ -7,13 +7,13 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-client-extjs-acstudio</artifactId>
+    <artifactId>bio4j-ng-client-extjs-ims</artifactId>
     <packaging>war</packaging>
-    <name>Bio Client (ExtJS) for ACStudio Project</name>
+    <name>Bio Client (ExtJS) for IMS (GIVC) Project</name>
 
     <properties>
-        <wab.name>Bio4j ACStudio WebClient Service</wab.name>
-        <wab.context.path>/acstudio</wab.context.path>
+        <wab.name>Bio4j IMS WebClient Service</wab.name>
+        <wab.context.path>/ims</wab.context.path>
     </properties>
 
     <build>

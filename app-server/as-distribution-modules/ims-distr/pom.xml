@@ -6,11 +6,11 @@
         <artifactId>as-distribution-modules</artifactId>
         <version>0.2-SNAPSHOT</version>
 	</parent>
-    <artifactId>as-distribution-bio</artifactId>
+    <artifactId>as-distribution-ims</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Bio Server Module Distribution</name>
+    <name>Bio App IMS Server Module Distribution</name>
     <properties>
-        <module-x.name>bio4j-ng-module-bio</module-x.name>
+        <module-x.name>bio4j-ng-module-ims</module-x.name>
     </properties>
 
     <build>

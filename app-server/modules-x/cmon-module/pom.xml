@@ -11,6 +11,5 @@
     <artifactId>bio4j-ng-module-cmon</artifactId>
     <packaging>bundle</packaging>
     <name>BioAIM CMON</name>
-    <description>Service implements application server for CMON project</description>
 
 </project>

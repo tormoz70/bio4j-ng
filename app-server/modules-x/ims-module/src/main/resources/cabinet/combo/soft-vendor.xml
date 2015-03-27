@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd">
+  <SQL action="select">
+    <text>
+      <![CDATA[
+      select a.id_vnd as id, a.vndname as caption from GIVC_ORG.softvendor a
+      where (:query is null) or (upper(a.vndname) like '%'||upper(:query)||'%')
+      order by caption
+      ]]>
+    </text>
+  </SQL>
+
+  <fields>
+    <field name="id" type="integer" pk="true"/>
+    <field name="caption" type="string" />
+  </fields>
+</cursor>

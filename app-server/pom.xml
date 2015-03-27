@@ -334,6 +334,7 @@
                 <module>db-api</module>
                 <module>dba-commons</module>
                 <module>dba-oracle</module>
+                <module>dba-pgsql</module>
                 <module>sql-context</module>
                 <module>crud-handler</module>
                 <module>security-handler</module>
@@ -427,6 +428,17 @@
             <modules>
                 <module>modules-x/acstudio-module</module>
                 <module>as-distribution-modules/acstudio-distr</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>distr-module-ims</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>modules-x/ims-module</module>
+                <module>as-distribution-modules/ims-distr</module>
             </modules>
         </profile>
 

@@ -11,6 +11,5 @@
     <artifactId>bio4j-ng-module-ekb</artifactId>
     <packaging>bundle</packaging>
     <name>BioAIM Ekb</name>
-    <description>Service implements application server for Ekb project</description>
 
 </project>

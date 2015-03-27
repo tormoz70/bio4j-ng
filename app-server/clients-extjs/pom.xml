@@ -208,6 +208,15 @@
                 <module>acstudio-client</module>
             </modules>
         </profile>
+        <profile>
+            <id>distr-module-ims</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>ims-client</module>
+            </modules>
+        </profile>
     </profiles>
 
 </project>
