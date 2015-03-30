@@ -58,6 +58,8 @@
         <war-plugi-version>2.6</war-plugi-version>
         <antrun-plugin-version>1.8</antrun-plugin-version>
 
+        <postgresql-jdbc.version>9.4-1201.jdbc41</postgresql-jdbc.version>
+
 	</properties>
 
     <build>
@@ -207,6 +209,13 @@
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-servlet_3.0_spec</artifactId>
                 <version>${geronimo-servlet_3.0_spec.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql-jdbc.version}</version>
             </dependency>
 
             <!--bio4j-->

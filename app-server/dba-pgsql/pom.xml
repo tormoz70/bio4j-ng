@@ -29,7 +29,6 @@
                             sun.security.*;resolution:="optional",
                             sun.reflect.generics.*;resolution:="optional",
                             javax.*;resolution:="optional",
-                            oracle.*;resolution:="optional",
                             org.objectweb.*;resolution:="optional",
                             *</Import-Package>
                         <Embed-Dependency>*;scope=compile</Embed-Dependency>
@@ -45,12 +44,12 @@
         </plugins>
     </build>
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>ojdbc6</artifactId>-->
-            <!--<version>${ojdbc6.version}</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
