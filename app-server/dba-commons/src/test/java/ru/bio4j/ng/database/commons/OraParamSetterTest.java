@@ -16,7 +16,7 @@ import java.util.List;
 public class OraParamSetterTest {
     @Test
     public void testExtractParamNamesFromSQL1() throws Exception {
-        List<String> params = Sqls.extractParamNamesFromSQL("select user as curuser, :dummy as dummy_param, ':wer' as mak /* :ert */ from dual");
+        List<String> params = Sqls.extractParamNamesFromSQL("select user as curuser, :dummy as dummy_param, ':wer' as mak /* :ert */");
         Assert.assertEquals(params.size(), 1);
         Assert.assertEquals(params.get(0), "dummy");
     }

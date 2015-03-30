@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.model.transport.Param;
 
 /**
@@ -21,7 +22,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 	protected List<Param> params = null;
     protected int timeout = 60;
     protected Connection connection = null;
-    protected PreparedStatement preparedStatement = null;
+    protected NamedParametersStatement preparedStatement = null;
     protected String preparedSQL = null;
 
     protected SQLParamSetter paramSetter;
@@ -162,7 +163,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
 	@Override
 	public void cancel() throws SQLException {
-        final Statement stmnt = this.getStatement();
+        final NamedParametersStatement stmnt = this.getStatement();
         if(stmnt != null)
             stmnt.cancel();
 	}
@@ -180,7 +181,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 	}
 
 	@Override
-	public PreparedStatement getStatement() {
+	public NamedParametersStatement getStatement() {
 		return this.preparedStatement;
 	}
 

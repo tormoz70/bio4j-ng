@@ -1,10 +1,10 @@
 package ru.bio4j.ng.database.pgsql.impl;
 
-import oracle.jdbc.OraclePreparedStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
+import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.model.transport.Param;
@@ -24,7 +24,7 @@ public class PgSQLSelectableParamSetter implements SQLParamSetter {
 
     @Override
     public void setParamsToStatement(SQLCommand command, List<Param> params) throws SQLException {
-        OraclePreparedStatement selectable = (command.getStatement() instanceof OraclePreparedStatement) ? (OraclePreparedStatement)command.getStatement() : null;
+        NamedParametersStatement selectable = command.getStatement();
         if(selectable == null)
             throw new SQLException("Parameter [statement] mast be instance of OraclePreparedStatement!");
         final String sql = command.getPreparedSQL();
@@ -38,9 +38,9 @@ public class PgSQLSelectableParamSetter implements SQLParamSetter {
                 if(value != null)
                     selectable.setObjectAtName(paramName, value);
                 else
-                    selectable.setNullAtName(paramName, Types.NULL);
+                    selectable.setNullAtName(paramName);
             } else
-                selectable.setNullAtName(paramName, Types.NULL);
+                selectable.setNullAtName(paramName);
         }
     }
 }

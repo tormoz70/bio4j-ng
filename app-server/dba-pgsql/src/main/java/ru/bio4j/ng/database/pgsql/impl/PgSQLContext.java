@@ -87,7 +87,7 @@ public class PgSQLContext extends DbContextAbstract {
 
     @Override
     public String getDBMSName() {
-        return "oracle";
+        return "pgsql";
     }
 
     @Override

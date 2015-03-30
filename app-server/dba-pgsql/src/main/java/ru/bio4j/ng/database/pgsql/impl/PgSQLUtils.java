@@ -1,10 +1,9 @@
 package ru.bio4j.ng.database.pgsql.impl;
 
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleResultSet;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.database.api.RDBMSUtils;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -103,10 +102,10 @@ public class PgSQLUtils implements RDBMSUtils {
         StringBuilder args = new StringBuilder();
         PgSQLUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
-        try (OraclePreparedStatement st = (OraclePreparedStatement)conn.prepareStatement(SQL_GET_PARAMS_FROM_DBMS, ResultSet.TYPE_FORWARD_ONLY)) {
+        try (NamedParametersStatement st = NamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS, ResultSet.TYPE_FORWARD_ONLY)) {
             st.setStringAtName("package_name", pkg.pkgName);
             st.setStringAtName("method_name", pkg.methodName);
-            try (OracleResultSet rs = (OracleResultSet)st.executeQuery()) {
+            try (ResultSet rs = st.executeQuery()) {
                 try(Paramus p = Paramus.set(params)) {
                     while (rs.next()) {
                         String parName = rs.getString("argument_name");

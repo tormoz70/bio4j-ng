@@ -6,6 +6,7 @@ import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
+import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.database.api.SqlTypeConverter;
@@ -31,9 +32,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
 
     @Override
     public void setParamsToStatement(SQLCommand command, List<Param> params) throws SQLException {
-        CallableStatement callable = (command.getStatement() instanceof CallableStatement) ? (CallableStatement)command.getStatement() : null;
-        if(callable == null)
-            throw new SQLException("Parameter [statement] mast be instance of CallableStatement!");
+        NamedParametersStatement callable = command.getStatement();
         final String sql = this.owner.getPreparedSQL();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         final List<Param> outParams = new ArrayList<>();
@@ -59,7 +58,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                                     paramName, val, valType.getSimpleName(), targetValType.getSimpleName()), e);
                         }
                         try {
-                            callable.setObject(paramName, val, sqlType);
+                            callable.setObjectAtName(paramName, val, sqlType);
                         } catch (SQLException e) {
                             throw new SQLException(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s)",
                                     paramName, sqlTypeName, val, valType.getSimpleName()), e);

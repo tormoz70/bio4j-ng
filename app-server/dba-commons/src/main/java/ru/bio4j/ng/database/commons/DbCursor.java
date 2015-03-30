@@ -42,7 +42,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     @Override
 	protected void prepareStatement() throws SQLException {
         this.preparedSQL = this.sql;
-        this.preparedStatement = this.connection.prepareStatement(this.preparedSQL, ResultSet.TYPE_FORWARD_ONLY);
+        this.preparedStatement = NamedParametersStatement.prepareStatement(this.connection, this.preparedSQL, ResultSet.TYPE_FORWARD_ONLY);
         this.preparedStatement.setQueryTimeout(this.timeout);
 	}
 
