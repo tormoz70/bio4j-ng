@@ -17,9 +17,9 @@ public interface SQLContext {
     void addAfterEvent(SQLConnectionConnectedEvent e);
     void clearAfterEvents();
 
-    SQLCursor CreateCursor();
-    SQLStoredProc CreateStoredProc();
-    SQLReader CreateReader(ResultSet resultSet);
+    SQLCursor createCursor();
+    SQLStoredProc createStoredProc();
+    SQLReader createReader(ResultSet resultSet);
 
     String getDBMSName();
 

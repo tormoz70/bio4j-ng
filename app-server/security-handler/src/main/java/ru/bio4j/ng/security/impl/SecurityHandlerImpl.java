@@ -132,7 +132,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
                 LOG.debug("User {} logging in...", login);
                 cur.getSelectSqlDef().setParamValue("p_login", login);
-                try(SQLCursor c = context.CreateCursor()
+                try(SQLCursor c = context.createCursor()
                         .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
                         .open()) {
                     if (c.reader().next()){

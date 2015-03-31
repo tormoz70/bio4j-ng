@@ -15,8 +15,6 @@
         <!-- oracle -->
         <ojdbc6.version>12.1.0</ojdbc6.version>
         <!--<oucp.version>12.1.0</oucp.version>-->
-        <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
-        <tomcat-juli.version>8.0.3</tomcat-juli.version>
     </properties>
     <build>
         <plugins>
@@ -52,17 +50,18 @@
             <version>${ojdbc6.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
             <version>${tomcat-jdbc.version}</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-juli</artifactId>
             <version>${tomcat-juli.version}</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
 
     	<dependency>

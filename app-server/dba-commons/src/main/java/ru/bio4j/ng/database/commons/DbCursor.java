@@ -24,6 +24,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
     public DbCursor(SQLContext context) {
         super(context);
+        this.setParamSetter(new DbSelectableParamSetter());
     }
 
 	@Override
@@ -42,7 +43,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     @Override
 	protected void prepareStatement() throws SQLException {
         this.preparedSQL = this.sql;
-        this.preparedStatement = NamedParametersStatement.prepareStatement(this.connection, this.preparedSQL, ResultSet.TYPE_FORWARD_ONLY);
+        this.preparedStatement = NamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
         this.preparedStatement.setQueryTimeout(this.timeout);
 	}
 
@@ -63,7 +64,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
             @Override
             public void execute() throws SQLException {
                 final DbCursor self = DbCursor.this;
-                self.reader = context.CreateReader(self.preparedStatement.executeQuery());
+                self.reader = context.createReader(self.preparedStatement.executeQuery());
                 self.isActive = true;
 
             }

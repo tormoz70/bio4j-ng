@@ -1,6 +1,5 @@
-package ru.bio4j.ng.database.oracle.impl;
+package ru.bio4j.ng.database.commons;
 
-import oracle.jdbc.OraclePreparedStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
@@ -11,23 +10,17 @@ import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
-/**
- * Засовывает значения из params в OraclePreparedStatement
- */
-public class OraSelectableParamSetter implements SQLParamSetter {
-    private static final Logger LOG = LoggerFactory.getLogger(OraSelectableParamSetter.class);
+public class DbSelectableParamSetter implements SQLParamSetter {
+    private static final Logger LOG = LoggerFactory.getLogger(DbSelectableParamSetter.class);
 
-    public OraSelectableParamSetter() {
+    public DbSelectableParamSetter() {
     }
 
     @Override
     public void setParamsToStatement(SQLCommand command, List<Param> params) throws SQLException {
-        OraclePreparedStatement selectable = (OraclePreparedStatement)command.getStatement();
-        if(selectable == null)
-            throw new SQLException("Parameter [statement] mast be instance of OraclePreparedStatement!");
+        NamedParametersStatement selectable = command.getStatement();
         final String sql = command.getPreparedSQL();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         for (int i = 0; i < paramsNames.size(); i++) {
@@ -36,12 +29,16 @@ public class OraSelectableParamSetter implements SQLParamSetter {
             if (param != null) {
                 param.setId(i + 1);
                 Object value = param.getValue();
-                if(value != null)
-                    selectable.setObjectAtName(paramName, value);
-                else
-                    selectable.setNullAtName(paramName, Types.NULL);
+                int targetType = DbUtils.getInstance().paramSqlType(param);
+                if(value != null) {
+                    if(targetType == 0)
+                        selectable.setObjectAtName(paramName, value);
+                    else
+                        selectable.setObjectAtName(paramName, value, targetType);
+                } else
+                    selectable.setNullAtName(paramName);
             } else
-                selectable.setNullAtName(paramName, Types.NULL);
+                selectable.setNullAtName(paramName);
         }
     }
 }

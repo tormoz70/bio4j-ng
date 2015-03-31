@@ -13,7 +13,7 @@ import java.util.List;
  * Time: 21:09
  * To change this template use File | Settings | File Templates.
  */
-public class OraParamSetterTest {
+public class paramSetterTest {
     @Test
     public void testExtractParamNamesFromSQL1() throws Exception {
         List<String> params = Sqls.extractParamNamesFromSQL("select user as curuser, :dummy as dummy_param, ':wer' as mak /* :ert */");

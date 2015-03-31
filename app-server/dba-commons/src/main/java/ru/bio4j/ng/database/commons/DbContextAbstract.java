@@ -1,10 +1,14 @@
 package ru.bio4j.ng.database.commons;
 
+import org.apache.tomcat.jdbc.pool.PoolProperties;
+
+import java.lang.reflect.Constructor;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +18,7 @@ import javax.sql.DataSource;
 public abstract class DbContextAbstract implements SQLContext {
     private static final Logger LOG = LoggerFactory.getLogger(DbContextAbstract.class);
 
+    protected Wrappers wrappers;
     protected DataSource cpool;
 
     protected final List<SQLConnectionConnectedEvent> afterEvents = new ArrayList<>();
@@ -65,7 +70,36 @@ public abstract class DbContextAbstract implements SQLContext {
 
     protected static final int CONNECTION_TRY_COUNT = 3;
     protected static final long CONNECTION_AFTER_FAIL_PAUSE = 15L; // secs
-    protected abstract Connection getConnection(String userName, String password) throws SQLException;
+    protected Connection getConnection(String userName, String password) throws SQLException {
+        LOG.debug("Getting connection from pool...");
+        Connection conn = null;
+        int connectionPass = 0;
+        while(connectionPass < CONNECTION_TRY_COUNT) {
+            connectionPass++;
+            if (Strings.isNullOrEmpty(userName))
+                conn = this.cpool.getConnection();
+            else
+                conn = this.cpool.getConnection(userName, password);
+            if (conn.isClosed() || !conn.isValid(5)) {
+                LOG.debug("Connection is not valid or closed...");
+                conn = null;
+                ((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
+                LOG.debug("Waiting {} secs before next try connect to database...", CONNECTION_AFTER_FAIL_PAUSE);
+                try {
+                    Thread.sleep(CONNECTION_AFTER_FAIL_PAUSE * 1000);
+                } catch (InterruptedException e) {}
+            } else {
+                LOG.debug("Connection is ok...");
+                break;
+            }
+        }
+
+        if(conn == null)
+            LOG.debug("All trying of connecting to database ({}) failed...", CONNECTION_TRY_COUNT);
+
+        this.doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn));
+        return conn;
+    }
 
     public Connection getConnection() throws SQLException {
         return getConnection(null, null);
@@ -184,12 +218,12 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
-    public SQLCursor CreateCursor(){
+    public SQLCursor createCursor(){
         return new DbCursor(this);
     }
 
     @Override
-    public SQLStoredProc CreateStoredProc(){
+    public SQLStoredProc createStoredProc(){
         DbStoredProc cmd = new DbStoredProc(this);
         cmd.setParamSetter(new DbCallableParamSetter(cmd));
         cmd.setParamGetter(new DbCallableParamGetter(cmd));
@@ -197,7 +231,7 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
-    public SQLReader CreateReader(ResultSet resultSet) {
+    public SQLReader createReader(ResultSet resultSet) {
         return new DbReader(resultSet);
     }
 
@@ -205,5 +239,23 @@ public abstract class DbContextAbstract implements SQLContext {
     public abstract String getDBMSName();
 
     @Override
-    public abstract Wrappers getWrappers();
+    public Wrappers getWrappers() {
+        return wrappers;
+    }
+
+
+    public static <T extends DbContextAbstract> SQLContext create(SQLConnectionPoolConfig config, Class<T> clazz) throws Exception {
+        LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
+        final PoolProperties properties = new PoolProperties();
+        properties.setMaxActive(config.getMaxPoolSize());
+        properties.setDriverClassName(config.getDbDriverName());
+        properties.setUrl(config.getDbConnectionUrl());
+        properties.setUsername(config.getDbConnectionUsr());
+        properties.setPassword(config.getDbConnectionPwd());
+        properties.setCommitOnReturn(false);
+        DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(properties);
+        Constructor<T> constructor = clazz.getConstructor(DataSource.class, SQLConnectionPoolConfig.class);
+        return constructor.newInstance(new Object[]{dataSource, config});
+    }
+
 }

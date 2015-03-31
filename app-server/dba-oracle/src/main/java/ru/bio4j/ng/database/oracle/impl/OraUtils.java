@@ -67,7 +67,7 @@ public class OraUtils implements RDBMSUtils {
     }
 
 
-    private static MetaType decodeOraType(String oraTypeName) {
+    private static MetaType decodeType(String oraTypeName) {
         if(Arrays.asList("CHAR", "VARCHAR", "VARCHAR2", "CLOB").contains(oraTypeName))
             return MetaType.STRING;
         if(Arrays.asList("NUMBER", "INTEGER", "SMALLINT", "FLOAT", "DECIMAL", "DOUBLE PRECISION", "BINARY_DOUBLE", "BINARY_FLOAT").contains(oraTypeName))
@@ -81,7 +81,7 @@ public class OraUtils implements RDBMSUtils {
         return MetaType.UNDEFINED;
     }
 
-    private static Param.Direction decodeOraDirection(String oraDirName) {
+    private static Param.Direction decodeDirection(String oraDirName) {
         if(oraDirName.equals("IN"))
             return Param.Direction.IN;
         if(oraDirName.equals("OUT"))
@@ -118,8 +118,8 @@ public class OraUtils implements RDBMSUtils {
                         args.append(((args.length() == 0) ? ":" : ",:") + parName.toLowerCase());
                         p.add(Param.builder()
                                 .name(parName.toLowerCase())
-                                .type(decodeOraType(parType))
-                                .direction(decodeOraDirection(parDir))
+                                .type(decodeType(parType))
+                                .direction(decodeDirection(parDir))
                                 .build());
                     }
                 }

@@ -1,5 +1,7 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.commons.utils.Strings;
+
 import java.sql.*;
 import java.util.*;
 import java.sql.Date;
@@ -19,6 +21,10 @@ public class NamedParametersStatement implements Statement {
         parsedQuery=parse(query, indexMap);
     }
 
+    public String getParsedQuery(){
+        return parsedQuery;
+    }
+
     /**
      * Creates a NamedParameterStatement.  Wraps a call to
      * c.{@link Connection#prepareStatement(java.lang.String) prepareStatement}.
@@ -31,11 +37,11 @@ public class NamedParametersStatement implements Statement {
         sttmnt.statement=connection.prepareStatement(sttmnt.parsedQuery);
         return sttmnt;
     }
-    public static NamedParametersStatement prepareStatement(Connection connection, String query, int resultSetType) throws SQLException {
-        NamedParametersStatement sttmnt = new NamedParametersStatement(connection, query);
-        sttmnt.statement=connection.prepareStatement(sttmnt.parsedQuery, resultSetType);
-        return sttmnt;
-    }
+//    public static NamedParametersStatement prepareStatement(Connection connection, String query, int resultSetType) throws SQLException {
+//        NamedParametersStatement sttmnt = new NamedParametersStatement(connection, query);
+//        sttmnt.statement=connection.prepareStatement(sttmnt.parsedQuery, resultSetType);
+//        return sttmnt;
+//    }
 
     public static NamedParametersStatement prepareCall(Connection connection, String query) throws SQLException {
         NamedParametersStatement sttmnt = new NamedParametersStatement(connection, query);
@@ -51,17 +57,19 @@ public class NamedParametersStatement implements Statement {
      * @param paramMap map to hold parameter-index mappings
      * @return the parsed query
      */
-    static final String parse(String query, Map paramMap) {
+    public static final String parse(String query, Map paramMap) {
         // I was originally using regular expressions, but they didn't work well for ignoring
         // parameter-like strings inside quotes.
-        int length=query.length();
+        final String doubleDotsPlaceholder = "/$doubleDotsPlaceholder$/";
+        String preparedQuery = Strings.replace(query, "::", doubleDotsPlaceholder);
+        int length=preparedQuery.length();
         StringBuffer parsedQuery=new StringBuffer(length);
         boolean inSingleQuote=false;
         boolean inDoubleQuote=false;
         int index=1;
 
         for(int i=0;i<length;i++) {
-            char c=query.charAt(i);
+            char c=preparedQuery.charAt(i);
             if(inSingleQuote) {
                 if(c=='\'') {
                     inSingleQuote=false;
@@ -76,12 +84,12 @@ public class NamedParametersStatement implements Statement {
                 } else if(c=='"') {
                     inDoubleQuote=true;
                 } else if(c==':' && i+1<length &&
-                        Character.isJavaIdentifierStart(query.charAt(i+1))) {
+                        Character.isJavaIdentifierStart(preparedQuery.charAt(i+1))) {
                     int j=i+2;
-                    while(j<length && Character.isJavaIdentifierPart(query.charAt(j))) {
+                    while(j<length && Character.isJavaIdentifierPart(preparedQuery.charAt(j))) {
                         j++;
                     }
-                    String name=query.substring(i+1,j);
+                    String name=preparedQuery.substring(i+1,j);
                     c='?'; // replace the parameter with a question mark
                     i+=name.length(); // skip past the end if the parameter
 
@@ -111,7 +119,8 @@ public class NamedParametersStatement implements Statement {
             entry.setValue(indexes);
         }
 
-        return parsedQuery.toString();
+        String unpreparedQuery = Strings.replace(parsedQuery.toString(), doubleDotsPlaceholder, "::");
+        return unpreparedQuery;
     }
 
 
@@ -230,6 +239,25 @@ public class NamedParametersStatement implements Statement {
         for(int i=0; i < indexes.length; i++) {
             statement.setNull(indexes[i], Types.NULL);
         }
+    }
+
+    public void registerOutParameter(String paramName, int sqlType) throws SQLException {
+        if(statement instanceof CallableStatement){
+            int[] indexes=getIndexes(paramName);
+            for(int i=0; i < indexes.length; i++) {
+                ((CallableStatement)statement).registerOutParameter(indexes[i], sqlType);
+            }
+        }
+    }
+
+    public Object getObject(String paramName) throws SQLException {
+        if(statement instanceof CallableStatement){
+            int[] indexes=getIndexes(paramName);
+            for(int i=0; i < indexes.length; i++) {
+                return ((CallableStatement)statement).getObject(indexes[i]);
+            }
+        }
+        return null;
     }
 
     /**
@@ -517,9 +545,4 @@ public class NamedParametersStatement implements Statement {
         return statement.isWrapperFor(iface);
     }
 
-    public void registerOutParameter(String paramName, int sqlType) throws SQLException {
-        if(statement instanceof CallableStatement){
-            ((CallableStatement)statement).registerOutParameter(paramName, sqlType);
-        }
-    }
 }
