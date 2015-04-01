@@ -232,4 +232,10 @@ public class ParamsTest {
         Assert.assertEquals(MetaType.CLOB, pp.get(0).getType());
     }
 
+    @Test(enabled = true)
+    public void setTest() throws Exception {
+        List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
+        Assert.assertEquals(prms.get(0).getValue(), 101);
+    }
+
 }

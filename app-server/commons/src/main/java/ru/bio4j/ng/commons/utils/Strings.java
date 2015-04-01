@@ -156,4 +156,14 @@ public class Strings {
         text.replace(startIndex, endIndex+1, replacement);
         return text.toString();
     }
+    public static String replace(String str, String what, String replacement) {
+        if(!isNullOrEmpty(str) && !isNullOrEmpty(what)) {
+            int pos = str.indexOf(what);
+            if (pos >= 0) {
+                int posto = pos + what.length() - 1;
+                return replace(str, pos, posto, replacement);
+            }
+        }
+        return str;
+    }
 }

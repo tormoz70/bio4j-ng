@@ -85,7 +85,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static int readStoreData(final StoreData data, final SQLContext context, final Connection conn, final BioCursor cursorDef) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         int totalCount = 0;
-        try(SQLCursor c = context.CreateCursor()
+        try(SQLCursor c = context.createCursor()
                 .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParams()).open();) {
             LOG.debug("Cursor \"{}\" opened!!!", cursorDef.getBioCode());
             data.setMetadata(new StoreMetadata());
@@ -129,7 +129,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                 int totalCount = requestCached ? request.getTotalCount() : 0;
                 if(totalCount == 0) {
                     LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
-                    try (SQLCursor c = context.CreateCursor()
+                    try (SQLCursor c = context.createCursor()
                             .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
                         if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
@@ -144,7 +144,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
                         p.setValue(LocateWrapper.PKVAL, cur.getSelectSqlDef().getLocation());
                         p.setValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
                     }
-                    try (SQLCursor c = context.CreateCursor()
+                    try (SQLCursor c = context.createCursor()
                             .init(conn, cur.getSelectSqlDef().getLocateSql(), locateParams).open();) {
                         if (c.reader().next()) {
                             int locatedPos = c.reader().getValue(1, int.class);
@@ -192,7 +192,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
                 if(totalCount == 0) {
                     LOG.debug("For cursor \"{}\" max records fetched [{}]! Try calc count total records!!!", cur.getBioCode(), MAX_RECORDS_FETCH_LIMIT);
-                    try (SQLCursor c = context.CreateCursor()
+                    try (SQLCursor c = context.createCursor()
                             .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
                         if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
@@ -323,7 +323,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private static final String STD_PARAM_PREFIX = "p_";
 
     private static void processUpDelRow(final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
-        SQLStoredProc cmd = ctx.CreateStoredProc();
+        SQLStoredProc cmd = ctx.createStoredProc();
         RowChangeType changeType = row.getChangeType();
         BioCursor.SQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
         if(sqlDef == null && Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType))

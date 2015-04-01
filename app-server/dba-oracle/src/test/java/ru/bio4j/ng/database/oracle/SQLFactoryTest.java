@@ -10,6 +10,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -33,15 +34,15 @@ public class SQLFactoryTest {
 
     @BeforeTest
     public static void setUpClass() throws Exception {
-        context = OraContext.create(
+        context = DbContextAbstract.create(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)
                         .dbConnectionUrl(testDBUrl)
                         .dbConnectionUsr(testDBUsr)
                         .dbConnectionPwd(testDBPwd)
-                        .build()
-        );
+                        .build(),
+                OraContext.class);
         //if(true) return;
         try {
             context.execBatch(new SQLActionScalar<Object>() {
@@ -117,7 +118,7 @@ public class SQLFactoryTest {
                     Double dummysum = 0.0;
                     String sql = "select user as curuser, :dummy as dm, :dummy1 as dm1 from dual";
                     List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
-                    try(SQLCursor c = context.CreateCursor()
+                    try(SQLCursor c = context.createCursor()
                             .init(conn, sql, prms).open();){
                         while(c.reader().next()){
                             dummysum += c.reader().getValue("DM", Double.class);
@@ -144,7 +145,7 @@ public class SQLFactoryTest {
                 public byte[] exec(SQLContext context, Connection conn) throws Exception {
                     byte[] schema = null;
                     String sql = "select * from table(givcapi.upld.get_schemas)";
-                    try(SQLCursor c = context.CreateCursor()
+                    try(SQLCursor c = context.createCursor()
                             .init(conn, sql, null).open();){
                         while(c.reader().next()){
                             if(schema == null){
@@ -173,7 +174,7 @@ public class SQLFactoryTest {
                     int leng = 0;
                     LOG.debug("conn: " + conn);
 
-                    SQLStoredProc cmd = context.CreateStoredProc();
+                    SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
@@ -209,7 +210,7 @@ public class SQLFactoryTest {
                     int leng = 0;
                     LOG.debug("conn: " + conn);
 
-                    SQLStoredProc cmd = context.CreateStoredProc();
+                    SQLStoredProc cmd = context.createStoredProc();
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add(Param.builder().name("p_param1").type(MetaType.INTEGER).value(null).build())
                                 .add("p_param2", "QWE")
@@ -242,7 +243,7 @@ public class SQLFactoryTest {
                     int leng = 0;
                     LOG.debug("conn: " + conn);
 
-                    SQLStoredProc cmd = context.CreateStoredProc();
+                    SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
@@ -278,7 +279,7 @@ public class SQLFactoryTest {
                 public Object exec(SQLContext context, Connection conn, Object param) throws Exception {
                     LOG.debug("conn: " + conn + "; param: " + param);
 
-                    SQLStoredProc cmd = context.CreateStoredProc();
+                    SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_error";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
@@ -308,7 +309,7 @@ public class SQLFactoryTest {
                     int leng = 0;
                     LOG.debug("conn: " + conn);
 
-                    SQLStoredProc cmd = context.CreateStoredProc();
+                    SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
@@ -355,7 +356,7 @@ public class SQLFactoryTest {
             context.execBatch(new SQLAction<List<Param>, Object>() {
                 @Override
                 public Object exec(SQLContext context, Connection conn, List<Param> param) throws Exception {
-                    SQLStoredProc prc = context.CreateStoredProc();
+                    SQLStoredProc prc = context.createStoredProc();
                     prc.init(conn, "gacc.check_login", param).execSQL();
                     return null;
                 }
@@ -378,7 +379,7 @@ public class SQLFactoryTest {
                     ResultSet resultSet = null;
                     LOG.debug("conn: " + conn);
 
-                    SQLStoredProc cmd = context.CreateStoredProc();
+                    SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_cursor";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")

@@ -7,6 +7,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 
 import java.sql.Connection;
@@ -25,15 +26,15 @@ public class SQLFactoryTest1 {
 
     @BeforeTest(enabled = false)
     public static void setUpClass() throws Exception {
-        context = OraContext.create(
-                SQLConnectionPoolConfig.builder()
-                        .poolName("TEST-CONN-POOL")
-                        .dbDriverName(testDBDriverName)
-                        .dbConnectionUrl(testDBUrl)
-                        .dbConnectionUsr(testDBUsr)
-                        .dbConnectionPwd(testDBPwd)
-                        .build()
-        );
+        context = DbContextAbstract.create(
+            SQLConnectionPoolConfig.builder()
+                .poolName("TEST-CONN-POOL")
+                .dbDriverName(testDBDriverName)
+                .dbConnectionUrl(testDBUrl)
+                .dbConnectionUsr(testDBUsr)
+                .dbConnectionPwd(testDBPwd)
+                .build(),
+            OraContext.class);
     }
 
     @AfterTest(enabled = false)

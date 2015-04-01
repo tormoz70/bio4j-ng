@@ -1,10 +1,9 @@
 package ru.bio4j.ng.database.pgsql.impl;
 
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleResultSet;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.database.api.RDBMSUtils;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -67,60 +66,107 @@ public class PgSQLUtils implements RDBMSUtils {
     }
 
 
-    private static MetaType decodeOraType(String oraTypeName) {
-        if(Arrays.asList("CHAR", "VARCHAR", "VARCHAR2", "CLOB").contains(oraTypeName))
+    private static MetaType decodeType(String typeName) {
+        typeName = typeName.toUpperCase();
+        if(Arrays.asList("CHARACTER", "CHARACTER VARYING", "TEXT").contains(typeName))
             return MetaType.STRING;
-        if(Arrays.asList("NUMBER", "INTEGER", "SMALLINT", "FLOAT", "DECIMAL", "DOUBLE PRECISION", "BINARY_DOUBLE", "BINARY_FLOAT").contains(oraTypeName))
+        if(Arrays.asList("SMALLINT  ", "INTEGER", "BIGINT", "SMALLSERIAL", "SERIAL", "BIGSERIAL").contains(typeName))
+            return MetaType.INTEGER;
+        if(Arrays.asList("DECIMAL", "NUMERIC", "REAL", "DOUBLE PRECISION").contains(typeName))
             return MetaType.DECIMAL;
-        if(Arrays.asList("DATE", "TIMESTAMP", "TIME", "TIME WITH TZ", "TIMESTAMP WITH LOCAL TZ", "TIMESTAMP WITH TZ").contains(oraTypeName))
+        if(Arrays.asList("DATE", "TIMESTAMP", "TIME", "TIMESTAMP WITH TIME ZONE", "TIME WITH TIME ZONE").contains(typeName))
             return MetaType.DATE;
-        if(Arrays.asList("BLOB").contains(oraTypeName))
+        if(Arrays.asList("BYTEA").contains(typeName))
             return MetaType.BLOB;
-        if(Arrays.asList("REF").contains(oraTypeName))
+        if(Arrays.asList("REF").contains(typeName))
             return MetaType.CURSOR;
         return MetaType.UNDEFINED;
     }
 
-    private static Param.Direction decodeOraDirection(String oraDirName) {
-        if(oraDirName.equals("IN"))
+    public static final String DIRECTION_NAME_IN = "IN";
+    public static final String DIRECTION_NAME_OUT = "OUT";
+    public static final String DIRECTION_NAME_INOUT = "INOUT";
+    private static Param.Direction decodeDirection(String dirName) {
+        if(dirName.equals(DIRECTION_NAME_IN))
             return Param.Direction.IN;
-        if(oraDirName.equals("OUT"))
+        if(dirName.equals(DIRECTION_NAME_OUT))
             return Param.Direction.OUT;
-        if(oraDirName.equals("IN/OUT"))
+        if(dirName.equals(DIRECTION_NAME_INOUT))
             return Param.Direction.INOUT;
         return Param.Direction.IN;
     }
 
-    private static final String SQL_GET_PARAMS_FROM_DBMS = "select "+
-            " a.argument_name, a.position, a.sequence, a.data_type, a.in_out, a.data_length" +
-            " from ALL_ARGUMENTS a" +
-            " where a.owner = sys_context('userenv', 'current_schema')" +
-            " and (:package_name is null or a.package_name = upper(:package_name))" +
-            " and a.object_name = upper(:method_name)" +
-            " order by position";
+    private static String cutDirName(String paramDesc, String dirName){
+        if(paramDesc.toUpperCase().startsWith(dirName.toUpperCase()+" "))
+            paramDesc = paramDesc.substring(dirName.length());
+        return paramDesc.trim();
+    }
+
+    public static String cutDirNames(String paramDesc){
+        paramDesc = cutDirName(paramDesc, DIRECTION_NAME_IN);
+        paramDesc = cutDirName(paramDesc, DIRECTION_NAME_OUT);
+        paramDesc = cutDirName(paramDesc, DIRECTION_NAME_INOUT);
+        return paramDesc;
+    }
+
+    private static boolean checkDirName(String paramDesc, String dirName){
+        if(!Strings.isNullOrEmpty(paramDesc) && !Strings.isNullOrEmpty(dirName) && paramDesc.toUpperCase().startsWith(dirName+" ")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static String extractDirName(String paramDesc){
+        if(checkDirName(paramDesc, DIRECTION_NAME_IN))
+            return DIRECTION_NAME_IN;
+        if(checkDirName(paramDesc, DIRECTION_NAME_OUT))
+            return DIRECTION_NAME_OUT;
+        if(checkDirName(paramDesc, DIRECTION_NAME_INOUT))
+            return DIRECTION_NAME_INOUT;
+        return DIRECTION_NAME_IN;
+    }
+
+    private static void parsParam(String paramDesc, Paramus p, StringBuilder args) {
+        String dirName = extractDirName(paramDesc);
+        paramDesc = cutDirNames(paramDesc);
+        String paramName = paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
+        String paramNameUpper = paramName.toUpperCase();
+        paramDesc = cutDirName(paramDesc, paramName);
+        String typeName = paramDesc;
+
+        if (!(paramNameUpper.startsWith(DEFAULT_PARAM_PREFIX[0]) || paramNameUpper.startsWith(DEFAULT_PARAM_PREFIX[1])))
+            throw new IllegalArgumentException("Не верный формат наименования аргументов хранимой процедуры.\n" +
+                    "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
+        args.append(((args.length() == 0) ? ":" : ",:") + paramName.toLowerCase());
+        p.add(Param.builder()
+                .name(paramName)
+                .type(decodeType(typeName))
+                .direction(decodeDirection(dirName))
+                .build());
+
+    }
+
+    //"p_param1 character varying, OUT p_param2 integer"
+    public static void parsParams(String paramsList, Paramus p, StringBuilder args) {
+        String[] substrs = Strings.split(paramsList, ",");
+        for (String prmDesc : substrs)
+            parsParam(prmDesc.trim(), p, args);
+    }
+
+    private static final String SQL_GET_PARAMS_FROM_DBMS = "SELECT pg_get_function_identity_arguments(:method_name::regproc) as rslt";
+
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
     public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException {
         StringBuilder args = new StringBuilder();
         PgSQLUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
-        try (OraclePreparedStatement st = (OraclePreparedStatement)conn.prepareStatement(SQL_GET_PARAMS_FROM_DBMS, ResultSet.TYPE_FORWARD_ONLY)) {
-            st.setStringAtName("package_name", pkg.pkgName);
+        try (NamedParametersStatement st = NamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
             st.setStringAtName("method_name", pkg.methodName);
-            try (OracleResultSet rs = (OracleResultSet)st.executeQuery()) {
+            try (ResultSet rs = st.executeQuery()) {
                 try(Paramus p = Paramus.set(params)) {
-                    while (rs.next()) {
-                        String parName = rs.getString("argument_name");
-                        String parType = rs.getString("data_type");
-                        String parDir = rs.getString("in_out");
-                        if (!(parName.startsWith(DEFAULT_PARAM_PREFIX[0]) || parName.startsWith(DEFAULT_PARAM_PREFIX[1])))
-                            throw new IllegalArgumentException("Не верный формат наименования аргументов хранимой процедуры.\n" +
-                                    "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
-                        args.append(((args.length() == 0) ? ":" : ",:") + parName.toLowerCase());
-                        p.add(Param.builder()
-                                .name(parName.toLowerCase())
-                                .type(decodeOraType(parType))
-                                .direction(decodeOraDirection(parDir))
-                                .build());
+                    if (rs.next()) {
+                        String pars = rs.getString("rslt");
+                        parsParams(pars, p, args);
                     }
                 }
             }

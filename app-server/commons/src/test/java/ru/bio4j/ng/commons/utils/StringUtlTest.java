@@ -107,4 +107,10 @@ public class StringUtlTest {
         final String src = "Something in the air!!!";
         Assert.assertEquals(Strings.replace(src, 10, 100, "qwe"), "Something qwe");
     }
+    @Test(enabled = true)
+    public void replace4() throws Exception {
+        final String src = "Something in the air!!!";
+        Assert.assertEquals(Strings.replace(src, "in ", "qwe"), "Something qwethe air!!!");
+        Assert.assertEquals(Strings.replace(src, "air!!!", "qwe"), "Something in the qwe");
+    }
 }

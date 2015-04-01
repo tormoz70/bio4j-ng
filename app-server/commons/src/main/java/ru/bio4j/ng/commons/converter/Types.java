@@ -130,6 +130,12 @@ public class Types {
         return Number.class.isAssignableFrom(type);
     }
 
+    public static boolean typeIsReal(Class<?> type) {
+        if(Arrays.asList(float.class, double.class).contains(type))
+            return true;
+        return Number.class.isAssignableFrom(type);
+    }
+
     public static Date parsDate(String value) throws ConvertValueException {
         try {
             return DateTimeParser.getInstance().pars(value);
