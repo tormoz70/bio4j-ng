@@ -237,7 +237,7 @@ public class NamedParametersStatement implements Statement {
     public void setNullAtName(String name) throws SQLException {
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
-            statement.setNull(indexes[i], Types.NULL);
+            statement.setNull(indexes[i], Types.VARCHAR);
         }
     }
 

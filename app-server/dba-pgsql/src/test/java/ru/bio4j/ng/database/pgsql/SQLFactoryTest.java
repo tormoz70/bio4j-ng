@@ -53,20 +53,16 @@ public class SQLFactoryTest {
                 @Override
                 public Object exec(SQLContext context, Connection conn) throws Exception {
                     String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_test_table.sql"));
-                    CallableStatement cs = conn.prepareCall(sql);
-                    //cs.execute();
+                    Statement cs = conn.createStatement();
+                    cs.execute(sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_simple.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    cs.execute(sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_error.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    cs.execute(sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    cs.execute(sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    cs.execute(sql);
                     return null;
                 }
             });
@@ -82,16 +78,12 @@ public class SQLFactoryTest {
             context.execBatch(new SQLActionScalar<Object>() {
                 @Override
                 public Object exec(SQLContext context, Connection conn) throws Exception {
-                    CallableStatement cs = conn.prepareCall("drop procedure test_stored_prop");
-                    cs.execute();
-                    cs = conn.prepareCall("drop procedure test_stored_error");
-                    cs.execute();
-                    cs = conn.prepareCall("drop procedure test_stored_cursor");
-                    cs.execute();
-                    cs = conn.prepareCall("drop procedure test_stored_inout");
-                    cs.execute();
-                    cs = conn.prepareCall("drop table test_tbl");
-                    cs.execute();
+                    Statement cs = conn.createStatement();
+                    cs.execute("drop function test_stored_prop(varchar, out integer)");
+                    cs.execute("drop function test_stored_error(varchar, out integer)");
+                    cs.execute("drop function test_stored_cursor(varchar, out refcursor)");
+                    cs.execute("drop function test_stored_inout(inout integer, varchar, integer, numeric)");
+                    cs.execute("drop table test_tbl");
                     return null;
                 }
             });
@@ -415,9 +407,9 @@ public class SQLFactoryTest {
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         resultSet = paramus.getParamValue("p_param2", ResultSet.class);
                         if(resultSet.next()) {
-                            String userName = resultSet.getString("USERNAME");
+                            String userName = resultSet.getString("ROLNAME");
                             LOG.debug("userName: " + userName);
-                            Assert.assertEquals(userName, "SCOTT");
+                            Assert.assertEquals(userName.toUpperCase(), "POSTGRES");
                         }
                     }
                     return 0;

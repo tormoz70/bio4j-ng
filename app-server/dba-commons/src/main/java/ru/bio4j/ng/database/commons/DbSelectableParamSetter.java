@@ -10,6 +10,7 @@ import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 public class DbSelectableParamSetter implements SQLParamSetter {

@@ -26,7 +26,7 @@
                             org.objectweb.*;resolution:="optional",
                             *</Import-Package>
                         <Embed-Dependency>*;scope=compile</Embed-Dependency>
-                        <Export-Package>ru.bio4j.ng.database.oracle</Export-Package>
+                        <Export-Package>ru.bio4j.ng.database.commons.*</Export-Package>
                         <remoteOBR />
                     </instructions>
                 </configuration>

@@ -764,6 +764,14 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
+                                    <artifactId>bio4j-ng-dba-pgsql</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.install}</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-config</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>

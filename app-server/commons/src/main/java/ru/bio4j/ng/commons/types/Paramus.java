@@ -48,7 +48,8 @@ public class Paramus implements Closeable {
     Paramus setContext(List<Param> params){
         if(context.get() == null)
             context.set(new Stack<List<Param>>());
-        context.get().push(params);
+        if(context.get().search(params) == -1)
+            context.get().push(params);
         return this;
     }
     private void checkContext() {
