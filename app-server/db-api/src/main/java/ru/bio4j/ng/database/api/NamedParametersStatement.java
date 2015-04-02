@@ -1,10 +1,14 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.commons.utils.Regexs;
+import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Strings;
 
 import java.sql.*;
 import java.util.*;
 import java.sql.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class NamedParametersStatement implements Statement {
@@ -13,10 +17,10 @@ public class NamedParametersStatement implements Statement {
 
     /** Maps parameter names to arrays of ints which are the parameter indices.
      */
-    private final Map indexMap;
+    private final Map<String, int[]> indexMap;
     private final String parsedQuery;
 
-    private NamedParametersStatement (Connection connection, String query) throws SQLException {
+    private NamedParametersStatement (String query) throws SQLException {
         indexMap=new HashMap();
         parsedQuery=parse(query, indexMap);
     }
@@ -33,7 +37,7 @@ public class NamedParametersStatement implements Statement {
      * @throws SQLException if the statement could not be created
      */
     public static NamedParametersStatement prepareStatement(Connection connection, String query) throws SQLException {
-        NamedParametersStatement sttmnt = new NamedParametersStatement(connection, query);
+        NamedParametersStatement sttmnt = new NamedParametersStatement(query);
         sttmnt.statement=connection.prepareStatement(sttmnt.parsedQuery);
         return sttmnt;
     }
@@ -44,7 +48,7 @@ public class NamedParametersStatement implements Statement {
 //    }
 
     public static NamedParametersStatement prepareCall(Connection connection, String query) throws SQLException {
-        NamedParametersStatement sttmnt = new NamedParametersStatement(connection, query);
+        NamedParametersStatement sttmnt = new NamedParametersStatement(query);
         sttmnt.statement=connection.prepareCall(sttmnt.parsedQuery);
         return sttmnt;
     }
@@ -57,13 +61,14 @@ public class NamedParametersStatement implements Statement {
      * @param paramMap map to hold parameter-index mappings
      * @return the parsed query
      */
-    public static final String parse(String query, Map paramMap) {
+    public static final String parse_old(String query, Map paramMap) {
         // I was originally using regular expressions, but they didn't work well for ignoring
         // parameter-like strings inside quotes.
         final String doubleDotsPlaceholder = "/$doubleDotsPlaceholder$/";
         String preparedQuery = Strings.replace(query, "::", doubleDotsPlaceholder);
         int length=preparedQuery.length();
         StringBuffer parsedQuery=new StringBuffer(length);
+
         boolean inSingleQuote=false;
         boolean inDoubleQuote=false;
         int index=1;
@@ -123,6 +128,54 @@ public class NamedParametersStatement implements Statement {
         return unpreparedQuery;
     }
 
+    public static final String parse(String query, Map paramMap) {
+        final String doubleDotsPlaceholder = "/$doubleDotsPlaceholder$/";
+        final String assignsPlaceholder = "/$assignsPlaceholder$/";
+        String preparedQuery = Strings.replace(query, "::", doubleDotsPlaceholder);
+        preparedQuery = Strings.replace(preparedQuery, ":=", assignsPlaceholder);
+        String clearQuery = Sqls.deleteNonSQLSubstringsInSQL(preparedQuery);
+
+        List<String> paramNames = Sqls.extractParamNamesFromSQL(clearQuery);
+
+        final String r = "\\:\\b[\\w\\#\\$]+";
+        Matcher m = Regexs.match(clearQuery, r, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+        int indx = 1;
+        while (m.find()) {
+            String paramName = m.group().substring(1);
+
+            List indexList=(List)paramMap.get(paramName);
+            if(indexList==null) {
+                indexList=new LinkedList();
+                paramMap.put(paramName, indexList);
+            }
+            indexList.add(new Integer(indx));
+
+            indx++;
+        }
+
+        // replace the lists of Integer objects with arrays of ints
+        for(Iterator itr=paramMap.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry entry=(Map.Entry)itr.next();
+            List list=(List)entry.getValue();
+            int[] indexes=new int[list.size()];
+            int i=0;
+            for(Iterator itr2=list.iterator(); itr2.hasNext();) {
+                Integer x=(Integer)itr2.next();
+                indexes[i++]=x.intValue();
+            }
+            entry.setValue(indexes);
+        }
+
+        for(String paramName : paramNames){
+            preparedQuery = Regexs.replace(preparedQuery, "\\:"+paramName+"\\b", "?", Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
+        }
+
+        String unpreparedQuery = Strings.replace(preparedQuery, doubleDotsPlaceholder, "::");
+        unpreparedQuery = Strings.replace(unpreparedQuery, assignsPlaceholder, ":=");
+        return unpreparedQuery;
+
+    }
+
 
     /**
      * Returns the indexes for a parameter.
@@ -131,7 +184,7 @@ public class NamedParametersStatement implements Statement {
      * @throws IllegalArgumentException if the parameter does not exist
      */
     private int[] getIndexes(String name) {
-        int[] indexes=(int[])indexMap.get(name);
+        int[] indexes=indexMap.get(name);
         if(indexes==null) {
             throw new IllegalArgumentException("Parameter not found: "+name);
         }

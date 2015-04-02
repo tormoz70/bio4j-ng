@@ -685,6 +685,24 @@
                                 </artifactItem>
 
 
+                                <artifactItem>
+                                    <groupId>org.osgi</groupId>
+                                    <artifactId>org.osgi.enterprise</artifactId>
+                                    <version>5.0.0</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${distr.bundles}</outputDirectory>
+                                </artifactItem>
+
+                                <!--<artifactItem>-->
+                                    <!--<groupId>postgresql</groupId>-->
+                                    <!--<artifactId>postgresql</artifactId>-->
+                                    <!--<version>${postgresql-jdbc.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+
 <!-- ********************************************************************************************************** -->
                                 <!-- Bio4j -->
 

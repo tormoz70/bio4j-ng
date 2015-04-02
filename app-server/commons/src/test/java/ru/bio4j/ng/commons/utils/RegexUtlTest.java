@@ -53,4 +53,25 @@ public class RegexUtlTest {
         System.out.println(preparedSQL);
         Assert.assertTrue(true);
     }
+
+    @Test
+    public void testGetPos() throws Exception {
+        final String r = "\\:\\b[\\w\\#\\$]+";
+        final String line = "asdklj aslkdjn  :asd asdasd yuuuc\n" +
+                "asd :qwe asd poibvk; ';lksdflk :asd   l;sdkjflkj " +
+                "asdf;lkv sd;flk :qwe  sdgfsdfg";
+        Pattern pattern = Pattern.compile(r, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
+        Matcher m = pattern.matcher(line);
+        int indx = 0;
+        StringBuffer sb = new StringBuffer(line.length());
+        while (m.find()) {
+            System.out.println(indx+" - "+m.group());
+            m.appendReplacement(sb, "?");
+            indx++;
+        }
+        System.out.println(sb.toString());
+
+        Assert.assertTrue(true);
+    }
+
 }

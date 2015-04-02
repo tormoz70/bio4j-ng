@@ -1,8 +1,8 @@
 "%JAVA_HOME%\bin\java" ^
 -server ^
 -XX:-UseParallelGC ^
--XX:MaxPermSize=256M ^
--Xms256M -Xmx1G ^
+-XX:MaxPermSize=128M ^
+-Xms128M -Xmx1G ^
 -Dcom.sun.management.jmxremote.port=1100 ^
 -Dcom.sun.management.jmxremote.authenticate=false ^
 -Dcom.sun.management.jmxremote.ssl=false ^

@@ -1,10 +1,13 @@
-package ru.bio4j.ng.module.acstudio.impl;
+package ru.bio4j.ng.module.acstudio;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.api.SQLContextConfig;
+import ru.bio4j.ng.database.oracle.SQLContextFactory;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.module.commons.BioModuleBase;
 
@@ -13,7 +16,7 @@ import ru.bio4j.ng.module.commons.BioModuleBase;
 @Provides(specifications = BioModule.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
-                value = "ims",
+                value = "acstudio",
                 type = "java.lang.String"
         )})
 public class ApplicationImpl extends BioModuleBase {
@@ -29,7 +32,7 @@ public class ApplicationImpl extends BioModuleBase {
 
     @Override
     protected String getSelfModuleKey() {
-        return "ims";
+        return "acstudio";
     }
 
     @Context
@@ -40,10 +43,14 @@ public class ApplicationImpl extends BioModuleBase {
         return bundleContext;
     }
 
+    @Override
+    protected SQLContext createSQLContext(SQLContextConfig config) throws Exception {
+        return SQLContextFactory.create(config);
+    }
 
     @Override
     public String getDescription() {
-        return "IMS application";
+        return "ACStudio application";
     }
 
 

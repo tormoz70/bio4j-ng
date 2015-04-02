@@ -4,7 +4,7 @@
             <table>
                 <td>
                     <a href="http://ekinobilet.ru" id="logo">
-                        <img src="<%=request.getContextPath()%>/shared/images/logo_gr.png" alt="КИНОБИЛЕТ"/>
+                        <img src="<%=request.getContextPath()%>/shared/images/logo_ims.jpg" alt="КИНОБИЛЕТ"/>
                     </a>
                 </td>
                 <td valign="bottom">

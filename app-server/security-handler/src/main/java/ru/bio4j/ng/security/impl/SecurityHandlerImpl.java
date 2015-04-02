@@ -123,34 +123,13 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             return usr;
         }
 
+        LOG.debug("getting module {}...", moduleKey);
         final BioModule module = moduleProvider.getModule(moduleKey);
-        final BioModule bioModule = moduleProvider.getModule("bio");
-        final BioCursor cursor = bioModule.getCursor("get-user");
-        final SQLContext sqlContext = sqlContextProvider.selectContext(module);
-        User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
-            @Override
-            public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                LOG.debug("User {} logging in...", login);
-                cur.getSelectSqlDef().setParamValue("p_login", login);
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
-                        .open()) {
-                    if (c.reader().next()){
-                        User usr = new User();
-                        usr.setModuleKey(moduleKey);
-                        usr.setUid(c.reader().getValue("usr_uid", String.class));
-                        usr.setLogin(c.reader().getValue("usr_login", String.class));
-                        usr.setFio(c.reader().getValue("usr_fio", String.class));
-                        usr.setRoles(c.reader().getValue("usr_roles", String.class));
-                        usr.setGrants(c.reader().getValue("usr_grants", String.class));
-                        LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
-                        return usr;
-                    }
-                }
-                LOG.debug("User not found!");
-                return null;
-            }
-        }, cursor);
+        if(module != null)
+            LOG.debug("module {} assigned!", moduleKey);
+        else
+            LOG.debug("module {} not found!", moduleKey);
+        User newUsr = module.login(login);
         if(newUsr == null)
             throw new BioError.Login.BadLogin();
         storeUser(newUsr);

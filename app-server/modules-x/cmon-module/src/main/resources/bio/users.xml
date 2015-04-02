@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="false">
+	<SQL action="select">
+		<text><![CDATA[
+        select
+              usr_uid,
+              usr_login,
+              email_addr,
+              workspace_id,
+              org_id,
+              fio_fam,
+              fio_fname,
+              fio_sname,
+              usr_phone,
+              confirmed,
+              extinfo
+        from biosys.usr
+        ]]></text>
+	</SQL>
+    <SQL action="update"><text>usr$mng.modrec</text></SQL>
+
+    <SQL action="delete"><text>usr$mng.usr_delete</text></SQL>
+
+    <fields>
+        <field name="usr_uid" type="string" pk="true" header="UID"/>
+        <field name="login_name" type="string" header="Логин"/>
+        <field name="email_addr" type="string" header="E-Mail"/>
+        <field name="workspace_id" type="integer" hidden="true"/>
+        <field name="org_id" type="integer" hidden="true"/>
+        <field name="fio_fam" type="string" header="Фамилия"/>
+        <field name="fio_fname" type="string" header="Имя"/>
+        <field name="fio_sname" type="string" header="Отчество"/>
+        <field name="usr_phone" type="string" header="Телефон"/>
+        <field name="confirmed" type="boolean" header="Подтвержден"/>
+        <field name="extinfo" type="string" header="Доп. инфо"/>
+    </fields>
+</cursor>
+

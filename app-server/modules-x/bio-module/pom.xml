@@ -13,5 +13,12 @@
     <name>BioAIM Bio</name>
     <description>Service implements application module for Bio internals</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-dbapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>

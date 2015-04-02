@@ -11,6 +11,7 @@
     <packaging>bundle</packaging>
     <name>Bio Data Access Commons</name>
     <description>Data Access Commons for Bio Database API</description>
+
     <build>
         <plugins>
             <plugin>
@@ -20,13 +21,17 @@
                     <instructions>
                         <Import-Package>
                             com.sun.security.*;resolution:="optional",
+                            com.sun.jna.*;resolution:="optional",
                             sun.security.*;resolution:="optional",
                             sun.reflect.generics.*;resolution:="optional",
                             javax.*;resolution:="optional",
+                            oracle.*;resolution:="optional",
                             org.objectweb.*;resolution:="optional",
+                            org.postgresql.*;resolution:="optional",
+                            waffle.windows.auth.*;resolution:="optional",
                             *</Import-Package>
                         <Embed-Dependency>*;scope=compile</Embed-Dependency>
-                        <Export-Package>ru.bio4j.ng.database.commons.*</Export-Package>
+                        <Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*</Export-Package>
                         <remoteOBR />
                     </instructions>
                 </configuration>
@@ -45,6 +50,19 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-juli</artifactId>
             <version>${tomcat-juli.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>${ojdbc6.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>compile</scope>
         </dependency>
 

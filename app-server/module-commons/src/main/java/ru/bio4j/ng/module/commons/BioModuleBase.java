@@ -7,22 +7,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLContextConfig;
-import ru.bio4j.ng.database.pgsql.SQLContextFactory;
+import ru.bio4j.ng.database.api.*;
+//import ru.bio4j.ng.database.oracle.SQLContextFactory;
+//import ru.bio4j.ng.database.pgsql.SQLContextFactory;
+import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioModule;
-import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.service.api.Configurator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public abstract class BioModuleBase implements BioModule {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
@@ -73,7 +77,7 @@ public abstract class BioModuleBase implements BioModule {
                 InputStream inputStream = url.openStream();
                 if (inputStream != null) {
                     configurator.load(inputStream);
-                    sqlContext = SQLContextFactory.create(configurator.getConfig());
+                    sqlContext = createSQLContext(configurator.getConfig()); //SQLContextFactory.create(configurator.getConfig());
                     LOG.debug("Context description for module \"{}\" loaded from file \"{}\".", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
                 }
             } else
@@ -81,6 +85,8 @@ public abstract class BioModuleBase implements BioModule {
         }
         return sqlContext;
     }
+
+    protected abstract SQLContext createSQLContext(SQLContextConfig config) throws Exception;
 
     protected abstract EventAdmin getEventAdmin();
 
@@ -101,6 +107,41 @@ public abstract class BioModuleBase implements BioModule {
             }
         }, 1, TimeUnit.SECONDS);
 
+    }
+
+    @Override
+    public User login(final String login) throws Exception {
+        if(isNullOrEmpty(login))
+            throw new BioError.Login.BadLogin();
+
+        final String moduleKey = this.getSelfModuleKey();
+        final BioCursor cursor = this.getCursor("bio.get-user");
+        final SQLContext sqlContext = this.getSQLContext();
+        User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
+            @Override
+            public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                LOG.debug("User {} logging in...", login);
+                cur.getSelectSqlDef().setParamValue("p_login", login);
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
+                        .open()) {
+                    if (c.reader().next()){
+                        User usr = new User();
+                        usr.setModuleKey(moduleKey);
+                        usr.setUid(c.reader().getValue("usr_uid", String.class));
+                        usr.setLogin(c.reader().getValue("usr_login", String.class));
+                        usr.setFio(c.reader().getValue("usr_fio", String.class));
+                        usr.setRoles(c.reader().getValue("usr_roles", String.class));
+                        usr.setGrants(c.reader().getValue("usr_grants", String.class));
+                        LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
+                        return usr;
+                    }
+                }
+                LOG.debug("User not found!");
+                return null;
+            }
+        }, cursor);
+        return newUsr;
     }
 
 }

@@ -5,6 +5,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.module.commons.BioModuleBase;
 
@@ -38,6 +40,11 @@ public class ApplicationImpl extends BioModuleBase {
     @Override
     protected BundleContext bundleContext() {
         return bundleContext;
+    }
+
+    @Override
+    protected SQLContext createSQLContext(SQLContextConfig config) throws Exception {
+        return null; //SQLContextFactory.create(config);
     }
 
     @Override

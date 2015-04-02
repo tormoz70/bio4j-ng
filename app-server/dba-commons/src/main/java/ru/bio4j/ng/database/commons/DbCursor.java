@@ -60,10 +60,12 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
 	@Override
 	public SQLCursor open(List<Param> params) throws Exception {
-        return (SQLCursor)this.processStatement(params, new DelegateSQLAction() {
+        return this.processStatement(params, new DelegateSQLAction() {
             @Override
             public void execute() throws SQLException {
                 final DbCursor self = DbCursor.this;
+                String parsedQuery = self.preparedStatement.getParsedQuery();
+                LOG.debug("parsedQuery:\n"+parsedQuery);
                 self.reader = context.createReader(self.preparedStatement.executeQuery());
                 self.isActive = true;
 

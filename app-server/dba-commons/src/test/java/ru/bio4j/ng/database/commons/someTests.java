@@ -19,9 +19,18 @@ import java.util.Map;
 public class someTests {
     @Test
     public void namedStatementTest() throws Exception {
-        Map indexMap = new HashMap();
-        String parsedQuery = NamedParametersStatement.parse("SELECT pg_get_function_identity_arguments(:method_name::regproc) as rslt", indexMap);
-        Assert.assertEquals(parsedQuery, "SELECT pg_get_function_identity_arguments(?::regproc) as rslt");
+        Map<String, int[]> indexMap = new HashMap();
+        String parsedQuery = NamedParametersStatement.parse("asdasd :ert SELECT :method_name \"sdf :sdf\" pg_get_function_identity_" +
+                " asdasdasd /* :dfgdfgdg*/ fghfghfh\n"+
+                " asdasdasd -- :dfgdfgdg\n"+
+                "arguments(:method_name::regproc) :ert as rslt :method_name1", indexMap);
+        Assert.assertEquals(parsedQuery, "asdasd ? SELECT ? \"sdf :sdf\" pg_get_function_identity_ asdasdasd /* :dfgdfgdg*/ fghfghfh\n" +
+                " asdasdasd -- :dfgdfgdg\n" +
+                "arguments(?::regproc) ? as rslt ?");
+        Assert.assertEquals(indexMap.get("ert")[0], 1);
+        Assert.assertEquals(indexMap.get("ert")[1], 4);
+        Assert.assertEquals(indexMap.get("method_name")[0], 2);
+        Assert.assertEquals(indexMap.get("method_name")[1], 3);
     }
 
 
