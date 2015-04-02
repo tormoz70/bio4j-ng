@@ -1,1 +1,0 @@
-imp.exe system/oraROOT77@GIVCDB parfile=imp.par
