@@ -1,8 +1,8 @@
 Ext.require('*');
 Ext.onReady(function() {
 
-    Ext.ns('Ekb');
-    Ext.define('Ekb.RootPanel', {
+    Ext.ns('Ims');
+    Ext.define('Ims.RootPanel', {
         extend: 'Ext.view.View',
         alias: 'widget.rootpanel',
         autoHeight   : true,
@@ -57,8 +57,8 @@ Ext.onReady(function() {
         }
     });
 
-    var catalog = Ekb.catalog.groups,
-        bmenu = Ekb.bmenu.groups;
+    var catalog = Ims.catalog.groups,
+        bmenu = Ims.bmenu.groups;
 
     for (var i = 0, c; c = catalog[i]; i++) {
         c.id = 'bsrv-' + i;
@@ -74,7 +74,7 @@ Ext.onReady(function() {
                 data: catalog
             });
 
-            Ext.create('Ekb.RootPanel', {
+            Ext.create('Ims.RootPanel', {
                 renderTo: 'root-container',
                 store: store
             });

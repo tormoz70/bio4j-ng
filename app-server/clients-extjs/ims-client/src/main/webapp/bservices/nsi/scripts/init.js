@@ -1,27 +1,27 @@
 Ext.Loader.setConfig({enabled: true});
 Ext.Loader.setPath('Ext.ux', '../../../ux');
-Ext.Loader.setPath('Bio.admin', '.');
+//Ext.Loader.setPath('Ekb.grid', './');
+Ext.Loader.setPath('Ims.form', '.');
 Ext.require([
     'Ext.ux.PreviewPlugin'
+    //'Ims.form.FilmDetails'
 ]);
 
-
+//alert("Required loaded!");
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Управление пользователями]";
-
-    Ext.ns('Bio.admin');
+    document.title = document.title + " - [Справочник сценариев]";
+//    alert("Redy!!!");
+    Ext.ns('Ims');
 
     Ext.tip.QuickTipManager.init();
 
     var grid = Ext.create('Bio.grid.Panel', {
-        id: 'bio-admin-usrs-grid',
-        title: 'Пользователи',
-        rowLines: true,
-        columnLines: true,
+        id: 'ims-scripts-grid',
+        title: 'Default Tab',
         storeCfg: {
-            bioCode:'cabinet.org-filtered-list',
+            bioCode:'nsi.script',
             bioParams: [
                 {
                     name:"prm1",
@@ -32,7 +32,6 @@ Ext.onReady(function () {
                     value:"asd"
                 }
             ],
-            //pageSize: -1,
             autoLoad: true,
             remoteSort: true
         },
@@ -45,58 +44,31 @@ Ext.onReady(function () {
         tbar: Ext.create('Ext.toolbar.Toolbar', {
             items: [
                 {
-                    text: 'Создать',
-                    scope: this,
-                    handler: function () {
-                        var grd = Ext.getCmp('bio-admin-usrs-grid');
-                        var seldId = null;
-                        var win2 = Ext.create('Ext.window.Window', {
-                            title: 'Новый пользователь',
-                            closeAction: 'destroy',
-                            closable: true,
-                            plain: true,
-                            modal: true,
-                            layout: 'fit',
-                            items: Ext.create('Bio.admin.UsrDetails', {
-                                ekb: { orgId: seldId }
-                            })
-                        });
-                        win2.addListener("close", function (panel, eOpts) {
-                            var form = panel.down('form'),
-                                data = form.getForm().getRecord().data;
-                            grd.store.locate(data.org_id, 1);
-                        });
-                        win2.show();
-                    }
-                },
-                {
                     text: 'Детали',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('bio-admin-usrs-grid');
-                        var seldId = grd.getSelectedId();
+                        var grd = Ext.getCmp('ims-scripts-grid');
                         var win2 = Ext.create('Ext.window.Window', {
-                            title: 'Детальная информация по пользователю',
-                            closeAction: 'destroy',
+                            //autoHeight: true,
+                            height: 600,
+                            //autoWidth: true,
+                            width: 800,
+                            //x: 50,
+                            //y: 50,
+                            title: 'Детальная информация по сценарию',
                             closable: true,
                             plain: true,
-                            modal: true,
-                            layout: 'fit',
-                            items: Ext.create('Bio.admin.UsrDetails', {
-                                ekb: { orgId: seldId }
-                            })
-                        });
-                        win2.addListener("close", function (panel, eOpts) {
-                            grd.store.reload();
+                            layout: 'fit'
+                            //items: Ext.create('Ims.form.FilmDetails', {bioOwnerGrid:grd})
                         });
                         win2.show();
                     }
                 },
                 {
                     // search box
-                    id:     'txtId2Locate',
-                    xtype:  'textfield',
-                    value:  "enter id..."
+                    id: 'txtId2Locate',
+                    xtype:'textfield',
+                    value   : "enter id..."
                 },
                 {
                     // filter button
@@ -113,7 +85,7 @@ Ext.onReady(function () {
         })
     });
 
-    Ext.define('Ekb.Viewport', {
+    Ext.define('Ims.Viewport', {
         extend: 'Ext.container.Viewport',
         layout: 'border',
         items: [
@@ -162,14 +134,14 @@ Ext.onReady(function () {
             //},
             {
                 region: 'center',
-                xtype: 'tabpanel', // TabPanel itself has no title
+                xtype: 'panel', // TabPanel itself has no title
                 activeTab: 0,      // First tab active by default
                 items: grid
             }
         ]
     });
 
-    Ext.create('Ekb.Viewport', {
+    Ext.create('Ims.Viewport', {
         renderTo: 'root-container',
         store: null
     });

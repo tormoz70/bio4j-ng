@@ -1,7 +1,7 @@
 Ext.Loader.setConfig({enabled: true});
 Ext.Loader.setPath('Ext.ux', '../../../ux');
 //Ext.Loader.setPath('Ekb.grid', './');
-Ext.Loader.setPath('Ekb.form', '.');
+Ext.Loader.setPath('Ims.form', '.');
 Ext.require([
     'Ext.ux.PreviewPlugin'
     //'Ekb.form.FilmDetails'
@@ -11,19 +11,20 @@ Ext.require([
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Реестр кинотеатров]";
+    document.title = document.title + " - [Панель управления]";
 //    alert("Redy!!!");
-    Ext.ns('Ekb');
+    Ext.ns('Ims');
 
     Ext.tip.QuickTipManager.init();
 
     var grid = Ext.create('Bio.grid.Panel', {
-        id: 'ekb-orgs-grid',
+        id: 'ims-terminals-grid',
         title: 'Default Tab',
+        preventHeader: true,
         rowLines: true,
         columnLines: true,
         storeCfg: {
-            bioCode:'cabinet.org-filtered-list',
+            bioCode:'cabinet.terminal-list',
             bioParams: [
                 {
                     name:"prm1",
@@ -50,7 +51,7 @@ Ext.onReady(function () {
                     text: 'Создать',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-orgs-grid');
+                        var grd = Ext.getCmp('ims-terminals-grid');
                         var seldId = null;
                         var win2 = Ext.create('Ext.window.Window', {
                             title: 'Новый кинотеатр',
@@ -59,8 +60,8 @@ Ext.onReady(function () {
                             plain: true,
                             modal: true,
                             layout: 'fit',
-                            items: Ext.create('Ekb.form.OrgDetails', {
-                                ekb: { orgId: seldId }
+                            items: Ext.create('Ims.form.OrgDetails', {
+                                ims: { orgId: seldId }
                             })
                         });
                         win2.addListener("close", function (panel, eOpts) {
@@ -75,7 +76,7 @@ Ext.onReady(function () {
                     text: 'Детали',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-orgs-grid');
+                        var grd = Ext.getCmp('ims-orgs-grid');
                         var seldId = grd.getSelectedId();
                         var win2 = Ext.create('Ext.window.Window', {
                             title: 'Детальная информация по кинотеатру',
@@ -84,8 +85,8 @@ Ext.onReady(function () {
                             plain: true,
                             modal: true,
                             layout: 'fit',
-                            items: Ext.create('Ekb.form.OrgDetails', {
-                                ekb: { orgId: seldId }
+                            items: Ext.create('Ims.form.OrgDetails', {
+                                ims: { orgId: seldId }
                             })
                         });
                         win2.addListener("close", function (panel, eOpts) {
@@ -115,7 +116,7 @@ Ext.onReady(function () {
         })
     });
 
-    Ext.define('Ekb.Viewport', {
+    Ext.define('Ims.Viewport', {
         extend: 'Ext.container.Viewport',
         layout: 'border',
         items: [
@@ -133,45 +134,45 @@ Ext.onReady(function () {
                     {
                         xtype: "panel",
                         frame: true,
-                        html: '<a href="http://ekinobilet.ru" id="logo"><img height="50" width="80" src="../../../shared/images/logo_gr.png" alt="КИНОБИЛЕТ"/></a>'
+                        html: '<a href="http://givc.ru" id="logo"><img height="50" width="80" src="../../../shared/images/logo_ims.jpg" alt="КИНОБИЛЕТ"/></a>'
                     }
                 ]
             },
-            {
-                region: 'west',
-                collapsible: true,
-                collapsed: true,
-                title: 'Navigation',
-                width: 150
-            },
-            {
-                region: 'south',
-                title: 'South Panel',
-                collapsible: true,
-                collapsed: true,
-                html: 'Information goes here',
-                split: true,
-                height: 100,
-                minHeight: 100
-            },
-            {
-                region: 'east',
-                title: 'East Panel',
-                collapsible: true,
-                collapsed: true,
-                split: true,
-                width: 150
-            },
+            //{
+            //    region: 'west',
+            //    collapsible: true,
+            //    collapsed: true,
+            //    title: 'Navigation',
+            //    width: 150
+            //},
+            //{
+            //    region: 'south',
+            //    title: 'South Panel',
+            //    collapsible: true,
+            //    collapsed: true,
+            //    html: 'Information goes here',
+            //    split: true,
+            //    height: 100,
+            //    minHeight: 100
+            //},
+            //{
+            //    region: 'east',
+            //    title: 'East Panel',
+            //    collapsible: true,
+            //    collapsed: true,
+            //    split: true,
+            //    width: 150
+            //},
             {
                 region: 'center',
-                xtype: 'tabpanel', // TabPanel itself has no title
+                xtype: 'panel', // TabPanel itself has no title
                 activeTab: 0,      // First tab active by default
                 items: grid
             }
         ]
     });
 
-    Ext.create('Ekb.Viewport', {
+    Ext.create('Ims.Viewport', {
         renderTo: 'root-container',
         store: null
     });

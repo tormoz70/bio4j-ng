@@ -1,27 +1,27 @@
 Ext.Loader.setConfig({enabled: true});
 Ext.Loader.setPath('Ext.ux', '../../../ux');
 //Ext.Loader.setPath('Ekb.grid', './');
-Ext.Loader.setPath('Ekb.form', '.');
+Ext.Loader.setPath('Ims.form', '.');
 Ext.require([
     'Ext.ux.PreviewPlugin'
-    //'Ekb.form.FilmDetails'
+    //'Ims.form.FilmDetails'
 ]);
 
 //alert("Required loaded!");
 
 Ext.onReady(function () {
 
-    document.title = document.title + " - [Справочник фильмов]";
+    document.title = document.title + " - [Справочник медиа-файлов]";
 //    alert("Redy!!!");
-    Ext.ns('Ekb');
+    Ext.ns('Ims');
 
     Ext.tip.QuickTipManager.init();
 
     var grid = Ext.create('Bio.grid.Panel', {
-        id: 'ekb-films-grid',
+        id: 'ims-files-grid',
         title: 'Default Tab',
         storeCfg: {
-            bioCode:'cabinet.film-registry',
+            bioCode:'nsi.media-registry',
             bioParams: [
                 {
                     name:"prm1",
@@ -47,7 +47,7 @@ Ext.onReady(function () {
                     text: 'Детали',
                     scope: this,
                     handler: function () {
-                        var grd = Ext.getCmp('ekb-films-grid');
+                        var grd = Ext.getCmp('ims-films-grid');
                         var win2 = Ext.create('Ext.window.Window', {
                             //autoHeight: true,
                             height: 600,
@@ -55,11 +55,11 @@ Ext.onReady(function () {
                             width: 800,
                             //x: 50,
                             //y: 50,
-                            title: 'Детальная информация по фильму',
+                            title: 'Детальная информация по файлу',
                             closable: true,
                             plain: true,
                             layout: 'fit'
-                            //items: Ext.create('Ekb.form.FilmDetails', {bioOwnerGrid:grd})
+                            //items: Ext.create('Ims.form.FilmDetails', {bioOwnerGrid:grd})
                         });
                         win2.show();
                     }
@@ -85,7 +85,7 @@ Ext.onReady(function () {
         })
     });
 
-    Ext.define('Ekb.Viewport', {
+    Ext.define('Ims.Viewport', {
         extend: 'Ext.container.Viewport',
         layout: 'border',
         items: [
@@ -103,35 +103,35 @@ Ext.onReady(function () {
                     {
                         xtype: "panel",
                         frame: true,
-                        html: '<a href="http://ekinobilet.ru" id="logo"><img height="50" width="80" src="../../../shared/images/logo_gr.png" alt="КИНОБИЛЕТ"/></a>'
+                        html: '<a href="http://ekinobilet.ru" id="logo"><img height="50" width="80" src="../../../shared/images/logo_ims.jpg" alt="КИНОБИЛЕТ"/></a>'
                     }
                 ]
             },
-            {
-                region: 'west',
-                collapsible: true,
-                collapsed: true,
-                title: 'Navigation',
-                width: 150
-            },
-            {
-                region: 'south',
-                title: 'South Panel',
-                collapsible: true,
-                collapsed: true,
-                html: 'Information goes here',
-                split: true,
-                height: 100,
-                minHeight: 100
-            },
-            {
-                region: 'east',
-                title: 'East Panel',
-                collapsible: true,
-                collapsed: true,
-                split: true,
-                width: 150
-            },
+            //{
+            //    region: 'west',
+            //    collapsible: true,
+            //    collapsed: true,
+            //    title: 'Navigation',
+            //    width: 150
+            //},
+            //{
+            //    region: 'south',
+            //    title: 'South Panel',
+            //    collapsible: true,
+            //    collapsed: true,
+            //    html: 'Information goes here',
+            //    split: true,
+            //    height: 100,
+            //    minHeight: 100
+            //},
+            //{
+            //    region: 'east',
+            //    title: 'East Panel',
+            //    collapsible: true,
+            //    collapsed: true,
+            //    split: true,
+            //    width: 150
+            //},
             {
                 region: 'center',
                 xtype: 'tabpanel', // TabPanel itself has no title
@@ -141,7 +141,7 @@ Ext.onReady(function () {
         ]
     });
 
-    Ext.create('Ekb.Viewport', {
+    Ext.create('Ims.Viewport', {
         renderTo: 'root-container',
         store: null
     });

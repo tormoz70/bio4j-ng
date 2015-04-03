@@ -1,4 +1,4 @@
-Ext.define('Ekb.form.FilmDetails', {
+Ext.define('Ims.form.FileDetails', {
     extend: 'Ext.form.Panel',
     //title   : 'FieldContainers',
 
@@ -7,7 +7,7 @@ Ext.define('Ekb.form.FilmDetails', {
             var selection = this.bioOwnerGrid.getSelectionModel().getSelection();
             var row = (selection && selection.length > 0) ? selection[0].data : { };
             var store  = Ext.create('Bio.data.Store', {
-                bioCode: 'films.details',
+                bioCode: 'files.details',
                 bioParams: {docuid:{value:row.DOC_UID}}
             });
             store.loadForm(this);

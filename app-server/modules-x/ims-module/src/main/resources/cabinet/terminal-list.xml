@@ -5,58 +5,24 @@
         multiselection="true">
   <SQL action="select">
     <text><![CDATA[
-SELECT o1.*,
-      case o1.orgtype 
-      when 'l' then 'Киносеть'
-      when 'h' then 'Киносеть'
-      when 's' then 'Некоммерческая киносеть'
-      when 'b' then 'Некоммерческая киносеть'
-      when 'p' then 'Кинотеатр'
-      end as orgtype_name,
-      case o1.verstate when  '0' then 'не выверен'
-      when '1' then 'в процессе'
-      when '2' then 'адрес выверен'
-      when '9' then 'выверен'
-      end as verstatename
-FROM org$cinemalst_tst o1
-WHERE o1.test = 1 AND o1.orgtype in ('p', 's', 'l')
-AND (:SYS_CURUSR_ROLES in ('*','1','2','5','6'))
-AND ((:parent_org_id is null) or (o1.holding_id = :parent_org_id))
-AND
-  (
-    (nvl(o1.kladr_code_r, 'not_assigned') = decode(:region_id, null, nvl(o1.kladr_code_r, 'not_assigned'), :region_id)) and
-    ((:nas_punkt is null)       or (upper(o1.nas_punkt) like '%'||upper(:nas_punkt)||'%')) and
-    ((:street_name is null)       or (upper(o1.street_name) like '%'||upper(:street_name)||'%')) and
-    ((:hldname is null)         or ((o1.holding_id = nvl(to_number(regexp_substr(:hldname, '^\d+$')), 0)) or
-                                    (upper(o1.hldname) like '%'||upper(:hldname)||'%'))) and
-    ((:orgname is null)         or ((o1.id_org = nvl(to_number(regexp_substr(:orgname, '^\d+$')), 0)) or
-                                    (upper(o1.orgname) like '%'||upper(:orgname)||'%'))) and
-    ((:email is null)           or (upper(nvl(o1.email, o1.email_hld)) like '%'||upper(:email)||'%')) and
-    ((:orgname_jur is null)     or (upper(o1.orgname_jur) like '%'||upper(:orgname_jur)||'%')) and
+SELECT
+  aterminalid,
+  aterminalkey,
+  ip4addr,
+  tstate,
+  aname,
+  anote,
+  addr,
+  latitude,
+  longitude,
+  isdeleted
+FROM aterminal;
 
-    (nvl(o1.id_vnd, -1) = decode(:id_vnd, null, nvl(o1.id_vnd, -1), :id_vnd)) and
-    (nvl(o1.id_prop, -1) = decode(:id_prop, null, nvl(o1.id_prop, -1), :id_prop)) and
-    ((:orgtype is null) or (nvl(o1.orgtype, '-x') = :orgtype)) and
-
-    --(nvl(o1.test, 0) = decode(:test, null, nvl(o1.test, 0), :test)) and
-    (nvl(o1.liquidate, 0) = decode(:liquidate, null, nvl(o1.liquidate, 0), :liquidate)) and
-    (nvl(o1.automatic, 0) = decode(:automatic, null, nvl(o1.automatic, 0), :automatic)) and
-    (nvl(o1.original_dog, 0) = decode(:original_dog, null, nvl(o1.original_dog, 0), :original_dog)) and
-    (nvl(o1.isreported, 0) = decode(:isreported, null, nvl(o1.isreported, 0), :isreported)) and
-    (nvl(o1.whereisdata, 0) = decode(:whereisdata, null, nvl(o1.whereisdata, 0), :whereisdata)) and
-
-    ((:registred is null) or (o1.registred = :registred)) and
-    ((:modern is null) or (o1.modern = :modern)) and
-    ( (:verState is null) or
-      (o1.verstate in (select item from table(biosys.ai_utl.trans_list(:verState, ';'))))
-    )
-  )    
-ORDER BY o1.orgname
     ]]></text>
-    <param type="integer" name="parent_org_id"/>
-    <param type="string" name="region_id"/>
-    <param type="string" name="region"/>
-    <param type="string" name="nas_punkt"/>
+    <param type="integer" name="aterminalid"/>
+    <param type="string" name="aterminalkey"/>
+    <param type="string" name="ip4addr"/>
+    <param type="string" name="tstate"/>
     <param type="string" name="street_name"/>
     <param type="string" name="hldname"/>
     <param type="string" name="orgname"/>

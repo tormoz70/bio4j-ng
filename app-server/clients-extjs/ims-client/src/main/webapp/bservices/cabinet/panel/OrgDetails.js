@@ -1,4 +1,4 @@
-Ext.define('Ekb.form.OrgDetails', {
+Ext.define('Ims.form.OrgDetails', {
     extend: 'Ext.form.Panel',
 
     //frame: true,
@@ -608,7 +608,7 @@ Ext.define('Ekb.form.OrgDetails', {
                             listeners: {
                                 beforeload: function(store, operation, eOpts) {
                                     var me = store,
-                                        frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ekb.form.OrgDetails').getForm(),
+                                        frm = Bio.tools.parentFormByClassName(me.ownerGrid, 'Ims.form.OrgDetails').getForm(),
                                         orgId = Bio.tools.tryParsInt(frm.findField('org_id').getValue()),
                                         orgIdParam = { org_id: orgId };
                                     console.log('setting bioParams on beforeload '+me.ownerGrid.id+' to '+Bio.tools.dumpObject(orgIdParam));
@@ -679,7 +679,7 @@ Ext.define('Ekb.form.OrgDetails', {
                     bioCode: 'cabinet.get-org'
                     //autoSync: true
                 }),
-                seldId = (me.ekb ? me.ekb.orgId : null);
+                seldId = (me.ims ? me.ims.orgId : null);
 
 
             me.loadData(store, seldId, function () {
@@ -696,7 +696,7 @@ Ext.define('Ekb.form.OrgDetails', {
             margin: '0 5 25 0',
             handler: function () {
                 var me = this,
-                    form = Bio.tools.parentFormByClassName(me, 'Ekb.form.OrgDetails');
+                    form = Bio.tools.parentFormByClassName(me, 'Ims.form.OrgDetails');
 
                 form.postData({
                     callback: {

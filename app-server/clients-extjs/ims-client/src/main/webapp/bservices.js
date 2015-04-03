@@ -1,26 +1,14 @@
-Ext.namespace('Ekb');
-Ekb.catalog = {
+Ext.namespace('Ims');
+Ims.catalog = {
     groups: [
         {
             "title": "Личный кабинет",
             "items": [
                 {
-                    "text": "Регистрация",
-                    "url": "bservices/cabinet/reg/index.jsp",
+                    "text": "Панель управления",
+                    "url": "bservices/cabinet/panel/index.jsp",
                     "icon": "kitchensink.gif",
-                    "desc": "Регистрационная карта"
-                },
-                {
-                    "text": "Протоколы загрузки",
-                    "url": "bservices/cabinet/protocols/index.jsp",
-                    "icon": "feeds.png",
-                    "desc": "Протоколы загрузки данных"
-                },
-                {
-                    "text": "Отчеты",
-                    "url": "bservices/cabinet/reports/index.jsp",
-                    "icon": "calendar.png",
-                    "desc": "Аналитические отчеты по загруженным данным"
+                    "desc": "Панель управления демонтрациями"
                 }
             ]
         },
@@ -28,16 +16,16 @@ Ekb.catalog = {
             "title": "НСИ",
             "items": [
                 {
-                    "text": "Справочник фильмов",
-                    "url": "bservices/nsi/films/index.jsp",
+                    "text": "Справочник сценариев",
+                    "url": "bservices/nsi/scripts/index.jsp",
                     "icon": "soap-grid.png",
-                    "desc": "Каталог всех фильмов и прокатных удостоверений ..."
+                    "desc": "Каталог всех сценариев ..."
                 },
                 {
-                    "text": "Справочник адресов",
-                    "url": "bservices/nsi/kladr/index.jsp",
-                    "icon": "amf-grid.png",
-                    "desc": "Справочник адресов на базе КЛАДР ..."
+                    "text": "Справочник медиа-файлов",
+                    "url": "bservices/nsi/media/index.jsp",
+                    "icon": "soap-grid.png",
+                    "desc": "Каталог всех медиа-файлов загруженных на сервер ..."
                 }
             ]
 

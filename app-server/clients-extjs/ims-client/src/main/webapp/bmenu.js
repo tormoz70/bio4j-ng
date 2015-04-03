@@ -1,5 +1,5 @@
-Ext.namespace('Ekb');
-Ekb.bmenu = {
+Ext.namespace('Ims');
+Ims.bmenu = {
     groups: [
         {
             title: "Выход",
