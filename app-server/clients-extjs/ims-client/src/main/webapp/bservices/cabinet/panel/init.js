@@ -19,7 +19,7 @@ Ext.onReady(function () {
 
     var grid = Ext.create('Bio.grid.Panel', {
         id: 'ims-terminals-grid',
-        title: 'Default Tab',
+        title: 'Зарегистрированные терминалы',
         preventHeader: true,
         rowLines: true,
         columnLines: true,
@@ -165,7 +165,7 @@ Ext.onReady(function () {
             //},
             {
                 region: 'center',
-                xtype: 'panel', // TabPanel itself has no title
+                xtype: 'tabpanel', // TabPanel itself has no title
                 activeTab: 0,      // First tab active by default
                 items: grid
             }

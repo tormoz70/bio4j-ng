@@ -6,7 +6,7 @@
     -->
     <template type="filtering"><![CDATA[
     SELECT fltrng$wrpr.*
-     FROM ( ${QUERY_PLACEHOLDER} ) fltrng$wrpr
+     FROM ( ${QUERY_PLACEHOLDER} ) as fltrng$wrpr
       ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>
 
@@ -15,7 +15,7 @@
     -->
     <template type="sorting"><![CDATA[
     SELECT srtng$wrpr.*
-     FROM ( ${QUERY_PLACEHOLDER} ) srtng$wrpr
+     FROM ( ${QUERY_PLACEHOLDER} ) as srtng$wrpr
       ${ORDERBYCLAUSE_PLACEHOLDER}
     ]]></template>
 
@@ -28,8 +28,8 @@
     -->
     <template type="paging"><![CDATA[
     SELECT * FROM (
-        SELECT pgng$wrpr0.*, ROWNUM rnum$pgng
-          FROM ( ${QUERY_PLACEHOLDER} ) pgng$wrpr0
+        SELECT pgng$wrpr0.*, row_number() over (order by aterminalid) rnum$pgng
+          FROM ( ${QUERY_PLACEHOLDER} ) as pgng$wrpr0
     ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)
     ]]></template>
 
@@ -38,15 +38,15 @@
     -->
     <template type="totals"><![CDATA[
         SELECT COUNT(1) ttlCnt$wrpr
-          FROM ( ${QUERY_PLACEHOLDER} )
+          FROM ( ${QUERY_PLACEHOLDER} ) as ttlCnt$query
     ]]></template>
 
     <!--
       ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
     -->
     <template type="locate"><![CDATA[
-          SELECT rnum$ FROM (SELECT innerq.*, ROWNUM rnum$
-            FROM (${QUERY_PLACEHOLDER}) innerq)
+          SELECT rnum$ FROM (SELECT innerq.*, row_number() over (order by aterminalid) rnum$
+            FROM (${QUERY_PLACEHOLDER}) as innerq)
            WHERE ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>
 
@@ -54,7 +54,7 @@
       ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
     -->
     <template type="getrow"><![CDATA[
-          SELECT * FROM (${QUERY_PLACEHOLDER})
+          SELECT * FROM (${QUERY_PLACEHOLDER}) as getrow$query
            WHERE ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>
 

@@ -3,8 +3,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
         multiselection="true">
-  <SQL action="select">
-    <text><![CDATA[
+    <SQL action="select">
+        <text><![CDATA[
 SELECT
   aterminalid,
   aterminalkey,
@@ -16,105 +16,19 @@ SELECT
   latitude,
   longitude,
   isdeleted
-FROM aterminal;
-
-    ]]></text>
-    <param type="integer" name="aterminalid"/>
-    <param type="string" name="aterminalkey"/>
-    <param type="string" name="ip4addr"/>
-    <param type="string" name="tstate"/>
-    <param type="string" name="street_name"/>
-    <param type="string" name="hldname"/>
-    <param type="string" name="orgname"/>
-    <param type="string" name="email"/>
-    <param type="boolean" name="test"/>
-    <param type="boolean" name="liquidate"/>
-    <param type="boolean" name="automatic"/>
-    <param type="boolean" name="original_dog"/>
-    <param type="boolean" name="isreported"/>
-    <param type="boolean" name="whereisdata"/>
-    <param type="integer" name="id_prop"/>
-    <param type="string" name="prop"/>
-    <param type="integer" name="id_vnd"/>
-    <param type="string" name="vnd"/>
-    <param type="string" name="orgtype"/>
-    <param type="string" name="orgtype_name"/>
-    <param type="string" name="orgname_jur"/>
-    <param type="boolean" name="registred"/>
-    <param type="boolean" name="modern"/>
-    <param type="boolean" name="verSt0"/>
-    <param type="boolean" name="verSt1"/>
-    <param type="boolean" name="verSt2"/>
-    <param type="boolean" name="verSt9"/>
-    <param type="string" name="verState"/>
-  </SQL>
+FROM aterminal
+WHERE not isdeleted
+        ]]></text>
+    </SQL>
  
-  <fields>
-    <field name="orgname" type="string" header="Кинотеатр" align="left" width="200"/>
-    <field name="id_org" type="integer" header="ID" pk="true" format="0"/>
-    <field name="orgtype_name" type="string" header="Тип" width="80"/>
-    <field name="time_zone" type="integer" header="Часовой пояс" width="30"/>
-    <field name="ownership" type="string" header="Ф/С" width="60"/>
-    <field name="holding_id" type="integer" header="ID Киносети" width="40"/>
-    <field name="hldname" type ="string" header="Киносеть" width="150"/>
-    <field name="region" type="string" header="Регион" width="150" align="left"/>
-    <field name="nas_punkt" type="string" header="Нас. пункт" width="150" align="left"/>
-    <field name="street_name" type="string" header="Улица,Дом" width="150" align="left"/>
-    <field name="email" type="string" header="E-mail" width="100"/>
-    <field name="email_hld" type="string" header="E-mail \nкиносети" width="100"/>
-    <field name="automatic" type="boolean" header="Билетная \nсистема" width="30"/>
-    <field name="automatic_str" type="string" generate="false"/>
-    <field name="modern" type="boolean" header="Современный" width="30"/>
-    <field name="original_dog" type="boolean" header="Рег. карта" align="center" width="30"/>
-    <field name="original_dog_str" type="string" generate="false"/>
-    <field name="isreported" type="boolean" header="Отчитывается" align="center" width="30"/>
-    <field name="isreported_str" type="string" generate="false"/>
-    <field name="whereisdata" type="boolean" header="Молчит7дней" align="center" width="30"/>
-    <field name="last_upld" type="date" header="Поледняя \nзагрузка" format="d.m.Y H:i:s" width="120"/>
-    <field name="test" type="boolean" header="Тестовый" align="center" width="30"/>
-    <field name="registred" type="boolean" header="Зарегистрирован" align="center" width="30"/>
-    <field name="test_str" type="string" generate="false"/>
-    <field name="liquidate" type="boolean" hidden="true"/>
-    <field name="dog_num" type="string" header="Рег. номер"/>
-    <field name="dog_date" type="date" format="d.m.Y" header="Дата регистрации" width="70"/>
-    <field name="reg_date" type="date" format="d.m.Y" header="Дата ввода" width="70"/>
-    <field name="locname" type="string" header="Размещение"/>
-    <field name="state" type="integer" hidden="true"/>
-    <field name="statename" type="string" header="Состояние"/>
-    <field name="closereason_id" type="integer" hidden="true"/>
-    <field name="closereason_name" type="string" header="Прим.\nк состоянию"/>
-    <field name="respons_person" type ="string" header="Ответственное лицо"/>
-    <field name="phone_fax" type ="string" header="Телефон/факс"/>
-    <field name="id_k1" type="boolean" header="2D-1K" width="30"/>
-    <field name="id_k1_str" type="string"  generate="false"/>
-    <field name="id_k2" type="boolean" header="2D-2K" width="30"/>
-    <field name="id_k2_str" type="string"  generate="false"/>
-    <field name="id_k4" type="boolean" header="2D-4K" width="30"/>
-    <field name="id_k4_str" type="string"  generate="false"/>
-    <field name="id_3d" type="boolean" header="3D" width="30"/>
-    <field name="id_3d_str" type="string"  generate="false"/>
-    <field name="id_plenka" type="boolean" header="Пленка" width="30"/>
-    <field name="id_plenka_str" type="string"  generate="false"/>
-    <field name="analogsnd" type="boolean" header="Аналог \nЗвук" width="30"/>
-    <field name="analogsnd_str" type="string"  generate="false"/>
-    <field name="digitsnd" type="boolean" header="Цифровой \nЗвук" width="30"/>
-    <field name="digitsnd_str" type="string"  generate="false"/>
-    <field name="vndname" type="string" header="Поставщик ПО"/>
-    <field name="orgname_jur" type="string" header="Наименование юр. лица"/>
-    <field name="suspended" type="date" format="d.m.Y" header="Приостановлен до"/>
-    <field name="verstatename" type="string" header="Состояние\nвыверки"/>
-    <field name="sroom_cnt" type="integer" header="Кинозалов\nвсего"/>
-    <field name="splace_cnt" type="integer" header="Мест\nвсего"/>
-    <field name="space_ttl" type="decimal" header="Площадь\nобщая"/>
-    <field name="recid_io" type="integer" header="Строка\nв исх. файле"/>
-    <field name="silence_period" type="integer" header="Допустимый период\nмолчания"/>
-    <field name="last_chng_usr" type="string" generate="false"/>
-    <field name="last_chng_date" type="date" generate="false"/>
-    <field name="last_chng_act" type="clob" generate="false"/>
-    <field name="comments" type="string" generate="false"/>
-    <field name="post_index" type="string" generate="false"/>
-    <field name="address_jur" type="string" generate="false"/>
-    <field name="ogrn" type="string" generate="false"/>
-    <field name="inn" type="string" generate="false"/>
+    <fields>
+        <field name="aterminalid" type="integer" header="ID" pk="true" format="0"/>
+        <field name="aterminalkey" type="string" header="Уникальный ключ" align="left" width="200"/>
+
+        <field name="ip4addr" type="string" header="IP адрес" align="left" width="80"/>
+        <field name="tstate" type="string" header="Состояние" align="left" width="20"/>
+        <field name="aname" type="string" header="Наименование" width="80"/>
+        <field name="anote" type="string" header="Описание" width="180"/>
+        <field name="addr" type="string" header="Расположение" width="180"/>
   </fields>
 </cursor>

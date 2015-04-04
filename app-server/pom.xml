@@ -58,6 +58,10 @@
         <war-plugi-version>2.6</war-plugi-version>
         <antrun-plugin-version>1.8</antrun-plugin-version>
 
+        <jersey-server.version>1.8</jersey-server.version>
+        <jersey-bundle.version>1.19</jersey-bundle.version>
+
+
         <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
         <tomcat-juli.version>8.0.3</tomcat-juli.version>
 
@@ -310,6 +314,12 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-rapi-resful-ims</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
@@ -390,6 +400,9 @@
                 <!--<module>as-distribution-modules/acstudio-distr</module>-->
 
                 <module>as-distribution-cli</module>
+
+
+                <module>remote-api-resful-ims</module>
 
             </modules>
         </profile>

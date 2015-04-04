@@ -167,7 +167,7 @@ public class NamedParametersStatement implements Statement {
         }
 
         for(String paramName : paramNames){
-            preparedQuery = Regexs.replace(preparedQuery, "\\:"+paramName+"\\b", "?", Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
+            preparedQuery = Regexs.replace(preparedQuery, "\\Q:"+paramName+"\\E\\b", "?", Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
         }
 
         String unpreparedQuery = Strings.replace(preparedQuery, doubleDotsPlaceholder, "::");

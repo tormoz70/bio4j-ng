@@ -74,4 +74,46 @@ public class RegexUtlTest {
         Assert.assertTrue(true);
     }
 
+    @Test
+    public void testReplace() throws Exception {
+        final String sql = "\n" +
+                "    SELECT * FROM (\n" +
+                "        SELECT pgng$wrpr0.*, row_number() over (order by aterminalid) rnum$pgng\n" +
+                "          FROM ( SELECT\n" +
+                "  aterminalid,\n" +
+                "  aterminalkey,\n" +
+                "  ip4addr,\n" +
+                "  tstate,\n" +
+                "  aname,\n" +
+                "  anote,\n" +
+                "  addr,\n" +
+                "  latitude,\n" +
+                "  longitude,\n" +
+                "  isdeleted\n" +
+                "FROM aterminal\n" +
+                "WHERE not isdeleted ) as pgng$wrpr0\n" +
+                "    ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)\n" +
+                "    ";
+        final String sql1 = "\n" +
+                "    SELECT * FROM (\n" +
+                "        SELECT pgng$wrpr0.*, row_number() over (order by aterminalid) rnum$pgng\n" +
+                "          FROM ( SELECT\n" +
+                "  aterminalid,\n" +
+                "  aterminalkey,\n" +
+                "  ip4addr,\n" +
+                "  tstate,\n" +
+                "  aname,\n" +
+                "  anote,\n" +
+                "  addr,\n" +
+                "  latitude,\n" +
+                "  longitude,\n" +
+                "  isdeleted\n" +
+                "FROM aterminal\n" +
+                "WHERE not isdeleted ) as pgng$wrpr0\n" +
+                "    ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > ?) AND (pgng$wrpr.rnum$pgng <= :paging$last)\n" +
+                "    ";
+        String paramName = "paging$offset";
+        String preparedQuery = Regexs.replace(sql, "\\Q:"+paramName+"\\E\\b", "?", Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
+        Assert.assertEquals(preparedQuery, sql1);
+    }
 }
