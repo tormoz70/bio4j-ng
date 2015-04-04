@@ -58,7 +58,7 @@
         <war-plugi-version>2.6</war-plugi-version>
         <antrun-plugin-version>1.8</antrun-plugin-version>
 
-        <jersey-server.version>1.8</jersey-server.version>
+        <jersey-server.version>1.19</jersey-server.version>
         <jersey-bundle.version>1.19</jersey-bundle.version>
 
 
