@@ -8,8 +8,8 @@
 	</parent>
     <artifactId>as-distribution-as</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Server Distribution</name>
-    <description>Custom Apache Felix distribution for Bio</description>
+    <!--<name>Bio App Server Distribution</name>-->
+    <!--<description>Custom Apache Felix distribution for Bio</description>-->
 
     <properties>
         <distribution.ext>zip</distribution.ext>
@@ -352,11 +352,6 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${distr.bundles}</outputDirectory>
                                 </artifactItem>
-
-
-
-
-
 
                                 <!--<artifactItem>-->
                                     <!--<groupId>com.sun.grizzly</groupId>-->
@@ -1034,7 +1029,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.modules}</outputDirectory>
+                                    <outputDirectory>${distr.install}</outputDirectory>
                                 </artifactItem>
 
                             </artifactItems>
