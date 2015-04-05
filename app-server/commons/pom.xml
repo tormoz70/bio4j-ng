@@ -10,8 +10,8 @@
     </parent>
     <artifactId>bio4j-ng-commons</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Commons Lib</name>
-    <description>Bio Commons Library</description>
+    <!--<name>Bio Commons Lib</name>-->
+    <!--<description>Bio Commons Library</description>-->
     <build>
         <plugins>
             <plugin>

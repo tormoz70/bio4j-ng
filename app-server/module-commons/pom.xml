@@ -11,8 +11,8 @@
 
     <artifactId>bio4j-ng-module-commons</artifactId>
     <packaging>bundle</packaging>
-    <name>BioAIM Commons</name>
-    <description>Commons for Modules(BioAIM)</description>
+    <!--<name>BioAIM Commons</name>-->
+    <!--<description>Commons for Modules(BioAIM)</description>-->
     <build>
         <plugins>
             <plugin>

@@ -8,7 +8,7 @@
 	</parent>
     <artifactId>as-distribution-cmon</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App CMON Server Module Distribution</name>
+    <!--<name>Bio App CMON Server Module Distribution</name>-->
     <properties>
         <module-x.name>bio4j-ng-module-cmon</module-x.name>
     </properties>

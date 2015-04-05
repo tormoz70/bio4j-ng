@@ -8,8 +8,8 @@
 	</parent>
     <artifactId>as-distribution-cli</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Client Distribution</name>
-    <description>Custom Apache Felix distribution for Bio</description>
+    <!--<name>Bio App Client Distribution</name>-->
+    <!--<description>Custom Apache Felix distribution for Bio</description>-->
     <build>
         <finalName>bio4j-ng-as</finalName>
         <plugins>

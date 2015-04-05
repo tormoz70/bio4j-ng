@@ -1,11 +1,8 @@
-package ru.bio4j.service.rs;
+package ru.bio4j.ng.rapi.restful.ims;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import java.util.HashMap;
 
 /**
  * Created by ayrat on 17.03.14.

@@ -11,8 +11,8 @@
 
     <artifactId>bio4j-ng-sql-context</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio SQL Context Provider</name>
-    <description>Provies SQL Context</description>
+    <!--<name>Bio SQL Context Provider</name>-->
+    <!--<description>Provies SQL Context</description>-->
     <build>
         <plugins>
             <plugin>

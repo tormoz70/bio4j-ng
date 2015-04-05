@@ -8,7 +8,7 @@
 	</parent>
     <artifactId>as-distribution-ims</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App IMS Server Module Distribution</name>
+    <!--<name>Bio App IMS Server Module Distribution</name>-->
     <properties>
         <module-x.name>bio4j-ng-module-ims</module-x.name>
     </properties>

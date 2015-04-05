@@ -10,8 +10,8 @@
     </parent>
     <artifactId>bio4j-ng-tmodel</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Transport Model</name>
-    <description>Transport model for clients interaction</description>
+    <!--<name>Bio Transport Model</name>-->
+    <!--<description>Transport model for clients interaction</description>-->
     <build>
         <plugins>
             <plugin>

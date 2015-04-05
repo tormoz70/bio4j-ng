@@ -9,7 +9,7 @@
 
     <artifactId>bio4j-ng-dba-pgsql</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Direct PostgreSQL Access</name>
+    <!--<name>Bio Direct PostgreSQL Access</name>-->
     <properties>
         <!-- oracle -->
         <!--<ojdbc6.version>12.1.0</ojdbc6.version>-->
