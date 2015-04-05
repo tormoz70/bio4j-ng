@@ -19,13 +19,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <!--<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>-->
-                        <!--<Bundle-Name>Bio4j Integration Service</Bundle-Name>-->
-                        <!--<Bundle-Vendor>bio4j.ru</Bundle-Vendor>-->
-                        <!--<Bundle-Category>bio4j</Bundle-Category>-->
-                        <!--<Bundle-Description>Integration Service</Bundle-Description>-->
-                        <!--<Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>-->
-                        <!--<remoteOBR/>-->
                         <Import-Package>
                             org.apache.felix.ipojo.architecture;resolution:="optional",
                             javax.servlet.*;version="[2.4,4.0)",

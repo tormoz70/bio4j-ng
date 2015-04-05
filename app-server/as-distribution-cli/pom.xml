@@ -26,30 +26,30 @@
                         <configuration>
                             <artifactItems>
                                 <!--wars-->
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-ekb</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-cmon</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-acstudio</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-client-extjs-ekb</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>war</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-client-extjs-cmon</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>war</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-client-extjs-acstudio</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>war</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-client-extjs-ims</artifactId>
