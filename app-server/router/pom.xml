@@ -11,8 +11,8 @@
 
     <artifactId>bio4j-ng-router</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio router of remote requests</name>
-    <description>Routes remote requests by request type</description>
+    <!--<name>Bio router of remote requests</name>-->
+    <!--<description>Routes remote requests by request type</description>-->
     <build>
         <plugins>
             <plugin>

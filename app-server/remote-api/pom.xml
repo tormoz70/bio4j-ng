@@ -11,8 +11,8 @@
 
     <artifactId>bio4j-ng-rapi</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Remote API</name>
-    <description>API for access from remote apps</description>
+    <!--<name>Bio Remote API</name>-->
+    <!--<description>API for access from remote apps</description>-->
     <build>
         <plugins>
             <plugin>

@@ -10,8 +10,8 @@
     </parent>
     <artifactId>bio4j-ng-stypes</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Service Types</name>
-    <description>Base Types for services</description>
+    <!--<name>Bio Service Types</name>-->
+    <!--<description>Base Types for services</description>-->
     <build>
         <plugins>
             <plugin>

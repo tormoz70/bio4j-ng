@@ -10,7 +10,7 @@
     </parent>
     <artifactId>bio4j-ng-module-acstudio</artifactId>
     <packaging>bundle</packaging>
-    <name>BioAIM ACStudio</name>
+    <!--<name>BioAIM ACStudio</name>-->
 
     <dependencies>
         <dependency>

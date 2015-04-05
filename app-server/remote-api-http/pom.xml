@@ -10,8 +10,8 @@
 
     <artifactId>bio4j-ng-rapi-http</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Remote API (http)</name>
-    <description>Remote API of framework</description>
+    <!--<name>Bio Remote API (http)</name>-->
+    <!--<description>Remote API of framework</description>-->
     <build>
         <plugins>
             <plugin>

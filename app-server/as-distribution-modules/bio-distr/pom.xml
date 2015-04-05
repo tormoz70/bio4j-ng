@@ -8,7 +8,7 @@
 	</parent>
     <artifactId>as-distribution-bio</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Bio Server Module Distribution</name>
+    <!--<name>Bio App Bio Server Module Distribution</name>-->
     <properties>
         <module-x.name>bio4j-ng-module-bio</module-x.name>
     </properties>

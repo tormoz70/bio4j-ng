@@ -10,7 +10,7 @@
     </parent>
     <artifactId>bio4j-ng-module-ekb</artifactId>
     <packaging>bundle</packaging>
-    <name>BioAIM Ekb</name>
+    <!--<name>BioAIM Ekb</name>-->
 
     <dependencies>
         <dependency>

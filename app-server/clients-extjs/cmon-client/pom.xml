@@ -9,7 +9,7 @@
 
     <artifactId>bio4j-ng-client-extjs-cmon</artifactId>
     <packaging>war</packaging>
-    <name>Bio Client (ExtJS) for CMON Project</name>
+    <!--<name>Bio Client (ExtJS) for CMON Project</name>-->
 
     <properties>
         <wab.name>Bio4j CMON WebClient Service</wab.name>

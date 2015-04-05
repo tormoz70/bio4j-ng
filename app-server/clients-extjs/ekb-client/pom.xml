@@ -9,7 +9,7 @@
 
     <artifactId>bio4j-ng-client-extjs-ekb</artifactId>
     <packaging>war</packaging>
-    <name>Bio Client (ExtJS) for Ekb Project</name>
+    <!--<name>Bio Client (ExtJS) for Ekb Project</name>-->
 
     <properties>
         <wab.name>Bio4j Ekb WebClient Service</wab.name>

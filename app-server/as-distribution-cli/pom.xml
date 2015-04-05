@@ -8,8 +8,8 @@
 	</parent>
     <artifactId>as-distribution-cli</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Client Distribution</name>
-    <description>Custom Apache Felix distribution for Bio</description>
+    <!--<name>Bio App Client Distribution</name>-->
+    <!--<description>Custom Apache Felix distribution for Bio</description>-->
     <build>
         <finalName>bio4j-ng-as</finalName>
         <plugins>
@@ -26,30 +26,30 @@
                         <configuration>
                             <artifactItems>
                                 <!--wars-->
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-ekb</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-cmon</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-acstudio</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-client-extjs-ekb</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>war</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-client-extjs-cmon</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>war</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>bio4j-ng-client-extjs-acstudio</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>war</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
+                                <!--</artifactItem>-->
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
                                     <artifactId>bio4j-ng-client-extjs-ims</artifactId>

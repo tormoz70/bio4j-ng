@@ -9,7 +9,7 @@
 
     <artifactId>bio4j-ng-client-extjs-ims</artifactId>
     <packaging>war</packaging>
-    <name>Bio Client (ExtJS) for IMS (GIVC) Project</name>
+    <!--<name>Bio Client (ExtJS) for IMS (GIVC) Project</name>-->
 
     <properties>
         <wab.name>Bio4j IMS WebClient Service</wab.name>

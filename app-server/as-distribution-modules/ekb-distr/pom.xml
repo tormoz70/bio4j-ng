@@ -8,7 +8,7 @@
 	</parent>
     <artifactId>as-distribution-ekb</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Ekb Server Module Distribution</name>
+    <!--<name>Bio App Ekb Server Module Distribution</name>-->
     <properties>
         <module-x.name>bio4j-ng-module-ekb</module-x.name>
     </properties>

@@ -11,8 +11,8 @@
 
     <artifactId>bio4j-ng-security-handler</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Security Handler</name>
-    <description>Handles requests for security</description>
+    <!--<name>Bio Security Handler</name>-->
+    <!--<description>Handles requests for security</description>-->
     <build>
         <plugins>
             <plugin>

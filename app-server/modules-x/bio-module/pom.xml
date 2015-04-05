@@ -10,8 +10,8 @@
     </parent>
     <artifactId>bio4j-ng-module-bio</artifactId>
     <packaging>bundle</packaging>
-    <name>BioAIM Bio</name>
-    <description>Service implements application module for Bio internals</description>
+    <!--<name>BioAIM Bio</name>-->
+    <!--<description>Service implements application module for Bio internals</description>-->
 
     <dependencies>
         <dependency>

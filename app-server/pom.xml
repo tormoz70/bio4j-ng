@@ -402,7 +402,7 @@
                 <module>as-distribution-cli</module>
 
 
-                <module>remote-api-resful-ims</module>
+                <module>remote-api-restful-ims</module>
 
             </modules>
         </profile>

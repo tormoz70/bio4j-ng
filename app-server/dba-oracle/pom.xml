@@ -9,8 +9,8 @@
 
     <artifactId>bio4j-ng-dba-oracle</artifactId>
     <packaging>bundle</packaging>
-    <name>Bio Direct Oracle Access</name>
-    <description>Direct Oracle implementasion of Bio Database API</description>
+    <!--<name>Bio Direct Oracle Access</name>-->
+    <!--<description>Direct Oracle implementasion of Bio Database API</description>-->
     <build>
         <plugins>
             <plugin>

@@ -8,7 +8,7 @@
 	</parent>
     <artifactId>as-distribution-acstudio</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App ACStudio Server Module Distribution</name>
+    <!--<name>Bio App ACStudio Server Module Distribution</name>-->
     <properties>
         <module-x.name>bio4j-ng-module-acstudio</module-x.name>
     </properties>

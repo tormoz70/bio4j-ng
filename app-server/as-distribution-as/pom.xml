@@ -8,8 +8,8 @@
 	</parent>
     <artifactId>as-distribution-as</artifactId>
     <packaging>pom</packaging>
-    <name>Bio App Server Distribution</name>
-    <description>Custom Apache Felix distribution for Bio</description>
+    <!--<name>Bio App Server Distribution</name>-->
+    <!--<description>Custom Apache Felix distribution for Bio</description>-->
 
     <properties>
         <distribution.ext>zip</distribution.ext>
@@ -279,85 +279,73 @@
                                     <outputDirectory>${distr.bundles}</outputDirectory>
                                 </artifactItem>
 
-                                <!--Jersey-->
-                                <artifactItem>
-                                    <groupId>com.sun.jersey</groupId>
-                                    <artifactId>jersey-server</artifactId>
-                                    <version>${jersey-server.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.sun.jersey</groupId>
-                                    <artifactId>jersey-json</artifactId>
-                                    <version>${jersey-server.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.sun.jersey</groupId>
-                                    <artifactId>jersey-core</artifactId>
-                                    <version>${jersey-server.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--Jersey - 1 -->
                                 <!--<artifactItem>-->
-                                    <!--<groupId>javax.ws.rs</groupId>-->
-                                    <!--<artifactId>javax.ws.rs-api</artifactId>-->
-                                    <!--<version>1.1.0</version>-->
+                                    <!--<groupId>com.sun.jersey</groupId>-->
+                                    <!--<artifactId>jersey-server</artifactId>-->
+                                    <!--<version>${jersey-server.version}</version>-->
                                     <!--<type>jar</type>-->
                                     <!--<overWrite>true</overWrite>-->
                                     <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
                                 <!--</artifactItem>-->
-                                <artifactItem>
-                                    <groupId>javax.ws.rs</groupId>
-                                    <artifactId>jsr311-api</artifactId>
-                                    <version>1.1.1</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.jackson</groupId>
-                                    <artifactId>jackson-core-asl</artifactId>
-                                    <version>1.9.13</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.jackson</groupId>
-                                    <artifactId>jackson-jaxrs</artifactId>
-                                    <version>1.9.13</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.jackson</groupId>
-                                    <artifactId>jackson-mapper-lgpl</artifactId>
-                                    <version>1.9.13</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.codehaus.jettison</groupId>
-                                    <artifactId>jettison</artifactId>
-                                    <version>1.3.7</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>com.sun.jersey</groupId>-->
+                                    <!--<artifactId>jersey-json</artifactId>-->
+                                    <!--<version>${jersey-server.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>com.sun.jersey</groupId>-->
+                                    <!--<artifactId>jersey-core</artifactId>-->
+                                    <!--<version>${jersey-server.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>javax.ws.rs</groupId>-->
+                                    <!--<artifactId>jsr311-api</artifactId>-->
+                                    <!--<version>1.1.1</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.codehaus.jackson</groupId>-->
+                                    <!--<artifactId>jackson-core-asl</artifactId>-->
+                                    <!--<version>1.9.13</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.codehaus.jackson</groupId>-->
+                                    <!--<artifactId>jackson-jaxrs</artifactId>-->
+                                    <!--<version>1.9.13</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.codehaus.jackson</groupId>-->
+                                    <!--<artifactId>jackson-mapper-lgpl</artifactId>-->
+                                    <!--<version>1.9.13</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>org.codehaus.jettison</groupId>-->
+                                    <!--<artifactId>jettison</artifactId>-->
+                                    <!--<version>1.3.7</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
 
-
-
-
-
-
+                                <!--Jersey - 2 -->
                                 <!--<artifactItem>-->
                                     <!--<groupId>com.sun.grizzly</groupId>-->
                                     <!--<artifactId>grizzly-servlet-webserver</artifactId>-->
@@ -366,7 +354,6 @@
                                     <!--<overWrite>true</overWrite>-->
                                     <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
                                 <!--</artifactItem>-->
-
                                 <!--<artifactItem>-->
                                     <!--<groupId>com.sun.jersey</groupId>-->
                                     <!--<artifactId>jersey-bundle</artifactId>-->
@@ -1030,11 +1017,11 @@
 
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-rapi-resful-ims</artifactId>
+                                    <artifactId>bio4j-ng-rapi-restful-ims</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.modules}</outputDirectory>
+                                    <outputDirectory>${distr.install}</outputDirectory>
                                 </artifactItem>
 
                             </artifactItems>

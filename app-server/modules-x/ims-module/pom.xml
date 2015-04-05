@@ -10,7 +10,7 @@
     </parent>
     <artifactId>bio4j-ng-module-ims</artifactId>
     <packaging>bundle</packaging>
-    <name>BioAIM IMS</name>
+    <!--<name>BioAIM IMS</name>-->
 
     <dependencies>
         <dependency>

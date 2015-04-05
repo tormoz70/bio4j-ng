@@ -9,7 +9,7 @@
 
     <artifactId>bio4j-ng-clients-extjs</artifactId>
     <packaging>pom</packaging>
-    <name>Bio Client ExtJS Wars</name>
+    <!--<name>Bio Client ExtJS Wars</name>-->
     <properties>
         <wab.name>undefined</wab.name>
         <wab.context.path>undefined</wab.context.path>
