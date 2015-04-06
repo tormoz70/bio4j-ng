@@ -377,6 +377,8 @@
                 <module>module-commons</module>
                 <module>module-provider</module>
 
+                <module>remote-api-restful-ims</module>
+
                 <!-- Special services -->
                 <!-- Distribution -->
                 <!--<module>as-distribution</module>-->
@@ -402,7 +404,6 @@
                 <module>as-distribution-cli</module>
 
 
-                <module>remote-api-restful-ims</module>
 
             </modules>
         </profile>

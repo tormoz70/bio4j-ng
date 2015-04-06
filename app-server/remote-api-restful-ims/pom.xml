@@ -8,7 +8,7 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-rapi-restful-ims</artifactId>
+        <artifactId>bio4j-ng-rapi-restful-ims</artifactId>
     <packaging>bundle</packaging>
 
     <build>

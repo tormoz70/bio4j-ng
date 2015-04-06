@@ -16,7 +16,7 @@ import java.util.Hashtable;
 public class RestManagerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestManagerService.class);
-    private static final String SERVLET_SERVICE_PATH = "/bio4j-spi";
+        private static final String SERVLET_SERVICE_PATH = "/bio4j-spi";
 
     private HttpService httpService;
     //private QueryProcessor queryProcessor;
