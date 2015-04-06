@@ -6,6 +6,7 @@
     <SQL action="select">
         <text><![CDATA[
 SELECT
+  aterminalid as sortord,
   aterminalid,
   aterminalkey,
   ip4addr,
@@ -23,12 +24,12 @@ WHERE not isdeleted
  
     <fields>
         <field name="aterminalid" type="integer" header="ID" pk="true" format="0"/>
-        <field name="aterminalkey" type="string" header="Уникальный ключ" align="left" width="200"/>
+        <field name="aterminalkey" type="string" header="Уникальный ключ" align="left" width="40"/>
 
         <field name="ip4addr" type="string" header="IP адрес" align="left" width="80"/>
-        <field name="tstate" type="string" header="Состояние" align="left" width="20"/>
-        <field name="aname" type="string" header="Наименование" width="80"/>
-        <field name="anote" type="string" header="Описание" width="180"/>
-        <field name="addr" type="string" header="Расположение" width="180"/>
+        <field name="tstate" type="string" header="Состояние" align="left" width="80"/>
+        <field name="aname" type="string" header="Наименование" width="280"/>
+        <field name="anote" type="string" header="Описание" width="280"/>
+        <field name="addr" type="string" header="Расположение" width="150"/>
   </fields>
 </cursor>

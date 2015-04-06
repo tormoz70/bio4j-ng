@@ -28,7 +28,7 @@
     -->
     <template type="paging"><![CDATA[
     SELECT * FROM (
-        SELECT pgng$wrpr0.*, row_number() over (order by aterminalid) rnum$pgng
+        SELECT pgng$wrpr0.*, row_number() over (order by pgng$wrpr0.sortord) rnum$pgng
           FROM ( ${QUERY_PLACEHOLDER} ) as pgng$wrpr0
     ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)
     ]]></template>
