@@ -973,57 +973,6 @@
                                     <outputDirectory>${distr.install}</outputDirectory>
                                 </artifactItem>
 
-                                <!--modules - applications -->
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-module-bio</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.modules}</outputDirectory>
-                                </artifactItem>
-
-                                <!--
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-module-ekb</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.modules}</outputDirectory>
-                                </artifactItem>
-                                -->
-
-                                <!--wars-->
-                                <!--<artifactItem>-->
-                                    <!--<groupId>${parent.groupId}</groupId>-->
-                                    <!--<artifactId>jetty-wab-sample</artifactId>-->
-                                    <!--<version>${project.version}</version>-->
-                                    <!--<type>war</type>-->
-                                    <!--<overWrite>true</overWrite>-->
-                                    <!--<outputDirectory>${distr.webapps}</outputDirectory>-->
-                                <!--</artifactItem>-->
-
-                                <!--
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-client-extjs-ekb</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>war</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.webapps}</outputDirectory>
-                                </artifactItem>
-                                -->
-
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>bio4j-ng-rapi-restful-ims</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.install}</outputDirectory>
-                                </artifactItem>
-
                             </artifactItems>
                         </configuration>
                     </execution>

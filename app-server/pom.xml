@@ -319,6 +319,11 @@
                 <artifactId>bio4j-ng-rapi-resful-ims</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>flexjson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
 
         </dependencies>
@@ -344,70 +349,42 @@
 
     </dependencies>
 
+    <modules>
+        <!-- Common services -->
+        <!--<module>dependency-security-filter</module>-->
+        <module>flexjson</module>
+        <module>t-model</module>
+        <module>commons</module>
+        <module>s-types</module>
+        <module>s-api</module>
+        <module>db-api</module>
+        <module>dba-commons</module>
+        <module>dba-oracle</module>
+        <module>dba-pgsql</module>
+        <module>sql-context</module>
+        <module>crud-handler</module>
+        <module>security-handler</module>
+        <module>remote-api-http</module>
+        <!--<module>e-hcache</module>-->
+        <!--<module>content-resolver</module>-->
+        <module>config</module>
+        <module>router</module>
+        <!--<module>remote-api-rmi</module>-->
+        <module>remote-api</module>
+        <!--<module>test-jetty-wab-sample</module>-->
+        <!--bio-modules-->
+        <module>module-commons</module>
+        <module>module-provider</module>
+
+        <!-- Special services -->
+        <!-- Distribution -->
+        <!--<module>as-distribution</module>-->
+        <module>as-distribution-as</module>
+        <!--<module>test-rmi-client</module>-->
+
+    </modules>
+
     <profiles>
-        <profile>
-            <id>distr-as</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <!-- Common services -->
-                <!--<module>dependency-security-filter</module>-->
-                <module>flexjson</module>
-                <module>t-model</module>
-                <module>commons</module>
-                <module>s-types</module>
-                <module>s-api</module>
-                <module>db-api</module>
-                <module>dba-commons</module>
-                <module>dba-oracle</module>
-                <module>dba-pgsql</module>
-                <module>sql-context</module>
-                <module>crud-handler</module>
-                <module>security-handler</module>
-                <module>remote-api-http</module>
-                <!--<module>e-hcache</module>-->
-                <!--<module>content-resolver</module>-->
-                <module>config</module>
-                <module>router</module>
-                <!--<module>remote-api-rmi</module>-->
-                <module>remote-api</module>
-                <!--<module>test-jetty-wab-sample</module>-->
-                <!--bio-modules-->
-                <module>module-commons</module>
-                <module>module-provider</module>
-
-                <module>remote-api-restful-ims</module>
-
-                <!-- Special services -->
-                <!-- Distribution -->
-                <!--<module>as-distribution</module>-->
-                <module>as-distribution-as</module>
-                <!--<module>test-rmi-client</module>-->
-
-                <!--<module>modules-x</module>-->
-                <!--<module>as-distribution-modules</module>-->
-                <module>clients-extjs</module>
-
-                <!--<module>modules-x/bio-module</module>-->
-                <!--<module>as-distribution-modules/bio-distr</module>-->
-
-                <!--<module>modules-x/ekb-module</module>-->
-                <!--<module>as-distribution-modules/ekb-distr</module>-->
-
-                <!--<module>modules-x/cmon-module</module>-->
-                <!--<module>as-distribution-modules/cmon-distr</module>-->
-
-                <!--<module>modules-x/acstudio-module</module>-->
-                <!--<module>as-distribution-modules/acstudio-distr</module>-->
-
-                <module>as-distribution-cli</module>
-
-
-
-            </modules>
-        </profile>
-
         <profile>
             <id>dev</id>
             <activation>
@@ -417,93 +394,6 @@
                 <bioDebug>true</bioDebug>
             </properties>
         </profile>
-
-        <profile>
-            <id>distr-module-bio</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>modules-x/bio-module</module>
-                <module>as-distribution-modules/bio-distr</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>distr-module-ekb</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>modules-x/ekb-module</module>
-                <module>as-distribution-modules/ekb-distr</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>distr-module-cmon</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>modules-x/cmon-module</module>
-                <module>as-distribution-modules/cmon-distr</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>distr-module-acstudio</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>modules-x/acstudio-module</module>
-                <module>as-distribution-modules/acstudio-distr</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>distr-module-ims</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>modules-x/ims-module</module>
-                <module>as-distribution-modules/ims-distr</module>
-            </modules>
-        </profile>
-
     </profiles>
 
-    <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>distr-cli</id>-->
-            <!--<modules>-->
-                <!--<module>as-distribution-cli</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>distr-ekb</id>-->
-            <!--<modules>-->
-                <!--<module>modules-x/ekb-module</module>-->
-                <!--<module>as-distribution-modules/ekb-distr</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>distr-cmon</id>-->
-            <!--<modules>-->
-                <!--<module>modules-x/cmon-module</module>-->
-                <!--<module>as-distribution-modules/cmon-distr</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>distr-acstudio</id>-->
-            <!--<modules>-->
-                <!--<module>modules-x/acstudio-module</module>-->
-                <!--<module>as-distribution-modules/acstudio-distr</module>-->
-            <!--</modules>-->
-        <!--</profile>-->
-
-
-    <!--</profiles>-->
 </project>
