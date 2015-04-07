@@ -17,7 +17,7 @@ import java.util.Map;
 public class BioCursor {
 
     public static enum Type {
-        SELECT, UPDATE, DELETE, EXEC
+        SELECT, UPDATE, DELETE, EXECUTE
     }
     public static enum WrapMode {
         NONE((byte)0), FILTER((byte)1), SORT((byte)2), PAGING((byte)4), ALL((byte)7);
@@ -213,7 +213,7 @@ public class BioCursor {
     }
 
     public SQLDef getExecSqlDef() {
-        return sqlDefs.get(Type.EXEC);
+        return sqlDefs.get(Type.EXECUTE);
     }
 
     public SelectSQLDef getSelectSqlDef() {
