@@ -148,4 +148,11 @@ public class UtlTest {
         Assert.assertEquals(0, t1);
     }
 
+    @Test(enabled = false)
+    public void checkSum() throws Exception {
+        final String chksum = "9F993B28F29B53178DA58EC2781A9506";
+        final String chksumAct = MD5Checksum.checkSum("d:\\downloads\\ibexpert.rar");
+        Assert.assertEquals(chksumAct.toUpperCase(), chksum);
+    }
+
 }

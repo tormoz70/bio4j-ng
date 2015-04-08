@@ -68,6 +68,7 @@
         <ojdbc6.version>12.1.0</ojdbc6.version>
 
         <postgresql-jdbc.version>9.4-1201.jdbc41</postgresql-jdbc.version>
+        <commons-codec.version>1.9</commons-codec.version>
 
 	</properties>
 
@@ -225,6 +226,12 @@
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql-jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
             </dependency>
 
             <!--bio4j-->
