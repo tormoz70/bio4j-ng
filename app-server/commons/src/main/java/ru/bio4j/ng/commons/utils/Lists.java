@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lists {
-    public static <T> List<T> select(List<T> list, DelegateCheck<T> check) {
+    public static <T> List<T> select(List<T> list, DelegateCheck<T> check) throws Exception {
         List<T> result = new ArrayList<>();
         if (list != null && check != null) {
             for (T item : list)
@@ -15,7 +15,7 @@ public class Lists {
         }
         return result;
     }
-    public static <T> T first(List<T> list, DelegateCheck<T> check) {
+    public static <T> T first(List<T> list, DelegateCheck<T> check) throws Exception {
         if(check != null)
             list = select(list, check);
         if (list != null && list.size() > 0) {
@@ -23,11 +23,11 @@ public class Lists {
         }
         return null;
     }
-    public static <T> T first(List<T> list) {
+    public static <T> T first(List<T> list) throws Exception {
         return first(list, null);
     }
 
-    public static <T> T last(List<T> list, DelegateCheck<T> check) {
+    public static <T> T last(List<T> list, DelegateCheck<T> check) throws Exception {
         if(check != null)
             list = select(list, check);
         if (list != null && list.size() > 0) {
@@ -35,7 +35,7 @@ public class Lists {
         }
         return null;
     }
-    public static <T> T last(List<T> list) {
+    public static <T> T last(List<T> list) throws Exception {
         return last(list, null);
     }
 

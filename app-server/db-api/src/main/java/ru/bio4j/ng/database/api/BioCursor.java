@@ -176,21 +176,31 @@ public class BioCursor {
     }
 
     public Field findField(final String name) {
-        return Lists.first(fields, new DelegateCheck<Field>() {
-            @Override
-            public Boolean callback(Field item) {
-                return Strings.compare(name, item.getName(), true);
-            }
-        });
+        try {
+            return Lists.first(fields, new DelegateCheck<Field>() {
+                @Override
+                public Boolean callback(Field item) {
+                    return Strings.compare(name, item.getName(), true);
+                }
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     public Field findPk() {
-        return Lists.first(fields, new DelegateCheck<Field>() {
-            @Override
-            public Boolean callback(Field item) {
-                return item.isPk();
-            }
-        });
+        try {
+            return Lists.first(fields, new DelegateCheck<Field>() {
+                @Override
+                public Boolean callback(Field item) {
+                    return item.isPk();
+                }
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     public String getBioCode() { return bioCode; }

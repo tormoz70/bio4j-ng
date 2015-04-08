@@ -189,12 +189,17 @@ public class CursorParser {
     }
 
     private static Field findCol(final String name, final List<Field> cols) {
-        return Lists.first(cols, new DelegateCheck<Field>() {
-            @Override
-            public Boolean callback(Field item) {
-                return Strings.compare(name, item.getName(), true);
-            }
-        });
+        try {
+            return Lists.first(cols, new DelegateCheck<Field>() {
+                @Override
+                public Boolean callback(Field item) {
+                    return Strings.compare(name, item.getName(), true);
+                }
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     private static void addColsFromXml(final BioCursor cursor, final Document document) throws Exception {

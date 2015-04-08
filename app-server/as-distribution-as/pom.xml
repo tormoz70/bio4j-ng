@@ -792,14 +792,14 @@
 <!-- ********************************************************************************************************** -->
                                 <!-- Bio4j -->
 
-                                <artifactItem>
-                                    <groupId>${parent.groupId}</groupId>
-                                    <artifactId>dependency-security-filter</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${distr.bundles}</outputDirectory>
-                                </artifactItem>
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${parent.groupId}</groupId>-->
+                                    <!--<artifactId>dependency-security-filter</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<type>jar</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${distr.bundles}</outputDirectory>-->
+                                <!--</artifactItem>-->
 
                                 <artifactItem>
                                     <groupId>${parent.groupId}</groupId>

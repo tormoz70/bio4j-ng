@@ -88,13 +88,18 @@ public class Paramus implements Closeable {
 	private static final String csDefaultDelimiter = "/";
 
 	public Param getParam(final String name, final Boolean ignoreCase) {
-		List<Param> result = this.process(new DelegateCheck<Param>() {
-            @Override
-            public Boolean callback(Param param) {
-                return Strings.compare(param.getName(), name, ignoreCase);
-            }
-        });
-		return result.isEmpty() ? null : result.get(0);
+        try {
+            List<Param> result = this.process(new DelegateCheck<Param>() {
+                @Override
+                public Boolean callback(Param param) {
+                    return Strings.compare(param.getName(), name, ignoreCase);
+                }
+            });
+            return result.isEmpty() ? null : result.get(0);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
 	}
 
 	public Param getParam(final String name) {
@@ -119,7 +124,7 @@ public class Paramus implements Closeable {
 		return get().indexOf(this.getParam(name, true));
 	}
 
-	public List<Param> process(DelegateCheck<Param> check) {
+	public List<Param> process(DelegateCheck<Param> check) throws Exception {
         return Lists.select(get(), check);
 	}
 
