@@ -209,12 +209,6 @@
             </dependency>
 			<!-- Other stuff -->
 
-            <!--<dependency>-->
-                <!--<groupId>org.json</groupId>-->
-                <!--<artifactId>json</artifactId>-->
-                <!--<version>${json.version}</version>-->
-                <!--<scope>provided</scope>-->
-            <!--</dependency>-->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-servlet_3.0_spec</artifactId>
@@ -226,12 +220,6 @@
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql-jdbc.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec.version}</version>
             </dependency>
 
             <!--bio4j-->
