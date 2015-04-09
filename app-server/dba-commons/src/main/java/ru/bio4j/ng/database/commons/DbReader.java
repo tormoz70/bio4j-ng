@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons;
 
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
@@ -7,9 +8,11 @@ import ru.bio4j.ng.database.api.DBField;
 import ru.bio4j.ng.database.api.SQLReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +48,17 @@ public class DbReader implements SQLReader {
         return result;
     }
 
+    private static byte[] readBlob(InputStream inputStream) throws Exception {
+        byte[] bFile = new byte[inputStream.available()];
+        try {
+            inputStream.read(bFile);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bFile;
+    }
+
     @Override
     public boolean next() throws Exception {
         if(resultSet == null)
@@ -56,13 +70,18 @@ public class DbReader implements SQLReader {
                 this.fields = new ArrayList<>();
                 for (int i = 1; i <= metadata.getColumnCount(); i++) {
                     Class<?> type = null;
+                    int sqlType = metadata.getColumnType(i);
+                    String sqlTypeName = DbUtils.getInstance().getSqlTypeName(sqlType);
                     try {
-                        type = getClass().getClassLoader().loadClass(metadata.getColumnClassName(i));
+                        String className = metadata.getColumnClassName(i);
+                        if((sqlType == Types.BLOB) || (sqlType == Types.BINARY))
+                            type = Byte[].class;
+                        else
+                            type = getClass().getClassLoader().loadClass(className);
                     } catch (ClassNotFoundException ex) {
                         throw new SQLException(ex);
                     }
                     String fieldName =  metadata.getColumnName(i);
-                    int sqlType = metadata.getColumnType(i);
                     DBField field = new DBFieldImpl(type, i, fieldName, sqlType);
                     this.fields.add(field);
                 }
@@ -73,8 +92,12 @@ public class DbReader implements SQLReader {
             for (DBField field : this.fields) {
                 int valueIndex = field.getId() - 1;
                 Object value;
-                if(field.getSqlType() == Types.CLOB){
+                int sqlType = field.getSqlType();
+                String sqlTypeName = DbUtils.getInstance().getSqlTypeName(sqlType);
+                if(sqlType == Types.CLOB) {
                     value = readClob(resultSet.getClob(field.getId()));
+                } else if(Arrays.asList(Types.BLOB, Types.BINARY).contains(sqlType)){
+                    value = readBlob(resultSet.getBinaryStream(field.getId()));
                 } else
                     value = resultSet.getObject(field.getId());
                 this.rowValues.set(valueIndex, value);

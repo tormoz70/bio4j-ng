@@ -33,5 +33,12 @@ public class someTests {
         Assert.assertEquals(indexMap.get("method_name")[1], 3);
     }
 
+    @Test
+    public void nameOfByteArray() throws Exception {
+        Class<?> t = Byte[].class;
+        String className = t.getName();
+        Class<?> type = getClass().getClassLoader().loadClass("java.lang.Byte[]");
+        System.out.println(type.getCanonicalName());
+    }
 
 }

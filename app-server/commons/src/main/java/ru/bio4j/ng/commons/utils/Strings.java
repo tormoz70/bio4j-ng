@@ -131,6 +131,12 @@ public class Strings {
             sb.append(sb.length() == 0 ? item : delimiter+item);
         return sb.toString();
     }
+    public static String combineArray(byte[] array, String delimiter) {
+        StringBuilder sb  = new StringBuilder();
+        for (byte item : array)
+            sb.append(sb.length() == 0 ? item : delimiter+item);
+        return sb.toString();
+    }
 
     public static boolean isString(Object value) {
         return value == null || value instanceof String;

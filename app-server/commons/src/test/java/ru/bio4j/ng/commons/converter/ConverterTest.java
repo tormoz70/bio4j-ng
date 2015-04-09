@@ -212,4 +212,11 @@ public class ConverterTest {
             Assert.assertTrue(true);
         }
     }
+
+    @Test(enabled=true)
+    public void array3() throws Exception {
+        Byte[] instr = {1,2,3};
+        Byte[] dir = Converter.toType(instr, Byte[].class);
+        Assert.assertEquals(dir[0], instr[0]);
+    }
 }
