@@ -10,4 +10,5 @@ public interface BioModule {
     BioCursor getCursor(String bioCode) throws Exception;
     SQLContext getSQLContext() throws Exception;
     User login(final String login) throws Exception;
+    BioHttpRequestProcessor getHttpRequestProcessor(String requestType);
 }

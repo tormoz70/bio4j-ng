@@ -6,8 +6,7 @@ import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.BioRouter;
+import ru.bio4j.ng.service.api.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +17,7 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public class BioServletApiBase extends BioServletBase {
 
     protected BioRouter router;
+    protected ModuleProvider moduleProvider;
 
     protected void initRouter(ServletContext servletContext) {
         if(router == null) {
@@ -27,6 +27,21 @@ public class BioServletApiBase extends BioServletBase {
                 router = null;
             }
         }
+    }
+
+    @Override
+    protected void initServices(ServletContext servletContext) {
+        super.initServices(servletContext);
+
+        if(moduleProvider == null) {
+            try {
+                moduleProvider = Utl.getService(servletContext, ModuleProvider.class);
+            } catch (IllegalStateException e) {
+                moduleProvider = null;
+            }
+        }
+        if(moduleProvider == null)
+            throw new IllegalArgumentException("ModuleProvider not defined!");
     }
 
     protected static final String QRY_PARAM_NAME_REQUEST_TYPE = "rqt";
@@ -48,6 +63,15 @@ public class BioServletApiBase extends BioServletBase {
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
         if(isNullOrEmpty(requestType))
             throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", QRY_PARAM_NAME_REQUEST_TYPE));
+
+        BioModule bioModule = moduleProvider.getModule(moduleKey);
+        if(bioModule == null)
+            throw new IllegalArgumentException(String.format("Module with key \"%s\" not registered!", moduleKey));
+        BioHttpRequestProcessor requestProcessor = bioModule.getHttpRequestProcessor(requestType);
+        if(requestProcessor != null){
+            requestProcessor.doPost(rqst, rspns);
+            return;
+        }
 
         String jsonDataAsQueryParam = rqst.getParameter(QRY_PARAM_NAME_JSON_DATA);
         StringBuilder jd = new StringBuilder();

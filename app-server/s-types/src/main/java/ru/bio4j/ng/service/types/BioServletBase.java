@@ -10,6 +10,7 @@ import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.ConfigProvider;
+import ru.bio4j.ng.service.api.ModuleProvider;
 import ru.bio4j.ng.service.api.SecurityHandler;
 
 import javax.jws.soap.SOAPBinding;

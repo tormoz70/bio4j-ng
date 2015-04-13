@@ -31,11 +31,13 @@ public class Httpc {
         requestJson(url, null, callback);
     }
 
+    public static final String CONTENT_TYPE_JSON = "application/json";
+
     public static void requestJson(String url, String jsonData, Callback callback) throws Exception {
         URL u = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) u.openConnection();
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Content-Type", CONTENT_TYPE_JSON);
         connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -71,6 +73,7 @@ public class Httpc {
         connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setDoOutput(true);
+        connection.
         InputStream inputStream = request.getInputStream();
         OutputStream outputStream = connection.getOutputStream();
         try {

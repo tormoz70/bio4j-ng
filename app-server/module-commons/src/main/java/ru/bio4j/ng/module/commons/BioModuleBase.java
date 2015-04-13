@@ -12,6 +12,7 @@ import ru.bio4j.ng.database.api.*;
 //import ru.bio4j.ng.database.pgsql.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.Configurator;
 
@@ -144,4 +145,21 @@ public abstract class BioModuleBase implements BioModule {
         return newUsr;
     }
 
+    private final Map<String, BioHttpRequestProcessor> httpRequestProcessors = new HashMap<>();
+    protected void registerHttpRequestProcessor(String requestType, BioHttpRequestProcessor processor) {
+        if(httpRequestProcessors.containsKey(requestType))
+            throw new IllegalArgumentException(String.format("%s with key \"%s\" already registered!", BioHttpRequestProcessor.class.getSimpleName(), requestType));
+        httpRequestProcessors.put(requestType, processor);
+    }
+    protected void unregisterHttpRequestProcessor(String requestType) {
+        if(httpRequestProcessors.containsKey(requestType))
+            httpRequestProcessors.remove(requestType);
+    }
+
+    @Override
+    public BioHttpRequestProcessor getHttpRequestProcessor(String requestType) {
+        if(httpRequestProcessors.containsKey(requestType))
+            return httpRequestProcessors.get(requestType);
+        return null;
+    }
 }

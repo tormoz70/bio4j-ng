@@ -59,15 +59,31 @@ public class WarServletApiBase extends BioServletApiBase {
         rsp.setCharacterEncoding("UTF-8");
         final String queryString = Httpc.getQueryString(request);
         final String destination = this.forwardURL+(isNullOrEmpty(queryString) ? "" : "?"+queryString);
+//        final String contentType = request.getContentType();
 
-        String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
-        StringBuilder jd = new StringBuilder();
-        if(!isNullOrEmpty(jsonDataAsQueryParam))
-            jd.append(jsonDataAsQueryParam);
-        else
-            Httpc.readDataFromRequest(request, jd);
+//        String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
+//        StringBuilder jd = new StringBuilder();
+//        if(!isNullOrEmpty(jsonDataAsQueryParam))
+//            jd.append(jsonDataAsQueryParam);
+//        else
+//            Httpc.readDataFromRequest(request, jd);
 
-        Httpc.requestJson(destination, jd.toString(), new Httpc.Callback() {
+
+//        Httpc.requestJson(destination, jd.toString(), new Httpc.Callback() {
+//            @Override
+//            public void process(InputStream inputStream) throws IOException {
+//                OutputStream outputStream = rsp.getOutputStream();
+//                try {
+//                    Httpc.forwardStream(inputStream, outputStream);
+//                } finally {
+//                    if (outputStream != null)
+//                        outputStream.close();
+//                }
+//
+//            }
+//        });
+
+        Httpc.forwardRequest(destination, request, new Httpc.Callback() {
             @Override
             public void process(InputStream inputStream) throws IOException {
                 OutputStream outputStream = rsp.getOutputStream();
@@ -80,6 +96,7 @@ public class WarServletApiBase extends BioServletApiBase {
 
             }
         });
+
     }
 
 }
