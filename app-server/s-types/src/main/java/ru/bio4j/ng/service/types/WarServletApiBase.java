@@ -83,20 +83,21 @@ public class WarServletApiBase extends BioServletApiBase {
 //            }
 //        });
 
-        Httpc.forwardRequest(destination, request, new Httpc.Callback() {
-            @Override
-            public void process(InputStream inputStream) throws IOException {
-                OutputStream outputStream = rsp.getOutputStream();
-                try {
-                    Httpc.forwardStream(inputStream, outputStream);
-                } finally {
-                    if (outputStream != null)
-                        outputStream.close();
-                }
+//        Httpc.forwardRequest(destination, request, new Httpc.Callback() {
+//            @Override
+//            public void process(InputStream inputStream) throws IOException {
+//                OutputStream outputStream = rsp.getOutputStream();
+//                try {
+//                    Httpc.forwardStream(inputStream, outputStream);
+//                } finally {
+//                    if (outputStream != null)
+//                        outputStream.close();
+//                }
+//
+//            }
+//        });
 
-            }
-        });
-
+        Httpc.forwardRequestNew(destination, request, response);
     }
 
 }

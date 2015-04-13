@@ -1,9 +1,11 @@
 package ru.bio4j.ng.commons.utils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Enumeration;
 
 public class Httpc {
     public static interface Callback {
@@ -65,7 +67,7 @@ public class Httpc {
 
     }
 
-    public static void forwardRequest(String url, HttpServletRequest request, Callback callback) throws Exception {
+    public static void forwardRequestOld(String url, HttpServletRequest request, Callback callback) throws Exception {
         URL u = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) u.openConnection();
         connection.setRequestMethod(request.getMethod());
@@ -73,7 +75,6 @@ public class Httpc {
         connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setDoOutput(true);
-        connection.
         InputStream inputStream = request.getInputStream();
         OutputStream outputStream = connection.getOutputStream();
         try {
@@ -97,6 +98,59 @@ public class Httpc {
             throw new Exception(String.format("Error on forwarded server: [%d] - %s", connection.getResponseCode(), connection.getResponseMessage()));
         }
 
+    }
+
+    public static void forwardRequestNew(String forwardUrl, HttpServletRequest req, HttpServletResponse resp) {
+        final String method = req.getMethod();
+        final boolean hasoutbody = (method.equals("POST"));
+
+        try {
+            final URL url = new URL(forwardUrl //GlobalConstants.CLIENT_BACKEND_HTTPS  // no trailing slash
+                    //+ req.getRequestURI()
+                    + (req.getQueryString() != null ? "?" + req.getQueryString() : ""));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(method);
+
+            final Enumeration<String> headers = req.getHeaderNames();
+            while (headers.hasMoreElements()) {
+                final String header = headers.nextElement();
+                final Enumeration<String> values = req.getHeaders(header);
+                while (values.hasMoreElements()) {
+                    final String value = values.nextElement();
+                    conn.addRequestProperty(header, value);
+                }
+            }
+
+            //conn.setFollowRedirects(false);  // throws AccessDenied exception
+            conn.setUseCaches(false);
+            conn.setDoInput(true);
+            conn.setDoOutput(hasoutbody);
+            conn.connect();
+
+            final byte[] buffer = new byte[16384];
+            while (hasoutbody) {
+                final int read = req.getInputStream().read(buffer);
+                if (read <= 0) break;
+                conn.getOutputStream().write(buffer, 0, read);
+            }
+
+            resp.setStatus(conn.getResponseCode());
+            for (int i = 0; ; ++i) {
+                final String header = conn.getHeaderFieldKey(i);
+                if (header == null) break;
+                final String value = conn.getHeaderField(i);
+                resp.setHeader(header, value);
+            }
+
+            while (true) {
+                final int read = conn.getInputStream().read(buffer);
+                if (read <= 0) break;
+                resp.getOutputStream().write(buffer, 0, read);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // pass
+        }
     }
 
     public static String getQueryString(HttpServletRequest request) {
