@@ -374,7 +374,7 @@
         <!-- Special services -->
         <!-- Distribution -->
         <!--<module>as-distribution</module>-->
-        <module>as-distribution-as</module>
+        <!--<module>as-distribution-as</module>-->
         <!--<module>test-rmi-client</module>-->
 
     </modules>
