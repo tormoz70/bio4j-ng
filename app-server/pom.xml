@@ -311,11 +311,6 @@
 
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bio4j-ng-rapi-resful-ims</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>flexjson</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -366,7 +361,7 @@
         <module>router</module>
         <!--<module>remote-api-rmi</module>-->
         <module>remote-api</module>
-        <!--<module>test-jetty-wab-sample</module>-->
+        <module>remote-api-wab</module>
         <!--bio-modules-->
         <module>module-commons</module>
         <module>module-provider</module>
