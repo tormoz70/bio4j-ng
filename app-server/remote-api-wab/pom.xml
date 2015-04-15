@@ -12,7 +12,7 @@
 
     <properties>
         <wab.name>Bio4j Remote API WAB Service</wab.name>
-        <wab.context.path>/rapi</wab.context.path>
+        <wab.context.path>/bio4j</wab.context.path>
     </properties>
 
     <build>

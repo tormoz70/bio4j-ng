@@ -105,9 +105,9 @@ public class Httpc {
         final boolean hasoutbody = (method.equals("POST"));
 
         try {
-            final URL url = new URL(forwardUrl //GlobalConstants.CLIENT_BACKEND_HTTPS  // no trailing slash
+            final URL url = new URL(forwardUrl); //GlobalConstants.CLIENT_BACKEND_HTTPS  // no trailing slash
                     //+ req.getRequestURI()
-                    + (req.getQueryString() != null ? "?" + req.getQueryString() : ""));
+                    //+ (req.getQueryString() != null ? "?" + req.getQueryString() : ""));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
 

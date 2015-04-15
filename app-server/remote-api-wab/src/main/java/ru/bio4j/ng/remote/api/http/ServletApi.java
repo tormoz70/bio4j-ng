@@ -24,10 +24,15 @@ public class ServletApi extends BioServletApiBase {
         final HttpServletResponse resp = response;
         resp.setCharacterEncoding("UTF-8");
 
-        Collection<Part> c = req.getParts();
-        LOG.debug("Parts recived: {}", c.size());
-        for(Part p : c){
-            LOG.error(" - part: ", p.getName());
+        Collection<Part> c = null;
+        try {
+            c = req.getParts();
+        } catch (Exception e) {}
+        if(c != null) {
+            LOG.debug("Parts recived: {}", c.size());
+            for (Part p : c) {
+                LOG.error(" - part: ", p.getName());
+            }
         }
 
         try {

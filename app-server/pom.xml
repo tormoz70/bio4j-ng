@@ -11,14 +11,6 @@
         <project.Organization.Name>Bio4j Co</project.Organization.Name>
         <project.Description>Bio4j platform</project.Description>
 
-        <distr.base>target</distr.base>
-        <distr.depends>${distr.base}/dependencies</distr.depends>
-        <distr.bundles>${distr.depends}/bundle</distr.bundles>
-        <distr.install>${distr.depends}/install</distr.install>
-        <distr.webapps>${distr.depends}/webapps</distr.webapps>
-        <distr.modules>${distr.depends}/modules</distr.modules>
-        <distr.deploy>../as-distribution/target</distr.deploy>
-
         <!-- Main libs -->
         <!-- Felix -->
         <felix.shell.verion>1.4.3</felix.shell.verion>
