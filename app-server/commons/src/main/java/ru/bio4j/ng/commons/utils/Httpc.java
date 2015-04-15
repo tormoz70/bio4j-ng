@@ -1,5 +1,8 @@
 package ru.bio4j.ng.commons.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -8,6 +11,8 @@ import java.net.URL;
 import java.util.Enumeration;
 
 public class Httpc {
+    private static final Logger LOG = LoggerFactory.getLogger(Httpc.class);
+
     public static interface Callback {
         void process(InputStream inputStream) throws Exception;
     }
@@ -100,16 +105,17 @@ public class Httpc {
 
     }
 
-    public static void forwardRequestNew(String forwardUrl, HttpServletRequest req, HttpServletResponse resp) {
+    public static void forwardRequestNew(String forwardUrl, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         final String method = req.getMethod();
         final boolean hasoutbody = (method.equals("POST"));
 
-        try {
+//        try {
             final URL url = new URL(forwardUrl); //GlobalConstants.CLIENT_BACKEND_HTTPS  // no trailing slash
                     //+ req.getRequestURI()
                     //+ (req.getQueryString() != null ? "?" + req.getQueryString() : ""));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
+            conn.setRequestProperty("Content-Type", req.getContentType());
 
             final Enumeration<String> headers = req.getHeaderNames();
             while (headers.hasMoreElements()) {
@@ -147,10 +153,11 @@ public class Httpc {
                 if (read <= 0) break;
                 resp.getOutputStream().write(buffer, 0, read);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            // pass
-        }
+//        } catch (Exception e) {
+//            LOG.error("", e);
+//            //e.printStackTrace();
+//            // pass
+//        }
     }
 
     public static String getQueryString(HttpServletRequest request) {
