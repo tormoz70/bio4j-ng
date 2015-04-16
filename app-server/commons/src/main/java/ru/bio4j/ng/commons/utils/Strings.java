@@ -1,5 +1,9 @@
 package ru.bio4j.ng.commons.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -171,5 +175,16 @@ public class Strings {
             }
         }
         return str;
+    }
+
+    public static String readStream(InputStream inputStream) throws IOException {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));) {
+            StringBuilder out = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+            }
+            return out.toString();
+        }
     }
 }
