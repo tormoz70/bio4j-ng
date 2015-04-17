@@ -356,18 +356,25 @@ public class Paramus implements Closeable {
 	}
 
     public Paramus setValue(String name, Object value, boolean addIfNotExists) {
-        MetaType valueType = MetaTypeConverter.read((value != null) ? value.getClass() : String.class);
         Param param = this.getParam(name);
         if(param != null) {
-            param.setValue(value);
+            MetaType paramType = param.getType();
+            MetaType valueType = (paramType == MetaType.UNDEFINED ? MetaTypeConverter.read(value != null ? value.getClass() : String.class) : paramType);
             param.setType(valueType);
+            try {
+                param.setValue(Converter.toType(value, MetaTypeConverter.write(valueType)));
+            } catch (ConvertValueException e) {
+                throw new IllegalArgumentException(String.format("Cannot set value \"%s\" to parameter \"%s[%s]\"!", ""+value, name, paramType.name()));
+            }
         } else {
-            if(addIfNotExists)
+            if(addIfNotExists) {
+                MetaType valueType = MetaTypeConverter.read(value != null ? value.getClass() : String.class);
                 this.add(Param.builder()
                         .name(name)
                         .value(value)
                         .type(valueType)
                         .build());
+            }
         }
         return this;
     }
