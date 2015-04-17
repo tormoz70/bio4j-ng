@@ -1,0 +1,1 @@
+java -jar bnd.jar wrap -f -p ucp.bnd -o ucp-bnd.jar ucp.jar

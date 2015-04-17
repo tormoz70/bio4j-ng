@@ -1,0 +1,158 @@
+package ru.bio4j.ng.commons.utils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.converter.DateTimeParser;
+import ru.bio4j.ng.commons.types.Prop;
+
+import java.io.InputStream;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class UtlTest {
+    private final static Logger LOG = LoggerFactory.getLogger(UtlTest.class);
+
+    @Test
+    public void getClassNamesFromPackageTest() {
+        LOG.debug("Debug logger test!");
+    //	  ArrayList<String> clss = getClassNamesFromPackage("");
+    //	  Assert.
+    }
+
+    @Test
+    public void findAnnotationTest() {
+        AnnotationTest annot = Utl.findAnnotation(AnnotationTest.class, AnnotetedClass.class);
+        if(annot != null)
+            Assert.assertEquals(annot.path(), "/test_path");
+        else
+            Assert.fail();
+    }
+
+    @Test
+    public void typesIsSameTest() {
+        Assert.assertTrue(Utl.typesIsSame(DateTimeParser.class, DateTimeParser.class));
+    }
+
+    @Test
+    public void buildBeanStateInfoTest() {
+        TBox box = new TBox();
+        String rslt = "  ru.bio4j.ng.commons.utils.TBox {\n" +
+                "   - type : UNDEFINED;\n" +
+                "   - name : null;\n" +
+                "   - created : null;\n" +
+                "   - volume : null;\n" +
+                "   - packets : null;\n" +
+                "   - ex : null;\n" +
+                "   - err : null;\n" +
+                "  }";
+
+
+        String info = Utl.buildBeanStateInfo(box, null, "  ");
+        System.out.println(info);
+        Assert.assertEquals(info, rslt);
+    }
+
+    @Test(enabled = false)
+    public void regexFindTest() {
+        String txt = "ORA-20001: Не верное имя или пароль пользователя!\n" +
+                "ORA-06512: на  \"GIVCAPI.GACC\", line 316\n" +
+                "ORA-06512: на  \"GIVCAPI.GACC\", line 331\n" +
+                "ORA-06512: на  line 1";
+        Matcher m = Regexs.match(txt, "(?<=ORA-2\\d{4}:).+(?=\\nORA-\\d{5}:)", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL);
+        String fnd = m.group();
+        System.out.println(fnd);
+    }
+
+    public void normalizePathTest() {
+        String path = Utl.normalizePath("asd/sdf\\sdf", '\\');
+        Assert.assertEquals("asd\\sdf\\sdf\\", path);
+        path = Utl.normalizePath("asd/sdf\\sdf");
+        Assert.assertEquals("asd\\sdf\\sdf\\", path);
+        path = Utl.normalizePath("asd/sdf\\sdf", '/');
+        Assert.assertEquals("asd/sdf/sdf/", path);
+        path = Utl.normalizePath("asd/sdf\\sdf/", '/');
+        Assert.assertEquals("asd/sdf/sdf/", path);
+        path = Utl.normalizePath("asd\\sdf/sdf");
+        Assert.assertEquals("asd\\sdf\\sdf\\", path);
+        path = Utl.normalizePath("D:\\jdev\\workspace\\bio4j-ng\\as-distribution\\target\\as-distribution-2.0-SNAPSHOT\\as-distribution-2.0-SNAPSHOT/content");
+        Assert.assertEquals("D:\\jdev\\workspace\\bio4j-ng\\as-distribution\\target\\as-distribution-2.0-SNAPSHOT\\as-distribution-2.0-SNAPSHOT\\content\\", path);
+
+    }
+
+    public static class TestConfig1 {
+        @Prop(name = "pool.name")
+        private String poolName;
+
+        public String getPoolName() {
+            return poolName;
+        }
+
+        public void setPoolName(String poolName) {
+            this.poolName = poolName;
+        }
+    }
+    public static class TestConfig2 {
+        @Prop(name = "pool.name")
+        private String poolName;
+
+        public String getPoolName() {
+            return poolName;
+        }
+
+        public void setPoolName(String poolName) {
+            this.poolName = poolName;
+        }
+    }
+
+    @Test
+    public void applyValuesToBeanTest1() throws Exception {
+        final String expctd = "ru.bio4j.ng.doa.connectionPool.main";
+        Dictionary d = new Hashtable();
+        d.put("pool.name", expctd);
+        TestConfig1 c = new TestConfig1();
+        Utl.applyValuesToBean(d, c);
+        Assert.assertEquals(c.getPoolName(), expctd);
+    }
+    @Test
+    public void applyValuesToBeanTest2() throws Exception {
+        TestConfig1 c1 = new TestConfig1();
+        c1.setPoolName("ru.bio4j.ng.doa.connectionPool.main");
+        TestConfig2 c2 = new TestConfig2();
+        Utl.applyValuesToBean(c1, c2);
+        Assert.assertEquals(c2.getPoolName(), c1.getPoolName());
+    }
+
+    @Test(enabled = false)
+    public void getTypeParamsTest() throws Exception {
+        TestGeneric<TestGenericBean> t = new TestGeneric<>();
+        Assert.assertEquals(t.getparamType(), TestGenericBean.class);
+    }
+
+    @Test(enabled = true)
+    public void arrayCopyTest() throws Exception {
+        String[] a = {"1", "2"};
+        Object b = Utl.arrayCopyOf(a);
+        Assert.assertEquals(((Object[])b).length, a.length);
+        Assert.assertEquals(((Object[])b)[0], a[0]);
+        Assert.assertEquals(((Object[])b)[1], a[1]);
+    }
+
+    @Test(enabled = true)
+    public void nullIntegerToIntTest() throws Exception {
+        Integer t = null;
+        int t1 = Utl.nvl(t, 0);
+        Assert.assertEquals(0, t1);
+    }
+
+    @Test(enabled = false)
+    public void checkSum() throws Exception {
+        final String chksum = "9F993B28F29B53178DA58EC2781A9506";
+        final String chksumAct = MD5Checksum.checkSum("d:\\downloads\\ibexpert.rar");
+        Assert.assertEquals(chksumAct.toUpperCase(), chksum);
+    }
+
+}

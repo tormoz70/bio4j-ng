@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+       multiselection="true">
+    <SQL action="select">
+        <text>
+            <![CDATA[
+
+select * from (
+  SELECT a.pureg_id, a.film_id, a.prnt_film_id, a.film_name, a.film_name_orig,
+       a.hide_sess, a.cre_date,
+       a.pu_verified,
+       (case when a.pu_verified > 0 then 1 else 0 end) is_verified,
+       decode(a.pu_verified, 0, '--новый', 1, '--автомат', 2, '--ручн', '--ошиб') as pu_verified_state,
+       a.pu_num, a.pu_num_found,
+       a.pu_vrfd_date, a.pu_vrfd_usr, a.org_id, a.prnt_org_id,
+       a.org_name, a.prnt_org_name, a.genre
+ FROM nsi$filmpus a WHERE rownum < 101) b
+WHERE --(:SYS_CURUSERROLES in ('*', '1','2','5','6','7','8')) and
+  (
+    ((:seld_from is null) or (b.cre_date >= trunc(to_date(:seld_from)))) and
+    ((:seld_to is null) or (b.cre_date < trunc(to_date(:seld_to)+1)))
+  )
+  and(
+    (:filmname is null) or
+    (
+      (upper(b.film_name) like '%'||upper(:filmname)||'%') or
+      (upper(b.film_name_orig) like '%'||upper(:filmname)||'%')
+    )
+
+  )
+  and((:holding is null)   or ((b.prnt_org_id = nvl(to_number(regexp_substr(:holding, '^\d+$')), 0)) or
+                              (upper(b.prnt_org_name) like '%'||upper(:holding)||'%')))
+  and((:org is null)       or ((b.org_id = nvl(to_number(regexp_substr(:org, '^\d+$')), 0)) or
+                              (upper(b.org_name) like '%'||upper(:org)||'%')))
+
+    ]]></text>
+        <param type="date" name="seld_from"/>
+        <param type="date" name="seld_to"/>
+        <param type="string" name="filmname"/>
+        <param type="string" name="holding"/>
+        <param type="string" name="org"/>
+        <param type="integer" name="pu_verified"/>
+        <param type="integer" name="showhidden"/>
+    </SQL>
+    <fields>
+        <field name="pureg_id" type="integer" pk="1" format="0" header="ID ПУ"/>
+        <field name="film_id" type="integer" format="0" header="ID фильма"/>
+        <field name="prnt_film_id" type="integer" format="0" header="ID фильма по гос реестру"/>
+        <field name="film_name" type="string" header="Название фильма от прокатчика"/>
+        <field name="film_name_orig" type="string" header="Название фильма по гос реестру"/>
+        <field name="is_verified" type="boolean" header="Выверен"/>
+        <field name="pu_verified_state" type="string" header="Состояние"/>
+        <field name="hide_sess" type="boolean" header="Скрыть"/>
+        <field name="cre_date" type="date" header="Дата/Время поступления"/>
+        <field name="pu_vrfd_date" type="date" header="Дата/Время выверки"/>
+        <field name="pu_vrfd_usr" type="string" header="Кто сделал выверку"/>
+        <field name="pu_num" type="string" header="Номер ПУ"/>
+        <field name="pu_num_found" type="string" header="Номер ПУ, определен"/>
+        <field name="org_id" type="integer" header="ID кинотеатра"/>
+        <field name="prnt_org_id" type="integer" header="ID киносети"/>
+        <field name="org_name" type="string" header=" Название кинотеатра"/>
+        <field name="prnt_org_name" type="string" header="Название киносети"/>
+        <field name="genre" type="string" header="Жанр"/>
+    </fields>
+</cursor>
