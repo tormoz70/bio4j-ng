@@ -15,18 +15,20 @@ public enum BioRoute {
     LOGOUT("logout", BioRequestLogout.class, BioRequestFactory.Logout.class),
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
     CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class),
-    CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class);
+    CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class),
+    CRUD_FORM_UPLOAD("crud.form.upload", BioRequestJStorePost.class, BioRequestFactory.FormUpload.class);
 
     private String alias;
     private Class<? extends BioRequest> clazz;
-    private Class<? extends BioRequestFactory> factory;
+    private Class<? extends BioRequestFactory> factoryClazz;
+    private BioRequestFactory factory;
 
-    private BioRoute(String alias, Class<? extends BioRequest> clazz, Class<? extends BioRequestFactory> factory) {
+    private BioRoute(String alias, Class<? extends BioRequest> clazz, Class<? extends BioRequestFactory> factoryClazz) {
         if(isNullOrEmpty(alias))
             throw new IllegalArgumentException(String.format("Argument \"%s\" cannot be null!", "alias"));
         this.alias = alias;
         this.clazz = clazz;
-        this.factory = factory;
+        this.factoryClazz = factoryClazz;
     }
 
     public static BioRoute getType(String alias) {
@@ -37,14 +39,22 @@ public enum BioRoute {
         return UNKNOWN;
     }
 
+    public String getAlias(){
+        return alias;
+    }
     public Class<? extends BioRequest> getClazz() {
         if(clazz == null)
             throw new IllegalArgumentException(String.format("Property \"clazz\" is not defined for value %s!", this.name()));
         return clazz;
     }
-    public Class<? extends BioRequestFactory> getFactory() {
+    public Class<? extends BioRequestFactory> getFactoryClazz() {
+        if(factoryClazz == null)
+            throw new IllegalArgumentException(String.format("Property \"factoryClazz\" is not defined for value %s!", this.name()));
+        return factoryClazz;
+    }
+    public BioRequestFactory getFactory() throws Exception {
         if(factory == null)
-            throw new IllegalArgumentException(String.format("Property \"factory\" is not defined for value %s!", this.name()));
+            factory = factoryClazz.newInstance();
         return factory;
     }
 }
