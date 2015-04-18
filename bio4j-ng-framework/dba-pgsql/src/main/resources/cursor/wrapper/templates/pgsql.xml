@@ -45,8 +45,8 @@
       ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
     -->
     <template type="locate"><![CDATA[
-          SELECT rnum$ FROM (SELECT innerq.*, row_number() over (order by aterminalid) rnum$
-            FROM (${QUERY_PLACEHOLDER}) as innerq)
+          SELECT outerq$locate.rnum$ FROM (SELECT innerq$locate.*, row_number() over (order by innerq$locate.sortord) rnum$
+            FROM (${QUERY_PLACEHOLDER}) as innerq$locate) outerq$locate
            WHERE ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>
 
