@@ -49,6 +49,9 @@ public abstract class BioRequestFactory {
     public static class DataSetPost extends BioRequestFactory {
     }
 
+    public static class StoredProg extends BioRequestFactory {
+    }
+
     public static class FormUpload extends BioRequestFactory {
         @Override
         public BioRequest restore(HttpServletRequest request, final String moduleKey, final BioRoute route, final User usr) throws Exception {

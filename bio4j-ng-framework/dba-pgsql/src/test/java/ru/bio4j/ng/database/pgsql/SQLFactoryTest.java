@@ -132,6 +132,39 @@ public class SQLFactoryTest {
 
     }
 
+    @Test(enabled = true)
+    public void testSQLCommandOpenCursor111() {
+        try {
+            Double dummysum = context.execBatch(new SQLActionScalar<Double>() {
+                @Override
+                public Double exec(SQLContext context, Connection conn) throws Exception {
+                    Double dummysum = 0.0;
+                    String sql = "select * from test_tbl where fld2 = :fld2";
+                    List<Param> prms = Paramus.set(new ArrayList<Param>()).add(
+                            Param.builder()
+                                    .name("fld2")
+                                    .type(MetaType.INTEGER)
+                                    .value(null)
+                                    .build()
+                    ).pop();
+                    try(SQLCursor c = context.createCursor()
+                            .init(conn, sql, prms).open();){
+                        while(c.reader().next()){
+                            dummysum += c.reader().getValue("fld1", String.class).length();
+                        }
+                    }
+                    return dummysum;
+                }
+            });
+            LOG.debug("dummysum: " + dummysum);
+            Assert.assertEquals(dummysum, 0.0);
+        } catch (Exception ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+
+    }
+
     @Test(enabled = false)
     public void testSQLCommandOpenCursor1() {
         try {

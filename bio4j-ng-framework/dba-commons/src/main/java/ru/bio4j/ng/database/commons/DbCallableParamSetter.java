@@ -52,7 +52,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                         int charSize = 0;
                         if(valType == String.class)
                             charSize = ((String)val).length();
-                        Class<?> targetValType = sqlTypeConverter.write(sqlType, charSize);
+                        Class<?> targetValType = (sqlType > 0 ? sqlTypeConverter.write(sqlType, charSize) : valType);
                         if(val instanceof InputStream && sqlType == Types.BLOB) {
                             // nop
                         } else
@@ -63,6 +63,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                                         paramName, val, valType.getSimpleName(), targetValType.getSimpleName()), e);
                             }
                         try {
+                            sqlType = (sqlType == 0 ? sqlTypeConverter.read(targetValType, charSize, false) : sqlType);
                             callable.setObjectAtName(paramName, val, sqlType);
                         } catch (SQLException e) {
                             throw new SQLException(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s)",

@@ -2,6 +2,8 @@ package ru.bio4j.ng.database.commons;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.database.api.NamedParametersStatement;
@@ -20,7 +22,7 @@ public class DbSelectableParamSetter implements SQLParamSetter {
     }
 
     @Override
-    public void setParamsToStatement(SQLCommand command, List<Param> params) throws SQLException {
+    public void setParamsToStatement(SQLCommand command, List<Param> params) throws Exception {
         NamedParametersStatement selectable = command.getStatement();
         final String sql = command.getPreparedSQL();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
@@ -29,15 +31,19 @@ public class DbSelectableParamSetter implements SQLParamSetter {
             Param param = Paramus.set(params).getParam(paramName);
             if (param != null) {
                 param.setId(i + 1);
-                Object value = param.getValue();
+                Object value = Converter.toType(param.getValue(), MetaTypeConverter.write(param.getType()));
                 int targetType = DbUtils.getInstance().paramSqlType(param);
                 if(value != null) {
                     if(targetType == 0)
                         selectable.setObjectAtName(paramName, value);
                     else
                         selectable.setObjectAtName(paramName, value, targetType);
-                } else
-                    selectable.setNullAtName(paramName);
+                } else {
+                    if(targetType == 0)
+                        selectable.setNullAtName(paramName);
+                    else
+                        selectable.setObjectAtName(paramName, null, targetType);
+                }
             } else
                 selectable.setNullAtName(paramName);
         }

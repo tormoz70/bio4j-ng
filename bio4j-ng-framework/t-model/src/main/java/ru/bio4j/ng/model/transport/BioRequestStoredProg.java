@@ -2,7 +2,6 @@ package ru.bio4j.ng.model.transport;
 
 /**
  * Запуск хранимых процедур
- * С возможностью отслеживать прогресс с помощью DBMS_PIPE
  */
 
 public class BioRequestStoredProg extends BioRequest {

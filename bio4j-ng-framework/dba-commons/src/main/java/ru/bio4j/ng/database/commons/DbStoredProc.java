@@ -49,7 +49,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 	
     @Override
-	public void execSQL(List<Param> params) throws SQLException {
+	public void execSQL(List<Param> params) throws Exception {
         this.processStatement(params, new DelegateSQLAction() {
             @Override
             public void execute() throws SQLException {
@@ -60,7 +60,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 
     @Override
-    public void execSQL() throws SQLException {
+    public void execSQL() throws Exception {
         this.execSQL(null);
     }
 

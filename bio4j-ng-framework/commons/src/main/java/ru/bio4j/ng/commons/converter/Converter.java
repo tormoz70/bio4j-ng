@@ -9,6 +9,8 @@ public class Converter {
     public static <T> T toType(Object value, Class<T> type) throws ConvertValueException {
         if(type == null)
             throw new IllegalArgumentException("type");
+        if(type == Object.class)
+            return (T)value;
         if(value != null) {
             value = Types.wrapPrimitive(value);
             Class<?> srcType = value.getClass();

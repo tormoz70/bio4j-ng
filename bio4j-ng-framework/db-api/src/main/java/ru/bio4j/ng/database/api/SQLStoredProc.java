@@ -16,6 +16,6 @@ import java.util.List;
 public interface SQLStoredProc extends SQLCommand {
     SQLStoredProc init(Connection conn, String storedProcName, List<Param> params, int timeout) throws SQLException;
     SQLStoredProc init(Connection conn, String storedProcName, List<Param> params) throws SQLException;
-    void execSQL(List<Param> params) throws SQLException;
-    void execSQL() throws SQLException;
+    void execSQL(List<Param> params) throws Exception;
+    void execSQL() throws Exception;
 }

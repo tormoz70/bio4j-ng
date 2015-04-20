@@ -3,6 +3,7 @@ package ru.bio4j.ng.service.types;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioRequestLogout;
 import ru.bio4j.ng.model.transport.BioRequestPing;
+import ru.bio4j.ng.model.transport.BioRequestStoredProg;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
@@ -16,6 +17,7 @@ public enum BioRoute {
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
     CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class),
     CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class),
+    CRUD_EXEC("crud.exec", BioRequestStoredProg.class, BioRequestFactory.StoredProg.class),
     CRUD_FORM_UPLOAD("crud.form.upload", BioRequestJStorePost.class, BioRequestFactory.FormUpload.class);
 
     private String alias;

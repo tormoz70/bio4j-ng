@@ -60,7 +60,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     /**
      * Присваивает значения входящим параметрам
      */
-    protected void setParamsToStatement() throws SQLException {
+    protected void setParamsToStatement() throws Exception {
         if(this.paramSetter != null)
             this.paramSetter.setParamsToStatement(this, this.params);
     }
@@ -114,14 +114,14 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
     private static String getSQL2Execute(String sql, List<Param> params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{OraCommand.Params(before exec): {\n");
+        sb.append("{DbCommand.Params(before exec): {\n");
         for (Param p : params)
             sb.append("\t"+p.toString()+",\n");
         sb.append("}}");
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
-    protected T processStatement(List<Param> params, DelegateSQLAction action) throws SQLException {
+    protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
         SQLException lastError = null;
         try {
             try {

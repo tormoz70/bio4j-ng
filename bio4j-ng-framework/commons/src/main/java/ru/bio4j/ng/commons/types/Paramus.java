@@ -223,10 +223,12 @@ public class Paramus implements Closeable {
                 if(local != null) {
                     local.setValue(pp.getValue());
                     local.setInnerObject(pp.getInnerObject());
-                    if(pp.getType() != MetaType.UNDEFINED)
-                        local.setType(pp.getType());
-                    if(pp.getDirection() != Param.Direction.UNDEFINED)
-                        local.setDirection(pp.getDirection());
+                    MetaType ppType = pp.getType() != null ? pp.getType() : MetaType.UNDEFINED;
+                    if(ppType != MetaType.UNDEFINED)
+                        local.setType(ppType);
+                    Param.Direction ppDirection = pp.getDirection() != null ? pp.getDirection() : Param.Direction.UNDEFINED;
+                    if(ppDirection != Param.Direction.UNDEFINED)
+                        local.setDirection(ppDirection);
                 } else {
                     if(!applyOnliExists)
                         this.add(pp.export(), false);

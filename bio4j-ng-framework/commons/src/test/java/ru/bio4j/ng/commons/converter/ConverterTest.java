@@ -103,6 +103,17 @@ public class ConverterTest {
 		}
 	}
 
+    @Test
+    public void ConvertString2Integer2() {
+        try {
+            Integer actual = Converter.toType("", Integer.class);
+            Integer expected = null;
+            Assert.assertEquals(actual, expected);
+        } catch (ConvertValueException ex) {
+            Assert.fail(ex.getMessage());
+        }
+    }
+
 	private void checkAType(Number value){
 		try {
 			Assert.assertEquals(Converter.toType(value, Byte.class), new Byte((byte)12));

@@ -4,6 +4,7 @@ import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.commons.utils.Strings;
 
 import java.util.Date;
 
@@ -21,9 +22,11 @@ public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number
             return Types.number2Number(((Date) value).getTime(), targetTypeWrapped);
         else if (Types.typeIsNumber(valType))
             return Types.number2Number((Number)value, targetTypeWrapped);
-        else if (valType == String.class)
+        else if (valType == String.class) {
+            if (Strings.isNullOrEmpty((String) value))
+                return null;
             return Types.number2Number(Types.parsDouble((String) value), targetTypeWrapped);
-        else if (valType == Character.class)
+        } else if (valType == Character.class)
             return Types.number2Number(Types.parsDouble((String) value), targetTypeWrapped);
         throw new ConvertValueException(value, valType, genericType);
     }
@@ -31,7 +34,9 @@ public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number
     @Override
     public <T> T write(Number value, Class<T> targetType) throws ConvertValueException {
         Class<?> targetTypeWrapped = Types.wrapPrimitiveType(targetType);
-        if (Types.typeIsDate(targetTypeWrapped))
+        if (targetTypeWrapped == Object.class)
+            return (T) value;
+        else if (Types.typeIsDate(targetTypeWrapped))
             return (T) Types.date2Date(new Date(Types.number2Number(value, long.class)), targetTypeWrapped);
         else if (targetTypeWrapped == Boolean.class)
             return (T) value;

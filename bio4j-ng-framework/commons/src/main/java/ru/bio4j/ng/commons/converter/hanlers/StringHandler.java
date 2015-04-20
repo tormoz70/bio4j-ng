@@ -4,6 +4,7 @@ import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.commons.utils.Strings;
 
 public class StringHandler extends TypeHandlerBase implements TypeHandler<String> {
 
@@ -32,9 +33,11 @@ public class StringHandler extends TypeHandlerBase implements TypeHandler<String
             return (T) Types.date2Date(Types.parsDate(value), targetTypeWrapped);
         else if (targetTypeWrapped == Boolean.class)
             return (T) Types.parsBoolean(value);
-        else if (Types.typeIsNumber(targetTypeWrapped))
+        else if (Types.typeIsNumber(targetTypeWrapped)) {
+            if(Strings.isNullOrEmpty(value))
+                return null;
             return (T) Types.string2Number(value, targetTypeWrapped);
-        else if (targetTypeWrapped == String.class)
+        } else if (targetTypeWrapped == String.class)
             return (T) value;
         else if (targetTypeWrapped == Character.class)
             return (T) value;

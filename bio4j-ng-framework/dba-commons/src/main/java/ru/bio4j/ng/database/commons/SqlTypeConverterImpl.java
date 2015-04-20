@@ -56,8 +56,10 @@ public class SqlTypeConverterImpl implements SqlTypeConverter {
         if ((type == String.class) ||
                 (type == Character.class)) {
             return (stringSize <= (isCallableStatment ? 32000 : 4000)) ? java.sql.Types.VARCHAR : java.sql.Types.CLOB;
-        } else if (Types.typeIsNumber(type)) {
-            return java.sql.Types.NUMERIC;
+        } else if (Types.typeIsInteger(type)) {
+            return java.sql.Types.INTEGER;
+        } else if (Types.typeIsReal(type)) {
+            return java.sql.Types.DECIMAL;
         } else if ((type == boolean.class) || (type == Boolean.class)) {
             return java.sql.Types.CHAR;
         } else if ((type == Date.class) || (type == java.sql.Date.class) || (type == java.sql.Timestamp.class)) {

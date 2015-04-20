@@ -100,7 +100,7 @@ public class BioRespBuilder {
             return this;
         }
 
-        public Data params(List<Param> value) {
+        public Data bioParams(List<Param> value) {
             bioParams = value;
             return this;
         }

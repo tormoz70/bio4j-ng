@@ -65,8 +65,9 @@ public class PgSQLUtils implements RDBMSUtils {
         return !Strings.isNullOrEmpty(resultStr) ? Strings.split(resultStr, csDelimiter) : new String[0];
     }
 
-
     private static MetaType decodeType(String typeName) {
+        if(Strings.isNullOrEmpty(typeName))
+            return MetaType.UNDEFINED;
         typeName = typeName.toUpperCase();
         if(Arrays.asList("CHARACTER", "CHARACTER VARYING", "TEXT").contains(typeName))
             return MetaType.STRING;
@@ -78,7 +79,7 @@ public class PgSQLUtils implements RDBMSUtils {
             return MetaType.DATE;
         if(Arrays.asList("BYTEA").contains(typeName))
             return MetaType.BLOB;
-        if(Arrays.asList("REF").contains(typeName))
+        if(Arrays.asList("REFCURSOR").contains(typeName))
             return MetaType.CURSOR;
         return MetaType.UNDEFINED;
     }
@@ -126,6 +127,22 @@ public class PgSQLUtils implements RDBMSUtils {
         return DIRECTION_NAME_IN;
     }
 
+    private static final String SQL_GET_DOMINE_TYPE_DBMS =
+            "select data_type from information_schema.domains a\n" +
+                    "where a.domain_schema = 'public'\n" +
+                    "and a.domain_name = :domain_name";
+    private static String detectDomineType(String type, Connection conn) throws SQLException {
+        try (NamedParametersStatement st = NamedParametersStatement.prepareStatement(conn, SQL_GET_DOMINE_TYPE_DBMS)) {
+            st.setStringAtName("domain_name", type);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
+            }
+        }
+        return null;
+    }
+
     private static void parsParam(String paramDesc, Paramus p, StringBuilder args) {
         String dirName = extractDirName(paramDesc);
         paramDesc = cutDirNames(paramDesc);
@@ -138,10 +155,13 @@ public class PgSQLUtils implements RDBMSUtils {
             throw new IllegalArgumentException("Не верный формат наименования аргументов хранимой процедуры.\n" +
                     "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
         args.append(((args.length() == 0) ? ":" : ",:") + paramName.toLowerCase());
+        MetaType type = decodeType(typeName);
+
         p.add(Param.builder()
                 .name(paramName)
-                .type(decodeType(typeName))
+                .type(type)
                 .direction(decodeDirection(dirName))
+                .innerObject(typeName)
                 .build());
 
     }
@@ -171,6 +191,15 @@ public class PgSQLUtils implements RDBMSUtils {
                 }
             }
         }
+        try(Paramus pp = Paramus.set(params)) {
+            for(Param p : pp.get()){
+                if(p.getType() == MetaType.UNDEFINED){
+                    String typeName = detectDomineType((String)p.getInnerObject(), conn);
+                    p.setType(decodeType(typeName));
+                }
+            }
+        }
+
         String newExec = storedProcName + "(" + args + ")";
         return new StoredProgMetadata(newExec, params);
     }
