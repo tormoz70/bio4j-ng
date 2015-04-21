@@ -28,7 +28,7 @@
     -->
     <template type="paging"><![CDATA[
     SELECT * FROM (
-        SELECT pgng$wrpr0.*, row_number() over (order by pgng$wrpr0.sortord) rnum$pgng
+        SELECT pgng$wrpr0.*, row_number() over () rnum$pgng
           FROM ( ${QUERY_PLACEHOLDER} ) as pgng$wrpr0
     ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)
     ]]></template>
@@ -45,7 +45,7 @@
       ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
     -->
     <template type="locate"><![CDATA[
-          SELECT outerq$locate.rnum$ FROM (SELECT innerq$locate.*, row_number() over (order by innerq$locate.sortord) rnum$
+          SELECT outerq$locate.rnum$ FROM (SELECT innerq$locate.*, row_number() over () rnum$
             FROM (${QUERY_PLACEHOLDER}) as innerq$locate) outerq$locate
            WHERE ${WHERECLAUSE_PLACEHOLDER}
     ]]></template>

@@ -107,21 +107,21 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             return anonymousUser;
         }
 
-        if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
-            // Встроенная учетка
-            User usr = userIsOnline(moduleKey, ROOT_USER_UID);
-            if(usr == null) {
-                usr = new User();
-                usr.setModuleKey(moduleKey);
-                usr.setUid(ROOT_USER_UID);
-                usr.setLogin("root");
-                usr.setFio("Root User FIO");
-                usr.setRoles("*");
-                usr.setGrants("*");
-                storeUser(usr);
-            }
-            return usr;
-        }
+//        if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
+//            // Встроенная учетка
+//            User usr = userIsOnline(moduleKey, ROOT_USER_UID);
+//            if(usr == null) {
+//                usr = new User();
+//                usr.setModuleKey(moduleKey);
+//                usr.setUid(ROOT_USER_UID);
+//                usr.setLogin("root");
+//                usr.setFio("Root User FIO");
+//                usr.setRoles("*");
+//                usr.setGrants("*");
+//                storeUser(usr);
+//            }
+//            return usr;
+//        }
 
         LOG.debug("getting module {}...", moduleKey);
         final BioModule module = moduleProvider.getModule(moduleKey);
