@@ -7,6 +7,8 @@
     <packaging>pom</packaging>
 
     <properties>
+        <bioDebug>true</bioDebug>
+
         <!-- Main settings -->
         <project.Organization.Name>Bio4j Co</project.Organization.Name>
         <project.Description>Bio4j platform</project.Description>
@@ -381,17 +383,5 @@
         <!--<module>test-rmi-client</module>-->
 
     </modules>
-
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <bioDebug>true</bioDebug>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>
