@@ -231,17 +231,17 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     }
 
-    private static final String PARAM_CURUSR_UID =    "SYS_CURUSR_UID";
-    private static final String PARAM_CURUSR_ROLES =  "SYS_CURUSR_ROLES";
-    private static final String PARAM_CURUSR_GRANTS = "SYS_CURUSR_GRANTS";
+    private static final String PARAM_CURUSR_UID =    "p_sys_curusr_uid";
+    private static final String PARAM_CURUSR_ROLES =  "p_sys_curusr_roles";
+    private static final String PARAM_CURUSR_GRANTS = "p_sys_curusr_grants";
 
     private static void applyCurrentUserParams(final User usr, BioCursor.SQLDef ... sqlDefs) {
         for(BioCursor.SQLDef sqlDef : sqlDefs) {
             if(sqlDef != null)
                 try (Paramus p = Paramus.set(sqlDef.getParams())) {
-                    p.setValue(PARAM_CURUSR_UID, usr.getUid(), false);
-                    p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), false);
-                    p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), false);
+                    p.setValue(PARAM_CURUSR_UID, usr.getUid(), true);
+                    p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), true);
+                    p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), true);
                 }
         }
     }
@@ -359,6 +359,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
         sqlDef.setParams(request.getBioParams());
+
+        final User usr = request.getUser();
+        applyCurrentUserParams(usr, sqlDef);
 
         List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
             @Override

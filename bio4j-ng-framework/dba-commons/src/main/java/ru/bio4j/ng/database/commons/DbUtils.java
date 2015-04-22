@@ -104,4 +104,21 @@ public class DbUtils {
         });
     }
 
+    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
+        final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
+        T r = ctx.execBatch(new SQLActionScalar<T>() {
+            @Override
+            public T exec(SQLContext context, Connection conn) throws Exception {
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, sqlDef.getPreparedSql(), params).open();){
+                    if(c.reader().next()){
+                        return (T)c.reader().getValue(1);
+                    }
+                }
+                return null;
+            }
+        });
+        return r;
+    }
+
 }
