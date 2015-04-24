@@ -30,6 +30,11 @@ public class Field {
     private String title;
 
     /**
+     * Отображать всплывающую подсказаку с полным текстом ячейки
+     */
+    private boolean showTooltip;
+
+    /**
      * Не отображать
      */
     private boolean hidden;
@@ -181,5 +186,13 @@ public class Field {
 
     public void setUseNull(boolean useNull) {
         this.useNull = useNull;
+    }
+
+    public boolean isShowTooltip() {
+        return showTooltip;
+    }
+
+    public void setShowTooltip(boolean showTooltip) {
+        this.showTooltip = showTooltip;
     }
 }

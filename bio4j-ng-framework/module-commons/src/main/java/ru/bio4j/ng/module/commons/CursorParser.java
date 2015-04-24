@@ -142,6 +142,8 @@ public class CursorParser {
                     col.setWidth(pair[1].trim());
                 if(pair[0].equals("hidden"))
                     col.setHidden(Boolean.parseBoolean(pair[1].trim()));
+                if(pair[0].equals("showTooltip"))
+                    col.setShowTooltip(Boolean.parseBoolean(pair[1].trim()));
                 if(pair[0].equals("readonly"))
                     col.setReadonly(Boolean.parseBoolean(pair[1].trim()));
             }
@@ -228,6 +230,7 @@ public class CursorParser {
                 col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
                 col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
                 col.setHidden(Converter.toType(Doms.getAttribute(paramElem, "hidden", "false", String.class), boolean.class));
+                col.setShowTooltip(Converter.toType(Doms.getAttribute(paramElem, "showTooltip", "false", String.class), boolean.class));
                 col.setDefaultVal(Doms.getAttribute(paramElem, "defaultVal", null, String.class));
                 col.setPk(Converter.toType(Doms.getAttribute(paramElem, "pk", "false", String.class), boolean.class));
                 col.setUseNull(Converter.toType(Doms.getAttribute(paramElem, "useNull", "true", String.class), boolean.class));
