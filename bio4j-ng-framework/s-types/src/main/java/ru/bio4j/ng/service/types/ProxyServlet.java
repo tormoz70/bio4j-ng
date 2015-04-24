@@ -214,6 +214,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     public static final ContentType TEXT_PLAIN_UTF8 = ContentType.create("text/plain", Consts.UTF_8);
+    public static final ContentType APPLICATION_OCTET_STREAM_UTF8 = ContentType.create("application/octet-stream", Consts.UTF_8);
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
             throws ServletException, IOException {
@@ -238,6 +239,7 @@ public class ProxyServlet extends HttpServlet {
             proxyRequest = new HttpPost(proxyRequestUri);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setCharset(Charset.forName("UTF-8"));
             for(Part p : parts) {
                 String ct = p.getContentType();
                 ct = (Strings.isNullOrEmpty(ct) ? ContentType.TEXT_PLAIN.getMimeType() : ct);
@@ -245,12 +247,11 @@ public class ProxyServlet extends HttpServlet {
                     builder.addTextBody(p.getName(), Utl.readStream(p.getInputStream()), TEXT_PLAIN_UTF8);
                 } else {
                     String fileName = Httpc.extractFileNameFromPart(p);
-                    builder.addBinaryBody(p.getName(), p.getInputStream(), ContentType.APPLICATION_OCTET_STREAM, fileName);
+                    builder.addBinaryBody(p.getName(), p.getInputStream(), APPLICATION_OCTET_STREAM_UTF8, fileName);
                 }
                 //
                 //builder.addBinaryBody("file", new File("..."), ContentType.APPLICATION_OCTET_STREAM, "file.ext");
             }
-            builder.setCharset(Charset.forName("UTF-8"));
             HttpEntity multipart = builder.build();
 
             ((HttpPost)proxyRequest).setEntity(multipart);
