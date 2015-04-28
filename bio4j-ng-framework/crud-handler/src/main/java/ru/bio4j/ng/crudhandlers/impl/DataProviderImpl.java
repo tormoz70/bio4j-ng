@@ -43,15 +43,15 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private SQLContextProvider sqlContextProvider;
 
     private static void tryPrepareSessionContext(final String usrUID, final Connection conn) throws Exception {
-        LOG.debug("Try setting session context...");
-        try {
-            CallableStatement cs = conn.prepareCall("{call biocontext.set_current_user(:usr_uid)}");
-            cs.setString("usr_uid", usrUID);
-            cs.execute();
-            LOG.debug("Session context - OK.");
-        } catch (Exception e) {
-            LOG.debug("Session context - ERROR. Message: {}", e.getMessage());
-        }
+//        LOG.debug("Try setting session context...");
+//        try {
+//            NamedParametersStatement cs = NamedParametersStatement.prepareStatement(conn, "{call biocontext.set_current_user(:usr_uid)}");
+//            cs.setStringAtName("usr_uid", usrUID);
+//            cs.execute();
+//            LOG.debug("Session context - OK.");
+//        } catch (Exception e) {
+//            LOG.debug("Session context - ERROR. Message: {}", e.getMessage());
+//        }
     }
 
     private static final int MAX_RECORDS_FETCH_LIMIT = 500;
