@@ -32,6 +32,8 @@ import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -39,6 +41,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpCookie;
@@ -62,7 +65,7 @@ import java.util.*;
  * @author David Smiley dsmiley@mitre.org
  */
 public class ProxyServlet extends HttpServlet {
-
+    //private Logger LOG;
   /* INIT PARAMETER NAME CONSTANTS */
 
     /** A boolean parameter name to enable logging of input and target URLs to the servlet log. */
@@ -118,6 +121,7 @@ public class ProxyServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        //LOG = LoggerFactory.getLogger(this.getClass());
         String doLogStr = getConfigParam(P_LOG);
         if (doLogStr != null) {
             this.doLog = Boolean.parseBoolean(doLogStr);
@@ -213,6 +217,7 @@ public class ProxyServlet extends HttpServlet {
         super.destroy();
     }
 
+    private static final String SAVE_DIR = "uploadFiles";
     public static final ContentType TEXT_PLAIN_UTF8 = ContentType.create("text/plain", Consts.UTF_8);
     public static final ContentType APPLICATION_OCTET_STREAM_UTF8 = ContentType.create("application/octet-stream", Consts.UTF_8);
     @Override
@@ -233,10 +238,21 @@ public class ProxyServlet extends HttpServlet {
         Collection<Part> parts = null;
         try {
             parts = servletRequest.getParts();
-        } catch (Exception e) {}
+            //parts = servletRequest.
+        } catch (ServletException e) {}
         HttpRequest proxyRequest = null;
         if(method.equals("POST") && parts != null) {
             proxyRequest = new HttpPost(proxyRequestUri);
+
+            // gets absolute path of the web application
+            String appPath = servletRequest.getServletContext().getRealPath("");
+            // constructs path of the directory to save uploaded file
+            String savePath = appPath + File.separator + SAVE_DIR;
+            // creates the save directory if it does not exists
+            File fileSaveDir = new File(savePath);
+            if (!fileSaveDir.exists()) {
+                fileSaveDir.mkdir();
+            }
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setCharset(Charset.forName("UTF-8"));
@@ -247,7 +263,11 @@ public class ProxyServlet extends HttpServlet {
                     builder.addTextBody(p.getName(), Utl.readStream(p.getInputStream()), TEXT_PLAIN_UTF8);
                 } else {
                     String fileName = Httpc.extractFileNameFromPart(p);
-                    builder.addBinaryBody(p.getName(), p.getInputStream(), APPLICATION_OCTET_STREAM_UTF8, fileName);
+                    String tmpFileName = java.util.UUID.randomUUID().toString() + "." + Utl.fileExt(fileName);
+                    String fileStorage = savePath + File.separator + tmpFileName;
+                    p.write(fileStorage);
+
+                    builder.addBinaryBody(p.getName(), new File(fileStorage), APPLICATION_OCTET_STREAM_UTF8, fileName);
                 }
                 //
                 //builder.addBinaryBody("file", new File("..."), ContentType.APPLICATION_OCTET_STREAM, "file.ext");

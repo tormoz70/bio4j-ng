@@ -155,4 +155,10 @@ public class UtlTest {
         Assert.assertEquals(chksumAct.toUpperCase(), chksum);
     }
 
+    @Test(enabled = true)
+    public void fileExtTest() throws Exception {
+        final String fileName = "d:\\downloads\\ibexpert.rar";
+        Assert.assertEquals(Utl.fileExt(fileName), "rar");
+    }
+
 }

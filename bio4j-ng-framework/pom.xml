@@ -273,11 +273,11 @@
                 <artifactId>bio4j-ng-dba-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>bio4j-ng-dba-oracle</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>${project.groupId}</groupId>-->
+                <!--<artifactId>bio4j-ng-dba-oracle</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bio4j-ng-dba-pgsql</artifactId>
@@ -359,7 +359,7 @@
         <module>s-api</module>
         <module>db-api</module>
         <module>dba-commons</module>
-        <module>dba-oracle</module>
+        <!--<module>dba-oracle</module>-->
         <module>dba-pgsql</module>
         <module>sql-context</module>
         <module>crud-handler</module>
