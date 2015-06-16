@@ -20,16 +20,10 @@ import java.util.concurrent.TimeUnit;
 public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements ConfigProvider {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigProviderImpl.class);
 
-    private Configurator<BioConfig> configurator = new Configurator<>(BioConfig.class);
-
     @Requires
     private EventAdmin eventAdmin;
 
     @Override
-    protected Configurator<BioConfig> getConfigurator(){
-        return configurator;
-    }
-
     protected EventAdmin getEventAdmin(){
         return eventAdmin;
     }

@@ -15,12 +15,14 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.Configurator;
+import ru.bio4j.ng.service.types.BioServiceBase;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -29,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
-public abstract class BioModuleBase implements BioModule {
+public abstract class BioModuleBase<T> extends BioServiceBase<T> implements BioModule {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
 
     private static Document loadDocument(InputStream inputStream) throws Exception {
@@ -38,7 +40,6 @@ public abstract class BioModuleBase implements BioModule {
         DocumentBuilder builder = f.newDocumentBuilder();
         return builder.parse(inputStream);
     }
-
 
     private static BioCursor loadCursor(BundleContext context, String bioCode) throws Exception {
         BioCursor cursor = null;

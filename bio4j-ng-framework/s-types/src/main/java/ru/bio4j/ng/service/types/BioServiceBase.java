@@ -7,6 +7,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import ru.bio4j.ng.service.api.Configurator;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
@@ -17,8 +18,19 @@ public abstract class BioServiceBase<T> implements BioService {
 
     protected volatile boolean configIsRedy;
     protected volatile boolean redy;
+
+    private Configurator<T> configurator = null;
+
+    private Class<T> typeOfT;
     protected Configurator<T> getConfigurator(){
-        return null;
+        if(configurator == null) {
+            typeOfT = (Class<T>)
+                    ((ParameterizedType) getClass()
+                            .getGenericSuperclass())
+                            .getActualTypeArguments()[0];
+            configurator = new Configurator<>(typeOfT);
+        }
+        return configurator;
     }
 
     protected EventAdmin getEventAdmin(){
