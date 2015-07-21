@@ -5,6 +5,44 @@
     <artifactId>bio4j-ng-framework</artifactId>
     <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <repositories>
+        <repository>
+            <id>givc-public</id>
+            <name>Public Maven Repo</name>
+            <url>http://192.168.50.100:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>givc-public</id>
+            <name>Public Maven Repo</name>
+            <url>http://192.168.50.100:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>http://192.168.50.100:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>http://192.168.50.100:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <bioDebug>true</bioDebug>

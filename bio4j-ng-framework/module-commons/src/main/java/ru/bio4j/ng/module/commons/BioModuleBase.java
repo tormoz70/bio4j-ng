@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
-public abstract class BioModuleBase<T> extends BioServiceBase<T> implements BioModule {
+public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServiceBase<T> implements BioModule {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
 
     private static Document loadDocument(InputStream inputStream) throws Exception {
@@ -64,27 +64,29 @@ public abstract class BioModuleBase<T> extends BioServiceBase<T> implements BioM
         return cursor;
     }
 
-    private static final String SQL_CONTEXT_CONFIG_FILE_NAME = "sql-context.config";
-    private Configurator<SQLContextConfig> configurator = new Configurator<>(SQLContextConfig.class);
+    //private static final String SQL_CONTEXT_CONFIG_FILE_NAME = "sql-context.config";
     private SQLContext sqlContext = null;
     private boolean localSQLContextIsInited = false;
-    public SQLContext getSQLContext() throws Exception {
+    protected void initConfig(Configurator<T> configurator) throws Exception {
         if(sqlContext == null && !localSQLContextIsInited) {
             localSQLContextIsInited = true;
-            BundleContext bundleContext = bundleContext();
-            String selfModuleKey = getSelfModuleKey();
-            LOG.debug("Getting SQLContext for module \"{}\"...", selfModuleKey);
-            URL url = bundleContext.getBundle().getResource(SQL_CONTEXT_CONFIG_FILE_NAME);
-            if (url != null) {
-                InputStream inputStream = url.openStream();
-                if (inputStream != null) {
-                    configurator.load(inputStream);
+//            BundleContext bundleContext = bundleContext();
+//            String selfModuleKey = getSelfModuleKey();
+//            LOG.debug("Getting SQLContext for module \"{}\"...", selfModuleKey);
+//            URL url = bundleContext.getBundle().getResource(SQL_CONTEXT_CONFIG_FILE_NAME);
+//            if (url != null) {
+//                InputStream inputStream = url.openStream();
+//                if (inputStream != null) {
+//                    configurator.load(inputStream);
                     sqlContext = createSQLContext(configurator.getConfig()); //SQLContextFactory.create(configurator.getConfig());
-                    LOG.debug("Context description for module \"{}\" loaded from file \"{}\".", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
-                }
-            } else
-                LOG.debug("File \"{}\" not found for module \"{}\"...", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
+                    //LOG.debug("Context description for module \"{}\" loaded from file \"{}\".", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
+//                }
+//            } else
+//                LOG.debug("File \"{}\" not found for module \"{}\"...", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
         }
+
+    }
+    public SQLContext getSQLContext() throws Exception {
         return sqlContext;
     }
 
