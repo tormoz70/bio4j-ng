@@ -247,14 +247,14 @@ public class Utl {
         return out.toString();
     }
 
-    public static boolean applyValuesToBean(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
         if(vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
         if(bean == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Prop p = findAnnotation(Prop.class, fld);
             if(p != null)
@@ -299,7 +299,7 @@ public class Utl {
         return null;
     }
 
-    public static boolean applyValuesToBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
         if(srcBean == null)
             throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
@@ -307,7 +307,7 @@ public class Utl {
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> srcType = srcBean.getClass();
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Field srcFld = findFieldOfBean(srcType, fldName);
             if(srcFld == null)
@@ -349,7 +349,7 @@ public class Utl {
         if(bean != null && !bean.getClass().isPrimitive()) {
             Class<?> type = bean.getClass();
             Object newBean = type.newInstance();
-            applyValuesToBean(bean, newBean);
+            applyValuesToBeanFromBean(bean, newBean);
             return newBean;
         }
         return null;

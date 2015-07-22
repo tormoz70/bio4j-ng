@@ -64,29 +64,18 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         return cursor;
     }
 
-    //private static final String SQL_CONTEXT_CONFIG_FILE_NAME = "sql-context.config";
     private SQLContext sqlContext = null;
     private boolean localSQLContextIsInited = false;
-    protected void initConfig(Configurator<T> configurator) throws Exception {
+    protected void initSqlContext(Configurator<T> configurator) throws Exception {
         if(sqlContext == null && !localSQLContextIsInited) {
             localSQLContextIsInited = true;
-//            BundleContext bundleContext = bundleContext();
-//            String selfModuleKey = getSelfModuleKey();
-//            LOG.debug("Getting SQLContext for module \"{}\"...", selfModuleKey);
-//            URL url = bundleContext.getBundle().getResource(SQL_CONTEXT_CONFIG_FILE_NAME);
-//            if (url != null) {
-//                InputStream inputStream = url.openStream();
-//                if (inputStream != null) {
-//                    configurator.load(inputStream);
-                    sqlContext = createSQLContext(configurator.getConfig()); //SQLContextFactory.create(configurator.getConfig());
-                    //LOG.debug("Context description for module \"{}\" loaded from file \"{}\".", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
-//                }
-//            } else
-//                LOG.debug("File \"{}\" not found for module \"{}\"...", SQL_CONTEXT_CONFIG_FILE_NAME, selfModuleKey);
+            sqlContext = createSQLContext(configurator.getConfig());
         }
 
     }
+
     public SQLContext getSQLContext() throws Exception {
+        initSqlContext(getConfigurator());
         return sqlContext;
     }
 

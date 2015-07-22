@@ -41,7 +41,7 @@ public abstract class BioServiceBase<T> implements BioService {
         return redy;
     }
 
-    private void fireEventConfigUpdated(final String configUpdatedEventName) throws Exception {
+    protected void fireEventConfigUpdated(final String configUpdatedEventName) throws Exception {
 //        LOG.debug("Sending event...");
 //        eventAdmin.postEvent(new Event("bio-config-updated", new HashMap<String, Object>()));
 //        LOG.debug("Event sent.");

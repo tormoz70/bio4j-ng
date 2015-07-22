@@ -39,11 +39,12 @@ public class Configurator<T> {
         if(!conf.isEmpty()) {
             LOG.debug("Config dictionary is not empty...");
             try {
-                updated = Utl.applyValuesToBean(conf, configBean);
+                updated = Utl.applyValuesToBeanFromDict(conf, configBean);
+                LOG.debug("Config {} updated with:\n{}", beanType.getCanonicalName(),  Utl.buildBeanStateInfo(configBean, null, "\t"));
             } catch (ApplyValuesToBeanException e) {
                 throw new ConfigurationException(e.getField(), e.getMessage());
             }
-            LOG.debug("Apling config dictionary to {} done.", beanType);
+            LOG.debug("Appling config dictionary to {} done.", beanType);
         }
 
     }
