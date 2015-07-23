@@ -8,6 +8,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 
 import java.io.InputStream;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Properties;
 
 public class Configurator<T> {
@@ -21,8 +22,6 @@ public class Configurator<T> {
         this.beanType = beanType;
     }
 
-
-
     public void update(Dictionary conf) throws ConfigurationException {
         LOG.debug("About updating config to {}...", beanType);
         // Здесь получаем конфигурацию
@@ -35,17 +34,13 @@ public class Configurator<T> {
                 throw new ConfigurationException("*", String.format("Error on create new instance of bean (%s)! Message: %s", beanType, e.getMessage()));
             }
         }
-
-        if(!conf.isEmpty()) {
-            LOG.debug("Config dictionary is not empty...");
-            try {
-                updated = Utl.applyValuesToBeanFromDict(conf, configBean);
-                LOG.debug("Config {} updated with:\n{}", beanType.getCanonicalName(),  Utl.buildBeanStateInfo(configBean, null, "\t"));
-            } catch (ApplyValuesToBeanException e) {
-                throw new ConfigurationException(e.getField(), e.getMessage());
-            }
-            LOG.debug("Appling config dictionary to {} done.", beanType);
+        try {
+            updated = Utl.applyValuesToBeanFromDict(conf, configBean);
+            LOG.debug("Config {} updated with:\n{}", beanType.getCanonicalName(),  Utl.buildBeanStateInfo(configBean, null, "\t"));
+        } catch (ApplyValuesToBeanException e) {
+            throw new ConfigurationException(e.getField(), e.getMessage());
         }
+        LOG.debug("Appling config dictionary to {} done.", beanType);
 
     }
 

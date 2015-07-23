@@ -247,6 +247,20 @@ public class Utl {
         return out.toString();
     }
 
+    public static String dictionaryInfo(Dictionary dict, String beanName, String tab) {
+        if(tab == null) tab = "";
+        final String attrFmt = tab + " - %s : %s;\n";
+        StringBuilder out = new StringBuilder();
+        out.append(String.format(tab + "%s {\n", beanName));
+        for (Enumeration e = dict.keys(); e.hasMoreElements();) {
+            Object key = e.nextElement();
+            Object val = dict.get(key);
+            out.append(String.format(attrFmt, key, val));
+        }
+        out.append(tab + "}");
+        return out.toString();
+    }
+
     public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
         if(vals == null)
@@ -437,6 +451,18 @@ public class Utl {
             bytes[i] = oBytes[i];
         }
         return bytes;
+    }
+
+    public static Boolean confIsEmpty(Dictionary conf) {
+        if(conf == null || conf.isEmpty())
+            return true;
+        int count = 0;
+        String componentKey = "component";
+        for (Enumeration e = conf.keys(); e.hasMoreElements();) {
+            e.nextElement();
+            count++;
+        }
+        return (count == 1 && conf.get(componentKey) != null);
     }
 
 }

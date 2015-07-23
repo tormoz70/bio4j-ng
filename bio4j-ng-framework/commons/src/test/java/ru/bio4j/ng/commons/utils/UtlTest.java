@@ -170,4 +170,27 @@ public class UtlTest {
         Assert.assertEquals(Utl.fileExt(fileName), "rar");
     }
 
+    @Test(enabled = true)
+    public void dictionaryInfoTest() throws Exception {
+        Dictionary d = new Hashtable();
+        d.put("1", "Chocolate");
+        d.put("2", "Cocoa");
+        d.put("5", "Coffee");
+        String rslt = Utl.dictionaryInfo(d, "testDict", "\t");
+        Assert.assertEquals(rslt, "\ttestDict {\n" +
+                "\t - 5 : Coffee;\n" +
+                "\t - 2 : Cocoa;\n" +
+                "\t - 1 : Chocolate;\n" +
+                "\t}");
+    }
+
+    @Test(enabled = true)
+    public void confIsEmptyTest() throws Exception {
+        Dictionary d = new Hashtable();
+        d.put("component", "Chocolate");
+        Boolean rslt = Utl.confIsEmpty(d);
+        Assert.assertTrue(rslt);
+
+    }
+
 }

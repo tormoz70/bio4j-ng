@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.types;
 
 import org.apache.felix.ipojo.annotations.*;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.service.api.BioConfig;
 import ru.bio4j.ng.service.api.BioService;
 import org.osgi.service.event.Event;
@@ -9,6 +10,7 @@ import ru.bio4j.ng.service.api.Configurator;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,10 +60,12 @@ public abstract class BioServiceBase<T> implements BioService {
     }
 
     protected void doOnUpdated(Dictionary conf, String configUpdatedEventName) throws Exception {
-        getConfigurator().update(conf);
-        configIsRedy = getConfigurator().isUpdated();
-        if(configIsRedy) {
-            fireEventConfigUpdated(configUpdatedEventName);
+        if(!Utl.confIsEmpty(conf)) {
+            getConfigurator().update(conf);
+            configIsRedy = getConfigurator().isUpdated();
+            if (configIsRedy) {
+                fireEventConfigUpdated(configUpdatedEventName);
+            }
         }
     }
 
