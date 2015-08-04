@@ -32,8 +32,6 @@ import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -64,7 +62,7 @@ import java.util.*;
  *
  * @author David Smiley dsmiley@mitre.org
  */
-public class ProxyServlet extends HttpServlet {
+public class ProxyServlet1 extends HttpServlet {
     //private Logger LOG;
   /* INIT PARAMETER NAME CONSTANTS */
 
@@ -77,9 +75,9 @@ public class ProxyServlet extends HttpServlet {
     /** The parameter name for the target (destination) URI to proxy to. */
     protected static final String P_TARGET_URI = "targetUri";
     protected static final String ATTR_TARGET_URI =
-            ProxyServlet.class.getSimpleName() + ".targetUri";
+            ProxyServlet1.class.getSimpleName() + ".targetUri";
     protected static final String ATTR_TARGET_HOST =
-            ProxyServlet.class.getSimpleName() + ".targetHost";
+            ProxyServlet1.class.getSimpleName() + ".targetHost";
 
   /* MISC */
 
@@ -180,7 +178,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /** The http client used.
-     * @see #createHttpClient(HttpParams) */
+     * @see #createHttpClient(org.apache.http.params.HttpParams) */
     protected HttpClient getProxyClient() {
         return proxyClient;
     }
@@ -263,12 +261,11 @@ public class ProxyServlet extends HttpServlet {
                     builder.addTextBody(p.getName(), Utl.readStream(p.getInputStream()), TEXT_PLAIN_UTF8);
                 } else {
                     String fileName = Httpc.extractFileNameFromPart(p);
-                    //String tmpFileName = java.util.UUID.randomUUID().toString() + "." + Utl.fileExt(fileName);
-                    //String fileStorage = savePath + File.separator + tmpFileName;
-                    //p.write(fileStorage);
+                    String tmpFileName = UUID.randomUUID().toString() + "." + Utl.fileExt(fileName);
+                    String fileStorage = savePath + File.separator + tmpFileName;
+                    p.write(fileStorage);
 
-                    //builder.addBinaryBody(p.getName(), new File(fileStorage), APPLICATION_OCTET_STREAM_UTF8, fileName);
-                    builder.addBinaryBody(p.getName(), p.getInputStream(), APPLICATION_OCTET_STREAM_UTF8, fileName);
+                    builder.addBinaryBody(p.getName(), new File(fileStorage), APPLICATION_OCTET_STREAM_UTF8, fileName);
                 }
                 //
                 //builder.addBinaryBody("file", new File("..."), ContentType.APPLICATION_OCTET_STREAM, "file.ext");

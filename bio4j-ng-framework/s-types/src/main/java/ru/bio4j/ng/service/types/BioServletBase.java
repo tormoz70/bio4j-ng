@@ -8,6 +8,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.BioConfig;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.SecurityHandler;

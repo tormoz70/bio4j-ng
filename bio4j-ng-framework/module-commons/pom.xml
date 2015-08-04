@@ -6,7 +6,7 @@
     <parent>
         <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-module-commons</artifactId>
@@ -60,6 +60,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dbapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-stypes</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

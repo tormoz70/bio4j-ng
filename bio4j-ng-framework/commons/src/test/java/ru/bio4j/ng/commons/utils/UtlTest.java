@@ -114,7 +114,7 @@ public class UtlTest {
         Dictionary d = new Hashtable();
         d.put("pool.name", expctd);
         TestConfig1 c = new TestConfig1();
-        Utl.applyValuesToBean(d, c);
+        Utl.applyValuesToBeanFromDict(d, c);
         Assert.assertEquals(c.getPoolName(), expctd);
     }
     @Test
@@ -122,7 +122,16 @@ public class UtlTest {
         TestConfig1 c1 = new TestConfig1();
         c1.setPoolName("ru.bio4j.ng.doa.connectionPool.main");
         TestConfig2 c2 = new TestConfig2();
-        Utl.applyValuesToBean(c1, c2);
+        Utl.applyValuesToBeanFromBean(c1, c2);
+        Assert.assertEquals(c2.getPoolName(), c1.getPoolName());
+    }
+
+    @Test
+    public void applyValuesToBeanTest3() throws Exception {
+        TestConfig1 c1 = new TestConfig1();
+        c1.setPoolName("ru.bio4j.ng.doa.connectionPool.main");
+        ImsConfig c2 = new ImsConfig();
+        Utl.applyValuesToBeanFromBean(c1, c2);
         Assert.assertEquals(c2.getPoolName(), c1.getPoolName());
     }
 
@@ -159,6 +168,29 @@ public class UtlTest {
     public void fileExtTest() throws Exception {
         final String fileName = "d:\\downloads\\ibexpert.rar";
         Assert.assertEquals(Utl.fileExt(fileName), "rar");
+    }
+
+    @Test(enabled = true)
+    public void dictionaryInfoTest() throws Exception {
+        Dictionary d = new Hashtable();
+        d.put("1", "Chocolate");
+        d.put("2", "Cocoa");
+        d.put("5", "Coffee");
+        String rslt = Utl.dictionaryInfo(d, "testDict", "\t");
+        Assert.assertEquals(rslt, "\ttestDict {\n" +
+                "\t - 5 : Coffee;\n" +
+                "\t - 2 : Cocoa;\n" +
+                "\t - 1 : Chocolate;\n" +
+                "\t}");
+    }
+
+    @Test(enabled = true)
+    public void confIsEmptyTest() throws Exception {
+        Dictionary d = new Hashtable();
+        d.put("component", "Chocolate");
+        Boolean rslt = Utl.confIsEmpty(d);
+        Assert.assertTrue(rslt);
+
     }
 
 }

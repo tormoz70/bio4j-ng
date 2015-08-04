@@ -247,14 +247,28 @@ public class Utl {
         return out.toString();
     }
 
-    public static boolean applyValuesToBean(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
+    public static String dictionaryInfo(Dictionary dict, String beanName, String tab) {
+        if(tab == null) tab = "";
+        final String attrFmt = tab + " - %s : %s;\n";
+        StringBuilder out = new StringBuilder();
+        out.append(String.format(tab + "%s {\n", beanName));
+        for (Enumeration e = dict.keys(); e.hasMoreElements();) {
+            Object key = e.nextElement();
+            Object val = dict.get(key);
+            out.append(String.format(attrFmt, key, val));
+        }
+        out.append(tab + "}");
+        return out.toString();
+    }
+
+    public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
         if(vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
         if(bean == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Prop p = findAnnotation(Prop.class, fld);
             if(p != null)
@@ -299,7 +313,7 @@ public class Utl {
         return null;
     }
 
-    public static boolean applyValuesToBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
         if(srcBean == null)
             throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
@@ -307,7 +321,7 @@ public class Utl {
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> srcType = srcBean.getClass();
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Field srcFld = findFieldOfBean(srcType, fldName);
             if(srcFld == null)
@@ -349,7 +363,7 @@ public class Utl {
         if(bean != null && !bean.getClass().isPrimitive()) {
             Class<?> type = bean.getClass();
             Object newBean = type.newInstance();
-            applyValuesToBean(bean, newBean);
+            applyValuesToBeanFromBean(bean, newBean);
             return newBean;
         }
         return null;
@@ -437,6 +451,18 @@ public class Utl {
             bytes[i] = oBytes[i];
         }
         return bytes;
+    }
+
+    public static Boolean confIsEmpty(Dictionary conf) {
+        if(conf == null || conf.isEmpty())
+            return true;
+        int count = 0;
+        String componentKey = "component";
+        for (Enumeration e = conf.keys(); e.hasMoreElements();) {
+            e.nextElement();
+            count++;
+        }
+        return (count == 1 && conf.get(componentKey) != null);
     }
 
 }

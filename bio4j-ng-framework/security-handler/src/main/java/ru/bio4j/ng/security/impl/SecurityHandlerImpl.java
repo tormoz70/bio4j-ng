@@ -40,7 +40,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     private void storeUser(final User user) throws Exception {
         User existsUser = onlineUsers.get(user.getUid());
         if(existsUser != null) {
-            Utl.applyValuesToBean(user, existsUser);
+            Utl.applyValuesToBeanFromBean(user, existsUser);
             return;
         }
         onlineUsers.put(String.format("%s-%s", user.getModuleKey(), user.getUid()), user);
