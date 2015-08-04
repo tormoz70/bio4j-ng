@@ -397,7 +397,7 @@
         <module>s-api</module>
         <module>db-api</module>
         <module>dba-commons</module>
-        <!--<module>dba-oracle</module>-->
+        <module>dba-oracle</module>
         <module>dba-pgsql</module>
         <module>sql-context</module>
         <module>crud-handler</module>
