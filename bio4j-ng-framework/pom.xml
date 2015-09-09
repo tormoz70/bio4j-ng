@@ -411,7 +411,6 @@
         <module>remote-api</module>
         <module>remote-api-wab</module>
         <!--bio-modules-->
-        <module>module-commons</module>
         <module>module-provider</module>
 
         <!-- Special services -->

@@ -1,4 +1,4 @@
-package ru.bio4j.ng.module.commons;
+package ru.bio4j.ng.service.types;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
@@ -13,16 +13,13 @@ import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
-import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.Configurator;
-import ru.bio4j.ng.service.types.BioServiceBase;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -31,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
-public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServiceBase<T> implements BioModule {
+public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
 
     private static Document loadDocument(InputStream inputStream) throws Exception {
@@ -56,7 +53,6 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     protected abstract BundleContext bundleContext();
 
-    @Override
     public BioCursor getCursor(String bioCode) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
         if(cursor == null)
@@ -102,7 +98,6 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     }
 
-    @Override
     public User login(final String login) throws Exception {
         if(isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
@@ -148,7 +143,6 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
             httpRequestProcessors.remove(requestType);
     }
 
-    @Override
     public BioHttpRequestProcessor getHttpRequestProcessor(String requestType) {
         if(httpRequestProcessors.containsKey(requestType))
             return httpRequestProcessors.get(requestType);

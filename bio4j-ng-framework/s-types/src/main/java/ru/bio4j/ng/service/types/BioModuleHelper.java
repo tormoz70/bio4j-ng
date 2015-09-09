@@ -1,4 +1,4 @@
-package ru.bio4j.ng.module.commons;
+package ru.bio4j.ng.service.types;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

@@ -6,7 +6,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.module.commons.BioModuleHelper;
+import ru.bio4j.ng.service.types.BioModuleHelper;
 import ru.bio4j.ng.service.api.BioModule;
 import ru.bio4j.ng.service.api.ModuleProvider;
 import ru.bio4j.ng.service.types.BioServiceBase;
