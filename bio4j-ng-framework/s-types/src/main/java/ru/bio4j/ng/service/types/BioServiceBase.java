@@ -1,8 +1,6 @@
 package ru.bio4j.ng.service.types;
 
-import org.apache.felix.ipojo.annotations.*;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.service.api.BioConfig;
 import ru.bio4j.ng.service.api.BioService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
@@ -10,16 +8,15 @@ import ru.bio4j.ng.service.api.Configurator;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class BioServiceBase<T> implements BioService {
+public abstract class BioServiceBase<T> implements BioService<T> {
 
-    protected volatile boolean configIsRedy;
-    protected volatile boolean redy;
+    protected volatile boolean configIsReady;
+    protected volatile boolean ready;
 
     private Configurator<T> configurator = null;
 
@@ -39,8 +36,9 @@ public abstract class BioServiceBase<T> implements BioService {
         return null;
     }
 
-    public boolean isRedy() {
-        return redy;
+    @Override
+    public boolean isReady() {
+        return ready;
     }
 
     protected void fireEventConfigUpdated(final String configUpdatedEventName) throws Exception {
@@ -62,13 +60,14 @@ public abstract class BioServiceBase<T> implements BioService {
     protected void doOnUpdated(Dictionary conf, String configUpdatedEventName) throws Exception {
         if(!Utl.confIsEmpty(conf)) {
             getConfigurator().update(conf);
-            configIsRedy = getConfigurator().isUpdated();
-            if (configIsRedy) {
+            configIsReady = getConfigurator().isUpdated();
+            if (configIsReady) {
                 fireEventConfigUpdated(configUpdatedEventName);
             }
         }
     }
 
+    @Override
     public T getConfig() {
         if(!getConfigurator().isUpdated()) {
             return null;
@@ -76,8 +75,9 @@ public abstract class BioServiceBase<T> implements BioService {
         return getConfigurator().getConfig();
     }
 
-    public boolean configIsRedy() {
-        return configIsRedy;
+    @Override
+    public boolean configIsReady() {
+        return configIsReady;
     }
 
 }

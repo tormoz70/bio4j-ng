@@ -124,14 +124,14 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
         }
 
-        this.redy = true;
+        this.ready = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void doStop() throws Exception {
         LOG.debug("Stoping...");
-        this.redy = false;
+        this.ready = false;
         LOG.debug("Stoped.");
     }
 

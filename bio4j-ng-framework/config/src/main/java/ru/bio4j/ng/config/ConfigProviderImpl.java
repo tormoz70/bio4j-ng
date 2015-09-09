@@ -36,14 +36,14 @@ public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements Con
     @Validate
     public void start() throws Exception {
         LOG.debug("Starting...");
-        this.redy = true;
+        this.ready = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void stop() throws Exception {
         LOG.debug("Stoping...");
-        this.redy = false;
+        this.ready = false;
         LOG.debug("Stoped.");
     }
 

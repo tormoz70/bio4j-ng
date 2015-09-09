@@ -41,14 +41,14 @@ public class ModuleProviderImpl extends BioServiceBase implements ModuleProvider
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
-        this.redy = true;
+        this.ready = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void doStop() throws Exception {
         LOG.debug("Stoping...");
-        this.redy = false;
+        this.ready = false;
         LOG.debug("Stoped.");
     }
 

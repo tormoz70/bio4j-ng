@@ -44,8 +44,8 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
     public void doStart() throws Exception {
         LOG.debug("Starting...");
 
-        if(!configProvider.configIsRedy()) {
-            LOG.info("Config is not redy! Waiting...");
+        if(!configProvider.configIsReady()) {
+            LOG.info("Config is not ready! Waiting...");
             return;
         }
 
@@ -62,14 +62,14 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
 //
 //        }
 
-        this.redy = true;
+        this.ready = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void doStop() throws Exception {
         LOG.debug("Stoping...");
-        this.redy = false;
+        this.ready = false;
         LOG.debug("Stoped.");
     }
 
