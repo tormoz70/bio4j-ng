@@ -1,8 +1,5 @@
 package ru.bio4j.ng.service.api;
 
-public interface BioService<T>  {
+public interface BioService  {
     boolean isReady();
-    public T getConfig();
-    public boolean configIsReady();
-
 }

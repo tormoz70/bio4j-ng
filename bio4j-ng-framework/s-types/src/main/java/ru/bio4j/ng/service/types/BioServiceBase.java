@@ -13,21 +13,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class BioServiceBase<T> implements BioService<T> {
+public abstract class BioServiceBase<T> implements BioService {
 
     protected volatile boolean configIsReady;
     protected volatile boolean ready;
 
     private Configurator<T> configurator = null;
 
-    private Class<T> typeOfT;
+    private Class<T> typeOfConfig;
     protected Configurator<T> getConfigurator(){
         if(configurator == null) {
-            typeOfT = (Class<T>)
+            typeOfConfig = (Class<T>)
                     ((ParameterizedType) getClass()
                             .getGenericSuperclass())
                             .getActualTypeArguments()[0];
-            configurator = new Configurator<>(typeOfT);
+            configurator = new Configurator<>(typeOfConfig);
         }
         return configurator;
     }
@@ -67,7 +67,6 @@ public abstract class BioServiceBase<T> implements BioService<T> {
         }
     }
 
-    @Override
     public T getConfig() {
         if(!getConfigurator().isUpdated()) {
             return null;
@@ -75,7 +74,6 @@ public abstract class BioServiceBase<T> implements BioService<T> {
         return getConfigurator().getConfig();
     }
 
-    @Override
     public boolean configIsReady() {
         return configIsReady;
     }
