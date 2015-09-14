@@ -29,7 +29,7 @@ public class BioServletApiBase extends BioServletBase {
     }
 
     @Override
-    protected void initServices(ServletContext servletContext) {
+    protected void initServices(ServletContext servletContext) throws Exception {
         super.initServices(servletContext);
 
         if(moduleProvider == null) {

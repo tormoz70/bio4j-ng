@@ -39,7 +39,7 @@ public class BioServletBase extends HttpServlet {
         LOG = LoggerFactory.getLogger(getClass());
     }
 
-    protected void initServices(ServletContext servletContext) {
+    protected void initServices(ServletContext servletContext) throws Exception {
         if(configProvider == null) {
             try {
                 configProvider = Utl.getService(servletContext, ConfigProvider.class);
