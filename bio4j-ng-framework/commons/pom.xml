@@ -24,7 +24,14 @@
                             !org.apache.tools.ant.*,
                             *</Import-Package>
                         <Embed-Dependency>commons-beanutils-core</Embed-Dependency>
-                        <Export-Package>ru.bio4j.ng.commons.*,org.apache.commons.beanutils.*</Export-Package>
+                        <Export-Package>
+                            ru.bio4j.ng.commons.*,
+                            org.apache.commons.beanutils.*
+                        </Export-Package>
+                        <!--<Export-Package>-->
+                            <!--com.google.common.*,-->
+                            <!--javassist.*-->
+                        <!--</Export-Package>-->
                     </instructions>
                 </configuration>
             </plugin>
@@ -42,6 +49,18 @@
             <version>1.8.3</version>
             <scope>compile</scope>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.guava</groupId>-->
+            <!--<artifactId>guava</artifactId>-->
+            <!--<version>14.0.1</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.javassist</groupId>-->
+            <!--<artifactId>javassist</artifactId>-->
+            <!--<version>3.20.0-GA</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
