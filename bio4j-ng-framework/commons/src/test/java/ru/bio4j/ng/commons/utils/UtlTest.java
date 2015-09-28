@@ -193,4 +193,9 @@ public class UtlTest {
 
     }
 
+    @Test(enabled = true)
+    public void fileWithoutExtTest() throws Exception {
+        Assert.assertEquals(Utl.fileWithoutExt("d:/qwe.asd/fgh.fgh.txt"), "d:/qwe.asd/fgh.fgh");
+    }
+
 }

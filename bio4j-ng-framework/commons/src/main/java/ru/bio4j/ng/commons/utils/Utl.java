@@ -59,6 +59,12 @@ public class Utl {
         return extension;
     }
 
+    public static String fileWithoutExt(String fileName) {
+        if(Strings.isNullOrEmpty(fileName))
+            return fileName;
+        return fileName.replaceFirst("[.][^.]+$", "");
+    }
+
     /**
      * Приводит LongToInt, если это возможно
      * @param l
