@@ -23,7 +23,7 @@ import java.util.List;
 public class SQLFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest.class);
     private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
-    private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.41:1521:ORAS";
+    private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.30:1521:GIVCDB";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@stat4-ora-dev:1521:MICEXDB";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
