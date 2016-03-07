@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioRequestLogout;

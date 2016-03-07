@@ -15,7 +15,7 @@ import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.DataProvider;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
-import ru.bio4j.ng.service.types.BioRoute;
+import ru.bio4j.ng.service.api.BioRoute;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStoreGetDataSet request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_GET);
-                    BioRespBuilder.Data responseBuilder = dataProvider.getDataSet(request);
+                    BioRespBuilder.Data responseBuilder = dataProvider.processRequest(BioRoute.CRUD_DATASET_GET, request);
                     processCallback(responseBuilder, callback);
                 }
             });
@@ -90,7 +90,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStoreGetRecord request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_RECORD_GET);
-                    BioRespBuilder.Data responseBuilder = dataProvider.getRecord(request);
+                    BioRespBuilder.Data responseBuilder = dataProvider.processRequest(BioRoute.CRUD_RECORD_GET, request);
                     processCallback(responseBuilder, callback);
                 }
             });
@@ -99,7 +99,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStorePost request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_POST);
-                    BioRespBuilder.Data responseBuilder = dataProvider.postDataSet(request);
+                    BioRespBuilder.Data responseBuilder = dataProvider.processRequest(BioRoute.CRUD_DATASET_POST, request);
                     processCallback(responseBuilder, callback);
                 }
             });
@@ -108,7 +108,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestStoredProg request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_EXEC);
-                    BioRespBuilder.Data responseBuilder = dataProvider.exec(request);
+                    BioRespBuilder.Data responseBuilder = dataProvider.processRequest(BioRoute.CRUD_EXEC, request);
                     processCallback(responseBuilder, callback);
                 }
             });
@@ -117,7 +117,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStorePost request, Callback callback) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FORM_UPLOAD);
-                    BioRespBuilder.Data responseBuilder = dataProvider.postDataSet(request);
+                    BioRespBuilder.Data responseBuilder = dataProvider.processRequest(BioRoute.CRUD_FORM_UPLOAD, request);
                     processCallback(responseBuilder, callback);
                 }
             });

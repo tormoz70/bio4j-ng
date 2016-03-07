@@ -16,6 +16,7 @@ public class BioModuleHelper {
 
         if(references != null) {
             BioModule module = (BioModule) context.getService(references[0]);
+            module.setKey(key);
             LOG.debug("Module {} found!!!", module.getDescription());
             return module;
         }

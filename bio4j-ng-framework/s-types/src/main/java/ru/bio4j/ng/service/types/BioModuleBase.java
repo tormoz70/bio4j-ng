@@ -79,7 +79,15 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     protected abstract EventAdmin getEventAdmin();
 
-    protected abstract String getSelfModuleKey();
+    private String _bioModuleKey;
+
+    public String getSelfModuleKey() {
+        return _bioModuleKey;
+    }
+
+    public void setKey(String s) {
+        _bioModuleKey = s.toLowerCase();
+    }
 
     protected void fireEventModuleUpdated() throws Exception {
         // Откладываем отправку события чтобы успел инициализироваться логгер

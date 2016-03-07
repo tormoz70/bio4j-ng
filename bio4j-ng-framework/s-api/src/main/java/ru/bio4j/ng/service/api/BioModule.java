@@ -6,6 +6,7 @@ import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.model.transport.User;
 
 public interface BioModule extends BioService {
+    void setKey(String key);
     String getDescription();
     BioCursor getCursor(String bioCode) throws Exception;
     SQLContext getSQLContext() throws Exception;
