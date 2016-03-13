@@ -19,13 +19,13 @@ import java.sql.Connection;
  */
 public class ProviderGetRecord extends ProviderAn {
 
-    protected static BioRespBuilder.Data processCursorAsSelectableSingleRecord(final User usr, final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
+    protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
-        BioRespBuilder.Data response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.Data>() {
+        BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
             @Override
-            public BioRespBuilder.Data exec(SQLContext context, Connection conn, BioCursor cursorDef) throws Exception {
-                tryPrepareSessionContext(usr.getUid(), conn);
-                final BioRespBuilder.Data result = BioRespBuilder.data();
+            public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cursorDef) throws Exception {
+                tryPrepareSessionContext(request.getUser().getUid(), conn);
+                final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
                 result.bioCode(cursorDef.getBioCode());
 
                 cursorDef.getSelectSqlDef().setParamValue(GetrowWrapper.PKVAL, request.getId());
@@ -42,17 +42,14 @@ public class ProviderGetRecord extends ProviderAn {
 
     }
 
-    public BioRespBuilder.Data process(final BioRequest request) throws Exception {
+    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
-            BioCursor cursor = module.getCursor(request.getBioCode());
+            BioCursor cursor = module.getCursor(request);
             cursor.getSelectSqlDef().setParams(request.getBioParams());
 
-            final User usr = request.getUser();
-            applyCurrentUserParams(usr, cursor.getSelectSqlDef());
-
             context.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
-            return processCursorAsSelectableSingleRecord(usr,(BioRequestJStoreGetRecord)request, context, cursor, LOG);
+            return processCursorAsSelectableSingleRecord((BioRequestJStoreGetRecord)request, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getRecord for \"{}\" - returning response...", request.getBioCode());
         }

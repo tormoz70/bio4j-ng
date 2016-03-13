@@ -7,10 +7,6 @@ import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.database.commons.wrappers.filtering.GetrowWrapper;
-import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
-import ru.bio4j.ng.database.commons.wrappers.pagination.PaginationWrapper;
-import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
@@ -44,29 +40,16 @@ public abstract class ProviderAn {
         this.context = context;
     }
 
-    protected static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreGetDataSet request) {
-        sqlDef.setParams(request.getBioParams());
-        sqlDef.setOffset(request.getOffset());
-        sqlDef.setPageSize(request.getPageSize());
-        sqlDef.setLocation(request.getLocation());
-        sqlDef.setFilter(request.getFilter());
-        sqlDef.setSort(request.getSort());
-    }
-
-    protected static final String PARAM_CURUSR_UID =    "p_sys_curusr_uid";
-    protected static final String PARAM_CURUSR_ROLES =  "p_sys_curusr_roles";
-    protected static final String PARAM_CURUSR_GRANTS = "p_sys_curusr_grants";
-
-    protected static void applyCurrentUserParams(final User usr, BioCursor.SQLDef ... sqlDefs) {
-        for(BioCursor.SQLDef sqlDef : sqlDefs) {
-            if(sqlDef != null)
-                try (Paramus p = Paramus.set(sqlDef.getParams())) {
-                    p.setValue(PARAM_CURUSR_UID, usr.getUid(), true);
-                    p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), true);
-                    p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), true);
-                }
-        }
-    }
+//    protected static void applyCurrentUserParams(final User usr, BioCursor.SQLDef ... sqlDefs) {
+//        for(BioCursor.SQLDef sqlDef : sqlDefs) {
+//            if(sqlDef != null)
+//                try (Paramus p = Paramus.set(sqlDef.getParams())) {
+//                    p.setValue(PARAM_CURUSR_UID, usr.getUid(), true);
+//                    p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), true);
+//                    p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), true);
+//                }
+//        }
+//    }
 
     protected static void tryPrepareSessionContext(final String usrUID, final Connection conn) throws Exception {
 //        LOG.debug("Try setting session context...");
@@ -134,6 +117,6 @@ public abstract class ProviderAn {
         return totalCount;
     }
 
-    public abstract BioRespBuilder.Data process(final BioRequest request) throws Exception;
+    public abstract BioRespBuilder.Builder process(final BioRequest request) throws Exception;
 
 }

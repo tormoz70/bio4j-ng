@@ -9,16 +9,13 @@ import java.util.List;
 
 public class ProviderExec extends ProviderAn {
 
-    private static BioRespBuilder.Data processExec(final BioRequestStoredProg request, final SQLContext ctx, final BioCursor cursor) throws Exception {
-        final BioRespBuilder.Data result = BioRespBuilder.data();
+    private static BioRespBuilder.DataBuilder processExec(final BioRequestStoredProg request, final SQLContext ctx, final BioCursor cursor) throws Exception {
+        final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         final SQLStoredProc cmd = ctx.createStoredProc();
         final BioCursor.SQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
         sqlDef.setParams(request.getBioParams());
-
-        final User usr = request.getUser();
-        applyCurrentUserParams(usr, sqlDef);
 
         List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
             @Override
@@ -32,13 +29,13 @@ public class ProviderExec extends ProviderAn {
         return result.exception(null);
     }
 
-    public BioRespBuilder.Data process(final BioRequest request) throws Exception {
+    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
         LOG.debug("Process exec for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
-            final BioCursor cursorDef = module.getCursor(request.getBioCode());
+            final BioCursor cursorDef = module.getCursor(request);
 
-            BioRespBuilder.Data response = processExec((BioRequestStoredProg)request, context, cursorDef);
+            BioRespBuilder.DataBuilder response = processExec((BioRequestStoredProg)request, context, cursorDef);
 
             return response;
         } finally {

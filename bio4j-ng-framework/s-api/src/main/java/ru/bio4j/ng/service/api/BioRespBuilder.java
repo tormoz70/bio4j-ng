@@ -2,6 +2,7 @@ package ru.bio4j.ng.service.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
@@ -56,21 +57,21 @@ public class BioRespBuilder {
             return response;
         }
 
+        public String json(){
+            return Jsons.encode(this.build());
+        }
     }
 
-    public static abstract class Success <T extends Builder> extends Builder<T> {
-
+    public static abstract class SuccessBuilder<T extends Builder> extends Builder<T> {
     }
 
-    public static class Login extends Success<Login> {
-
+    public static class LoginBilder extends SuccessBuilder<LoginBilder> {
+    }
+    public static LoginBilder loginBuilder() {
+        return create(LoginBilder.class);
     }
 
-    public static Login login() {
-        return create(Login.class);
-    }
-
-    public static class AnError extends Builder<AnError> {
+    public static class AnErrorBuilder extends Builder<AnErrorBuilder> {
 
         @Override
         public BioResponse build() {
@@ -80,11 +81,11 @@ public class BioRespBuilder {
         }
 
     }
-    public static AnError anError() {
-        return create(AnError.class);
+    public static AnErrorBuilder anErrorBuilder() {
+        return create(AnErrorBuilder.class);
     }
 
-    public static class Data extends Success<Data> {
+    public static class DataBuilder extends SuccessBuilder<DataBuilder> {
 
         private String bioCode;
         private List<Param> bioParams;
@@ -95,36 +96,36 @@ public class BioRespBuilder {
         private List<BioResponse> slaveResponses;
 
 
-        public Data bioCode(String value) {
+        public DataBuilder bioCode(String value) {
             bioCode = value;
             return this;
         }
 
-        public Data bioParams(List<Param> value) {
+        public DataBuilder bioParams(List<Param> value) {
             bioParams = value;
             return this;
         }
 
-        public Data rmtStatePack(RmtStatePack value) {
+        public DataBuilder rmtStatePack(RmtStatePack value) {
             rmtStatePack = value;
             return this;
         }
 
-        public Data packet(StoreData value) {
+        public DataBuilder packet(StoreData value) {
             packet = value;
             return this;
         }
 
-        public Data sort(Sort value) {
+        public DataBuilder sort(Sort value) {
             sort = value;
             return this;
         }
-        public Data filter(Expression value) {
+        public DataBuilder filter(Expression value) {
             filter = value;
             return this;
         }
 
-        public Data slaveResponses(List<BioResponse> value) {
+        public DataBuilder slaveResponses(List<BioResponse> value) {
             slaveResponses = value;
             return this;
         }
@@ -168,8 +169,24 @@ public class BioRespBuilder {
         }
 
     }
-    public static Data data() {
-        return create(Data.class);
+    public static DataBuilder dataBuilder() {
+        return create(DataBuilder.class);
+    }
+
+    public static class JsonBuilder extends SuccessBuilder<JsonBuilder> {
+        private StringBuilder jsonBuilder;
+        public StringBuilder getJsonBuilder(){
+            return jsonBuilder;
+        }
+
+        @Override
+        public String json(){
+            return this.jsonBuilder.toString();
+        }
+
+    }
+    public static JsonBuilder jsonBuilder() {
+        return create(JsonBuilder.class);
     }
 
 }

@@ -1,14 +1,9 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SecurityHandler;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class BioLoginProcessor {
 
@@ -18,8 +13,8 @@ public class BioLoginProcessor {
         this.securityHandler = securityHandler;
     }
 
-    public User login(BioServletBase.BioQueryParams prms) throws Exception {
-        BioRespBuilder.Login brsp =  BioRespBuilder.login();
+    public User login(SrvcUtils.BioQueryParams prms) throws Exception {
+        BioRespBuilder.LoginBilder brsp =  BioRespBuilder.loginBuilder();
         if(securityHandler == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 

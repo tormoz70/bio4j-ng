@@ -21,7 +21,7 @@ public class ServletLogin extends BioServletLoginBase {
         resp.setCharacterEncoding("UTF-8");
         try {
             initServices(this.getServletContext());
-            BioRespBuilder.Login bresp = doLogin(req);
+            BioRespBuilder.LoginBilder bresp = doLogin(req);
             writeSuccess(bresp, resp);
         } catch (Exception e) {
             if(e instanceof BioError.Login)

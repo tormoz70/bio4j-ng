@@ -6,11 +6,13 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 //import ru.bio4j.ng.database.oracle.SQLContextFactory;
 //import ru.bio4j.ng.database.pgsql.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
 import ru.bio4j.ng.service.api.Configurator;
@@ -20,6 +22,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -53,10 +57,31 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     protected abstract BundleContext bundleContext();
 
-    public BioCursor getCursor(String bioCode) throws Exception {
+    protected static void applyCurrentUserParams(final User usr, Collection<BioCursor.SQLDef> sqlDefs) {
+        for(BioCursor.SQLDef sqlDef : sqlDefs) {
+            if(sqlDef != null)
+                try (Paramus p = Paramus.set(sqlDef.getParams())) {
+                    p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getUid(), true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), true);
+                }
+        }
+    }
+
+    public BioCursor findCursor(String bioCode) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getSelfModuleKey()));
+        return cursor;
+    }
+
+    public BioCursor getCursor(BioRequest bioRequest) throws Exception {
+        String bioCode = bioRequest.getBioCode();
+        BioCursor cursor = findCursor(bioCode);
+
+        final User usr = bioRequest.getUser();
+        applyCurrentUserParams(usr, cursor.sqlDefs());
+
         return cursor;
     }
 
@@ -111,33 +136,48 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
             throw new BioError.Login.BadLogin();
 
         final String moduleKey = this.getSelfModuleKey();
-        final BioCursor cursor = this.getCursor("bio.get-user");
+        final BioCursor cursor = this.findCursor("bio.get-user");
         final SQLContext sqlContext = this.getSQLContext();
-        User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
-            @Override
-            public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                LOG.debug("User {} logging in...", login);
-                cur.getSelectSqlDef().setParamValue("p_login", login);
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
-                        .open()) {
-                    if (c.reader().next()){
-                        User usr = new User();
-                        usr.setModuleKey(moduleKey);
-                        usr.setUid(c.reader().getValue("usr_uid", String.class));
-                        usr.setLogin(c.reader().getValue("usr_login", String.class));
-                        usr.setFio(c.reader().getValue("usr_fio", String.class));
-                        usr.setRoles(c.reader().getValue("usr_roles", String.class));
-                        usr.setGrants(c.reader().getValue("usr_grants", String.class));
-                        LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
-                        return usr;
+        try {
+            User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
+                @Override
+                public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                    LOG.debug("User {} logging in...", login);
+                    cur.getSelectSqlDef().setParamValue("p_login", login);
+                    try (SQLCursor c = context.createCursor()
+                            .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
+                            .open()) {
+                        if (c.reader().next()) {
+                            User usr = new User();
+                            usr.setModuleKey(moduleKey);
+                            usr.setUid(c.reader().getValue("usr_uid", String.class));
+                            usr.setLogin(c.reader().getValue("usr_login", String.class));
+                            usr.setFio(c.reader().getValue("usr_fio", String.class));
+                            usr.setRoles(c.reader().getValue("usr_roles", String.class));
+                            usr.setGrants(c.reader().getValue("usr_grants", String.class));
+                            LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
+                            return usr;
+                        }
                     }
+                    LOG.debug("User not found!");
+                    return null;
                 }
-                LOG.debug("User not found!");
-                return null;
+            }, cursor);
+            return newUsr;
+        } catch (SQLException ex) {
+            switch (ex.getErrorCode()) {
+                case 20401:
+                    throw new BioError.Login.BadLogin();
+                case 20402:
+                    throw new BioError.Login.UserBlocked();
+                case 20403:
+                    throw new BioError.Login.UserNotConfirmed();
+                case 20404:
+                    throw new BioError.Login.UserDeleted();
+                default:
+                    throw ex;
             }
-        }, cursor);
-        return newUsr;
+        }
     }
 
     private final Map<String, BioHttpRequestProcessor> httpRequestProcessors = new HashMap<>();

@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.ConfigProvider;
-import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.BioServletLoginBase;
 
 import javax.servlet.ServletException;
@@ -28,7 +26,7 @@ public class ServletLogin extends BioServletLoginBase {
         resp.setCharacterEncoding("UTF-8");
         try {
             initServices(this.getServletContext());
-            BioRespBuilder.Login bresp = doLogin(req);
+            BioRespBuilder.LoginBilder bresp = doLogin(req);
             writeSuccess(bresp, resp);
         } catch (Exception e) {
             if(e instanceof BioError.Login)

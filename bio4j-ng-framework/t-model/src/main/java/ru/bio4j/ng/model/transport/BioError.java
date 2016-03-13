@@ -67,6 +67,34 @@ public class BioError extends Exception {
                 super(message);
             }
         }
+
+        public static class UserBlocked extends BioError.Login {
+            public UserBlocked() {
+                super("Пользователь заблокирован!");
+            }
+            public UserBlocked(String message) {
+                super(message);
+            }
+        }
+
+        public static class UserNotConfirmed extends BioError.Login {
+            public UserNotConfirmed() {
+                super("Пользователь не подтвержден!");
+            }
+            public UserNotConfirmed(String message) {
+                super(message);
+            }
+        }
+
+        public static class UserDeleted extends BioError.Login {
+            public UserDeleted() {
+                super("Пользователь удален!");
+            }
+            public UserDeleted(String message) {
+                super(message);
+            }
+        }
+
 //        public static class LoginGet extends BioError.Login {
 //            public LoginGet() {
 //                super("Введите имя и пароль пользователя!");

@@ -55,7 +55,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     @Override
-    public BioRespBuilder.Data processRequest(BioRoute route, final BioRequest request) throws Exception {
+    public BioRespBuilder.Builder processRequest(BioRoute route, final BioRequest request) throws Exception {
         final BioModule module = getActualModule(request);
         final SQLContext context = getActualContext(request, module);
         ProviderAn provider = providerMap.get(route);
@@ -63,7 +63,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             provider.init(module, context);
             return provider.process(request);
         }
-        final BioRespBuilder.Data result = BioRespBuilder.data().exception(new BioError.BadRequestType(request.getRequestType()));
+        final BioRespBuilder.Builder result = BioRespBuilder.dataBuilder().exception(new BioError.BadRequestType(request.getRequestType()));
         return result;
     }
 

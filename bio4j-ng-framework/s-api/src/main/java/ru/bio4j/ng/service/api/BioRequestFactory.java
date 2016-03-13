@@ -41,6 +41,9 @@ public abstract class BioRequestFactory {
     public static class Logout extends BioRequestFactory {
     }
 
+    public static class GetJson extends BioRequestFactory {
+    }
+
     public static class GetDataSet extends BioRequestFactory {
     }
 

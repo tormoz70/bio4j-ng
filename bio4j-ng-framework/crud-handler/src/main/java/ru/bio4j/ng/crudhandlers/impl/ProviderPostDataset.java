@@ -65,13 +65,12 @@ public class ProviderPostDataset extends ProviderAn {
             }
     }
 
-    private BioRespBuilder.Data processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
+    private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
-        final BioCursor cursorDef = module.getCursor(request.getBioCode());
+        final BioCursor cursorDef = module.getCursor(request);
         cursorDef.getSelectSqlDef().setParams(request.getBioParams());
-        applyCurrentUserParams(usr, cursorDef.getUpdateSqlDef(), cursorDef.getDeleteSqlDef());
 
-        final BioRespBuilder.Data result = BioRespBuilder.data();
+        final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());
         result.user(usr);
 
@@ -104,13 +103,13 @@ public class ProviderPostDataset extends ProviderAn {
         return result.exception(null);
     }
 
-    public BioRespBuilder.Data process(final BioRequest request) throws Exception {
+    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
         LOG.debug("Process postDataSet for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
-            BioRespBuilder.Data response = context.execBatch(new SQLAction<Object, BioRespBuilder.Data>() {
+            BioRespBuilder.DataBuilder response = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
                 @Override
-                public BioRespBuilder.Data exec(SQLContext context, Connection conn, Object obj) throws Exception {
+                public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj) throws Exception {
                     tryPrepareSessionContext(usr.getUid(), conn);
                     return processRequestPost((BioRequestJStorePost)request, context, conn, null, null, null);
                 }
