@@ -5,10 +5,7 @@ import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.BioRequestStoredProg;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
@@ -81,9 +78,9 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_JSON_GET, new BioRouteHandler<BioRequestJStoreGetDataSet>() {
+            routeMap.put(BioRoute.CRUD_JSON_GET, new BioRouteHandler<BioRequestGetJson>() {
                 @Override
-                public void handle(final BioRequestJStoreGetDataSet request, final HttpServletResponse response) throws Exception {
+                public void handle(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_JSON_GET);
                     BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_JSON_GET, request).user(request.getUser());
                     response.getWriter().append(responseBuilder.json());

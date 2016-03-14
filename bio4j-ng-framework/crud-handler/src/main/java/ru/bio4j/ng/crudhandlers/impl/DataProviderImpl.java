@@ -62,9 +62,10 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         if(provider != null) {
             provider.init(module, context);
             return provider.process(request);
-        }
-        final BioRespBuilder.Builder result = BioRespBuilder.dataBuilder().exception(new BioError.BadRequestType(request.getRequestType()));
-        return result;
+        } else
+            throw new IllegalArgumentException(String.format("Для запроса %s не определен обработчик!", route));
+        //final BioRespBuilder.Builder result = BioRespBuilder.dataBuilder().exception(new BioError.BadRequestType(request.getRequestType()));
+        //return result;
     }
 
     @Validate
@@ -76,6 +77,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             providerMap.put(BioRoute.CRUD_RECORD_GET, new ProviderGetRecord());
             providerMap.put(BioRoute.CRUD_DATASET_POST, new ProviderPostDataset());
             providerMap.put(BioRoute.CRUD_EXEC, new ProviderExec());
+            providerMap.put(BioRoute.CRUD_JSON_GET, new ProviderGetJson());
         }
         this.ready = true;
         LOG.debug("Started");
