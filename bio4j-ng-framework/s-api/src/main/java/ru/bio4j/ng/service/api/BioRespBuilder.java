@@ -176,6 +176,8 @@ public class BioRespBuilder {
     public static class JsonBuilder extends SuccessBuilder<JsonBuilder> {
         private StringBuilder jsonBuilder;
         public StringBuilder getJsonBuilder(){
+            if(jsonBuilder == null)
+                jsonBuilder = new StringBuilder();
             return jsonBuilder;
         }
 
