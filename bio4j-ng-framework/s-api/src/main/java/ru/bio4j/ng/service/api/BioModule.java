@@ -10,7 +10,7 @@ public interface BioModule extends BioService {
     String getKey();
     String getDescription();
     BioCursor getCursor(BioRequest bioRequest) throws Exception;
-    BioCursor findCursor(String bioCode) throws Exception;
+    BioCursor getCursor(String bioCode) throws Exception;
     SQLContext getSQLContext() throws Exception;
     BioHttpRequestProcessor getHttpRequestProcessor(String requestType);
 }

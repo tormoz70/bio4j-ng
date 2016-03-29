@@ -68,7 +68,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         }
     }
 
-    public BioCursor findCursor(String bioCode) throws Exception {
+    public BioCursor getCursor(String bioCode) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
@@ -77,7 +77,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     public BioCursor getCursor(BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
-        BioCursor cursor = findCursor(bioCode);
+        BioCursor cursor = getCursor(bioCode);
 
         final User usr = bioRequest.getUser();
         applyCurrentUserParams(usr, cursor.sqlDefs());
