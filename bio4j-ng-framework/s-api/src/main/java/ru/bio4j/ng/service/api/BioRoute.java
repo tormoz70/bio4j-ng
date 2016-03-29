@@ -1,9 +1,6 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.service.api;
 
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.BioRequestLogout;
-import ru.bio4j.ng.model.transport.BioRequestPing;
-import ru.bio4j.ng.model.transport.BioRequestStoredProg;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
@@ -14,6 +11,7 @@ public enum BioRoute {
     UNKNOWN("unknown", null, null),
     PING("ping", BioRequestPing.class, BioRequestFactory.Ping.class),
     LOGOUT("logout", BioRequestLogout.class, BioRequestFactory.Logout.class),
+    CRUD_JSON_GET("crud.json.get", BioRequestGetJson.class, BioRequestFactory.GetJson.class),
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
     CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class),
     CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class),

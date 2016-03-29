@@ -1,9 +1,10 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.User;
+
 import javax.servlet.http.HttpServletRequest;
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -38,6 +39,9 @@ public abstract class BioRequestFactory {
     }
 
     public static class Logout extends BioRequestFactory {
+    }
+
+    public static class GetJson extends BioRequestFactory {
     }
 
     public static class GetDataSet extends BioRequestFactory {

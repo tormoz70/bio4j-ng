@@ -9,10 +9,7 @@ import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BioCursor {
 
@@ -230,5 +227,8 @@ public class BioCursor {
         return (SelectSQLDef)sqlDefs.get(Type.SELECT);
     }
 
+    public Collection<SQLDef> sqlDefs(){
+        return sqlDefs.values();
+    }
 
 }
