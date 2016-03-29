@@ -15,6 +15,7 @@ import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -96,6 +97,60 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             throw new BioError.Login.LoginExpired();
     }
 
+    private User _login(final BioModule module, final String login) throws Exception {
+        if(isNullOrEmpty(login))
+            throw new BioError.Login.BadLogin();
+
+        final String moduleKey = module.getKey();
+        final BioCursor cursor = module.findCursor("bio.get-user");
+        final SQLContext sqlContext = module.getSQLContext();
+        try {
+            User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
+                @Override
+                public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                    LOG.debug("User {} logging in...", login);
+                    cur.getSelectSqlDef().setParamValue("p_login", login);
+                    try (SQLCursor c = context.createCursor()
+                            .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
+                            .open()) {
+                        if (c.reader().next()) {
+                            User usr = new User();
+                            usr.setModuleKey(moduleKey);
+                            usr.setUid(c.reader().getValue("usr_uid", String.class));
+                            usr.setLogin(c.reader().getValue("usr_login", String.class));
+                            usr.setFio(c.reader().getValue("usr_fio", String.class));
+                            usr.setEmail(c.reader().getValue("email_addr", String.class));
+                            usr.setPhone(c.reader().getValue("usr_phone", String.class));
+                            usr.setOrgId(c.reader().getValue("org_id", String.class));
+                            usr.setOrgName(c.reader().getValue("org_name", String.class));
+                            usr.setOrgDesc(c.reader().getValue("org_desc", String.class));
+                            usr.setRoles(c.reader().getValue("usr_roles", String.class));
+                            usr.setGrants(c.reader().getValue("usr_grants", String.class));
+                            LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
+                            return usr;
+                        }
+                    }
+                    LOG.debug("User not found!");
+                    return null;
+                }
+            }, cursor);
+            return newUsr;
+        } catch (SQLException ex) {
+            switch (ex.getErrorCode()) {
+                case 20401:
+                    throw new BioError.Login.BadLogin();
+                case 20402:
+                    throw new BioError.Login.UserBlocked();
+                case 20403:
+                    throw new BioError.Login.UserNotConfirmed();
+                case 20404:
+                    throw new BioError.Login.UserDeleted();
+                default:
+                    throw ex;
+            }
+        }
+    }
+
     @Override
     public User login(final String moduleKey, final String login) throws Exception {
         if(isNullOrEmpty(login))
@@ -129,7 +184,7 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
             LOG.debug("module {} assigned!", moduleKey);
         else
             LOG.debug("module {} not found!", moduleKey);
-        User newUsr = module.login(login);
+        User newUsr = _login(module, login);
         if(newUsr == null)
             throw new BioError.Login.BadLogin();
         storeUser(newUsr);

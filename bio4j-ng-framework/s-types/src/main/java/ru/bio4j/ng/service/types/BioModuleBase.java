@@ -71,7 +71,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
     public BioCursor findCursor(String bioCode) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
         if(cursor == null)
-            throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getSelfModuleKey()));
+            throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
         return cursor;
     }
 
@@ -106,7 +106,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     private String _bioModuleKey;
 
-    public String getSelfModuleKey() {
+    public String getKey() {
         return _bioModuleKey;
     }
 
@@ -120,7 +120,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         service.schedule(new Runnable() {
             @Override
             public void run() {
-            String selfModuleKey = getSelfModuleKey();
+            String selfModuleKey = getKey();
             LOG.debug("Sending event [bio-module-updated] for module \"{}\"...", selfModuleKey);
             Map<String, Object> props = new HashMap<>();
             props.put("bioModuleKey", selfModuleKey);
@@ -131,54 +131,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     }
 
-    public User login(final String login) throws Exception {
-        if(isNullOrEmpty(login))
-            throw new BioError.Login.BadLogin();
-
-        final String moduleKey = this.getSelfModuleKey();
-        final BioCursor cursor = this.findCursor("bio.get-user");
-        final SQLContext sqlContext = this.getSQLContext();
-        try {
-            User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
-                @Override
-                public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                    LOG.debug("User {} logging in...", login);
-                    cur.getSelectSqlDef().setParamValue("p_login", login);
-                    try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
-                            .open()) {
-                        if (c.reader().next()) {
-                            User usr = new User();
-                            usr.setModuleKey(moduleKey);
-                            usr.setUid(c.reader().getValue("usr_uid", String.class));
-                            usr.setLogin(c.reader().getValue("usr_login", String.class));
-                            usr.setFio(c.reader().getValue("usr_fio", String.class));
-                            usr.setRoles(c.reader().getValue("usr_roles", String.class));
-                            usr.setGrants(c.reader().getValue("usr_grants", String.class));
-                            LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
-                            return usr;
-                        }
-                    }
-                    LOG.debug("User not found!");
-                    return null;
-                }
-            }, cursor);
-            return newUsr;
-        } catch (SQLException ex) {
-            switch (ex.getErrorCode()) {
-                case 20401:
-                    throw new BioError.Login.BadLogin();
-                case 20402:
-                    throw new BioError.Login.UserBlocked();
-                case 20403:
-                    throw new BioError.Login.UserNotConfirmed();
-                case 20404:
-                    throw new BioError.Login.UserDeleted();
-                default:
-                    throw ex;
-            }
-        }
-    }
+    //public abstract User login(final String login) throws Exception;
 
     private final Map<String, BioHttpRequestProcessor> httpRequestProcessors = new HashMap<>();
     protected void registerHttpRequestProcessor(String requestType, BioHttpRequestProcessor processor) {
