@@ -10,7 +10,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.BioModule;
+import ru.bio4j.ng.service.api.BioAppModule;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
@@ -36,130 +36,83 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
     @Requires
     private SQLContextProvider sqlContextProvider;
 
-    private ConcurrentMap<String, User> onlineUsers = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, Object> onlineUsers = new ConcurrentHashMap<>();
 
-    private void storeUser(final User user) throws Exception {
-        User existsUser = onlineUsers.get(user.getUid());
+    private final String securityModuleKey = "security";
+
+    private static final Object dummy = new Object();
+    private void storeUser(final String userUid) throws Exception {
+        Object existsUser = onlineUsers.get(userUid);
         if(existsUser != null) {
-            Utl.applyValuesToBeanFromBean(user, existsUser);
             return;
         }
-        onlineUsers.put(String.format("%s-%s", user.getModuleKey(), user.getUid()), user);
+        onlineUsers.put(String.format("%s-%s", securityModuleKey, userUid), dummy);
     }
 
-    private User userIsOnline(final String moduleKey, final String userUID) {
-        return onlineUsers.get(String.format("%s-%s", moduleKey, userUID));
+    private Boolean userIsOnline(final String userUID) {
+        return onlineUsers.get(String.format("%s-%s", securityModuleKey, userUID)) != null;
     }
 
-    private User removeUser(final String moduleKey, final String userUID) {
-        return onlineUsers.remove(String.format("%s-%s", moduleKey, userUID));
+    private void removeUser(final String userUID) {
+        onlineUsers.remove(String.format("%s-%s", securityModuleKey, userUID));
     }
 
-    //private static final String BIO_ANONYMOUS_USER_UID = "bio-anonymous-user-uid";
-    private static final String ROOT_USER_LOGIN = "root/root";
-    private static final String ROOT_USER_UID = "root-user-uid";
+//    private static final String ROOT_USER_LOGIN = "root/root";
+//    private static final String ROOT_USER_UID = "root-user-uid";
 
-    private User detectAnonymous(String moduleKey, String userUidOrLogin) throws Exception {
-        if(User.BIO_ANONYMOUS_USER_LOGIN.equals(userUidOrLogin.toLowerCase())) {
+    private BioSecurityModule _securityModule = null;
+    private BioSecurityModule getSecurityModule() throws Exception {
+        if(_securityModule != null)
+            return _securityModule;
+        LOG.debug("getting module {}...", securityModuleKey);
+        _securityModule = moduleProvider.getSecurityModule(securityModuleKey);
+        if(_securityModule != null) {
+            LOG.debug("module {} found!", securityModuleKey);
+        } else
+            LOG.debug("module {} not found!", securityModuleKey);
+        return _securityModule;
+    }
+
+    private Boolean detectAnonymous(String userUid) throws Exception {
+        if(User.BIO_ANONYMOUS_USER_LOGIN.equals(userUid.toLowerCase())) {
             // Используется для открытых пространств
-            User usr = userIsOnline(moduleKey, User.BIO_ANONYMOUS_USER_LOGIN);
-            if(usr == null) {
-                usr = new User();
-                usr.setModuleKey(moduleKey);
-                usr.setUid(User.BIO_ANONYMOUS_USER_LOGIN);
-                usr.setLogin(User.BIO_ANONYMOUS_USER_LOGIN);
-                usr.setFio("Anonymous User");
-                usr.setRoles("*");
-                usr.setGrants("*");
-                storeUser(usr);
+            Boolean userIsOnline = userIsOnline(User.BIO_ANONYMOUS_USER_LOGIN);
+            if(!userIsOnline) {
+                storeUser(User.BIO_ANONYMOUS_USER_LOGIN);
             }
-            return usr;
+            return true;
         }
-        return null;
+        return false;
     }
 
     @Override
-    public User getUser(final String moduleKey, final String userUid) throws Exception {
+    public User getUser(final String userUid) throws Exception {
         if(isNullOrEmpty(userUid))
             throw new BioError.Login.BadLogin();
 
-        User anonymousUser = detectAnonymous(moduleKey, userUid);
-        if(anonymousUser != null) {
-            LOG.debug("Anonymouse User with uid \"{}\" logged in.", userUid);
-            return anonymousUser;
+        Boolean anonymousUserIsOk = detectAnonymous(userUid);
+        if(anonymousUserIsOk) {
+            LOG.debug("Anonymous User with uid \"{}\" logged in.", userUid);
+            return getSecurityModule().getUser(userUid);
         }
 
-        User onlineUser = userIsOnline(moduleKey, userUid);
-        if(onlineUser != null){
-            LOG.debug("User with uid \"{}\" alredy logged in as \"{}\".", userUid, onlineUser.getLogin());
-            return onlineUser;
+        Boolean userIsOnline = userIsOnline(userUid);
+        if(userIsOnline){
+            LOG.debug("User with uid \"{}\" already logged in.", userUid);
+            return getSecurityModule().getUser(userUid);
         } else
             throw new BioError.Login.LoginExpired();
     }
 
-    private User _login(final BioModule module, final String login) throws Exception {
-        if(isNullOrEmpty(login))
-            throw new BioError.Login.BadLogin();
-
-        final String moduleKey = module.getKey();
-        final BioCursor cursor = module.getCursor("bio.get-user");
-        final SQLContext sqlContext = module.getSQLContext();
-        try {
-            User newUsr = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
-                @Override
-                public User exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                    LOG.debug("User {} logging in...", login);
-                    cur.getSelectSqlDef().setParamValue("p_login", login);
-                    try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams())
-                            .open()) {
-                        if (c.reader().next()) {
-                            User usr = new User();
-                            usr.setModuleKey(moduleKey);
-                            usr.setUid(c.reader().getValue("usr_uid", String.class));
-                            usr.setLogin(c.reader().getValue("usr_login", String.class));
-                            usr.setFio(c.reader().getValue("usr_fio", String.class));
-                            usr.setEmail(c.reader().getValue("email_addr", String.class));
-                            usr.setPhone(c.reader().getValue("usr_phone", String.class));
-                            usr.setOrgId(c.reader().getValue("org_id", String.class));
-                            usr.setOrgName(c.reader().getValue("org_name", String.class));
-                            usr.setOrgDesc(c.reader().getValue("org_desc", String.class));
-                            usr.setRoles(c.reader().getValue("usr_roles", String.class));
-                            usr.setGrants(c.reader().getValue("usr_grants", String.class));
-                            LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
-                            return usr;
-                        }
-                    }
-                    LOG.debug("User not found!");
-                    return null;
-                }
-            }, cursor);
-            return newUsr;
-        } catch (SQLException ex) {
-            switch (ex.getErrorCode()) {
-                case 20401:
-                    throw new BioError.Login.BadLogin();
-                case 20402:
-                    throw new BioError.Login.UserBlocked();
-                case 20403:
-                    throw new BioError.Login.UserNotConfirmed();
-                case 20404:
-                    throw new BioError.Login.UserDeleted();
-                default:
-                    throw ex;
-            }
-        }
-    }
-
     @Override
-    public User login(final String moduleKey, final String login) throws Exception {
+    public User login(final String login) throws Exception {
         if(isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
 
-        User anonymousUser = detectAnonymous(moduleKey, login);
-        if(anonymousUser != null) {
-            LOG.debug("Anonymouse User with login \"{}\" logged in.", login);
-            return anonymousUser;
+        Boolean anonymousUserIsOk = detectAnonymous(login);
+        if(anonymousUserIsOk) {
+            LOG.debug("Anonymous User with login \"{}\" logged in.", login);
+            return getSecurityModule().getUser(login);
         }
 
 //        if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
@@ -178,22 +131,16 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
 //            return usr;
 //        }
 
-        LOG.debug("getting module {}...", moduleKey);
-        final BioModule module = moduleProvider.getModule(moduleKey);
-        if(module != null)
-            LOG.debug("module {} assigned!", moduleKey);
-        else
-            LOG.debug("module {} not found!", moduleKey);
-        User newUsr = _login(module, login);
+        User newUsr = getSecurityModule().login(login);
         if(newUsr == null)
             throw new BioError.Login.BadLogin();
-        storeUser(newUsr);
+        storeUser(newUsr.getUid());
         return newUsr;
     }
 
     @Override
-    public void logoff(final String moduleKey, final String uid) throws Exception {
-        removeUser(moduleKey, uid);
+    public void logoff(final String uid) throws Exception {
+        removeUser(uid);
     }
 
     @Validate
@@ -205,16 +152,16 @@ public class SecurityHandlerImpl extends BioServiceBase implements SecurityHandl
 
     @Invalidate
     public void doStop() throws Exception {
-        LOG.debug("Stoping...");
+        LOG.debug("Stopping...");
         this.ready = false;
-        LOG.debug("Stoped.");
+        LOG.debug("Stopped.");
     }
 
     @Subscriber(
             name="crud.handler.subscriber",
             topics="bio-config-updated")
     public void receive(Event e) throws Exception {
-        LOG.debug("Config updated event recived!!!");
+        LOG.debug("Config updated event received!!!");
 //        doStop();
 //        doStart();
     }

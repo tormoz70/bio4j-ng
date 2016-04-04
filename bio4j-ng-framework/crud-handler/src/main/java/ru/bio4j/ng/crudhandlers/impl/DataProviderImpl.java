@@ -37,18 +37,18 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     @Requires
     private SQLContextProvider sqlContextProvider;
 
-    private BioModule getActualModule(final BioRequest request) throws Exception {
+    private BioAppModule getActualModule(final BioRequest request) throws Exception {
         String altModuleKey = Utl.extractModuleKey(request.getBioCode());
         String defaultModuleKey = request.getModuleKey();
         String moduleKey = (Strings.isNullOrEmpty(altModuleKey) ? defaultModuleKey : altModuleKey);
-        return moduleProvider.getModule(moduleKey);
+        return moduleProvider.getAppModule(moduleKey);
     }
 
-    private SQLContext getActualContext(final BioRequest request, final BioModule module) throws Exception {
+    private SQLContext getActualContext(final BioRequest request, final BioAppModule module) throws Exception {
         SQLContext ctx = sqlContextProvider.selectContext(module);
         if (ctx == null) {
             String defaultModuleKey = request.getModuleKey();
-            BioModule ctxModule = moduleProvider.getModule(defaultModuleKey);
+            BioAppModule ctxModule = moduleProvider.getAppModule(defaultModuleKey);
             ctx = sqlContextProvider.selectContext(ctxModule);
         }
         return ctx;
@@ -56,7 +56,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
 
     @Override
     public BioRespBuilder.Builder processRequest(BioRoute route, final BioRequest request) throws Exception {
-        final BioModule module = getActualModule(request);
+        final BioAppModule module = getActualModule(request);
         final SQLContext context = getActualContext(request, module);
         ProviderAn provider = providerMap.get(route);
         if(provider != null) {

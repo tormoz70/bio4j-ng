@@ -3,7 +3,7 @@ package ru.bio4j.ng.model.transport;
 public class User {
 
     public static final String BIO_ANONYMOUS_USER_LOGIN = "$bio-anonymous$";
-    private String moduleKey;
+//    private String moduleKey;
     private String uid;
     private String login;
     private String fio;
@@ -56,13 +56,13 @@ public class User {
         this.grants = grants;
     }
 
-    public String getModuleKey() {
-        return moduleKey;
-    }
+//    public String getModuleKey() {
+//        return moduleKey;
+//    }
 
-    public void setModuleKey(String moduleKey) {
-        this.moduleKey = moduleKey;
-    }
+//    public void setModuleKey(String moduleKey) {
+//        this.moduleKey = moduleKey;
+//    }
 
     public Boolean isAnonymous() {
         return BIO_ANONYMOUS_USER_LOGIN.equals(login);

@@ -4,12 +4,12 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-dba-pgsql</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Direct PostgreSQL Access</name>-->
+
     <properties>
         <!-- oracle -->
         <!--<ojdbc6.version>12.1.0</ojdbc6.version>-->

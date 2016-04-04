@@ -6,12 +6,12 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
+
     <artifactId>bio4j-ng-stypes</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Service Types</name>-->
-    <!--<description>Base Types for services</description>-->
+
     <build>
         <plugins>
             <plugin>

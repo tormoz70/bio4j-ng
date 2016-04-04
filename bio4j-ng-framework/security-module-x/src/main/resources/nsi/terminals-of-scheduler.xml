@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="d:\jdev\workspace\bio4j-ng\app-server\as-distribution-as\src\main\biodef\store-v10.xsd"
+       multiselection="false">
+    <SQL action="select">
+        <text><![CDATA[
+select
+  a.aterminalid,
+  a.aterminalkey,
+  a.ip4addr,
+  a.tstate,
+  a.aname,
+  a.anote,
+  a.addr,
+  a.latitude,
+  a.longitude
+from ATERMINAL a
+    inner join SCHTERM st on st.aterminalid = a.aterminalid
+where not a.isdeleted
+  and st.scheduleid = :scheduleid
+        ]]></text>
+        <param name="scheduleid" type="integer"/>
+    </SQL>
+    <fields>
+        <field name="aterminalid" type="integer" header="ID" pk="true" format="0"/>
+        <field name="aterminalkey" type="string" header="Уникальный ключ" align="left" width="40"/>
+
+        <field name="ip4addr" type="string" header="IP адрес" align="left" width="80"/>
+        <field name="tstate" type="string" header="Состояние" align="left" width="80"/>
+        <field name="aname" type="string" header="Наименование" width="280"/>
+        <field name="anote" type="string" header="Описание" width="280"/>
+        <field name="addr" type="string" header="Расположение" width="150"/>
+    </fields>
+</cursor>

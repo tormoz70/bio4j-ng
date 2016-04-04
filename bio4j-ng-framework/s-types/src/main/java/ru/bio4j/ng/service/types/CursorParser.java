@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.types;
 
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -15,7 +16,10 @@ import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CursorParser {
@@ -241,13 +245,25 @@ public class CursorParser {
 
     }
 
-    public static BioCursor pars(final String bioCode, final Document document) throws Exception {
+    private static String tryLoadSQL(final BundleContext context, final String bioCode, String sqlText) throws Exception {
+        Matcher m = Regexs.match(sqlText, "(?<={text-file:)(\\w|-)+\\.sql(?=})", Pattern.CASE_INSENSITIVE);
+        if(m.find()){
+            String sqlFileName = Utl.normalizePath(Utl.extractBioParentPath(bioCode)) + m.group();
+            URL url = context.getBundle().getResource(sqlFileName);
+            try(InputStream inputStream = url.openStream()) {
+                sqlText = Utl.readStream(inputStream);
+            }
+        }
+        return sqlText;
+    }
+
+    public static BioCursor pars(BundleContext context, final String bioCode, final Document document) throws Exception {
         BioCursor cursor = new BioCursor(bioCode);
         addColsFromXml(cursor, document); // добавляем колонки из XML
         List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
         for (Element sqlElem : sqlTextElems) {
             BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
-            String sql = sqlElem.getTextContent().trim();
+            String sql = tryLoadSQL(context, bioCode, sqlElem.getTextContent().trim());
             BioCursor.SQLDef sqlDef;
             if(curType == BioCursor.Type.SELECT)
                 sqlDef = new BioCursor.SelectSQLDef(sql);

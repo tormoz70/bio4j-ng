@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="false">
+	<SQL action="select">
+		<text><![CDATA[
+                select
+                    usr_uid, usr_login,
+                    fio_fam||' '||fio_name||' '||fio_mname as usr_fio,
+                    email_addr, usr_phone,
+                    org_id, org_name, org_desc,
+                    usr_roles, usr_grants
+                from table(bio_login2.get_usr(:p_login))
+        ]]></text>
+	</SQL>
+ 	<fields>
+        <field name="usr_uid" type="string" pk="true"/>
+        <field name="usr_login" type="string"/>
+        <field name="usr_fio" type="string"/>
+        <field name="email_addr" type="string"/>
+        <field name="usr_phone" type="string"/>
+        <field name="org_id" type="string"/>
+        <field name="org_name" type="string"/>
+        <field name="org_desc" type="string"/>
+        <field name="usr_roles" type="string"/>
+        <field name="usr_grants" type="string"/>
+    </fields>
+</cursor>
+

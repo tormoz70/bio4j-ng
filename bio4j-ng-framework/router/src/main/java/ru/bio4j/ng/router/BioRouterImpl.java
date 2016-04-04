@@ -72,7 +72,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
                     final String moduleKey = request.getModuleKey();
                     final String userUID = request.getUser().getUid();
-                    securityHandler.logoff(moduleKey, userUID);
+                    securityHandler.logoff(userUID);
                     BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser());
                     response.getWriter().append(responseBuilder.json());
                 }
@@ -161,14 +161,14 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         final String moduleKey = request.getParameter(SrvcUtils.QRY_PARAM_NAME_MODULE);
         final String userUID = request.getParameter(SrvcUtils.QRY_PARAM_NAME_UID);
 
-        final User usr = securityHandler.getUser(moduleKey, userUID);
+        final User usr = securityHandler.getUser(userUID);
 
         final String requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
         if(isNullOrEmpty(requestType))
             throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE));
 
-        BioModule bioModule = moduleProvider.getModule(moduleKey);
+        BioAppModule bioModule = moduleProvider.getAppModule(moduleKey);
         if(bioModule == null)
             throw new IllegalArgumentException(String.format("Module with key \"%s\" not registered!", moduleKey));
         BioHttpRequestProcessor requestProcessor = bioModule.getHttpRequestProcessor(requestType);

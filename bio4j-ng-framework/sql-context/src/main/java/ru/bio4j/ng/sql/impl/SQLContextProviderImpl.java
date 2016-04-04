@@ -6,7 +6,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.service.api.BioModule;
+import ru.bio4j.ng.service.api.BioAppModule;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
@@ -25,7 +25,7 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
 //    }
 
     @Override
-    public SQLContext selectContext(BioModule module) throws Exception {
+    public SQLContext selectContext(BioAppModule module) throws Exception {
         LOG.debug("About selecting sqlContext...");
         SQLContext ctx = module.getSQLContext();
         if(ctx == null) {

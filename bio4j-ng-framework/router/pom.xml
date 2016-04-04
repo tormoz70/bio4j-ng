@@ -6,13 +6,12 @@
     <parent>
         <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-router</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio router of remote requests</name>-->
-    <!--<description>Routes remote requests by request type</description>-->
+
     <build>
         <plugins>
             <plugin>

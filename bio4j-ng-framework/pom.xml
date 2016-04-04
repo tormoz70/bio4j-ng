@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.bio4j.ng</groupId>
     <artifactId>bio4j-ng-framework</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <repositories>
         <repository>
@@ -412,6 +412,7 @@
         <module>remote-api-wab</module>
         <!--bio-modules-->
         <module>module-provider</module>
+        <module>security-module-x</module>
 
         <!-- Special services -->
         <!-- Distribution -->

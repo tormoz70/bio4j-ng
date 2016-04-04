@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="d:\jdev\workspace\bio4j-ng\app-server\as-distribution-as\src\main\biodef\store-v10.xsd"
+       multiselection="false">
+    <SQL action="execute"><text>screenplay_del</text></SQL>
+    <fields/>
+</cursor>

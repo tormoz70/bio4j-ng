@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="d:\jdev\workspace\bio4j-ng\app-server\as-distribution-as\src\main\biodef\store-v10.xsd"
+       multiselection="false">
+    <SQL action="select">
+        <text><![CDATA[
+select a.scheduleid, a.aname, a.anote,
+	(select count(1)
+	   from SCHITEM b
+        inner join SCREENPLAY sp on sp.screenplayid = b.screenplayid and not sp.isdeleted
+       where b.scheduleid = a.scheduleid and not b.isdeleted) scrplcnt,
+    (select count(1)
+       from SCHTERM st
+        inner join ATERMINAL t on t.aterminalid = st.aterminalid and not t.isdeleted
+      where st.scheduleid = a.scheduleid) schtermcnt
+  from SCHEDULE a
+ where not isdeleted
+        ]]></text>
+    </SQL>
+    <SQL action="update"><text>schedule_edit</text></SQL>
+    <SQL action="execute"><text>schedule_del</text></SQL>
+    <fields>
+        <field name="scheduleid" type="integer" pk="true" format="0" header="ID"/>
+        <field name="aname" type="string" header="Название" width="200"/>
+        <field name="anote" type="string" header="Описание" width="250" showTooltip="true"/>
+        <field name="scrplcnt" type="integer" header="Кол-во сценариев" width="100"/>
+        <field name="schtermcnt" type="integer" header="Кол-во терминалов" width="100"/>
+    </fields>
+</cursor>

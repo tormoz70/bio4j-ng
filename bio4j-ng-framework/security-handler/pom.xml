@@ -6,13 +6,12 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-security-handler</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Security Handler</name>-->
-    <!--<description>Handles requests for security</description>-->
+    
     <build>
         <plugins>
             <plugin>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="d:\jdev\workspace\bio4j-ng\app-server\as-distribution-as\src\main\biodef\store-v10.xsd"
+       multiselection="false">
+    <SQL action="select">
+        <text><![CDATA[
+select a.schitemid,	a.cronperiod, a.screenplayid,
+    b.aname||' ('||b.anote||') - '||b.filename as screenplay
+  from SCHITEM a
+ inner join SCREENPLAY b on b.screenplayid = a.screenplayid and not b.isdeleted
+  where not a.isdeleted
+	and a.scheduleid = :scheduleid
+        ]]></text>
+        <param name="scheduleid" type="integer"/>
+    </SQL>
+    <SQL action="update"><text>screenplays_edit</text></SQL>
+    <SQL action="delete"><text>screenplays_del</text></SQL>
+    <fields>
+        <field name="schitemid" type="integer" pk="true" format="0" width="50" header="ID"/>
+        <field name="scheduleid" type="integer" hidden="true"/>
+        <field name="cronperiod" type="string" header="Запуск" width="100"/>
+        <field name="screenplayid" type="integer" header="Сценарий" width="250" />
+        <field name="screenplay" type="string" header="Сценарий" width="250" generate="false" />
+    </fields>
+</cursor>

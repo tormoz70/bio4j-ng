@@ -432,15 +432,34 @@ public class Utl {
             return bioCodeParts[0];
         return null;
     }
-    public static String extractBioPath(String bioCode) {
+    public static String extractBioPath(String bioCode, String pathSeparator) {
         String[] bioCodeParts = Strings.split(bioCode, "@");
         if(bioCodeParts.length == 2) {
-            String path = "/" + bioCodeParts[1].replace(".", "/");
+            String path = pathSeparator + bioCodeParts[1].replace(".", pathSeparator);
             return path;
         } else if(bioCodeParts.length == 1) {
-            return "/" + bioCode.replace(".", "/");
+            return pathSeparator + bioCode.replace(".", pathSeparator);
         }
         return null;
+    }
+
+    public static final String DEFAULT_BIO_PATH_SEPARATOR = "/";
+    public static String extractBioPath(String bioCode) {
+        return extractBioPath(bioCode, DEFAULT_BIO_PATH_SEPARATOR);
+    }
+
+    public static String extractBioParentPath(String bioCode, String pathSeparator) {
+        String[] bioCodeParts = Strings.split(bioCode, ".");
+        if(bioCodeParts.length > 1) {
+            bioCodeParts = Arrays.copyOf(bioCodeParts, bioCodeParts.length - 1);
+            bioCode = Strings.combineArray(bioCodeParts, ".");
+            return extractBioPath(bioCode, pathSeparator);
+        }
+        return pathSeparator;
+    }
+
+    public static String extractBioParentPath(String bioCode) {
+        return extractBioParentPath(bioCode, DEFAULT_BIO_PATH_SEPARATOR);
     }
 
     public static Byte[] toObjects(byte[] bytesPrim) {

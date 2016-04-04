@@ -48,9 +48,10 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         URL url = context.getBundle().getResource(path + ".xml");
         if(url != null) {
             LOG.debug("Loading cursor spec from \"{}\"", path + ".xml");
-            InputStream inputStream = url.openStream();
-            Document document = loadDocument(inputStream);
-            cursor = CursorParser.pars(bioCode, document);
+            try(InputStream inputStream = url.openStream()) {
+                Document document = loadDocument(inputStream);
+                cursor = CursorParser.pars(context, bioCode, document);
+            }
         }
         return cursor;
     }
@@ -90,7 +91,10 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
     protected void initSqlContext(Configurator<T> configurator) throws Exception {
         if(sqlContext == null && !localSQLContextIsInited) {
             localSQLContextIsInited = true;
-            sqlContext = createSQLContext(configurator.getConfig());
+            T cfg = configurator.getConfig();
+            if(cfg == null)
+                throw new Exception(String.format("Config not found for module \"%s\"!", this.getKey()));
+            sqlContext = createSQLContext(cfg);
         }
 
     }

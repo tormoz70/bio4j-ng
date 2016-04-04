@@ -198,4 +198,11 @@ public class UtlTest {
         Assert.assertEquals(Utl.fileWithoutExt("d:/qwe.asd/fgh.fgh.txt"), "d:/qwe.asd/fgh.fgh");
     }
 
+    @Test(enabled = true)
+    public void extractBioPathTest() throws Exception {
+        Assert.assertEquals(Utl.extractBioPath("qwe.asd.fgh.fgh"), "/qwe/asd/fgh/fgh");
+        Assert.assertEquals(Utl.extractBioParentPath("qwe.asd.fgh.fgh"), "/qwe/asd/fgh");
+        Assert.assertEquals(Utl.extractBioParentPath("qwe"), "/");
+    }
+
 }

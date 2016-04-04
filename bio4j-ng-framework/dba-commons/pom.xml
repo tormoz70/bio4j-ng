@@ -4,13 +4,11 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-dba-commons</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Data Access Commons</name>-->
-    <!--<description>Data Access Commons for Bio Database API</description>-->
 
     <build>
         <plugins>

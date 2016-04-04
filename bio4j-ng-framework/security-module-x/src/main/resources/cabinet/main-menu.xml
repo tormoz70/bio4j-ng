@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v10.xsd"
+        multiselection="false">
+	<SQL action="select">
+		<text><![CDATA[
+with ugrnts as (
+select
+    row_number() over (order by a.sortord) rnum,
+    '{
+    "xtype": "ekb-main-menu-item",
+    "text": "'||a.grant_desc||'",
+    "id": "'||lower(a.grant_name)||'",
+    "disabled": false
+    }' as json,
+    a.grant_id, a.grant_name, a.grant_desc
+  from UGRANTS a
+ inner join UROLGRNT ug on ug.grant_id = a.grant_id
+ where a.grant_group = 'MAIN-MENU'
+   and trunc(sysdate) between ug.dstart and coalesce(ug.dend, to_date('30000101', 'YYYYMMDD'))
+   and ug.role_id = to_number(:p_sys_curusr_roles)
+)
+select '[' as json from dual
+union all
+select case when rnum = 1 then '' else ',' end||json from ugrnts
+union all
+select ']' as json from dual
+          ]]></text>
+	</SQL>
+    <fields>
+        <field name="grant_id" type="integer" pk="true"/>
+        <field name="grant_name" type="string"/>
+        <field name="grant_desc" type="string"/>
+    </fields>
+</cursor>
+

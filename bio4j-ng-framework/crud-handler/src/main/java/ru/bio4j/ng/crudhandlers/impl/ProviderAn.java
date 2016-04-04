@@ -9,9 +9,8 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.service.api.BioModule;
+import ru.bio4j.ng.service.api.BioAppModule;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
 import java.sql.Connection;
@@ -28,14 +27,14 @@ public abstract class ProviderAn {
 
     protected static final int MAX_RECORDS_FETCH_LIMIT = 500;
 
-    protected BioModule module;
+    protected BioAppModule module;
     protected SQLContext context;
 
     public ProviderAn(){
         LOG = LoggerFactory.getLogger(this.getClass());
     }
 
-    public void init(BioModule module, SQLContext context){
+    public void init(BioAppModule module, SQLContext context){
         this.module = module;
         this.context = context;
     }

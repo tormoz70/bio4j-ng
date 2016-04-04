@@ -23,9 +23,9 @@ public class BioLoginProcessor {
 
         User usr;
         if(!Strings.isNullOrEmpty(uid)) {
-            usr = securityHandler.getUser(prms.moduleKey, uid);
+            usr = securityHandler.getUser(uid);
         } else {
-            usr = securityHandler.login(prms.moduleKey, login);
+            usr = securityHandler.login(login);
         }
         return usr;
     }
