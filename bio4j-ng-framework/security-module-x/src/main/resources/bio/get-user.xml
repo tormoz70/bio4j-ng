@@ -6,12 +6,11 @@
 	<SQL action="select">
 		<text><![CDATA[
                 select
-                    usr_uid, usr_login,
-                    fio_fam||' '||fio_name||' '||fio_mname as usr_fio,
+                    usr_uid, usr_login, usr_fio,
                     email_addr, usr_phone,
-                    org_id, org_name, org_desc,
+                    org_uid, org_name, org_desc,
                     usr_roles, usr_grants
-                from table(bio_login2.get_usr(:p_login))
+                from statm_api.usr_user_get(:p_login)
         ]]></text>
 	</SQL>
  	<fields>
@@ -20,7 +19,7 @@
         <field name="usr_fio" type="string"/>
         <field name="email_addr" type="string"/>
         <field name="usr_phone" type="string"/>
-        <field name="org_id" type="string"/>
+        <field name="org_uid" type="string"/>
         <field name="org_name" type="string"/>
         <field name="org_desc" type="string"/>
         <field name="usr_roles" type="string"/>

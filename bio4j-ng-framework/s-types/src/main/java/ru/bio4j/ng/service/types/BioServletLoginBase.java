@@ -22,9 +22,9 @@ public class BioServletLoginBase extends BioServletBase {
 
     protected BioRespBuilder.LoginBilder doLogin(HttpServletRequest request) throws Exception {
         BioRespBuilder.LoginBilder brsp =  BioRespBuilder.loginBuilder();
-        if(securityHandler == null)
+        if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-        loginProcessor.setSecurityHandler(securityHandler);
+        loginProcessor.setSecurityProvider(securityProvider);
         SrvcUtils.BioQueryParams prms = SrvcUtils.decodeBioQueryParams(request);
 
         User usr = loginProcessor.login(prms);

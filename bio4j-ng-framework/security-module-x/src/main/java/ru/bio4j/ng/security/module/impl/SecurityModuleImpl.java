@@ -10,7 +10,6 @@ import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioSecurityModule;
-import ru.bio4j.ng.service.api.SecurityHandler;
 import ru.bio4j.ng.service.types.BioModuleBase;
 
 import java.sql.Connection;
@@ -32,8 +31,6 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
 
     @Requires
     private EventAdmin eventAdmin;
-    @Requires
-    private SecurityHandler securityHandler;
 
     @Override
     protected EventAdmin getEventAdmin() {
@@ -54,8 +51,8 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     }
 
     protected SQLContext createSQLContext(SQLContextConfig config) throws Exception {
-            return ru.bio4j.ng.database.oracle.SQLContextFactory.create(config);
-//            return ru.bio4j.ng.database.pgsql.SQLContextFactory.create(config);
+            //return ru.bio4j.ng.database.oracle.SQLContextFactory.create(config);
+            return ru.bio4j.ng.database.pgsql.SQLContextFactory.create(config);
     }
 
     private User _getUser(final String loginOrUid) throws Exception {
@@ -81,7 +78,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
                             usr.setFio(c.reader().getValue("usr_fio", String.class));
                             usr.setEmail(c.reader().getValue("email_addr", String.class));
                             usr.setPhone(c.reader().getValue("usr_phone", String.class));
-                            usr.setOrgId(c.reader().getValue("org_id", String.class));
+                            usr.setOrgId(c.reader().getValue("org_uid", String.class));
                             usr.setOrgName(c.reader().getValue("org_name", String.class));
                             usr.setOrgDesc(c.reader().getValue("org_desc", String.class));
                             usr.setRoles(c.reader().getValue("usr_roles", String.class));
@@ -155,7 +152,4 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
         LOG.debug("Started");
     }
 
-    public SecurityHandler getSecurityHandler() {
-        return securityHandler;
-    }
 }

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.BioRouter;
 import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.DataProvider;
-import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.api.SecurityProvider;
 
 @Component
 //@Provides
@@ -26,7 +26,7 @@ public class RemoteAPIService {
     @Requires
     private BioRouter router;
     @Requires
-    private SecurityHandler securityHandler;
+    private SecurityProvider securityProvider;
     @Requires
     private ConfigProvider configProvider;
 

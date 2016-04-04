@@ -116,4 +116,19 @@ public class RegexUtlTest {
         String preparedQuery = Regexs.replace(sql, "\\Q:"+paramName+"\\E\\b", "?", Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
         Assert.assertEquals(preparedQuery, sql1);
     }
+
+    @Test
+    public void testFindTextFileRef() throws Exception {
+        String sqlText = "<SQL action=\"select\">\n" +
+                "    <text><![CDATA[{text-file:film.sql}]]></text>\n" +
+                "    <param type=\"string\" name=\"film_name\"/>\n" +
+                "</SQL>";
+        Matcher m = Regexs.match(sqlText, "(?<=\\{text-file:)(\\w|-)+\\.sql(?=\\})", Pattern.CASE_INSENSITIVE);
+        if(m.find()) {
+            String fn = m.group();
+            Assert.assertEquals("film.sql", fn);
+        } else
+            Assert.fail();
+    }
+
 }

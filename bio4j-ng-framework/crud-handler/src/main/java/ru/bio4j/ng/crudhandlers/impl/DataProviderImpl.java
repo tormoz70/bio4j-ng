@@ -31,7 +31,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private BundleContext bundleContext;
 
     @Requires
-    private SecurityHandler securityHandler;
+    private SecurityProvider securityProvider;
     @Requires
     private ModuleProvider moduleProvider;
     @Requires

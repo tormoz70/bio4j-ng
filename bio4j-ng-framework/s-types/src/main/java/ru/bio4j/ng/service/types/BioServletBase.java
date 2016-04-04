@@ -8,7 +8,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.ConfigProvider;
-import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.api.SecurityProvider;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -28,7 +28,7 @@ public class BioServletBase extends HttpServlet {
 
     protected boolean bioDebug = false;
 
-    protected SecurityHandler securityHandler;
+    protected SecurityProvider securityProvider;
     protected ConfigProvider configProvider;
 
     public BioServletBase() {
@@ -43,14 +43,14 @@ public class BioServletBase extends HttpServlet {
                 configProvider = null;
             }
         }
-        if(securityHandler == null) {
+        if(securityProvider == null) {
             try {
-                securityHandler = Utl.getService(servletContext, SecurityHandler.class);
+                securityProvider = Utl.getService(servletContext, SecurityProvider.class);
             } catch (IllegalStateException e) {
-                securityHandler = null;
+                securityProvider = null;
             }
         }
-        if(securityHandler == null)
+        if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
         if(configProvider == null)
             throw new IllegalArgumentException("ConfigProvider not defined!");

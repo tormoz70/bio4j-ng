@@ -10,7 +10,7 @@ import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.api.SecurityProvider;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -68,16 +68,16 @@ public class WarSecurityFilterBase implements Filter {
         debug("init - done.");
     }
 
-    protected SecurityHandler securityHandler;
+    protected SecurityProvider securityProvider;
     protected void initSecurityHandler(ServletContext servletContext) {
-        if(securityHandler == null) {
+        if(securityProvider == null) {
             try {
-                securityHandler = Utl.getService(servletContext, SecurityHandler.class);
+                securityProvider = Utl.getService(servletContext, SecurityProvider.class);
             } catch (IllegalStateException e) {
-                securityHandler = null;
+                securityProvider = null;
             }
         }
-        loginProcessor.setSecurityHandler(securityHandler);
+        loginProcessor.setSecurityProvider(securityProvider);
     }
 
     private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -119,7 +119,7 @@ public class WarSecurityFilterBase implements Filter {
             initSecurityHandler(req.getServletContext());
             final SrvcUtils.BioQueryParams prms = SrvcUtils.decodeBioQueryParams(req);
             final boolean weAreInPublicAreas = detectWeAreInPublicAreas(prms.bioCode);
-            if (securityHandler != null) {
+            if (securityProvider != null) {
                 User user = loginProcessor.login(prms);
                 if (user.isAnonymous() && !weAreInPublicAreas) {
                     debug("Anonymous not in public area for bioCode \"{}\"!", prms.bioCode);
