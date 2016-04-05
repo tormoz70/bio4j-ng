@@ -156,8 +156,8 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
             topics="bio-config-updated")
     public void receive(Event e) throws Exception {
         LOG.debug("Config updated event received!!!");
-        doStop();
-        doStart();
+        //doStop();
+        //doStart();
     }
 
 }

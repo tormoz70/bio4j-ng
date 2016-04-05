@@ -248,7 +248,7 @@ public class CursorParser {
     private static String tryLoadSQL(final BundleContext context, final String bioCode, String sqlText) throws Exception {
         Matcher m = Regexs.match(sqlText, "(?<=\\{text-file:)(\\w|-)+\\.sql(?=\\})", Pattern.CASE_INSENSITIVE);
         if(m.find()){
-            String sqlFileName = Utl.normalizePath(Utl.extractBioParentPath(bioCode)) + m.group();
+            String sqlFileName = Utl.extractBioParentPath(bioCode) + Utl.DEFAULT_BIO_PATH_SEPARATOR + m.group();
             URL url = context.getBundle().getResource(sqlFileName);
             try(InputStream inputStream = url.openStream()) {
                 sqlText = Utl.readStream(inputStream);
