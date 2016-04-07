@@ -13,6 +13,7 @@ import ru.bio4j.ng.database.api.*;
 //import ru.bio4j.ng.database.pgsql.SQLContextFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
 import ru.bio4j.ng.service.api.Configurator;
@@ -62,9 +63,9 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         for(BioCursor.SQLDef sqlDef : sqlDefs) {
             if(sqlDef != null)
                 try (Paramus p = Paramus.set(sqlDef.getParams())) {
-                    p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getUid(), true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getUid(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
                 }
         }
     }
