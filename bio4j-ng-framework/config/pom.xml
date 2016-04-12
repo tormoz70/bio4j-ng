@@ -6,7 +6,7 @@
     <parent>
         <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>0.5-SNAPSHOT</version>
+        <version>1.3</version>
     </parent>
 
     <artifactId>bio4j-ng-config</artifactId>
