@@ -6,7 +6,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.service.api.BioModule;
+import ru.bio4j.ng.service.api.BioAppModule;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
@@ -25,7 +25,7 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
 //    }
 
     @Override
-    public SQLContext selectContext(BioModule module) throws Exception {
+    public SQLContext selectContext(BioAppModule module) throws Exception {
         LOG.debug("About selecting sqlContext...");
         SQLContext ctx = module.getSQLContext();
         if(ctx == null) {
@@ -44,8 +44,8 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
     public void doStart() throws Exception {
         LOG.debug("Starting...");
 
-        if(!configProvider.configIsRedy()) {
-            LOG.info("Config is not redy! Waiting...");
+        if(!configProvider.configIsReady()) {
+            LOG.info("Config is not ready! Waiting...");
             return;
         }
 
@@ -62,14 +62,14 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
 //
 //        }
 
-        this.redy = true;
+        this.ready = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void doStop() throws Exception {
         LOG.debug("Stoping...");
-        this.redy = false;
+        this.ready = false;
         LOG.debug("Stoped.");
     }
 

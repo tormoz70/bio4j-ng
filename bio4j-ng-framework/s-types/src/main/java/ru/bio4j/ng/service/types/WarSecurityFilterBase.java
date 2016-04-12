@@ -10,7 +10,7 @@ import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.SecurityHandler;
+import ru.bio4j.ng.service.api.SecurityProvider;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -68,26 +68,26 @@ public class WarSecurityFilterBase implements Filter {
         debug("init - done.");
     }
 
-    protected SecurityHandler securityHandler;
+    protected SecurityProvider securityProvider;
     protected void initSecurityHandler(ServletContext servletContext) {
-        if(securityHandler == null) {
+        if(securityProvider == null) {
             try {
-                securityHandler = Utl.getService(servletContext, SecurityHandler.class);
+                securityProvider = Utl.getService(servletContext, SecurityProvider.class);
             } catch (IllegalStateException e) {
-                securityHandler = null;
+                securityProvider = null;
             }
         }
-        loginProcessor.setSecurityHandler(securityHandler);
+        loginProcessor.setSecurityProvider(securityProvider);
     }
 
     private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (user != null) {
             Map<String, String[]> extraParams = new TreeMap<>();
             extraParams.putAll(request.getParameterMap());
-            extraParams.put(BioServletBase.QRY_PARAM_NAME_UID, new String[] {user.getUid()});
+            extraParams.put(SrvcUtils.QRY_PARAM_NAME_UID, new String[] {user.getUid()});
             return new BioWrappedRequest(request, extraParams);
         } else {
-            BioServletBase.writeError(BioRespBuilder.anError().exception(new BioError.Login.BadLogin()), response, bioDebug);
+            BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(new BioError.Login.BadLogin()), response, bioDebug);
             return request;
         }
     }
@@ -98,7 +98,7 @@ public class WarSecurityFilterBase implements Filter {
 
     private void processBadLoginError(final HttpServletResponse resp) throws IOException {
         BioError.Login.BadLogin e = new BioError.Login.BadLogin();
-        BioServletBase.writeError(BioRespBuilder.anError().exception(e), resp, bioDebug);
+        BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(e), resp, bioDebug);
         log_error("An error while checking User!", e);
 
     }
@@ -117,9 +117,9 @@ public class WarSecurityFilterBase implements Filter {
             debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
             initSecurityHandler(req.getServletContext());
-            final BioServletBase.BioQueryParams prms = BioServletBase.decodeBioQueryParams(req);
+            final SrvcUtils.BioQueryParams prms = SrvcUtils.decodeBioQueryParams(req);
             final boolean weAreInPublicAreas = detectWeAreInPublicAreas(prms.bioCode);
-            if (securityHandler != null) {
+            if (securityProvider != null) {
                 User user = loginProcessor.login(prms);
                 if (user.isAnonymous() && !weAreInPublicAreas) {
                     debug("Anonymous not in public area for bioCode \"{}\"!", prms.bioCode);
@@ -146,7 +146,7 @@ public class WarSecurityFilterBase implements Filter {
                                     chn.doFilter(wrappedRequest, resp);
                                 }
                             } else {
-                                BioServletBase.writeError(BioRespBuilder.anError().exception(bresp.getException()), resp, bioDebug);
+                                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(bresp.getException()), resp, bioDebug);
                                 log_error("An error while checking User!", bresp.getException());
                             }
                         }
@@ -157,7 +157,7 @@ public class WarSecurityFilterBase implements Filter {
             }
 
         } catch (Exception e) {
-            BioServletBase.writeError(BioRespBuilder.anError().exception(BioError.wrap(e)), resp, bioDebug);
+            BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
             log_error("Unexpected error while filtering (Level-1)!", e);
         }
     }

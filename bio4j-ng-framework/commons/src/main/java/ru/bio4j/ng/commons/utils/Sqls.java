@@ -8,10 +8,11 @@ import java.util.regex.Pattern;
 public class Sqls {
 
     public static String deleteNonSQLSubstringsInSQL(String sql) {
-        sql = Regexs.replace(sql, "(['])(.*?)\\1", "", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL); // replace string consts by placeholders
-        sql = Regexs.replace(sql, "([\"])(.*?)\\1", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE); // replace double quoted string by placeholders
-        sql = Regexs.replace(sql, "--.*$", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE); // replace singleline comments
-        sql = Regexs.replace(sql, "\\/\\*.*\\*\\/", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE + Pattern.DOTALL); // replace multiline comments
+        //sql = Regexs.replace(sql, "(')(.*?)\\1", "", Pattern.MULTILINE); // replace string consts by placeholders
+        //sql = Regexs.replace(sql, "(\")(.*?)\\1", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE); // replace double quoted string by placeholders
+        //sql = Regexs.replace(sql, "--.*$", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE); // replace singleline comments
+        //sql = Regexs.replace(sql, "\\/\\*.*\\*\\/", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE + Pattern.DOTALL); // replace multiline comments
+        sql = Regexs.replace(sql, "(\\/\\*([^*]|[\\r\\n]|(\\*+([^*\\/]|[\\r\\n])))*\\*+\\/)|'(?:[^']|'')*'|(--.*)", "", Pattern.MULTILINE);
         sql = Regexs.replace(sql, ":=", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE + Pattern.DOTALL); // replace multiline comments
         return sql;
     }

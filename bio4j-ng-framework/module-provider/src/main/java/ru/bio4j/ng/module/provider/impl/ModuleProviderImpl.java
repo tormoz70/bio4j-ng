@@ -6,8 +6,10 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.module.commons.BioModuleHelper;
 import ru.bio4j.ng.service.api.BioModule;
+import ru.bio4j.ng.service.api.BioSecurityModule;
+import ru.bio4j.ng.service.types.BioModuleHelper;
+import ru.bio4j.ng.service.api.BioAppModule;
 import ru.bio4j.ng.service.api.ModuleProvider;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
@@ -24,13 +26,12 @@ public class ModuleProviderImpl extends BioServiceBase implements ModuleProvider
     private BundleContext bundleContext;
     private Map<String, BioModule> modules = new HashMap<>();
 
-    @Override
-    public BioModule getModule(String key) throws Exception {
+    private <T extends BioModule> T getModule(String key, Class<T> clazz) throws Exception {
         LOG.debug("About getModule by key - \"{}\"...", key);
-        BioModule rslt = modules.get(key);
+        T rslt = (T)modules.get(key);
         if(rslt == null) {
             LOG.debug("Module \"{}\" not in cache, searching...", key);
-            rslt = BioModuleHelper.lookupService(bundleContext, key);
+            rslt = BioModuleHelper.lookupService(bundleContext, clazz, key);
             modules.put(key, rslt);
             LOG.debug("Module \"{}\" found and putted in cache.", key);
         } else
@@ -38,17 +39,27 @@ public class ModuleProviderImpl extends BioServiceBase implements ModuleProvider
         return rslt;
     }
 
+    @Override
+    public BioAppModule getAppModule(String key) throws Exception {
+        return getModule(key, BioAppModule.class);
+    }
+
+    @Override
+    public BioSecurityModule getSecurityModule(String key) throws Exception {
+        return getModule(key, BioSecurityModule.class);
+    }
+
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
-        this.redy = true;
+        this.ready = true;
         LOG.debug("Started");
     }
 
     @Invalidate
     public void doStop() throws Exception {
         LOG.debug("Stoping...");
-        this.redy = false;
+        this.ready = false;
         LOG.debug("Stoped.");
     }
 

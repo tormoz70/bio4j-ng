@@ -357,7 +357,7 @@ public class Paramus implements Closeable {
 		return setList(names, values, csDefaultDelimiter);
 	}
 
-    public Paramus setValue(String name, Object value, boolean addIfNotExists) {
+    public Paramus setValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
         Param param = this.getParam(name);
         if(param != null) {
             MetaType paramType = param.getType();
@@ -368,6 +368,8 @@ public class Paramus implements Closeable {
             } catch (ConvertValueException e) {
                 throw new IllegalArgumentException(String.format("Cannot set value \"%s\" to parameter \"%s[%s]\"!", ""+value, name, paramType.name()));
             }
+            if(direction != Param.Direction.UNDEFINED)
+                param.setDirection(direction);
         } else {
             if(addIfNotExists) {
                 MetaType valueType = MetaTypeConverter.read(value != null ? value.getClass() : String.class);
@@ -375,11 +377,16 @@ public class Paramus implements Closeable {
                         .name(name)
                         .value(value)
                         .type(valueType)
+                        .direction(direction)
                         .build());
             }
         }
         return this;
     }
+    public Paramus setValue(String name, Object value, boolean addIfNotExists) {
+        return setValue(name, value, Param.Direction.UNDEFINED, addIfNotExists);
+    }
+
     public Paramus setValue(String name, Object value) {
         return setValue(name, value, true);
     }

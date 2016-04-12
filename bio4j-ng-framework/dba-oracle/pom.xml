@@ -4,13 +4,12 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-dba-oracle</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Direct Oracle Access</name>-->
-    <!--<description>Direct Oracle implementasion of Bio Database API</description>-->
+
     <build>
         <plugins>
             <plugin>

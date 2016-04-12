@@ -1,26 +1,21 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.SecurityHandler;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import ru.bio4j.ng.service.api.SecurityProvider;
 
 public class BioLoginProcessor {
 
-    private SecurityHandler securityHandler;
+    private SecurityProvider securityProvider;
 
-    public void setSecurityHandler(SecurityHandler securityHandler) {
-        this.securityHandler = securityHandler;
+    public void setSecurityProvider(SecurityProvider securityProvider) {
+        this.securityProvider = securityProvider;
     }
 
-    public User login(BioServletBase.BioQueryParams prms) throws Exception {
-        BioRespBuilder.Login brsp =  BioRespBuilder.login();
-        if(securityHandler == null)
+    public User login(SrvcUtils.BioQueryParams prms) throws Exception {
+        BioRespBuilder.LoginBilder brsp =  BioRespBuilder.loginBuilder();
+        if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 
         final String uid = prms.loginOrUid.contains("/") ? null : prms.loginOrUid;
@@ -28,9 +23,9 @@ public class BioLoginProcessor {
 
         User usr;
         if(!Strings.isNullOrEmpty(uid)) {
-            usr = securityHandler.getUser(prms.moduleKey, uid);
+            usr = securityProvider.getUser(uid);
         } else {
-            usr = securityHandler.login(prms.moduleKey, login);
+            usr = securityProvider.login(login);
         }
         return usr;
     }

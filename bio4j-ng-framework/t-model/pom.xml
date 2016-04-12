@@ -6,12 +6,11 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
 		<artifactId>bio4j-ng-framework</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
     <artifactId>bio4j-ng-tmodel</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Transport Model</name>-->
-    <!--<description>Transport model for clients interaction</description>-->
+
     <build>
         <plugins>
             <plugin>

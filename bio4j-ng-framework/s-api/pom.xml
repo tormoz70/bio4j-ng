@@ -6,12 +6,12 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
+
     <artifactId>bio4j-ng-sapi</artifactId>
     <packaging>bundle</packaging>
-    <!--<name>Bio Service API</name>-->
-    <!--<description>API all framework services</description>-->
+
     <build>
         <plugins>
             <plugin>
@@ -33,6 +33,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>flexjson</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
