@@ -62,7 +62,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.PING, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
-                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser());
+                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
@@ -73,7 +73,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                     final String moduleKey = request.getModuleKey();
                     final String userUID = request.getUser().getUid();
                     securityProvider.logoff(userUID);
-                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser());
+                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
