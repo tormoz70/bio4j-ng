@@ -443,4 +443,33 @@ public class SQLFactoryTest {
         String msg = r.getMessage();
         LOG.debug(msg);
     }
+
+    @Test(enabled = false)
+    public void testSQLCommandOpenCursor2() {
+        try {
+            Double dummysum = 0.0;
+            byte[] schema = context.execBatch(new SQLActionScalar<byte[]>() {
+                @Override
+                public byte[] exec(SQLContext context, Connection conn) throws Exception {
+                    byte[] schema = null;
+                    String sql = "";
+                    try(SQLCursor c = context.createCursor()
+                            .init(conn, sql, null).open();){
+                        while(c.reader().next()){
+                            if(schema == null){
+                                schema = c.reader().getValue("XSD_BODY", byte[].class);
+                            }
+                        }
+                    }
+                    return schema;
+                }
+            });
+            Assert.assertTrue(schema.length > 0);
+        } catch (Exception ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+
+    }
+
 }

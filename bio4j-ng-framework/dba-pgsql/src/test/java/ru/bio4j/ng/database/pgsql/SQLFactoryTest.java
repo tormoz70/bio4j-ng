@@ -26,7 +26,7 @@ public class SQLFactoryTest {
 //    private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@stat4-ora-dev:1521:MICEXDB";
     private static final String testDBDriverName = "org.postgresql.Driver";
-    private static final String testDBUrl = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String testDBUrl = "jdbc:postgresql://192.168.50.47:5432/postgres";
 
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
@@ -343,7 +343,7 @@ public class SQLFactoryTest {
             }, "AnContext");
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
-            Assert.assertEquals(ex.getCause().getMessage(), "ОШИБКА: FTW");
+            Assert.assertEquals(ex.getCause().getMessage(), "ERROR: FTW");
         }
     }
     
