@@ -2,11 +2,9 @@ package ru.bio4j.ng.database.commons;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,10 +18,10 @@ public class someTests {
     @Test
     public void namedStatementTest() throws Exception {
         Map<String, int[]> indexMap = new HashMap();
-        String parsedQuery = NamedParametersStatement.parse("asdasd :ert SELECT :method_name \"sdf :sdf\" pg_get_function_identity_" +
-                " asdasdasd /* :dfgdfgdg*/ fghfghfh\n"+
-                " asdasdasd -- :dfgdfgdg\n"+
-                "arguments(:method_name::regproc) :ert as rslt :method_name1", indexMap);
+        String parsedQuery = DbNamedParametersStatement.parse("asdasd :ert SELECT :method_name \"sdf :sdf\" pg_get_function_identity_" +
+                " asdasdasd /* :dfgdfgdg*/ fghfghfh\n" +
+                " asdasdasd -- :dfgdfgdg\n" +
+                "arguments(:method_name::regproc) :ert as rslt :method_name1", null, indexMap);
         Assert.assertEquals(parsedQuery, "asdasd ? SELECT ? \"sdf :sdf\" pg_get_function_identity_ asdasdasd /* :dfgdfgdg*/ fghfghfh\n" +
                 " asdasdasd -- :dfgdfgdg\n" +
                 "arguments(?::regproc) ? as rslt ?");

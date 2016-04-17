@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
@@ -44,7 +43,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
             params = p.get();
         }
         preparedSQL = String.format("{call %s}", sp.getSignature());
-        preparedStatement = NamedParametersStatement.prepareCall(this.connection, this.preparedSQL);
+        preparedStatement = DbNamedParametersStatement.prepareCall(this.connection, this.preparedSQL);
         preparedStatement.setQueryTimeout(this.timeout);
 	}
 	

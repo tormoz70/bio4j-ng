@@ -450,7 +450,7 @@ public class SQLFactoryTest {
 
             SQLContext contextLocal = DbContextAbstract.create(
                     SQLConnectionPoolConfig.builder()
-                            .poolName("TEST-CONN-POOL")
+                            .poolName("TEST-CONN-POOL-123")
                             .dbDriverName(testDBDriverName)
                             .dbConnectionUrl(testDBUrl)
                             .dbConnectionUsr("GIVCADMIN")

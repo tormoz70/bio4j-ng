@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
 import ru.bio4j.ng.model.transport.Param;
 
 /**
@@ -22,7 +21,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 	protected List<Param> params = null;
     protected int timeout = 60;
     protected Connection connection = null;
-    protected NamedParametersStatement preparedStatement = null;
+    protected SQLNamedParametersStatement preparedStatement = null;
     protected String preparedSQL = null;
 
     protected SQLParamSetter paramSetter;
@@ -121,6 +120,14 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
+    private static String getSQL2Execute(String sql, String params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{DbCommand.Params(before exec): {\n");
+        sb.append(params);
+        sb.append("}}");
+        return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
+    }
+
     protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
         SQLException lastError = null;
         try {
@@ -139,14 +146,14 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
                 this.setParamsToStatement(); // Применяем параметры
 
                 if (action != null) {
-                    LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.params));
+                    LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
                     action.execute(); // Выполняем команду
                 }
 
                 this.getBackOutParams(); // Вытаскиваем OUT-параметры
 
             } catch (SQLException e) {
-                lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
+                lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
                 throw lastError;
             }
         } finally {
@@ -163,7 +170,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
 	@Override
 	public void cancel() throws SQLException {
-        final NamedParametersStatement stmnt = this.getStatement();
+        final SQLNamedParametersStatement stmnt = this.getStatement();
         if(stmnt != null)
             stmnt.cancel();
 	}
@@ -181,7 +188,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 	}
 
 	@Override
-	public NamedParametersStatement getStatement() {
+	public SQLNamedParametersStatement getStatement() {
 		return this.preparedStatement;
 	}
 

@@ -6,13 +6,11 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.model.transport.Param;
 
-import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 public class DbSelectableParamSetter implements SQLParamSetter {
@@ -23,7 +21,7 @@ public class DbSelectableParamSetter implements SQLParamSetter {
 
     @Override
     public void setParamsToStatement(SQLCommand command, List<Param> params) throws Exception {
-        NamedParametersStatement selectable = command.getStatement();
+        SQLNamedParametersStatement selectable = command.getStatement();
         final String sql = command.getPreparedSQL();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         for (int i = 0; i < paramsNames.size(); i++) {

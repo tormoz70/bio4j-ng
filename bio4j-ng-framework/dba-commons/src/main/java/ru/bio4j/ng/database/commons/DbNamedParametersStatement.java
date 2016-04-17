@@ -1,143 +1,90 @@
-package ru.bio4j.ng.database.api;
+package ru.bio4j.ng.database.commons;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 
 import java.io.InputStream;
 import java.sql.*;
-import java.util.*;
 import java.sql.Date;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class NamedParametersStatement implements Statement {
+public class DbNamedParametersStatement implements SQLNamedParametersStatement {
     /** The statement this object is wrapping. */
     private PreparedStatement statement;
 
     /** Maps parameter names to arrays of ints which are the parameter indices.
      */
+    private final List<String> paramNames;
+    private final Map<String, String> paramTypes;
+    private final Map<String, String> outParamTypes;
+    private final Map<String, Object> paramValues;
     private final Map<String, int[]> indexMap;
     private final String parsedQuery;
 
-    private NamedParametersStatement (String query) throws SQLException {
+    private DbNamedParametersStatement(String query) throws SQLException {
+        paramNames = new ArrayList<>();
+        paramTypes = new HashMap();
+        outParamTypes = new HashMap();
+        paramValues = new HashMap();
         indexMap=new HashMap();
-        parsedQuery=parse(query, indexMap);
+        parsedQuery=parse(query, paramNames, indexMap);
+        for (String pn : indexMap.keySet()){
+            paramValues.put(pn, null);
+        }
+    }
+
+    public String getParamsAsString(){
+        if(paramNames != null) {
+            StringBuilder sb = new StringBuilder();
+            int indx = 1;
+            String paramName = null;
+            String paramDir = null;
+            for (String key : paramNames) {
+                paramDir = outParamTypes.containsKey(key.toLowerCase()) ?
+                        String.format("%s(out)(%s)", key.toLowerCase(), outParamTypes.get(key.toLowerCase())) :
+                        String.format("%s(in)(%s)", key.toLowerCase(), paramTypes.get(key.toLowerCase()));
+                paramName = "\t" + Strings.padLeft(""+indx, 4) + "-" + Strings.padRight(paramDir, 50).replace(" ", ".");
+                Strings.append(sb, String.format("%s%s", paramName, "" + paramValues.get(key.toLowerCase())), ";\n");
+                indx++;
+            }
+            return sb.toString() + ";\n";
+        }
+        return null;
     }
 
     public String getParsedQuery(){
         return parsedQuery;
     }
 
-    /**
-     * Creates a NamedParameterStatement.  Wraps a call to
-     * c.{@link Connection#prepareStatement(java.lang.String) prepareStatement}.
-     * @param connection the database connection
-     * @param query      the parameterized query
-     * @throws SQLException if the statement could not be created
-     */
-    public static NamedParametersStatement prepareStatement(Connection connection, String query) throws SQLException {
-        NamedParametersStatement sttmnt = new NamedParametersStatement(query);
+    public static SQLNamedParametersStatement prepareStatement(Connection connection, String query) throws SQLException {
+        DbNamedParametersStatement sttmnt = new DbNamedParametersStatement(query);
         sttmnt.statement=connection.prepareStatement(sttmnt.parsedQuery);
         return sttmnt;
     }
-//    public static NamedParametersStatement prepareStatement(Connection connection, String query, int resultSetType) throws SQLException {
-//        NamedParametersStatement sttmnt = new NamedParametersStatement(connection, query);
-//        sttmnt.statement=connection.prepareStatement(sttmnt.parsedQuery, resultSetType);
-//        return sttmnt;
-//    }
 
-    public static NamedParametersStatement prepareCall(Connection connection, String query) throws SQLException {
-        NamedParametersStatement sttmnt = new NamedParametersStatement(query);
+    public static SQLNamedParametersStatement prepareCall(Connection connection, String query) throws SQLException {
+        DbNamedParametersStatement sttmnt = new DbNamedParametersStatement(query);
         sttmnt.statement=connection.prepareCall(sttmnt.parsedQuery);
         return sttmnt;
     }
 
-    /**
-     * Parses a query with named parameters.  The parameter-index mappings are put into the map, and the
-     * parsed query is returned.  DO NOT CALL FROM CLIENT CODE.  This method is non-private so JUnit code can
-     * test it.
-     * @param query    query to parse
-     * @param paramMap map to hold parameter-index mappings
-     * @return the parsed query
-     */
-    public static final String parse_old(String query, Map paramMap) {
-        // I was originally using regular expressions, but they didn't work well for ignoring
-        // parameter-like strings inside quotes.
-        final String doubleDotsPlaceholder = "/$doubleDotsPlaceholder$/";
-        String preparedQuery = Strings.replace(query, "::", doubleDotsPlaceholder);
-        int length=preparedQuery.length();
-        StringBuffer parsedQuery=new StringBuffer(length);
-
-        boolean inSingleQuote=false;
-        boolean inDoubleQuote=false;
-        int index=1;
-
-        for(int i=0;i<length;i++) {
-            char c=preparedQuery.charAt(i);
-            if(inSingleQuote) {
-                if(c=='\'') {
-                    inSingleQuote=false;
-                }
-            } else if(inDoubleQuote) {
-                if(c=='"') {
-                    inDoubleQuote=false;
-                }
-            } else {
-                if(c=='\'') {
-                    inSingleQuote=true;
-                } else if(c=='"') {
-                    inDoubleQuote=true;
-                } else if(c==':' && i+1<length &&
-                        Character.isJavaIdentifierStart(preparedQuery.charAt(i+1))) {
-                    int j=i+2;
-                    while(j<length && Character.isJavaIdentifierPart(preparedQuery.charAt(j))) {
-                        j++;
-                    }
-                    String name=preparedQuery.substring(i+1,j);
-                    c='?'; // replace the parameter with a question mark
-                    i+=name.length(); // skip past the end if the parameter
-
-                    List indexList=(List)paramMap.get(name);
-                    if(indexList==null) {
-                        indexList=new LinkedList();
-                        paramMap.put(name, indexList);
-                    }
-                    indexList.add(new Integer(index));
-
-                    index++;
-                }
-            }
-            parsedQuery.append(c);
-        }
-
-        // replace the lists of Integer objects with arrays of ints
-        for(Iterator itr=paramMap.entrySet().iterator(); itr.hasNext();) {
-            Map.Entry entry=(Map.Entry)itr.next();
-            List list=(List)entry.getValue();
-            int[] indexes=new int[list.size()];
-            int i=0;
-            for(Iterator itr2=list.iterator(); itr2.hasNext();) {
-                Integer x=(Integer)itr2.next();
-                indexes[i++]=x.intValue();
-            }
-            entry.setValue(indexes);
-        }
-
-        String unpreparedQuery = Strings.replace(parsedQuery.toString(), doubleDotsPlaceholder, "::");
-        return unpreparedQuery;
-    }
-
-    public static final String parse(String query, Map paramMap) {
+    public static final String parse(String query, List paramNames, Map paramMap) {
         final String doubleDotsPlaceholder = "/$doubleDotsPlaceholder$/";
         final String assignsPlaceholder = "/$assignsPlaceholder$/";
         String preparedQuery = Strings.replace(query, "::", doubleDotsPlaceholder);
         preparedQuery = Strings.replace(preparedQuery, ":=", assignsPlaceholder);
         String clearQuery = Sqls.deleteNonSQLSubstringsInSQL(preparedQuery);
 
-        List<String> paramNames = Sqls.extractParamNamesFromSQL(clearQuery);
+        List<String> paramNamesList = Sqls.extractParamNamesFromSQL(clearQuery);
+        if(paramNames != null) {
+            paramNames.clear();
+            paramNames.addAll(paramNamesList);
+        }
 
         final String r = "\\:\\b[\\w\\#\\$]+";
         Matcher m = Regexs.match(clearQuery, r, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
@@ -148,7 +95,7 @@ public class NamedParametersStatement implements Statement {
             List indexList=(List)paramMap.get(paramName);
             if(indexList==null) {
                 indexList=new LinkedList();
-                paramMap.put(paramName, indexList);
+                paramMap.put(paramName.toLowerCase(), indexList);
             }
             indexList.add(new Integer(indx));
 
@@ -168,7 +115,7 @@ public class NamedParametersStatement implements Statement {
             entry.setValue(indexes);
         }
 
-        for(String paramName : paramNames){
+        for(String paramName : paramNamesList){
             preparedQuery = Regexs.replace(preparedQuery, "\\Q:"+paramName+"\\E\\b", "?", Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
         }
 
@@ -178,35 +125,24 @@ public class NamedParametersStatement implements Statement {
 
     }
 
-
-    /**
-     * Returns the indexes for a parameter.
-     * @param name parameter name
-     * @return parameter indexes
-     * @throws IllegalArgumentException if the parameter does not exist
-     */
     private int[] getIndexes(String name) {
-        int[] indexes=indexMap.get(name);
+        int[] indexes=indexMap.get(name.toLowerCase());
         if(indexes==null) {
-            throw new IllegalArgumentException("Parameter not found: "+name);
+            throw new IllegalArgumentException("Parameter not found: "+name.toLowerCase());
         }
         return indexes;
     }
 
-
-    /**
-     * Sets a parameter.
-     * @param name  parameter name
-     * @param value parameter value
-     * @throws SQLException if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setObject(int, java.lang.Object)
-     */
+    @Override
     public void setObjectAtName(String name, Object value) throws SQLException {
         setObjectAtName(name, value, -999);
     }
 
+    @Override
     public void setObjectAtName(String name, Object value, int targetSqlType) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(targetSqlType));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             int indx = indexes[i];
@@ -219,72 +155,55 @@ public class NamedParametersStatement implements Statement {
         }
     }
 
-
-
-    /**
-     * Sets a parameter.
-     * @param name  parameter name
-     * @param value parameter value
-     * @throws SQLException if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setString(int, java.lang.String)
-     */
+    @Override
     public void setStringAtName(String name, String value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.VARCHAR));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             statement.setString(indexes[i], value);
         }
     }
 
-
-    /**
-     * Sets a parameter.
-     * @param name  parameter name
-     * @param value parameter value
-     * @throws SQLException if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setInt(int, int)
-     */
+    @Override
     public void setIntAtName(String name, int value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.INTEGER));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             statement.setInt(indexes[i], value);
         }
     }
 
-
-    /**
-     * Sets a parameter.
-     * @param name  parameter name
-     * @param value parameter value
-     * @throws SQLException if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setInt(int, int)
-     */
+    @Override
     public void setLongAtName(String name, long value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.BIGINT));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             statement.setLong(indexes[i], value);
         }
     }
 
-
-    /**
-     * Sets a parameter.
-     * @param name  parameter name
-     * @param value parameter value
-     * @throws SQLException if an error occurred
-     * @throws IllegalArgumentException if the parameter does not exist
-     * @see PreparedStatement#setTimestamp(int, java.sql.Timestamp)
-     */
+    @Override
     public void setTimestampAtName(String name, Timestamp value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.TIMESTAMP));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             statement.setTimestamp(indexes[i], value);
         }
     }
 
+    @Override
     public void setDateAtName(String name, Date value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.DATE));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             statement.setDate(indexes[i], value);
@@ -292,14 +211,21 @@ public class NamedParametersStatement implements Statement {
     }
 
 
+    @Override
     public void setNullAtName(String name) throws SQLException {
+        paramValues.put(name.toLowerCase(), null);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.NULL));
+
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
             statement.setNull(indexes[i], Types.VARCHAR);
         }
     }
 
+    @Override
     public void registerOutParameter(String paramName, int sqlType) throws SQLException {
+        outParamTypes.put(paramName.toLowerCase(), DbUtils.getInstance().getSqlTypeName(sqlType));
+
         if(statement instanceof CallableStatement){
             int[] indexes=getIndexes(paramName);
             for(int i=0; i < indexes.length; i++) {
@@ -308,6 +234,7 @@ public class NamedParametersStatement implements Statement {
         }
     }
 
+    @Override
     public Object getObject(String paramName) throws SQLException {
         if(statement instanceof CallableStatement){
             int[] indexes=getIndexes(paramName);
@@ -318,49 +245,27 @@ public class NamedParametersStatement implements Statement {
         return null;
     }
 
-    /**
-     * Returns the underlying statement.
-     * @return the statement
-     */
+    @Override
     public PreparedStatement getStatement() {
         return statement;
     }
 
 
-    /**
-     * Executes the statement.
-     * @return true if the first result is a {@link ResultSet}
-     * @throws SQLException if an error occurred
-     * @see PreparedStatement#execute()
-     */
+    @Override
     public boolean execute() throws SQLException {
         return statement.execute();
     }
 
 
-    /**
-     * Executes the statement, which must be a query.
-     * @return the query results
-     * @throws SQLException if an error occurred
-     * @see PreparedStatement#executeQuery()
-     */
+    @Override
     public ResultSet executeQuery() throws SQLException {
         return statement.executeQuery();
     }
 
-
-    /**
-     * Executes the statement, which must be an SQL INSERT, UPDATE or DELETE
-     statement;
-     * or an SQL statement that returns nothing, such as a DDL statement.
-     * @return number of rows affected
-     * @throws SQLException if an error occurred
-     * @see PreparedStatement#executeUpdate()
-     */
+    @Override
     public int executeUpdate() throws SQLException {
         return statement.executeUpdate();
     }
-
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
@@ -372,11 +277,6 @@ public class NamedParametersStatement implements Statement {
         return statement.executeUpdate(sql);
     }
 
-    /**
-     * Closes the statement.
-     * @throws SQLException if an error occurred
-     * @see Statement#close()
-     */
     @Override
     public void close() throws SQLException {
         statement.close();
@@ -500,7 +400,7 @@ public class NamedParametersStatement implements Statement {
 
     /**
      * Adds the current set of parameters as a batch entry.
-     * @throws SQLException if something went wrong
+     * @throws java.sql.SQLException if something went wrong
      */
     public void addBatch() throws SQLException {
         statement.addBatch();
@@ -510,9 +410,9 @@ public class NamedParametersStatement implements Statement {
     /**
      * Executes all of the batched statements.
      *
-     * See {@link Statement#executeBatch()} for details.
+     * See {@link java.sql.Statement#executeBatch()} for details.
      * @return update counts for each statement
-     * @throws SQLException if something went wrong
+     * @throws java.sql.SQLException if something went wrong
      */
     public int[] executeBatch() throws SQLException {
         return statement.executeBatch();

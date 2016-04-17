@@ -1,12 +1,11 @@
 package ru.bio4j.ng.database.commons;
 
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamGetter;
 import ru.bio4j.ng.model.transport.Param;
 
-import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class DbCallableParamGetter implements SQLParamGetter {
 
     public void getParamsFromStatement(SQLCommand command, List<Param> params) throws SQLException {
 //        CallableStatement callable = (command.getStatement() instanceof CallableStatement) ? (CallableStatement)command.getStatement() : null;
-        NamedParametersStatement callable = command.getStatement();
+        SQLNamedParametersStatement callable = command.getStatement();
         if(callable == null)
             throw new SQLException("Parameter [statement] mast be instance of CallableStatement!");
         for(Param param : params) {

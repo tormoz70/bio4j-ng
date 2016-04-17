@@ -40,6 +40,13 @@ public class Strings {
 		return line;
 	}
 
+    public static void append(StringBuilder stringBuilder, String str, String delimiter) {
+        if (stringBuilder.length() == 0)
+            stringBuilder.append((str == null) ? "" : str);
+        else
+            stringBuilder.append(delimiter + ((str == null) ? "" : str));
+    }
+
 	/**
 	 * Разбивает строку на подстроки с заданными разделителями
 	 * @param str - строка, которую необходимо разбить
@@ -175,6 +182,14 @@ public class Strings {
             }
         }
         return str;
+    }
+
+    public static String padRight(String s, int n) {
+        return String.format("%1$-" + n + "s", s);
+    }
+
+    public static String padLeft(String s, int n) {
+        return String.format("%1$" + n + "s", s);
     }
 
 }
