@@ -64,11 +64,12 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
             @Override
             public void execute() throws SQLException {
                 final DbCursor self = DbCursor.this;
-                String parsedQuery = self.preparedStatement.getParsedQuery();
-                LOG.debug("parsedQuery:\n"+parsedQuery);
+//                String parsedQuery = self.preparedStatement.getParsedQuery();
+//                ParameterMetaData pmd = self.preparedStatement.getStatement().getParameterMetaData();
+//                self.preparedStatement.get
+//                pmd.
                 self.reader = context.createReader(self.preparedStatement.executeQuery());
                 self.isActive = true;
-
             }
         });
 	}

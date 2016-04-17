@@ -47,11 +47,15 @@ public class BioCursor {
             return owner.getBioCode();
         }
 
-        public SQLDef setParamValue(String name, Object value, boolean addIfNotExists) {
+        public SQLDef setParamValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
             try(Paramus paramus = Paramus.set(params)) {
-                paramus.setValue(name, value, addIfNotExists);
+                paramus.setValue(name, value, direction, addIfNotExists);
             }
             return this;
+        }
+
+        public SQLDef setParamValue(String name, Object value, boolean addIfNotExists) {
+            return setParamValue(name, value, Param.Direction.IN, true);
         }
 
         public SQLDef setParamValue(String name, Object value) {

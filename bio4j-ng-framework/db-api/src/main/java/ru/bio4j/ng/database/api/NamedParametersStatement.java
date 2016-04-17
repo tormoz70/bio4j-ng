@@ -209,12 +209,13 @@ public class NamedParametersStatement implements Statement {
     public void setObjectAtName(String name, Object value, int targetSqlType) throws SQLException {
         int[] indexes=getIndexes(name);
         for(int i=0; i < indexes.length; i++) {
+            int indx = indexes[i];
             if(targetSqlType == -999)
-                statement.setObject(indexes[i], value);
+                statement.setObject(indx, value);
             else if(value instanceof InputStream && targetSqlType == Types.BLOB)
-                statement.setBinaryStream(indexes[i], (InputStream) value);
+                statement.setBinaryStream(indx, (InputStream) value);
             else
-                statement.setObject(indexes[i], value, targetSqlType);
+                statement.setObject(indx, value, targetSqlType);
         }
     }
 

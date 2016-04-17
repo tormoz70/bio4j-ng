@@ -16,8 +16,8 @@ import static ru.bio4j.ng.database.api.WrapQueryType.LOCATE;
 public class LocateWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
     private String template;
-    public static final String PKVAL = "LOCATE$PKVALUE";
-    public static final String STARTFROM = "LOCATE$STARTFROM";
+    public static final String PKVAL = "locate$pkvalue";
+    public static final String STARTFROM = "locate$startfrom";
 
     public LocateWrapper(String template) {
         super(template);

@@ -443,4 +443,171 @@ public class SQLFactoryTest {
         String msg = r.getMessage();
         LOG.debug(msg);
     }
+
+    @Test(enabled = true)
+    public void testSQLCommandOpenCursor2() {
+        try {
+
+            SQLContext contextLocal = DbContextAbstract.create(
+                    SQLConnectionPoolConfig.builder()
+                            .poolName("TEST-CONN-POOL")
+                            .dbDriverName(testDBDriverName)
+                            .dbConnectionUrl(testDBUrl)
+                            .dbConnectionUsr("GIVCADMIN")
+                            .dbConnectionPwd("j12")
+                            .build(),
+                    OraContext.class);
+
+            String rslt = contextLocal.execBatch(new SQLActionScalar<String>() {
+                @Override
+                public String exec(SQLContext context, Connection conn) throws Exception {
+                    String sql = "SELECT * FROM (\n" +
+                            "        SELECT pgng$wrpr0.*, ROWNUM rnum$pgng\n" +
+                            "          FROM ( with \n" +
+                            "orgs as (\n" +
+                            "  select /*+ MATERIALIZE */ o.id_org, o.holding_id, o.time_zone, o.id_vnd, DECODE (o.test, 1, 'тестовый', 'реальный') AS test,\n" +
+                            "        v.vndname, v.contacts AS vndcontacts\n" +
+                            "    from org$r o \n" +
+                            "      left join givc_org.softvendor v ON v.id_vnd = o.id_vnd\n" +
+                            "),\n" +
+                            "ekbps as (\n" +
+                            "SELECT /*+ MATERIALIZE */\n" +
+                            "   a.packet_id as id,\n" +
+                            "  a.org_id,\n" +
+                            "  a.sess_prnt_org_id,\n" +
+                            "  a.sess_org_id,\n" +
+                            "  a.ip_addr as ip,\n" +
+                            "  a.registred as date_incoming,\n" +
+                            "  decode(a.packet_name, '...', a.zip_name, a.packet_name) as packet_name,\n" +
+                            "  a.zip_name,\n" +
+                            "  a.processed as date_processing,\n" +
+                            "  a.is_loaded,\n" +
+                            "  a.cur_pstate as cur_pstate0,\n" +
+                            "  decode(a.is_loaded, '1', 'загружен', s.description) as cur_pstate,\n" +
+                            "  a.cur_pstate_msg as last_pstate_msg,\n" +
+                            "  a.is_log_downloaded,\n" +
+                            "  a.log_downloaded,\n" +
+                            "  nvl(o1.time_zone, o2.time_zone) as time_zone,\n" +
+                            "  nvl(o1.id_vnd, o2.id_vnd) as id_vnd, \n" +
+                            "  nvl(o1.vndname, o2.vndname) as vndname, \n" +
+                            "  nvl(o1.vndcontacts, o2.vndcontacts) as vndcontacts,\n" +
+                            "  nvl(o1.test, o2.test) as test,\n" +
+                            "  decode(a.load_method, \n" +
+                            "          0, 'Авт. система', \n" +
+                            "          1, 'Из кабинета', \n" +
+                            "          2, 'CreateXMLStatic', \n" +
+                            "          3, 'CreateXMLMobile', \n" +
+                            "          4, 'EkbUploadRobot', \n" +
+                            "          5, 'Grader', 'не определен') as load_method,\n" +
+                            "  decode(a.show_date, null, '00000000', to_char(a.show_date, 'YYYYMMDD')) part_key\n" +
+                            "  FROM FPACKET a\n" +
+                            "        left join orgs o1 on o1.id_org = a.sess_org_id\n" +
+                            "        left join orgs o2 on o2.id_org = a.org_id\n" +
+                            "        left join nsi$ekbpstate s on s.id = a.cur_pstate\n" +
+                            "  WHERE a.packet_name = nvl(:packet_name_full, a.packet_name) and\n" +
+                            "        ((a.registred >= biosys.ai_utl.db_datetime(decode(:reg_from, null, trunc(sysdate), :reg_from), :time_zone)) AND\n" +
+                            "         (a.registred < biosys.ai_utl.db_datetime(decode(:reg_to, null, trunc(sysdate), :reg_to), :time_zone)+1))\n" +
+                            "    AND ((:force_org_id IS NULL) OR \n" +
+                            "          ((a.org_id = :force_org_id) OR ((a.sess_org_id = :force_org_id) and (a.org_id = o1.holding_id))\n" +
+                            "          or (a.sess_prnt_org_id =:force_org_id))\n" +
+                            "         )\n" +
+                            "    \n" +
+                            ")\n" +
+                            "SELECT \n" +
+                            "  a.id, \n" +
+                            "  a.org_id,\n" +
+                            "  a.sess_prnt_org_id,\n" +
+                            "  a.sess_org_id,\n" +
+                            "  a.ip, \n" +
+                            "  a.date_incoming,\n" +
+                            "  a.packet_name, \n" +
+                            "  a.zip_name,\n" +
+                            "  a.date_processing,\n" +
+                            "  a.time_zone,\n" +
+                            "  a.is_loaded,\n" +
+                            "  a.cur_pstate0,\n" +
+                            "  a.cur_pstate,\n" +
+                            "  a.last_pstate_msg,\n" +
+                            "  a.is_log_downloaded,\n" +
+                            "  a.log_downloaded, \n" +
+                            "  a.id_vnd, a.vndname, a.vndcontacts,\n" +
+                            "  a.load_method,\n" +
+                            "  a.test,\n" +
+                            "  a.part_key\n" +
+                            "  FROM ekbps a\n" +
+                            "  WHERE ((:p_sys_curusr_roles in ('6')) or\n" +
+                            "         ((:p_sys_curusr_roles in ('4')) and (\n" +
+                            "           (a.org_id = to_number(:p_sys_curodepuid)) or\n" +
+                            "           (a.org_id in (select o.id_org from givc_org.org o where o.holding_id = to_number(:p_sys_curodepuid)))\n" +
+                            "          )\n" +
+                            "         ) or\n" +
+                            "         ((:p_sys_curusr_roles in ('3')) and (\n" +
+                            "            /*(a.sess_org_id = to_number(:SYS_CURODEPUID)) and*/\n" +
+                            "            ((a.org_id = to_number(:p_sys_curodepuid)) or\n" +
+                            "             (a.org_id in (select nvl(o.holding_id, o.id_org) from givc_org.org o where o.id_org = to_number(:p_sys_curodepuid)))\n" +
+                            "            )\n" +
+                            "          )\n" +
+                            "         )\n" +
+                            "    ) AND \n" +
+                            "    (\n" +
+                            "      (a.org_id = decode(:org_id, null, a.org_id, nvl(to_number(regexp_substr(:org_id, '^\\d+$')), 0))) and\n" +
+                            "      (nvl(a.sess_prnt_org_id, 0) = decode(:sess_prnt_org_id, null, nvl(a.sess_prnt_org_id, 0), nvl(to_number(regexp_substr(:sess_prnt_org_id, '^\\d+$')), 0))) and\n" +
+                            "      (a.sess_org_id = decode(:sess_org_id, null, a.sess_org_id, nvl(to_number(regexp_substr(:sess_org_id, '^\\d+$')), 0))) and\n" +
+                            "      (a.packet_name like decode(:packet_name, null, '%', '%'||lower(:packet_name)||'%')) and\n" +
+                            "      (a.ip like decode(:ip, null, '%', '%'||lower(:ip)||'%')) and\n" +
+                            "      (a.cur_pstate like decode(:cur_pstate, null, '%', '%'||lower(:cur_pstate)||'%')) and\n" +
+                            "      (a.last_pstate_msg like decode(:message, null, '%', '%'||lower(:message)||'%')) and\n" +
+                            "      (lower(a.load_method) like decode(:load_method, null, '%', '%'||lower(:load_method)||'%')) and\n" +
+                            "      (a.test like decode(:test, null, '%', '%'||lower(:test)||'%')) \n" +
+                            "    )\n" +
+                            "  ORDER BY date_incoming desc\n" +
+                            " ) pgng$wrpr0\n" +
+                            "    ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :paging$offset) AND (pgng$wrpr.rnum$pgng <= :paging$last)";
+                    int cnt = 0;
+                    List<Param> params = new ArrayList<>();
+
+
+                    //params.add(Param.builder().name("packet_name_full").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("reg_from").type(MetaType.DATE).build());
+                    //params.add(Param.builder().name("reg_to").type(MetaType.DATE).build());
+                    //params.add(Param.builder().name("time_zone").type(MetaType.INTEGER).build());
+                    params.add(Param.builder().name("p_sys_curusr_roles").value("6").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("p_sys_curodepuid").type(MetaType.STRING).build());
+
+                    params.add(Param.builder().name("force_org_id").type(MetaType.INTEGER).build());
+                    //params.add(Param.builder().name("org_id").type(MetaType.INTEGER).build());
+                    //params.add(Param.builder().name("sess_org_id").type(MetaType.INTEGER).build());
+
+                    //params.add(Param.builder().name("sess_prnt_org_id").type(MetaType.INTEGER).build());
+                    //params.add(Param.builder().name("packet_name").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("ip").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("cur_pstate").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("message").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("load_method").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("test").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("p_sys_curusr_uid").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("p_sys_curusr_grants").type(MetaType.STRING).build());
+                    //params.add(Param.builder().name("prm1").value("qwe").build());
+                    //params.add(Param.builder().name("prm2").value("qwe").build());
+                    params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
+                    params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
+
+                    try(SQLCursor c = context.createCursor()
+                            .init(conn, sql, params).open();){
+                        while(c.reader().next()){
+//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
+                            cnt++;
+                        }
+                    }
+                    return ""+cnt;
+                }
+            });
+            Assert.assertEquals("25", rslt);
+        } catch (Exception ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+
+    }
+
 }

@@ -13,8 +13,8 @@ import static ru.bio4j.ng.database.api.WrapQueryType.PAGING;
 @WrapperType(PAGING)
 public class PaginationWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
-    public static final String OFFSET = "PAGING$OFFSET";
-    public static final String LAST = "PAGING$LAST";
+    public static final String OFFSET = "paging$offset";
+    public static final String LAST = "paging$last";
 
     private String template;
 
