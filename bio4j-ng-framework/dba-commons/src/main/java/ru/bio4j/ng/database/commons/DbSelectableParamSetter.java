@@ -31,7 +31,8 @@ public class DbSelectableParamSetter implements SQLParamSetter {
             Param param = Paramus.set(params).getParam(paramName);
             if (param != null) {
                 param.setId(i + 1);
-                Object value = Converter.toType(param.getValue(), MetaTypeConverter.write(param.getType()));
+                Object origValue = param.getValue();
+                Object value = origValue == null ? null : Converter.toType(origValue, MetaTypeConverter.write(param.getType()));
                 int targetType = DbUtils.getInstance().paramSqlType(param);
                 if(value != null) {
                     if(targetType == 0)
