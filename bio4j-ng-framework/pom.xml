@@ -74,11 +74,15 @@
 
         <!-- Others -->
         <!--<json.version>1.0.0</json.version>-->
-        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <javax.jsp-api.version>2.3.0</javax.jsp-api.version>
-        <geronimo-servlet_3.0_spec.version>1.0</geronimo-servlet_3.0_spec.version>
-        <shiro.verion>1.2.2</shiro.verion>
-        <opensaml.verion>2.6.0</opensaml.verion>
+        <!--<javax.servlet-api.version>3.1.0</javax.servlet-api.version>-->
+        <!--<javax.jsp-api.version>2.3.0</javax.jsp-api.version>-->
+        <!--<geronimo-servlet_3.0_spec.version>1.0</geronimo-servlet_3.0_spec.version>-->
+
+        <jetty-osgi-servlet-api.version>3.1.0.M3</jetty-osgi-servlet-api.version>
+
+
+        <!--<shiro.verion>1.2.2</shiro.verion>-->
+        <!--<opensaml.verion>2.6.0</opensaml.verion>-->
 
         <!-- maven plugin -->
         <bundle-plugin-version>2.5.3</bundle-plugin-version>
@@ -91,8 +95,8 @@
         <war-plugi-version>2.6</war-plugi-version>
         <antrun-plugin-version>1.8</antrun-plugin-version>
 
-        <jersey-server.version>1.19</jersey-server.version>
-        <jersey-bundle.version>1.19</jersey-bundle.version>
+        <!--<jersey-server.version>1.19</jersey-server.version>-->
+        <!--<jersey-bundle.version>1.19</jersey-bundle.version>-->
 
 
         <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
@@ -101,7 +105,7 @@
         <ojdbc6.version>12.1.0</ojdbc6.version>
 
         <postgresql-jdbc.version>9.4-1201.jdbc41</postgresql-jdbc.version>
-        <commons-codec.version>1.9</commons-codec.version>
+        <!--<commons-codec.version>1.9</commons-codec.version>-->
         <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
 	</properties>
 
@@ -124,8 +128,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <!--<version>${compiler-plugin-version}</version>-->
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -258,10 +262,17 @@
             </dependency>
 			<!-- Other stuff -->
 
+            <!--<dependency>-->
+                <!--<groupId>org.apache.geronimo.specs</groupId>-->
+                <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
+                <!--<version>${geronimo-servlet_3.0_spec.version}</version>-->
+            <!--</dependency>-->
+
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-servlet_3.0_spec</artifactId>
-                <version>${geronimo-servlet_3.0_spec.version}</version>
+                <groupId>org.eclipse.jetty.toolchain</groupId>
+                <artifactId>jetty-osgi-servlet-api</artifactId>
+                <version>${jetty-osgi-servlet-api.version}</version>
+                <scope>provided</scope>
             </dependency>
 
 

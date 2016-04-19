@@ -43,10 +43,15 @@
             <!--<scope>compile</scope>-->
         <!--</dependency>-->
 
+        <!--<dependency>-->
+            <!--<groupId>org.apache.geronimo.specs</groupId>-->
+            <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            <scope>compile</scope>
+            <groupId>org.eclipse.jetty.toolchain</groupId>
+            <artifactId>jetty-osgi-servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

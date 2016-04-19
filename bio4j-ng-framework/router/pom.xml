@@ -30,9 +30,14 @@
             <artifactId>org.apache.felix.ipojo</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.geronimo.specs</groupId>-->
+            <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <groupId>org.eclipse.jetty.toolchain</groupId>
+            <artifactId>jetty-osgi-servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
