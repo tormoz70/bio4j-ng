@@ -1,20 +1,25 @@
 package ru.bio4j.ng.service.types;
 
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 public class BioWrappedRequest extends HttpServletRequestWrapper {
     private final Map<String, String[]> modParameters;
+    private final HashMap<String, String> modHeaders;
 
     public BioWrappedRequest(final HttpServletRequest request, final Map<String, String[]> newParams) {
         super(request);
         modParameters = new TreeMap<>();
-        modParameters.putAll(newParams);
+        if(newParams != null)
+            modParameters.putAll(newParams);
+
+        modHeaders = new HashMap();
+    }
+
+    public void putHeader(String name, String value){
+        this.modHeaders.put(name, value);
     }
 
     @Override
@@ -40,5 +45,37 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     public String[] getParameterValues(final String name) {
         return getParameterMap().get(name);
     }
+
+
+    @Override
+    public String getHeader(String name) {
+        String headerValue = super.getHeader(name);
+        if (modHeaders.containsKey(name)) {
+            headerValue = modHeaders.get(name);
+        }
+        return headerValue;
+    }
+
+    /**
+     * get the Header names
+     */
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        List<String> names = Collections.list(super.getHeaderNames());
+        for (String name : modHeaders.keySet()) {
+            names.add(name);
+        }
+        return Collections.enumeration(names);
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String name) {
+        List<String> values = Collections.list(super.getHeaders(name));
+        if (modHeaders.containsKey(name)) {
+            values.add(modHeaders.get(name));
+        }
+        return Collections.enumeration(values);
+    }
+
 
 }

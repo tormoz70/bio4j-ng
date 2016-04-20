@@ -116,6 +116,11 @@
             <artifactId>jetty-osgi-servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!--<dependency>-->
             <!--<groupId>org.ops4j.pax.logging</groupId>-->

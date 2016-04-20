@@ -97,6 +97,7 @@
 
         <!--<jersey-server.version>1.19</jersey-server.version>-->
         <!--<jersey-bundle.version>1.19</jersey-bundle.version>-->
+        <org.eclipse.jetty.version>9.3.8.v20160314</org.eclipse.jetty.version>
 
 
         <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
@@ -291,6 +292,12 @@
                 <groupId>org.eclipse.jetty.toolchain</groupId>
                 <artifactId>jetty-osgi-servlet-api</artifactId>
                 <version>${jetty-osgi-servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlets</artifactId>
+                <version>${org.eclipse.jetty.version}</version>
                 <scope>provided</scope>
             </dependency>
 
