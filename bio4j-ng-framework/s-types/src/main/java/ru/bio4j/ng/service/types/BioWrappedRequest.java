@@ -9,13 +9,15 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     private final Map<String, String[]> modParameters;
     private final HashMap<String, String> modHeaders;
 
-    public BioWrappedRequest(final HttpServletRequest request, final Map<String, String[]> newParams) {
+    public BioWrappedRequest(final HttpServletRequest request) {
         super(request);
         modParameters = new TreeMap<>();
-        if(newParams != null)
-            modParameters.putAll(newParams);
-
         modHeaders = new HashMap();
+    }
+
+    public void appendParams(final Map<String, String[]> params) {
+        if(params != null)
+            modParameters.putAll(params);
     }
 
     public void putHeader(String name, String value){

@@ -24,7 +24,6 @@ public class WarSecurityFilterBase implements Filter {
     private Logger LOG;
 
     private boolean bioDebug = false;
-    private String forwardURL = null;
     private Set<String> publicAreas = new HashSet();
     private String errorPage;
 
@@ -56,14 +55,12 @@ public class WarSecurityFilterBase implements Filter {
         debug("init...");
         if (filterConfig != null) {
             bioDebug = Strings.compare(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_BIODEBUG), "true", true);
-            forwardURL = filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_FORWARD_URL);
             initPublicAreas(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS));
             errorPage = filterConfig.getInitParameter("error_page");
-            debug(" Config : {" +
+            debug(" Security filter config : {" +
                   "   -- bioDebug : {}\n"+
-                  "   -- forwardURL : {}\n"+
                   "   -- errorPage : {}\n" +
-                  " }", bioDebug, forwardURL, errorPage);
+                  " }", bioDebug, errorPage);
         }
         debug("init - done.");
     }
@@ -85,7 +82,9 @@ public class WarSecurityFilterBase implements Filter {
             Map<String, String[]> extraParams = new TreeMap<>();
             extraParams.putAll(request.getParameterMap());
             extraParams.put(SrvcUtils.QRY_PARAM_NAME_UID, new String[] {user.getUid()});
-            return new BioWrappedRequest(request, extraParams);
+            BioWrappedRequest rslt = new BioWrappedRequest(request);
+            rslt.appendParams(extraParams);
+            return rslt;
         } else {
             BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(new BioError.Login.BadLogin()), response, bioDebug);
             return request;
@@ -129,31 +128,9 @@ public class WarSecurityFilterBase implements Filter {
                     chn.doFilter(wrappedRequest, resp);
                 }
             } else {
-                final String destination = String.format("%s?bm=%s&uid=%s&biocd=%s", this.forwardURL, prms.moduleKey, prms.loginOrUid, prms.bioCode);
-                try {
-                    Httpc.requestJson(destination, new Httpc.Callback() {
-                        @Override
-                        public void process(InputStream inputStream) throws Exception {
-                            String brespJson = Utl.readStream(inputStream);
-                            BioResponse bresp = Jsons.decode(brespJson, BioResponse.class);
-                            if (bresp.isSuccess()) {
-                                User user = bresp.getUser();
-                                if (user.isAnonymous() && !weAreInPublicAreas) {
-                                    debug("Anonymous not in public area for bioCode \"{}\"!", prms.bioCode);
-                                    processBadLoginError(resp);
-                                } else {
-                                    HttpServletRequest wrappedRequest = processUser(user, req, resp);
-                                    chn.doFilter(wrappedRequest, resp);
-                                }
-                            } else {
-                                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(bresp.getException()), resp, bioDebug);
-                                log_error("An error while checking User!", bresp.getException());
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    throw new BioError(String.format("Unexpected error while forwarding getUser-request to the BioServer! Message: %s", e.getMessage()), e);
-                }
+                Exception e = new Exception("Security provider not defined!");
+                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
+                log_error("An error while checking User!", e);
             }
 
         } catch (Exception e) {
