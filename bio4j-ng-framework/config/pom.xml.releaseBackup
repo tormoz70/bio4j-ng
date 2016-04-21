@@ -4,9 +4,10 @@
     <parent>
         <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>bio4j-ng-module-provider</artifactId>
+
+    <artifactId>bio4j-ng-config</artifactId>
     <packaging>bundle</packaging>
 
     <build>
@@ -21,6 +22,7 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -33,16 +35,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-tmodel</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-commons</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-stypes</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -51,6 +43,12 @@
             <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -4,9 +4,10 @@
     <parent>
         <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>bio4j-ng-module-provider</artifactId>
+
+    <artifactId>bio4j-ng-rapi</artifactId>
     <packaging>bundle</packaging>
 
     <build>
@@ -15,22 +16,10 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-ipojo-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo</artifactId>
-        </dependency>
 
+    <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
@@ -39,16 +28,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-stypes</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

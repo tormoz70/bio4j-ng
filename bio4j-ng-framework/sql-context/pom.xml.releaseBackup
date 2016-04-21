@@ -2,11 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>1.4.1-SNAPSHOT</version>
+        <artifactId>bio4j-ng-framework</artifactId>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>bio4j-ng-module-provider</artifactId>
+
+    <artifactId>bio4j-ng-sql-context</artifactId>
     <packaging>bundle</packaging>
 
     <build>
@@ -33,7 +34,12 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-tmodel</artifactId>
+            <artifactId>bio4j-ng-stypes</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -43,12 +49,22 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-stypes</artifactId>
+            <artifactId>bio4j-ng-tmodel</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-sapi</artifactId>
+            <artifactId>bio4j-ng-dba-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>bio4j-ng-dba-oracle</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-dbapi</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
