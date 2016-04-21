@@ -6,15 +6,13 @@ import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.database.api.SqlTypeConverter;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.io.InputStream;
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
 
     @Override
     public void setParamsToStatement(SQLCommand command, List<Param> params) throws SQLException {
-        NamedParametersStatement callable = command.getStatement();
+        SQLNamedParametersStatement callable = command.getStatement();
         final String sql = this.owner.getPreparedSQL();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         final List<Param> outParams = new ArrayList<>();

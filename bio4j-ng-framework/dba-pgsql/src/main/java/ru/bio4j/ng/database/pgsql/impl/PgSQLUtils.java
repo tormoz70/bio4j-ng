@@ -3,9 +3,10 @@ package ru.bio4j.ng.database.pgsql.impl;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.NamedParametersStatement;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.RDBMSUtils;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -132,7 +133,7 @@ public class PgSQLUtils implements RDBMSUtils {
                     "where a.domain_schema = 'public'\n" +
                     "and a.domain_name = :domain_name";
     private static String detectDomineType(String type, Connection conn) throws SQLException {
-        try (NamedParametersStatement st = NamedParametersStatement.prepareStatement(conn, SQL_GET_DOMINE_TYPE_DBMS)) {
+        try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_DOMINE_TYPE_DBMS)) {
             st.setStringAtName("domain_name", type);
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
@@ -180,7 +181,7 @@ public class PgSQLUtils implements RDBMSUtils {
         StringBuilder args = new StringBuilder();
         PgSQLUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
-        try (NamedParametersStatement st = NamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
+        try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
             st.setStringAtName("method_name", pkg.methodName);
             try (ResultSet rs = st.executeQuery()) {
                 try(Paramus p = Paramus.set(params)) {

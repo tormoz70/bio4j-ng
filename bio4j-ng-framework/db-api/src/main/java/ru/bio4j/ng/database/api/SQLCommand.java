@@ -14,7 +14,7 @@ public interface SQLCommand {
 
 	Connection getConnection();
 
-	NamedParametersStatement getStatement();
+	SQLNamedParametersStatement getStatement();
 
     void addBeforeEvent(SQLCommandBeforeEvent e);
     void addAfterEvent(SQLCommandAfterEvent e);

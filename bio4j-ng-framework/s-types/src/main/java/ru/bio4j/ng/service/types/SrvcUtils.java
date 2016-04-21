@@ -16,6 +16,7 @@ public class SrvcUtils {
     public static final String QRY_PARAM_NAME_UID = "uid";
 
     public static final String PARAM_CURUSR_UID =    "p_sys_curusr_uid";
+    public static final String PARAM_CURUSR_ORG_UID =    "p_sys_curusr_org_uid";
     public static final String PARAM_CURUSR_ROLES =  "p_sys_curusr_roles";
     public static final String PARAM_CURUSR_GRANTS = "p_sys_curusr_grants";
 
