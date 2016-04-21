@@ -1,0 +1,1 @@
+mvn --batch-mode release:update-versions
