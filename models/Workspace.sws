@@ -12,7 +12,7 @@
 		<Model ID="{BFDF025D-EB76-4066-B5A8-F6687370ACB7}" Loaded="No" Name="usecase (autentication).v4" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="usecase (autentication).v4.bpm"/>
 		<Model ID="{A5EC4CDE-B07A-46F1-B8CB-9B1BA66E1FE5}" Loaded="No" Name="ObjectOrientedModel_1" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="ObjectOrientedModel_1.oom"/>
 		<Model ID="{706D418F-23BC-4408-A6F1-B513EAA18246}" Loaded="No" Name="EnterpriseArchitectureModel_1" Type="{5215C79E-A9A1-4738-A627-36DA432EFE29}" URL="EnterpriseArchitectureModel_1.eam"/>
-		<Model Expanded="Yes" ID="{39092C0F-2FE6-471F-A265-37F8FBB5F566}" Name="ObjectOrientedModel_2" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="ObjectOrientedModel_2.oom"/>
+		<Model Expanded="Yes" ID="{39092C0F-2FE6-471F-A265-37F8FBB5F566}" Loaded="No" Name="ObjectOrientedModel_2" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="ObjectOrientedModel_2.oom"/>
 	</Local>
 	<BrowserModule Name="Repository"/>
 </Workspace>
