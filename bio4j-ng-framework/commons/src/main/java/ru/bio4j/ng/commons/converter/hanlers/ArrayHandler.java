@@ -5,6 +5,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ArrayHandler extends TypeHandlerBase implements TypeHandler<String[]> {
@@ -56,4 +57,9 @@ public class ArrayHandler extends TypeHandlerBase implements TypeHandler<String[
         }
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(String[] value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

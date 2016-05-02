@@ -6,12 +6,14 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class Bgn extends Compare {
 
-    /**
-     * Значение поля начинается со строки
-     * @param fieldName
-     * @param value
-     */
-    public Bgn(String fieldName, String value, boolean ignoreCase) {
-        super(fieldName, value, ignoreCase);
+    public Bgn(String column, Object value, boolean ignoreCase) {
+        super(column, value, ignoreCase);
+    }
+    public Bgn(String column, Object value) {
+        this(column, value, false);
+    }
+
+    public Bgn() {
+        this(null, null, false);
     }
 }

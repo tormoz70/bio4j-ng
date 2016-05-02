@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.converter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Date;
 
 /**
  * Created by ayrat on 21.03.14.

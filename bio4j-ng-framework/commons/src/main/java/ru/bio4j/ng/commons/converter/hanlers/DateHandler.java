@@ -5,6 +5,8 @@ import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;
 import ru.bio4j.ng.commons.converter.Types;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateHandler extends TypeHandlerBase implements TypeHandler<Date> {
@@ -28,7 +30,7 @@ public class DateHandler extends TypeHandlerBase implements TypeHandler<Date> {
     }
 
     @Override
-    public <T> T write(Date value, Class<T> targetType) throws ConvertValueException {
+    public <T> T write(Date value, Class<T> targetType, String format) throws ConvertValueException {
         Class<?> targetTypeWrapped = Types.wrapPrimitiveType(targetType);
         if (Types.typeIsDate(targetTypeWrapped))
             return (T) Types.date2Date(value, targetTypeWrapped);
@@ -36,10 +38,17 @@ public class DateHandler extends TypeHandlerBase implements TypeHandler<Date> {
             Types.nop();
         else if (Types.typeIsNumber(targetTypeWrapped))
             return (T) Types.number2Number(value.getTime(), targetTypeWrapped);
-        else if (targetTypeWrapped == String.class)
-            return (T) value;
-        else if (targetTypeWrapped == byte[].class)
+        else if (targetTypeWrapped == String.class) {
+            DateFormat df = new SimpleDateFormat(format);
+            return (T) df.format(value);
+        } else if (targetTypeWrapped == byte[].class)
             Types.nop();
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    @Override
+    public <T> T write(Date value, Class<T> targetType) throws ConvertValueException {
+        return write(value, targetType, "dd.MM.yyyy HH:mm:ss");
+    }
+
 }

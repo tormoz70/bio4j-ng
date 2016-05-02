@@ -7,7 +7,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
-import ru.bio4j.ng.model.transport.jstore.filter.Expression;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.util.*;
 
@@ -90,7 +90,7 @@ public class BioCursor {
         private byte wrapMode = WrapMode.ALL.code();
         private String totalsSql;
         private String locateSql;
-        private Expression filter;
+        private Filter filter;
         private List<Sort> sort;
         private int offset;
         private int pageSize;
@@ -110,9 +110,9 @@ public class BioCursor {
             return wrapMode;
         }
 
-        public Expression getFilter() { return filter; }
+        public Filter getFilter() { return filter; }
 
-        public void setFilter(Expression filter) { this.filter = filter; }
+        public void setFilter(Filter filter) { this.filter = filter; }
 
         public List<Sort> getSort() { return sort; }
 

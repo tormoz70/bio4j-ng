@@ -1,9 +1,18 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
+import ru.bio4j.ng.commons.converter.hanlers.MetaTypeHandler;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.MetaType;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.jstore.*;
+import ru.bio4j.ng.model.transport.jstore.filter.*;
 
 import javax.servlet.http.HttpServletRequest;
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
@@ -11,7 +20,23 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public abstract class BioRequestFactory {
     private static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
 
+    private void prepareBioParams(BioRequest bioRequest){
+        if(bioRequest.getBioParams() != null && !bioRequest.getBioParams().isEmpty()){
+            try(Paramus pms = Paramus.set(bioRequest.getBioParams());){
+                for(Param p : pms.get()){
+                    if(p.getType() == null) {
+                        MetaType valueType = MetaTypeConverter.read(p.getValue() != null ? p.getValue().getClass() : String.class);
+                        p.setType(valueType);
+                    }
+                }
+            }
+        }
+
+    }
+
     public BioRequest restore(HttpServletRequest request, final String moduleKey, final BioRoute route, final User usr) throws Exception {
+        Filter f = new Filter();
+        f = null;
         final String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
         StringBuilder jd = new StringBuilder();
         if(!isNullOrEmpty(jsonDataAsQueryParam))

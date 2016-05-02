@@ -5,6 +5,7 @@ import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.model.transport.Param;
 
 import java.util.Date;
 
@@ -50,4 +51,9 @@ public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number
             Types.nop();
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(Number value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

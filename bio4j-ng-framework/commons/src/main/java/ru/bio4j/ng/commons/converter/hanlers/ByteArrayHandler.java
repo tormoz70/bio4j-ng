@@ -67,4 +67,9 @@ public class ByteArrayHandler extends TypeHandlerBase implements TypeHandler<Byt
         }
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(Byte[] value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

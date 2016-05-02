@@ -25,4 +25,9 @@ public class ResultSetHandler extends TypeHandlerBase implements TypeHandler<Res
         Class<?> targetTypeWrapped = Types.wrapPrimitiveType(targetType);
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(ResultSet value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

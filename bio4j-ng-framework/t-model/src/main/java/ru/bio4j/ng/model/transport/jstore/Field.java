@@ -1,6 +1,6 @@
 package ru.bio4j.ng.model.transport.jstore;
 
-import flexjson.JSON;
+//import flexjson.JSON;
 import ru.bio4j.ng.model.transport.MetaType;
 
 /**
@@ -38,6 +38,11 @@ public class Field {
      * Не отображать
      */
     private boolean hidden;
+
+    /**
+     * Фильтрация
+     */
+    private boolean filter;
 
     /**
      * Только чтение
@@ -175,7 +180,7 @@ public class Field {
      * Field index starts from 0
      * @return
      */
-    @JSON(include = false)
+//    @JSON(include = false)
     public int getIndex() { return id-1; }
 
     public void setId(int id) { this.id = id; }
@@ -194,5 +199,13 @@ public class Field {
 
     public void setShowTooltip(boolean showTooltip) {
         this.showTooltip = showTooltip;
+    }
+
+    public boolean isFilter() {
+        return filter;
+    }
+
+    public void setFilter(boolean filter) {
+        this.filter = filter;
     }
 }

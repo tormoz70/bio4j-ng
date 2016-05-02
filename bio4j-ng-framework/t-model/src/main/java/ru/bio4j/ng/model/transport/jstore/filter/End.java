@@ -6,12 +6,15 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class End extends Compare {
 
-    /**
-     * Значение поля оканчивается на строку
-     * @param fieldName
-     * @param value
-     */
-    public End(String fieldName, String value, boolean ignoreCase) {
-        super(fieldName, value, ignoreCase);
+    public End(String column, Object value, boolean ignoreCase) {
+        super(column, value, ignoreCase);
     }
+    public End(String column, Object value) {
+        this(column, value, false);
+    }
+
+    public End() {
+        this(null, null, false);
+    }
+
 }

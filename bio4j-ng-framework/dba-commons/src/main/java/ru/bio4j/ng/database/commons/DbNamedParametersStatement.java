@@ -150,8 +150,11 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setObject(indx, value);
             else if(value instanceof InputStream && targetSqlType == Types.BLOB)
                 statement.setBinaryStream(indx, (InputStream) value);
-            else
+            else {
+                if(value != null && value.getClass() == java.util.Date.class)
+                    value = new java.sql.Date(((java.util.Date)value).getTime());
                 statement.setObject(indx, value, targetSqlType);
+            }
         }
     }
 

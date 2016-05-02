@@ -422,7 +422,7 @@ public class Paramus implements Closeable {
 
 	public static String paramValueAsString(Param param) {
         try{
-		    return (param.getValue() == null) ? null : Converter.toType(param.getValue(), String.class);
+		    return (param.getValue() == null) ? null : Converter.toType(param.getValue(), String.class, "yyyy-MM-dd-HH-mm-ss");
         } catch (ConvertValueException ex) {
             return ex.getMessage();
         }

@@ -6,7 +6,12 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class Or extends Logical {
 
-    public Or(Expression ... operands) {
-        super(operands);
+    public Or() {
+        super();
     }
+
+    public Or(Expression ... expressions) {
+        super(expressions);
+    }
+
 }

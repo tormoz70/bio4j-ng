@@ -21,6 +21,8 @@ public interface TypeHandler <H> {
      */
     <T> T write(H value, Class<T> targetType) throws ConvertValueException;
 
+    <T> T write(H value, Class<T> targetType, String format) throws ConvertValueException;
+
 
     /**
      * Возвращает true если обработчик подходит для заданного java-типа

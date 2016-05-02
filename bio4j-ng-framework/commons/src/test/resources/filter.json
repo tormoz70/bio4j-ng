@@ -1,0 +1,58 @@
+{
+  "children": [
+    {
+      "class": "ru.bio4j.ng.model.transport.jstore.filter.And",
+      "children": [
+        {
+          "class": "ru.bio4j.ng.model.transport.jstore.filter.And",
+          "children": [
+            {
+              "class": "ru.bio4j.ng.model.transport.jstore.filter.Not",
+              "children": [
+                {
+                  "class": "ru.bio4j.ng.model.transport.jstore.filter.Eq",
+                  "column": "field10",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "class": "ru.bio4j.ng.model.transport.jstore.filter.Eq",
+              "column": "field12",
+              "value": 23
+            },
+            {
+              "class": "ru.bio4j.ng.model.transport.jstore.filter.Gt",
+              "column": "fieldD",
+              "value": 2.5
+            }
+          ]
+        },
+        {
+          "class": "ru.bio4j.ng.model.transport.jstore.filter.Or",
+          "children": [
+            {
+              "class": "ru.bio4j.ng.model.transport.jstore.filter.Bgn",
+              "column": "field2",
+              "value": "qwe"
+            },
+            {
+              "class": "ru.bio4j.ng.model.transport.jstore.filter.End",
+              "column": "field2",
+              "value": "ads"
+            }
+          ]
+        },
+        {
+          "class": "ru.bio4j.ng.model.transport.jstore.filter.Not",
+          "children": [
+            {
+              "class": "ru.bio4j.ng.model.transport.jstore.filter.IsNull",
+              "column": "nnfld"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

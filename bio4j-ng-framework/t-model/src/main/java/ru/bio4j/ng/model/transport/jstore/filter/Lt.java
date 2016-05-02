@@ -9,4 +9,7 @@ public class Lt extends Compare {
     public Lt(String fieldName, Object value) {
         super(fieldName, value);
     }
+    public Lt() {
+        this(null, null);
+    }
 }
