@@ -33,7 +33,7 @@ public class ProviderGetDataset extends ProviderAn {
                 tryPrepareSessionContext(request.getUser().getUid(), conn);
                 final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
                 result.bioCode(cur.getBioCode());
-                boolean requestCached = requestCached(request, LOG);
+                boolean requestCached = false; //requestCached(request, LOG);
 
                 int totalCount = requestCached ? request.getTotalCount() : 0;
                 if(totalCount == 0) {
