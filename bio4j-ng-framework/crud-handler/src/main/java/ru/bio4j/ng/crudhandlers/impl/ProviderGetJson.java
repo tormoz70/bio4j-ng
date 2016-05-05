@@ -24,7 +24,7 @@ public class ProviderGetJson extends ProviderAn {
                 final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder();
 
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, cursor.getSelectSqlDef().getPreparedSql(), cursor.getSelectSqlDef().getParams()).open();) {
+                        .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParams()).open();) {
                     while(c.reader().next()) {
                         List<Object> values = c.reader().getValues();
                         for(Object val : values)
@@ -42,7 +42,7 @@ public class ProviderGetJson extends ProviderAn {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-
+            cursor.getSelectSqlDef().setParams(request.getBioParams());
             return processCursorAsJsonProvider((BioRequestGetJson) request, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
