@@ -1,0 +1,15 @@
+1. создание основного бранча дл€ резиза
+mvn release:branch -DbranchName=givc-stat-client-mrp-1.1.x -Duser=tormoz70 -Dpassword=vps73758bb
+
+2. переходим в созданный бранч
+
+3. mvn release:prepare
+
+4. mvn release:perform
+
+5.
+≈сли плагин в процессе произошла ошибка самой сборки, например, интеграционный тест не прошел, используйте
+mvn release:rollback
+
+≈сли вы уверены, что откатывать нечего, и просто хотите начать заново, используйте 
+mvn release:clean
