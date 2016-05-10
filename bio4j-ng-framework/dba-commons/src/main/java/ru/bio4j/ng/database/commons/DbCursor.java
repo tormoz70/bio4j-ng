@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Реализует 3 основных вида запроса Query, Exec, Scalar
  */
-public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
+public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(DbCursor.class);
 
 
@@ -64,10 +64,6 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
             @Override
             public void execute() throws SQLException {
                 final DbCursor self = DbCursor.this;
-//                String parsedQuery = self.preparedStatement.getParsedQuery();
-//                ParameterMetaData pmd = self.preparedStatement.getStatement().getParameterMetaData();
-//                self.preparedStatement.get
-//                pmd.
                 self.reader = context.createReader(self.preparedStatement.executeQuery());
                 self.isActive = true;
             }
