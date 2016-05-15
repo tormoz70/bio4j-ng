@@ -4,15 +4,15 @@
 
 <Workspace>
 	<Local Expanded="Yes">
-		<Model Expanded="Yes" ID="{EC84154E-E134-4B14-B69D-51DBA5B6A8F3}" Loaded="No" Name="handlers" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="handlers.bpm"/>
+		<Model Expanded="Yes" ID="{EC84154E-E134-4B14-B69D-51DBA5B6A8F3}" Name="handlers" Selected="Yes" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="handlers.bpm"/>
 		<Model Expanded="Yes" ID="{5E2F362C-7241-4F0B-9C04-809C0C76528D}" Loaded="No" Name="oom-seq-longpooling" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="oom-seq-longpooling.oom"/>
 		<Model ID="{9DDA8C25-64D2-44C3-A2FE-CBB1F150D2DB}" Loaded="No" Name="Transport-Model" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="Transport-Model.oom"/>
-		<Model Expanded="Yes" ID="{1504ABB9-3500-4E3E-8894-342EEBEFC370}" Loaded="No" Name="Bio-Description" Type="{029EAF0C-06EE-4282-8CB2-D70732085DEF}" URL="Bio-Description.xsm"/>
+		<Model Expanded="Yes" ID="{1504ABB9-3500-4E3E-8894-342EEBEFC370}" Name="Bio-Description" Type="{029EAF0C-06EE-4282-8CB2-D70732085DEF}" URL="Bio-Description.xsm"/>
 		<Model Expanded="Yes" ID="{BFDF025D-EB76-4066-B5A8-F6687370ACB7}" Loaded="No" Name="usecase (autentication).v3" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="usecase (autentication).v3.bpm"/>
 		<Model ID="{BFDF025D-EB76-4066-B5A8-F6687370ACB7}" Loaded="No" Name="usecase (autentication).v4" Type="{3D3C409C-B60D-430E-A1C4-B880653AC634}" URL="usecase (autentication).v4.bpm"/>
 		<Model ID="{A5EC4CDE-B07A-46F1-B8CB-9B1BA66E1FE5}" Loaded="No" Name="ObjectOrientedModel_1" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="ObjectOrientedModel_1.oom"/>
-		<Model ID="{706D418F-23BC-4408-A6F1-B513EAA18246}" Loaded="No" Name="EnterpriseArchitectureModel_1" Type="{5215C79E-A9A1-4738-A627-36DA432EFE29}" URL="EnterpriseArchitectureModel_1.eam"/>
-		<Model Expanded="Yes" ID="{5119AD16-8D6D-40F6-AC64-FDD059D55B22}" Name="bio4j-1.4.1" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="bio4j-1.4.1.oom"/>
+		<Model ID="{706D418F-23BC-4408-A6F1-B513EAA18246}" Name="EnterpriseArchitectureModel_1" Type="{5215C79E-A9A1-4738-A627-36DA432EFE29}" URL="EnterpriseArchitectureModel_1.eam"/>
+		<Model Expanded="Yes" ID="{5119AD16-8D6D-40F6-AC64-FDD059D55B22}" Loaded="No" Name="bio4j-1.4.1" Type="{18112060-1A4B-11D1-83D9-444553540000}" URL="bio4j-1.4.1.oom"/>
 	</Local>
 	<BrowserModule Name="Repository"/>
 </Workspace>
