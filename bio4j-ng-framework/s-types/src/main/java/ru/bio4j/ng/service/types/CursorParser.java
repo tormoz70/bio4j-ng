@@ -253,9 +253,12 @@ public class CursorParser {
         if(m.find()){
             String sqlFileName = Utl.extractBioParentPath(bioCode) + Utl.DEFAULT_BIO_PATH_SEPARATOR + m.group();
             URL url = context.getBundle().getResource(sqlFileName);
-            try(InputStream inputStream = url.openStream()) {
-                sqlText = Utl.readStream(inputStream);
-            }
+            if(url != null)
+                try(InputStream inputStream = url.openStream()) {
+                    sqlText = Utl.readStream(inputStream);
+                }
+            else
+                throw new Exception(String.format("Файл %s, на который ссылается объект %s не наден в ресурсах!", sqlFileName, bioCode));
         }
         return sqlText;
     }
