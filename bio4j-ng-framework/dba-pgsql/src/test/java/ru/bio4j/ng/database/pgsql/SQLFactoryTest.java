@@ -386,6 +386,8 @@ public class SQLFactoryTest {
             return Paramus.set(params).getValueByName(type, paramName, true);
         } catch (ConvertValueException ex) {
             throw new SQLException(ex);
+        } finally {
+            Paramus.instance().pop();
         }
     }
 
@@ -399,7 +401,7 @@ public class SQLFactoryTest {
                     .add("p_password", "siolopon")
                     .add(Param.builder()./*owner(paramus.get()).*/name("v_role_id").type(MetaType.INTEGER).direction(Param.Direction.OUT).build())
                     .add(Param.builder()./*owner(paramus.get()).*/name("v_org_id").type(MetaType.INTEGER).direction(Param.Direction.OUT).build());
-            List<Param> params = paramus.get();
+            List<Param> params = paramus.pop();
             context.execBatch(new SQLAction<List<Param>, Object>() {
                 @Override
                 public Object exec(SQLContext context, Connection conn, List<Param> param) throws Exception {

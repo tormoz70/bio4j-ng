@@ -138,7 +138,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
                 if(this.params == null)
                     this.params = new ArrayList<>();
                 if(params != null)
-                    this.params = Paramus.set(params).merge(params, true).get();
+                    this.params = Paramus.set(params).merge(params, true).pop();
 
                 if(!this.doBeforeStatement(this.params)) // Обрабатываем события
                     return (T)this;
