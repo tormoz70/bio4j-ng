@@ -6,44 +6,44 @@
     <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <!--<repositories>-->
-        <!--<repository>-->
-            <!--<id>givc-public</id>-->
-            <!--<name>Public Maven Repo</name>-->
-            <!--<url>http://192.168.50.100:8081/nexus/content/groups/public/</url>-->
-            <!--<releases>-->
-                <!--<enabled>true</enabled>-->
-            <!--</releases>-->
-            <!--<snapshots>-->
-                <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
-        <!--</repository>-->
-    <!--</repositories>-->
-    <!--<pluginRepositories>-->
-        <!--<pluginRepository>-->
-            <!--<id>givc-public</id>-->
-            <!--<name>Public Maven Repo</name>-->
-            <!--<url>http://192.168.50.100:8081/nexus/content/groups/public/</url>-->
-            <!--<releases>-->
-                <!--<enabled>true</enabled>-->
-            <!--</releases>-->
-            <!--<snapshots>-->
-                <!--<enabled>true</enabled>-->
-            <!--</snapshots>-->
-        <!--</pluginRepository>-->
-    <!--</pluginRepositories>-->
-    <!--<distributionManagement>-->
-        <!--<repository>-->
-            <!--<id>deployment</id>-->
-            <!--<name>Internal Releases</name>-->
-            <!--<url>http://192.168.50.100:8081/nexus/content/repositories/releases/</url>-->
-        <!--</repository>-->
-        <!--<snapshotRepository>-->
-            <!--<id>deployment</id>-->
-            <!--<name>Internal Releases</name>-->
-            <!--<url>http://192.168.50.100:8081/nexus/content/repositories/snapshots/</url>-->
-        <!--</snapshotRepository>-->
-    <!--</distributionManagement>-->
+    <repositories>
+        <repository>
+            <id>givc-public</id>
+            <name>Public Maven Repo</name>
+            <url>http://192.168.50.100:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>givc-public</id>
+            <name>Public Maven Repo</name>
+            <url>http://192.168.50.100:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>http://192.168.50.100:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Internal Releases</name>
+            <url>http://192.168.50.100:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <scm>
         <connection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</connection>
@@ -284,6 +284,14 @@
             </dependency>
 			<!-- Other stuff -->
 
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <!--<dependency>-->
                 <!--<groupId>org.apache.geronimo.specs</groupId>-->
                 <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
@@ -424,8 +432,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
