@@ -23,9 +23,9 @@ public class BioLoginProcessor {
 
         User usr;
         if(!Strings.isNullOrEmpty(uid)) {
-            usr = securityProvider.getUser(uid);
+            usr = securityProvider.getUser(uid, prms.remoteIP);
         } else {
-            usr = securityProvider.login(login);
+            usr = securityProvider.login(login, prms.remoteIP);
         }
         return usr;
     }

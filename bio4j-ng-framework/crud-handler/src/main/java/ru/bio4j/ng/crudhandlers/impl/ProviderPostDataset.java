@@ -68,7 +68,7 @@ public class ProviderPostDataset extends ProviderAn {
     private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
         final BioCursor cursorDef = module.getCursor(request);
-        cursorDef.getSelectSqlDef().setParams(request.getBioParams());
+//        cursorDef.getSelectSqlDef().setParams(request.getBioParams());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());

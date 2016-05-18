@@ -279,6 +279,9 @@ public class CursorParser {
 
             addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
             addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
+            for(Param p : sqlDef.getParams()){
+                p.setFixed(true);
+            }
         }
         LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;

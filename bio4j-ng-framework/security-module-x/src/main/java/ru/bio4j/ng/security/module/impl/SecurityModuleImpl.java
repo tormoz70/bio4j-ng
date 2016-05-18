@@ -55,7 +55,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
             return ru.bio4j.ng.database.pgsql.SQLContextFactory.create(config);
     }
 
-    private User _getUser(final String loginOrUid) throws Exception {
+    private User _getUser(final String loginOrUid, final String remoteIP) throws Exception {
         if (isNullOrEmpty(loginOrUid))
             throw new BioError.Login.BadLogin();
 
@@ -72,7 +72,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
                             .open()) {
                         if (c.reader().next()) {
                             User usr = new User();
-//                            usr.setModuleKey(moduleKey);
+
                             usr.setUid(c.reader().getValue("usr_uid", String.class));
                             usr.setLogin(c.reader().getValue("usr_login", String.class));
                             usr.setFio(c.reader().getValue("usr_fio", String.class));
@@ -83,6 +83,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
                             usr.setOrgDesc(c.reader().getValue("org_desc", String.class));
                             usr.setRoles(c.reader().getValue("usr_roles", String.class));
                             usr.setGrants(c.reader().getValue("usr_grants", String.class));
+                            usr.setRemoteIP(remoteIP);
                             LOG.debug("User found: {}", Utl.buildBeanStateInfo(usr, "User", "  "));
                             return usr;
                         }
@@ -109,16 +110,17 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     }
 
     @Override
-    public User login(final String login) throws Exception {
+    public User login(final String login, final String remoteIP) throws Exception {
         if (isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
         LOG.debug("User {} logging in...", login);
 
-        User usr = _getUser(login);
+        User usr = _getUser(login, remoteIP);
         return usr;
     }
 
-    public User getUser(final String uid) throws Exception {
+    @Override
+    public User getUser(final String uid, String remoteIP) throws Exception {
 
         if(User.BIO_ANONYMOUS_USER_LOGIN.equals(uid.toLowerCase())) {
             User usr = new User();
@@ -132,10 +134,11 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
 
         LOG.debug("User {} getting...", uid);
 
-        User usr = _getUser(uid);
+        User usr = _getUser(uid, remoteIP);
         return usr;
     }
 
+    @Override
     public void logoff(final String uid) throws Exception {
     }
 

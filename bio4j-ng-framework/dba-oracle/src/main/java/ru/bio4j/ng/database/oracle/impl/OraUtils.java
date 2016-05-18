@@ -99,7 +99,7 @@ public class OraUtils implements RDBMSUtils {
             " and a.object_name = upper(:method_name)" +
             " order by position";
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws SQLException {
         StringBuilder args = new StringBuilder();
         OraUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
@@ -108,19 +108,25 @@ public class OraUtils implements RDBMSUtils {
             st.setStringAtName("method_name", pkg.methodName);
             try (OracleResultSet rs = (OracleResultSet)st.executeQuery()) {
                 try(Paramus p = Paramus.set(params)) {
+                    int i = 0;
                     while (rs.next()) {
-                        String parName = rs.getString("argument_name");
+                        Param fixedParam = null;
+                        if(fixedParamsOverride != null && fixedParamsOverride.size() > i)
+                            fixedParam = fixedParamsOverride.get(i).getFixed() ? fixedParamsOverride.get(i) : null;
+
+                        String parName = fixedParam != null ? fixedParam.getName() : rs.getString("argument_name");
                         String parType = rs.getString("data_type");
                         String parDir = rs.getString("in_out");
-                        if (!(parName.startsWith(DEFAULT_PARAM_PREFIX[0]) || parName.startsWith(DEFAULT_PARAM_PREFIX[1])))
-                            throw new IllegalArgumentException("Не верный формат наименования аргументов хранимой процедуры.\n" +
-                                    "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
+                        if (!(parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[0]) || parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[1])))
+                            throw new IllegalArgumentException(String.format("Не верный формат наименования аргументов хранимой процедуры, \"%s\".\n" +
+                                    "Необходимо, чтобы все имена аргументов начинались с префикса \"%s\" или \"%s\" !", parName.toUpperCase(), DEFAULT_PARAM_PREFIX[0], DEFAULT_PARAM_PREFIX[1]));
                         args.append(((args.length() == 0) ? ":" : ",:") + parName.toLowerCase());
                         p.add(Param.builder()
                                 .name(parName.toLowerCase())
-                                .type(decodeType(parType))
-                                .direction(decodeDirection(parDir))
+                                .type(fixedParam != null ? fixedParam.getType() : decodeType(parType))
+                                .direction(fixedParam != null ? fixedParam.getDirection() : decodeDirection(parDir))
                                 .build());
+                        i++;
                     }
                 }
             }

@@ -3,7 +3,7 @@ package ru.bio4j.ng.service.api;
 import ru.bio4j.ng.model.transport.User;
 
 public interface BioSecurityModule extends BioModule {
-    User getUser(final String uid) throws Exception;
-    User login(final String login) throws Exception;
+    User getUser(final String uid, final String remoteIP) throws Exception;
+    User login(final String login, final String remoteIP) throws Exception;
     void logoff(final String uid) throws Exception;
 }

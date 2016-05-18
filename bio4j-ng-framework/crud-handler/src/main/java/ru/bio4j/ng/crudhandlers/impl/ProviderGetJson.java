@@ -42,7 +42,7 @@ public class ProviderGetJson extends ProviderAn {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-            cursor.getSelectSqlDef().setParams(request.getBioParams());
+//            cursor.getSelectSqlDef().setParams(request.getBioParams());
             return processCursorAsJsonProvider((BioRequestGetJson) request, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());

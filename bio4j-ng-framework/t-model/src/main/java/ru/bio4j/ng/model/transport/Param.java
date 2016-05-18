@@ -2,6 +2,14 @@ package ru.bio4j.ng.model.transport;
 
 public class Param {
 
+    public Boolean getFixed() {
+        return fixed;
+    }
+
+    public void setFixed(Boolean fixed) {
+        this.fixed = fixed;
+    }
+
     public static enum Direction {
         UNDEFINED,
         IN,
@@ -122,6 +130,7 @@ public class Param {
 	private MetaType type;
 	private int size;
 	private Direction direction;
+    private Boolean fixed = false;
 
     private int id;
 

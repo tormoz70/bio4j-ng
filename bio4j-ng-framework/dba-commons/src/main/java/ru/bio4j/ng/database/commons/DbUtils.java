@@ -66,10 +66,10 @@ public class DbUtils {
         return converter.read(param.getType(), stringSize, isCallable);
     }
 
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws SQLException {
         if(rdbmsUtils == null)
             throw new IllegalArgumentException(String.format(INIT_ERRORS_TEMPL, RDBMSUtils.class.getSimpleName()));
-        return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn);
+        return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
     public static List<Param> processExec(final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {

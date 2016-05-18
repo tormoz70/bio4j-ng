@@ -118,7 +118,7 @@ public class ProviderGetDataset extends ProviderAn {
     }
 
     private static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreGetDataSet request) {
-        sqlDef.setParams(request.getBioParams());
+//        sqlDef.setParams(request.getBioParams());
         sqlDef.setOffset(request.getOffset());
         sqlDef.setPageSize(request.getPageSize());
         sqlDef.setLocation(request.getLocation());

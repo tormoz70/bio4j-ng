@@ -144,10 +144,10 @@ public class PgSQLUtils implements RDBMSUtils {
         return null;
     }
 
-    private static void parsParam(String paramDesc, Paramus p, StringBuilder args) {
+    private static void parsParam(String paramDesc, Paramus p, StringBuilder args, Param fixedParam) {
         String dirName = extractDirName(paramDesc);
         paramDesc = cutDirNames(paramDesc);
-        String paramName = paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
+        String paramName = fixedParam != null ? fixedParam.getName() : paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
         String paramNameUpper = paramName.toUpperCase();
         paramDesc = cutDirName(paramDesc, paramName);
         String typeName = paramDesc;
@@ -160,24 +160,30 @@ public class PgSQLUtils implements RDBMSUtils {
 
         p.add(Param.builder()
                 .name(paramName)
-                .type(type)
-                .direction(decodeDirection(dirName))
+                .type(fixedParam != null ? fixedParam.getType() : type)
+                .direction(fixedParam != null ? fixedParam.getDirection() : decodeDirection(dirName))
                 .innerObject(typeName)
                 .build());
 
     }
 
     //"p_param1 character varying, OUT p_param2 integer"
-    public static void parsParams(String paramsList, Paramus p, StringBuilder args) {
+    public static void parsParams(String paramsList, Paramus p, StringBuilder args, List<Param> fixedParamsOverride) {
         String[] substrs = Strings.split(paramsList, ",");
-        for (String prmDesc : substrs)
-            parsParam(prmDesc.trim(), p, args);
+        int i = 0;
+        for (String prmDesc : substrs) {
+            Param fixedParam = null;
+            if(fixedParamsOverride != null && fixedParamsOverride.size() > i)
+                fixedParam = fixedParamsOverride.get(i).getFixed() ? fixedParamsOverride.get(i) : null;
+            parsParam(prmDesc.trim(), p, args, fixedParam);
+            i++;
+        }
     }
 
     private static final String SQL_GET_PARAMS_FROM_DBMS = "SELECT pg_get_function_identity_arguments(:method_name::regproc) as rslt";
 
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws SQLException {
         StringBuilder args = new StringBuilder();
         PgSQLUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
@@ -187,7 +193,7 @@ public class PgSQLUtils implements RDBMSUtils {
                 try(Paramus p = Paramus.set(params)) {
                     if (rs.next()) {
                         String pars = rs.getString("rslt");
-                        parsParams(pars, p, args);
+                        parsParams(pars, p, args, fixedParamsOverride);
                     }
                 }
             }

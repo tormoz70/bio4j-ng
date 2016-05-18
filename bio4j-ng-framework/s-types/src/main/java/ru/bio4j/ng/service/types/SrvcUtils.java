@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.types;
 
+import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.User;
 
@@ -19,11 +20,13 @@ public class SrvcUtils {
     public static final String PARAM_CURUSR_ORG_UID    = "p_sys_curusr_org_uid";
     public static final String PARAM_CURUSR_ROLES      = "p_sys_curusr_roles";
     public static final String PARAM_CURUSR_GRANTS     = "p_sys_curusr_grants";
+    public static final String PARAM_CURUSR_IP         = "p_sys_curusr_ip";
 
     public static class BioQueryParams {
         public String moduleKey;
         public String bioCode;
         public String loginOrUid;
+        public String remoteIP;
     }
 
     public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) {
@@ -31,6 +34,7 @@ public class SrvcUtils {
         result.moduleKey = request.getParameter(QRY_PARAM_NAME_MODULE);
         result.bioCode = request.getParameter(QRY_PARAM_NAME_BIOCODE);
         result.loginOrUid = request.getParameter(QRY_PARAM_NAME_UID);
+        result.remoteIP = Httpc.extractRealRemoteAddr(request);
         if(Strings.isNullOrEmpty(result.loginOrUid))
             result.loginOrUid = User.BIO_ANONYMOUS_USER_LOGIN;
         return result;

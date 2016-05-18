@@ -307,7 +307,7 @@ public class SQLFactoryTest {
             context.execBatch(new SQLAction<Object, Object>() {
                 @Override
                 public Object exec(SQLContext context, Connection conn, Object param) throws Exception {
-                    StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto("test_stored_error", conn);
+                    StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto("test_stored_error", conn, null);
                     return null;
                 }
             }, "AnContext");

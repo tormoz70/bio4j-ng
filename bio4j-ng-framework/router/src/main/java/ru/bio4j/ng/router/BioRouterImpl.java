@@ -5,6 +5,7 @@ import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
@@ -161,7 +162,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         final String moduleKey = request.getParameter(SrvcUtils.QRY_PARAM_NAME_MODULE);
         final String userUID = request.getParameter(SrvcUtils.QRY_PARAM_NAME_UID);
 
-        final User usr = securityProvider.getUser(userUID);
+        final User usr = securityProvider.getUser(userUID, Httpc.extractRealRemoteAddr(request));
 
         final String requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
         LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
