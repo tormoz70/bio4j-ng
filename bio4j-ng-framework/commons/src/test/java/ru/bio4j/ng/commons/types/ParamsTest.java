@@ -7,7 +7,9 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ParamsTest {
@@ -190,9 +192,35 @@ public class ParamsTest {
 		throw new RuntimeException("Test not implemented");
 	}
 
-	@Test(enabled = false)
-	public void setValue() {
-		throw new RuntimeException("Test not implemented");
+	@Test(enabled = true)
+	public void setValue() throws Exception {
+		try(Paramus paramus = Paramus.set(new ArrayList<Param>());){
+			Param.Builder pb = Param.builder()/*.owner(paramus.get())*/;
+			paramus.add(pb
+					.name("testDate")
+					.type(MetaType.STRING)
+					.direction(Param.Direction.IN)
+					.format("to_date('yyyy.MM.dd HH:mm:ss');to_number('##0.###')")
+					.build());
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = fmt.parse("2013-05-06");
+			paramus.setValue("testDate", date);
+			String val = paramus.getValueAsStringByName("testDate", true);
+			Assert.assertEquals("2013.05.06 00:00:00", val);
+
+			paramus.add(pb
+					.name("testDouble")
+					.type(MetaType.STRING)
+					.direction(Param.Direction.IN)
+					.format("to_date('yyyy.MM.dd HH:mm:ss');to_number('##0.#')")
+					.build());
+			Double dbl = 123.567;
+			paramus.setValue("testDouble", dbl);
+			val = paramus.getValueAsStringByName("testDouble", true);
+			Assert.assertEquals("123.6", val);
+
+		}
+
 	}
 
 	@Test(enabled = false)

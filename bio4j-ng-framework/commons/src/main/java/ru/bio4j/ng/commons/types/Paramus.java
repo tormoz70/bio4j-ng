@@ -4,7 +4,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -12,10 +17,7 @@ import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.converter.Types;
-import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.commons.utils.Lists;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -26,7 +28,7 @@ public class Paramus implements Closeable {
 
     private static final Paramus instance = new Paramus();
 
-    private Paramus() {
+	private Paramus() {
     }
 
     /**
@@ -357,14 +359,37 @@ public class Paramus implements Closeable {
 		return setList(names, values, csDefaultDelimiter);
 	}
 
+	public static String extractDateFormat(String fmt){
+		String rslt = Regexs.find(fmt, "(?<=to_date\\(').*(?='\\);)", Pattern.CASE_INSENSITIVE);
+		return Strings.isNullOrEmpty(rslt) ? "yyyy.MM.dd HH:mm:ss" : rslt;
+	}
+
+	public static String extractNumberFormat(String fmt){
+		String rslt = Regexs.find(fmt, "(?<=;to_number\\(').*(?='\\))", Pattern.CASE_INSENSITIVE);
+		return Strings.isNullOrEmpty(rslt) ? "##0.##" : rslt;
+	}
+
     public Paramus setValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
         Param param = this.getParam(name);
         if(param != null) {
+			Class inClass = value != null ? value.getClass() : String.class;
             MetaType paramType = param.getType();
-            MetaType valueType = (paramType == MetaType.UNDEFINED ? MetaTypeConverter.read(value != null ? value.getClass() : String.class) : paramType);
+            MetaType valueType = (paramType == MetaType.UNDEFINED ? MetaTypeConverter.read(inClass) : paramType);
             param.setType(valueType);
+			Class valueClass = MetaTypeConverter.write(valueType);
+			if(valueType == MetaType.STRING && (Types.typeIsDate(inClass) || Types.typeIsNumber(inClass))){
+				if(Types.typeIsDate(inClass)){
+					String format = extractDateFormat(param.getFormat());
+					DateFormat df = new SimpleDateFormat(format);
+					value = df.format(value);
+				}else if(Types.typeIsNumber(inClass)){
+					String format = extractNumberFormat(param.getFormat());
+					DecimalFormat myFormatter = new DecimalFormat(format, new DecimalFormatSymbols(Locale.ENGLISH));
+					value = myFormatter.format(value);
+				}
+			}
             try {
-                param.setValue(Converter.toType(value, MetaTypeConverter.write(valueType)));
+                param.setValue(Converter.toType(value, valueClass));
             } catch (ConvertValueException e) {
                 throw new IllegalArgumentException(String.format("Cannot set value \"%s\" to parameter \"%s[%s]\"!", ""+value, name, paramType.name()));
             }

@@ -15,7 +15,6 @@ public class ProviderExec extends ProviderAn {
         final BioCursor.SQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
-        //sqlDef.setParams(request.getBioParams());
 
         List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
             @Override
@@ -34,7 +33,6 @@ public class ProviderExec extends ProviderAn {
         try {
             final User usr = request.getUser();
             final BioCursor cursor = module.getCursor(request);
-//            cursor.getExecSqlDef().setParams(request.getBioParams());
 
             BioRespBuilder.DataBuilder response = processExec((BioRequestStoredProg)request, context, cursor);
 

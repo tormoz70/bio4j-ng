@@ -2,14 +2,6 @@ package ru.bio4j.ng.model.transport;
 
 public class Param {
 
-    public Boolean getFixed() {
-        return fixed;
-    }
-
-    public void setFixed(Boolean fixed) {
-        this.fixed = fixed;
-    }
-
     public static enum Direction {
         UNDEFINED,
         IN,
@@ -36,6 +28,8 @@ public class Param {
         private MetaType type = MetaType.UNDEFINED;
         private int size = 0;
         private Direction direction = Direction.UNDEFINED;
+        private Boolean fixed = false;
+        private String format;
 
         public static Param copy(Param copyFrom) {
             return new Builder()
@@ -45,6 +39,8 @@ public class Param {
                     .type(copyFrom.getType())
                     .size(copyFrom.getSize())
                     .direction(copyFrom.getDirection())
+                    .fixed(copyFrom.getFixed())
+                    .format(copyFrom.getFormat())
                     .build();
         }
 
@@ -55,7 +51,9 @@ public class Param {
                     .innerObject(param.getInnerObject())
                     .type(param.getType())
                     .size(param.getSize())
-                    .direction(param.getDirection());
+                    .direction(param.getDirection())
+                    .fixed(param.getFixed())
+                    .format(param.getFormat());
         }
 
         public String getName() {
@@ -113,6 +111,24 @@ public class Param {
             return this;
         }
 
+        public Boolean getFixed() {
+            return this.fixed;
+        }
+
+        public Builder fixed(Boolean fixed) {
+            this.fixed = fixed;
+            return this;
+        }
+
+        public String getFormat() {
+            return this.format;
+        }
+
+        public Builder format(String format) {
+            this.format = format;
+            return this;
+        }
+
         public Param build() {
             return new Param(this);
         }
@@ -130,7 +146,8 @@ public class Param {
 	private MetaType type;
 	private int size;
 	private Direction direction;
-    private Boolean fixed = false;
+    private Boolean fixed;
+    private String format;
 
     private int id;
 
@@ -143,6 +160,8 @@ public class Param {
 		this.type = builder.getType();
 		this.size = builder.getSize();
 		this.direction = builder.getDirection();
+        this.fixed = builder.getFixed();
+        this.format = builder.getFormat();
 	}
 
     public Param export() {
@@ -194,9 +213,22 @@ public class Param {
     public int getId() {
         return this.id;
     }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Boolean getFixed() {
+        return fixed;
+    }
+    public void setFixed(Boolean fixed) {
+        this.fixed = fixed;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String toString() {
@@ -206,7 +238,7 @@ public class Param {
             objsStr.append(objsStr.length() == 0 ? innrObjStr : ";"+innrObjStr);
         }
         String valStr = this.getValue() + (objsStr.length() > 0 ? "(" + objsStr.toString() + ")" : null);
-        return String.format("(%s=[%s]; tp:%s; sz:%d; dr:%s)", this.getName(), valStr, this.getType(), this.getSize(), this.getDirection());
+        return String.format("(%s=[%s]; tp:%s; sz:%d; dr:%s; fx:%s; fm:%s)", this.getName(), valStr, this.getType(), this.getSize(), this.getDirection(), this.getFixed(), this.getFormat());
     }
 
 }

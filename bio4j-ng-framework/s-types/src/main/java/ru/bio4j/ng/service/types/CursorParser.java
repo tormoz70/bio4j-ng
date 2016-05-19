@@ -164,12 +164,16 @@ public class CursorParser {
                 String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
                 MetaType paramType = Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class);
                 Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);
+                Boolean fixed = Doms.getAttribute(paramElem, "fixed", true, Boolean.class);
+                String format = Doms.getAttribute(paramElem, "format", null, String.class);
                 Param param = p.getParam(paramName, true);
                 if(param == null) {
                     param = Param.builder()
                             .name(paramName)
                             .type(paramType)
                             .direction(paramDir)
+                            .fixed(fixed)
+                            .format(format)
                             .build();
                     p.add(param);
                 } else {
@@ -279,9 +283,6 @@ public class CursorParser {
 
             addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
             addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
-            for(Param p : sqlDef.getParams()){
-                p.setFixed(true);
-            }
         }
         LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;
