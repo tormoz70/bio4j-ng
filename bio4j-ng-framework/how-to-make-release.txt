@@ -1,4 +1,4 @@
-1. создание основного бранча для резиза
+1. создание основного бранча для релиза
 mvn release:branch -DbranchName=givc-stat-client-mrp-1.1.x -Duser=tormoz70 -Dpassword=vps73758bb
 
 2. переходим в созданный бранч
