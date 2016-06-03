@@ -89,7 +89,7 @@ public class SQLFactoryTest1 {
         String paramsList = "p_param1 character varying, OUT p_param2 integer";
         List<Param> params = new ArrayList<>();
         try (Paramus p = Paramus.set(params)) {
-            PgSQLUtils.parsParams(paramsList, p, args);
+            PgSQLUtils.parsParams(paramsList, p, args, null);
         }
         Assert.assertEquals(params.get(0).getDirection(), Param.Direction.IN);
         Assert.assertEquals(params.get(0).getType(), MetaType.STRING);

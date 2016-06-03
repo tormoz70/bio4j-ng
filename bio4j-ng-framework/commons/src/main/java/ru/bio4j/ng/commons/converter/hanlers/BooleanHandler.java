@@ -64,4 +64,9 @@ public class BooleanHandler extends TypeHandlerBase implements TypeHandler<Boole
             Types.nop();
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(Boolean value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

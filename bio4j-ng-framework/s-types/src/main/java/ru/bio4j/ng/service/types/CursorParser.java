@@ -146,6 +146,8 @@ public class CursorParser {
                     col.setWidth(pair[1].trim());
                 if(pair[0].equals("hidden"))
                     col.setHidden(Boolean.parseBoolean(pair[1].trim()));
+                if(pair[0].equals("filter"))
+                    col.setFilter(Boolean.parseBoolean(pair[1].trim()));
                 if(pair[0].equals("showTooltip"))
                     col.setShowTooltip(Boolean.parseBoolean(pair[1].trim()));
                 if(pair[0].equals("readonly"))
@@ -162,12 +164,16 @@ public class CursorParser {
                 String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
                 MetaType paramType = Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class);
                 Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);
+                Boolean fixed = Doms.getAttribute(paramElem, "fixed", true, Boolean.class);
+                String format = Doms.getAttribute(paramElem, "format", null, String.class);
                 Param param = p.getParam(paramName, true);
                 if(param == null) {
                     param = Param.builder()
                             .name(paramName)
                             .type(paramType)
                             .direction(paramDir)
+                            .fixed(fixed)
+                            .format(format)
                             .build();
                     p.add(param);
                 } else {
@@ -234,6 +240,7 @@ public class CursorParser {
                 col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
                 col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
                 col.setHidden(Converter.toType(Doms.getAttribute(paramElem, "hidden", "false", String.class), boolean.class));
+                col.setFilter(Converter.toType(Doms.getAttribute(paramElem, "filter", "false", String.class), boolean.class));
                 col.setShowTooltip(Converter.toType(Doms.getAttribute(paramElem, "showTooltip", "false", String.class), boolean.class));
                 col.setDefaultVal(Doms.getAttribute(paramElem, "defaultVal", null, String.class));
                 col.setPk(Converter.toType(Doms.getAttribute(paramElem, "pk", "false", String.class), boolean.class));
@@ -250,9 +257,12 @@ public class CursorParser {
         if(m.find()){
             String sqlFileName = Utl.extractBioParentPath(bioCode) + Utl.DEFAULT_BIO_PATH_SEPARATOR + m.group();
             URL url = context.getBundle().getResource(sqlFileName);
-            try(InputStream inputStream = url.openStream()) {
-                sqlText = Utl.readStream(inputStream);
-            }
+            if(url != null)
+                try(InputStream inputStream = url.openStream()) {
+                    sqlText = Utl.readStream(inputStream);
+                }
+            else
+                throw new Exception(String.format("Файл %s, на который ссылается объект %s не наден в ресурсах!", sqlFileName, bioCode));
         }
         return sqlText;
     }

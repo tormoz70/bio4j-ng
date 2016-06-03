@@ -1,5 +1,9 @@
 package ru.bio4j.ng.model.transport.jstore.filter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Элемент фильтра
  */
@@ -12,24 +16,13 @@ public class IsNull extends AbstractExpression {
         this.column = column;
     }
 
+    public IsNull() {
+        this(null);
+    }
+
     @Override
     public String getColumn() {
         return this.column;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IsNull isNull = (IsNull) o;
-
-        return !(column != null ? !column.equals(isNull.column) : isNull.column != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return column != null ? column.hashCode() : 0;
-    }
 }

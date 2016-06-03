@@ -33,6 +33,7 @@
                         <!--</Import-Package>-->
                         <!-- By default, we don't export anything -->
                         <Export-Package />
+                        <Import-Package>*,ru.bio4j.ng.model.transport.jstore,ru.bio4j.ng.model.transport.jstore.filter</Import-Package>
                     </instructions>
                 </configuration>
                 <executions>
@@ -92,10 +93,11 @@
     </build>
 
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.felix</groupId>-->
-            <!--<artifactId>org.apache.felix.ipojo.annotations</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.apache.felix</groupId>-->
             <!--<artifactId>org.apache.felix.ipojo</artifactId>-->

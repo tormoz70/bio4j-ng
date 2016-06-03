@@ -6,16 +6,15 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class Eq extends Compare {
 
-    /**
-     * Значение поля РАВНО значению
-     * @param fieldName
-     * @param value
-     */
-    public Eq(String fieldName, String value, boolean ignoreCase) {
-        super(fieldName, value, ignoreCase);
+    public Eq(String column, Object value, boolean ignoreCase) {
+        super(column, value, ignoreCase);
+    }
+    public Eq(String column, Object value) {
+        this(column, value, false);
     }
 
-    public Eq(String fieldName, Object value) {
-        super(fieldName, value, false);
+    public Eq() {
+        this(null, null, false);
     }
+
 }

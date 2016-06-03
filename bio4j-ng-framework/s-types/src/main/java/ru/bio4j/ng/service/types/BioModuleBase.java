@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,11 +64,19 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         for(BioCursor.SQLDef sqlDef : sqlDefs) {
             if(sqlDef != null)
                 try (Paramus p = Paramus.set(sqlDef.getParams())) {
-                    p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getUid(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_UID,      usr.getUid(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID,  usr.getOrgId(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_ROLES,    usr.getRoles(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS,   usr.getGrants(), Param.Direction.IN, true);
+                    p.setValue(SrvcUtils.PARAM_CURUSR_IP,       usr.getRemoteIP(), Param.Direction.IN, true);
                 }
+        }
+    }
+
+    protected static void applyBioParams(final List<Param> bioParams, Collection<BioCursor.SQLDef> sqlDefs) {
+        for(BioCursor.SQLDef sqlDef : sqlDefs) {
+            if(sqlDef != null)
+                sqlDef.setParams(bioParams);
         }
     }
 
@@ -84,6 +93,7 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
         final User usr = bioRequest.getUser();
         applyCurrentUserParams(usr, cursor.sqlDefs());
+        applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
 
         return cursor;
     }

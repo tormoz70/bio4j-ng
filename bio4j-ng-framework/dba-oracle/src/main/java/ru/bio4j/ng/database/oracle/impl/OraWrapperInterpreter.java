@@ -42,8 +42,11 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
             column = "upper("+column+")";
         }
 
-        if (value != null && value instanceof Date)
-            value = "to_date('YYYYMMDD', '" + new SimpleDateFormat("YYYYMMdd").format(value) + "')";
+        if (value != null && value instanceof Date) {
+            String valueFrom = "to_date('" + new SimpleDateFormat("YYYYMMdd").format(value) + "-00:00:00', 'YYYYMMDD-HH24:MI:SS')";
+            String valueTo = "to_date('" + new SimpleDateFormat("YYYYMMdd").format(value) + "-23:59:59', 'YYYYMMDD-HH24:MI:SS')";
+            return String.format("%s between %s and %s", column, valueFrom, valueTo);
+        }
         return "("+String.format(templ, column, value)+")";
     }
 
@@ -51,27 +54,35 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
         return (Strings.isNullOrEmpty(alias) ? ""  : alias+".")+column;
     }
 
-    @Override
-    public String filterToSQL(String alias, Expression e) {
-        if(e instanceof Logical){
+    private String _filterToSQL(String alias, Expression e) {
+        if (e instanceof Logical) {
             String logicalOp = (e instanceof And) ? " and " : (
                     (e instanceof Or) ? " or " : " unknown-logical "
             );
             StringBuilder rslt = new StringBuilder();
-            for(Object chld : e.getChildrens()){
-                rslt.append(((rslt.length() == 0) ? "" : logicalOp) + this.filterToSQL(alias, (Expression) chld));
+            for (Object chld : e.getChildren()) {
+                rslt.append(((rslt.length() == 0) ? "" : logicalOp) + this._filterToSQL(alias, (Expression) chld));
             }
-            return "("+rslt.toString()+")";
+            return "(" + rslt.toString() + ")";
         }
 
-        if(e instanceof Compare){
+        if (e instanceof Compare) {
             return decodeCompare(alias, e);
         }
-        if(e instanceof IsNull){
-            return "("+appendAlias(alias, e.getColumn()) + " is null)";
+        if (e instanceof IsNull) {
+            return "(" + appendAlias(alias, e.getColumn()) + " is null)";
         }
-        if(e instanceof Not){
-            return "not "+this.filterToSQL(alias, (Expression) e.getChildrens().get(0))+"";
+        if (e instanceof Not) {
+            return "not " + this._filterToSQL(alias, (Expression) e.getChildren().get(0)) + "";
+        }
+        return null;
+    }
+
+    @Override
+    public String filterToSQL(String alias, Filter filter) {
+        if(filter != null && !filter.getChildren().isEmpty()) {
+            Expression e = filter.getChildren().get(0);
+            return _filterToSQL(alias, e);
         }
         return null;
     }

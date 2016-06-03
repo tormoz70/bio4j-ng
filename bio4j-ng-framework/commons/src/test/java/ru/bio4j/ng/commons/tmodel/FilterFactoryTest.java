@@ -2,15 +2,19 @@ package ru.bio4j.ng.commons.tmodel;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.jstore.filter.*;
 
+
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.bio4j.ng.model.transport.jstore.filter.Filter.*;
+import static ru.bio4j.ng.model.transport.jstore.filter.FilterBuilder.*;
 
 public class FilterFactoryTest {
     private static final Map<Class<?>, String> compareTemplates = new HashMap<Class<?>, String>() {{
@@ -70,7 +74,7 @@ public class FilterFactoryTest {
                                  (e instanceof Or) ? " or " : " unknown-logical "
                                 );
             StringBuilder rslt = new StringBuilder();
-            for(Object chld : e.getChildrens()){
+            for(Object chld : e.getChildren()){
                 rslt.append(((rslt.length() == 0) ? "" : logicalOp) + buildSql(alias, (Expression)chld));
             }
             return "("+rslt.toString()+")";
@@ -83,7 +87,7 @@ public class FilterFactoryTest {
             return "("+appendAlias(alias, e.getColumn()) + " is null)";
         }
         if(e instanceof Not){
-            return "not "+buildSql(alias, (Expression)e.getChildrens().get(0))+"";
+            return "not "+buildSql(alias, (Expression)e.getChildren().get(0))+"";
         }
         return null;
     }
@@ -95,17 +99,50 @@ public class FilterFactoryTest {
             .add(
                 and()
                     .add(not(eq("field10", 1)))
-                    .add(eq("field12", 23L)))
+                    .add(eq("field12", 23L))
+                    .add(gt("fieldD", 2.5)))
             .add(
-                or()
-                    .add(bgn("field2", "qwe", true))
-                    .add(end("field2", "ads", false))
+                    or()
+                            .add(bgn("field2", "qwe", true))
+                            .add(end("field2", "ads", false))
             )
             .add(
-                not(isNull("nnfld"))
+                    not(isNull("nnfld"))
             );
         String sql = buildSql("fltr", filter);
         System.out.println("sql: "+sql);
         Assert.assertTrue(true);
     }
+
+    @Test
+    public void testDo1() {
+
+        Expression filter = filter(and()
+                .add(
+                        and()
+                                .add(not(eq("field10", 1)))
+                                .add(eq("field12", 23L))
+                                .add(gt("fieldD", 2.5)))
+                .add(
+                        or()
+                                .add(bgn("field2", "qwe", true))
+                                .add(end("field2", "ads", false))
+                )
+                .add(
+                        not(isNull("nnfld"))
+                ));
+        String json = Jsons.encode(filter);
+        System.out.println("json: "+json);
+        Assert.assertTrue(true);
+    }
+
+
+    @Test
+    public void testDo2() throws Exception {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter.json");
+        String json = Utl.readStream(inputStream);
+        Expression filter = Jsons.decode(json, Filter.class);
+        Assert.assertNotNull(filter);
+    }
+
 }

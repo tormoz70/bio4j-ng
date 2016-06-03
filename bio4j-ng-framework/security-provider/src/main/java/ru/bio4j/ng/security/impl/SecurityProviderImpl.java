@@ -80,33 +80,33 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
     }
 
     @Override
-    public User getUser(final String userUid) throws Exception {
+    public User getUser(final String userUid, final String remoteIP) throws Exception {
         if(isNullOrEmpty(userUid))
             throw new BioError.Login.BadLogin();
 
         Boolean anonymousUserIsOk = detectAnonymous(userUid);
         if(anonymousUserIsOk) {
             LOG.debug("Anonymous User with uid \"{}\" logged in.", userUid);
-            return getSecurityModule().getUser(userUid);
+            return getSecurityModule().getUser(userUid, remoteIP);
         }
 
         Boolean userIsOnline = userIsOnline(userUid);
         if(userIsOnline){
             LOG.debug("User with uid \"{}\" already logged in.", userUid);
-            return getSecurityModule().getUser(userUid);
+            return getSecurityModule().getUser(userUid, remoteIP);
         } else
             throw new BioError.Login.LoginExpired();
     }
 
     @Override
-    public User login(final String login) throws Exception {
+    public User login(final String login, final String remoteIP) throws Exception {
         if(isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
 
         Boolean anonymousUserIsOk = detectAnonymous(login);
         if(anonymousUserIsOk) {
             LOG.debug("Anonymous User with login \"{}\" logged in.", login);
-            return getSecurityModule().getUser(login);
+            return getSecurityModule().getUser(login, remoteIP);
         }
 
 //        if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
@@ -125,7 +125,7 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
 //            return usr;
 //        }
 
-        User newUsr = getSecurityModule().login(login);
+        User newUsr = getSecurityModule().login(login, remoteIP);
         if(newUsr == null)
             throw new BioError.Login.BadLogin();
         storeUser(newUsr.getUid());

@@ -6,7 +6,11 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class Ge extends Compare {
 
-    public Ge(String fieldName, Object value) {
-        super(fieldName, value);
+    public Ge(String column, Object value) {
+        super(column, value, false);
+    }
+
+    public Ge() {
+        this(null, null);
     }
 }

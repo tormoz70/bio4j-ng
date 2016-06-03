@@ -37,7 +37,8 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
     @Override
 	protected void prepareStatement() throws SQLException {
-        StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection);
+        StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
+
         try(Paramus p = Paramus.set(sp.getParams())){
             p.apply(params, true);
             params = p.get();

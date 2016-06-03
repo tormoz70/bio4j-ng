@@ -27,6 +27,7 @@ public class DbSelectableParamSetter implements SQLParamSetter {
         for (int i = 0; i < paramsNames.size(); i++) {
             String paramName = paramsNames.get(i);
             Param param = Paramus.set(params).getParam(paramName);
+            Paramus.instance().pop();
             if (param != null) {
                 param.setId(i + 1);
                 Object origValue = param.getValue();

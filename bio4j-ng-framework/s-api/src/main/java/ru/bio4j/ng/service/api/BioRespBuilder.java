@@ -183,7 +183,9 @@ public class BioRespBuilder {
 
         @Override
         public String json(){
-            return this.jsonBuilder.toString();
+            if(this.jsonBuilder != null)
+                return this.jsonBuilder.toString();
+            return null;
         }
 
     }

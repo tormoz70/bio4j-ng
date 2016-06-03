@@ -9,4 +9,7 @@ public class Le extends Compare {
     public Le(String fieldName, Object value) {
         super(fieldName, value);
     }
+    public Le() {
+        this(null, null);
+    }
 }

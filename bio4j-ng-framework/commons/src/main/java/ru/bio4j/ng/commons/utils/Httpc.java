@@ -179,4 +179,12 @@ public class Httpc {
         return "";
     }
 
+    public static String extractRealRemoteAddr(HttpServletRequest request) {
+        if(request != null) {
+            String realRemoteAddr = request.getHeader("X-Real-IP");
+            return Strings.isNullOrEmpty(realRemoteAddr) ? request.getRemoteAddr() : realRemoteAddr;
+        }
+        return null;
+    }
+
 }

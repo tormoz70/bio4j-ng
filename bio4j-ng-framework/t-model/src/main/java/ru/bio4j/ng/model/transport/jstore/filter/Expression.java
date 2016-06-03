@@ -22,7 +22,7 @@ public interface Expression {
      * @title Получение списка аргументов
      * @return Список аргументов
      */
-    List<?> getChildrens();
+    List<Expression> getChildren();
 
     /**
      * Добавить аргумент для логических выражений (для построения в runtime)

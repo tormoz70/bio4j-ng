@@ -43,7 +43,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         }
 
         if (value != null && value instanceof Date)
-            value = "to_date('YYYYMMDD', '" + new SimpleDateFormat("YYYYMMdd").format(value) + "')";
+            value = "to_date('" + new SimpleDateFormat("YYYYMMdd").format(value) + "', 'YYYYMMDD')";
         return "("+String.format(templ, column, value)+")";
     }
 
@@ -51,15 +51,14 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         return (Strings.isNullOrEmpty(alias) ? ""  : alias+".")+column;
     }
 
-    @Override
-    public String filterToSQL(String alias, Expression e) {
+    private String _filterToSQL(String alias, Expression e) {
         if(e instanceof Logical){
             String logicalOp = (e instanceof And) ? " and " : (
                     (e instanceof Or) ? " or " : " unknown-logical "
             );
             StringBuilder rslt = new StringBuilder();
-            for(Object chld : e.getChildrens()){
-                rslt.append(((rslt.length() == 0) ? "" : logicalOp) + this.filterToSQL(alias, (Expression) chld));
+            for(Object chld : e.getChildren()){
+                rslt.append(((rslt.length() == 0) ? "" : logicalOp) + this._filterToSQL(alias, (Expression) chld));
             }
             return "("+rslt.toString()+")";
         }
@@ -71,7 +70,16 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
             return "("+appendAlias(alias, e.getColumn()) + " is null)";
         }
         if(e instanceof Not){
-            return "not "+this.filterToSQL(alias, (Expression) e.getChildrens().get(0))+"";
+            return "not "+this._filterToSQL(alias, (Expression) e.getChildren().get(0))+"";
+        }
+        return null;
+    }
+
+    @Override
+    public String filterToSQL(String alias, Filter filter) {
+        if(filter != null && !filter.getChildren().isEmpty()) {
+            Expression e = filter.getChildren().get(0);
+            return _filterToSQL(alias, e);
         }
         return null;
     }

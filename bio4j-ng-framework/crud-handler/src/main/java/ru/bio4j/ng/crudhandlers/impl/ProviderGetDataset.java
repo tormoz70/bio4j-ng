@@ -33,7 +33,7 @@ public class ProviderGetDataset extends ProviderAn {
                 tryPrepareSessionContext(request.getUser().getUid(), conn);
                 final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
                 result.bioCode(cur.getBioCode());
-                boolean requestCached = requestCached(request, LOG);
+                boolean requestCached = false; //requestCached(request, LOG);
 
                 int totalCount = requestCached ? request.getTotalCount() : 0;
                 if(totalCount == 0) {
@@ -60,8 +60,8 @@ public class ProviderGetDataset extends ProviderAn {
                             int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
                             LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), cur.getSelectSqlDef().getLocation(), locatedPos, offset);
                             cur.getSelectSqlDef().setOffset(offset);
-                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset())
-                                    .setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
+                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset());
+                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
                         } else {
                             LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
                             result.exception(new BioError.LacationFail(cur.getSelectSqlDef().getLocation()));
@@ -118,7 +118,7 @@ public class ProviderGetDataset extends ProviderAn {
     }
 
     private static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreGetDataSet request) {
-        sqlDef.setParams(request.getBioParams());
+//        sqlDef.setParams(request.getBioParams());
         sqlDef.setOffset(request.getOffset());
         sqlDef.setPageSize(request.getPageSize());
         sqlDef.setLocation(request.getLocation());

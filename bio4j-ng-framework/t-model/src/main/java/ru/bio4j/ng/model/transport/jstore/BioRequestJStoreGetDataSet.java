@@ -1,7 +1,7 @@
 package ru.bio4j.ng.model.transport.jstore;
 
 import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.jstore.filter.Expression;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
     /**
      * Параметры фильтрации для запросов GET
      */
-    private Expression filter;
+    private Filter filter;
 
     /**
      * Значение первичного ключа для запросов GET(с разбиением по страницам) если надо установить курсор в нужную позицию
@@ -66,11 +66,11 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
         this.sort = sort;
     }
 
-    public Expression getFilter() {
+    public Filter getFilter() {
         return filter;
     }
 
-    public void setFilter(Expression filter) {
+    public void setFilter(Filter filter) {
         this.filter = filter;
     }
 

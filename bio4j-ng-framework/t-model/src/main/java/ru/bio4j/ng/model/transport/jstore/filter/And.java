@@ -6,7 +6,12 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class And extends Logical {
 
-    public And(Expression ... operands) {
-        super(operands);
+    public And() {
+        super();
     }
+
+    public And(Expression ... expressions) {
+        super(expressions);
+    }
+
 }

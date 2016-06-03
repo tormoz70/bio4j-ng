@@ -40,4 +40,9 @@ public class MetaTypeHandler extends TypeHandlerBase implements TypeHandler<Meta
             return (T) MetaTypeConverter.write(value);
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(MetaType value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

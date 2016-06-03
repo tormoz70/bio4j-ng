@@ -34,4 +34,9 @@ public class DirectionHandler extends TypeHandlerBase implements TypeHandler<Par
             return (T) value.toString();
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(Param.Direction value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }

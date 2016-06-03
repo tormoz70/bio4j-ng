@@ -2,7 +2,7 @@ package ru.bio4j.ng.database.api;
 
 
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.model.transport.jstore.filter.Expression;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.util.List;
 
@@ -17,6 +17,6 @@ public interface WrapperInterpreter {
      * @param filter
      * @return
      */
-    String filterToSQL(String alias, Expression filter);
+    String filterToSQL(String alias, Filter filter);
     String sortToSQL(String alias, List<Sort> sort);
 }

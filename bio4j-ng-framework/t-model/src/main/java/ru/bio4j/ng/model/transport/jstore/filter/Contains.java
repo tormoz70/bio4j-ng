@@ -6,12 +6,14 @@ package ru.bio4j.ng.model.transport.jstore.filter;
 
 public class Contains extends Compare {
 
-    /**
-     * Значение поля содержит строку
-     * @param fieldName
-     * @param value
-     */
-    public Contains(String fieldName, String value, boolean ignoreCase) {
-        super(fieldName, value, ignoreCase);
+    public Contains(String column, Object value, boolean ignoreCase) {
+        super(column, value, ignoreCase);
+    }
+    public Contains(String column, Object value) {
+        this(column, value, false);
+    }
+
+    public Contains() {
+        this(null, null, false);
     }
 }

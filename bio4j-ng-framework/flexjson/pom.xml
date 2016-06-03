@@ -15,7 +15,19 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>*,ru.bio4j.ng.model.transport.jstore,ru.bio4j.ng.model.transport.jstore.filter</Import-Package>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-tmodel</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

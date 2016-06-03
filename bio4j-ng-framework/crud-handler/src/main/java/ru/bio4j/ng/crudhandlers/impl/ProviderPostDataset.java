@@ -30,12 +30,26 @@ public class ProviderPostDataset extends ProviderAn {
         if(sqlDef == null && Arrays.asList(RowChangeType.delete).contains(changeType))
             throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
         try(Paramus paramus = Paramus.set(sqlDef.getParams())) {
-            for(Field field : cursor.getFields()) {
-                paramus.add(Param.builder()
-                        .name(STD_PARAM_PREFIX + field.getName().toLowerCase())
-                        .value(row.getValue(field.getName()))
-                        .type(field.getType())
-                        .build(), true);
+//            for(Field field : cursor.getFields()) {
+//                paramus.add(Param.builder()
+//                        .name(STD_PARAM_PREFIX + field.getName().toLowerCase())
+//                        .value(row.getValue(field.getName()))
+//                        .type(field.getType())
+//                        .build(), true);
+//            }
+
+            for(String key : row.getData().keySet()) {
+                String paramName = (STD_PARAM_PREFIX + key).toLowerCase();
+                Object paramValue = row.getData().get(key);
+                Param p = paramus.getParam(paramName, true);
+                if(p != null){
+                    paramus.setValue(paramName, paramValue);
+                } else {
+                    paramus.add(Param.builder()
+                            .name(paramName)
+                            .value(paramValue)
+                            .build(), true);
+                }
             }
             cmd.init(conn, sqlDef.getPreparedSql(), paramus.get());
         }
@@ -68,7 +82,6 @@ public class ProviderPostDataset extends ProviderAn {
     private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
         final BioCursor cursorDef = module.getCursor(request);
-        cursorDef.getSelectSqlDef().setParams(request.getBioParams());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());

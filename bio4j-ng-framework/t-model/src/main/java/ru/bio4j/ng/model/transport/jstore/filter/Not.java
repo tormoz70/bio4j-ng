@@ -9,30 +9,12 @@ import java.util.List;
 
 public class Not extends AbstractExpression {
 
-    private Expression expression;
-
-    public Not(Expression expression) {
-        this.expression = expression;
+    public Not(Expression ... expressions) {
+        super(expressions);
     }
 
-    @Override
-    public List<?> getChildrens() {
-        return Collections.singletonList(this.expression);
+    public Not() {
+        super();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Not)) return false;
-
-        Not not = (Not) o;
-
-        return !(expression != null ? !expression.equals(not.expression) : not.expression != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return expression != null ? expression.hashCode() : 0;
-    }
 }

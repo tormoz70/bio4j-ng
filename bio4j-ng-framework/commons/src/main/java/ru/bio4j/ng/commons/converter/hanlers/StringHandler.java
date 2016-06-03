@@ -47,4 +47,9 @@ public class StringHandler extends TypeHandlerBase implements TypeHandler<String
             return (T) Types.parsEnum(value, targetTypeWrapped);
         throw new ConvertValueException(value, genericType, targetTypeWrapped);
     }
+
+    public <T> T write(String value, Class<T> targetType, String format) throws ConvertValueException {
+        return write(value, targetType);
+    }
+
 }
