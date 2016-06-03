@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.bio4j.ng</groupId>
     <artifactId>bio4j-ng-framework</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <repositories>
@@ -45,11 +45,11 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <!--<scm>-->
+    <scm>
         <!--<connection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</connection>-->
-        <!--<developerConnection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</developerConnection>-->
-        <!--<tag>bio4j-ng-framework-1.4.1</tag>-->
-    <!--</scm>-->
+        <developerConnection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</developerConnection>
+        <tag>bio4j-ng-framework-1.4.1</tag>
+    </scm>
 
     <properties>
         <bioDebug>true</bioDebug>

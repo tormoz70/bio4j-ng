@@ -1,1 +1,1 @@
-mvn --batch-mode release:update-versions
+mvn versions:set -DnewVersion=1.4.2-SNAPSHOT

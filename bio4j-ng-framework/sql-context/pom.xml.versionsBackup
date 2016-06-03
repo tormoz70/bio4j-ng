@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-dba-pgsql</artifactId>
+    <artifactId>bio4j-ng-sql-context</artifactId>
     <packaging>bundle</packaging>
 
-    <properties>
-        <!-- oracle -->
-        <!--<ojdbc6.version>12.1.0</ojdbc6.version>-->
-        <!--<oucp.version>12.1.0</oucp.version>-->
-        <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
-        <tomcat-juli.version>8.0.3</tomcat-juli.version>
-    </properties>
     <build>
         <plugins>
             <plugin>
@@ -31,35 +24,25 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>${tomcat-jdbc.version}</version>
-            <scope>test</scope>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-juli</artifactId>
-            <version>${tomcat-juli.version}</version>
-            <scope>test</scope>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-    	<dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-dbapi</artifactId>
+            <artifactId>bio4j-ng-stypes</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-dba-commons</artifactId>
+            <artifactId>bio4j-ng-sapi</artifactId>
             <scope>provided</scope>
         </dependency>
-    	<dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>
             <scope>provided</scope>
@@ -69,5 +52,21 @@
             <artifactId>bio4j-ng-tmodel</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-dba-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>bio4j-ng-dba-oracle</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-dbapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
+
 </project>
