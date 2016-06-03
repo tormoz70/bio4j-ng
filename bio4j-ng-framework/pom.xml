@@ -48,7 +48,7 @@
     <scm>
         <connection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</connection>
         <developerConnection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</developerConnection>
-        <tag>bio4j-ng-framework-1.4.0</tag>
+        <tag>bio4j-ng-framework-1.4.1</tag>
     </scm>
 
     <properties>
