@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <groupId>ru.bio4j.ng</groupId>
+        <version>1.4.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-stypes</artifactId>
+    <artifactId>bio4j-ng-router</artifactId>
     <packaging>bundle</packaging>
 
     <build>
@@ -17,27 +17,21 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Import-Package>
-                            org.apache.commons.codec.binary.*;resolution:="optional",
-                            org.apache.commons.logging.*;resolution:="optional",
-                            *</Import-Package>
-                        <Embed-Dependency>*;scope=compile</Embed-Dependency>
-                        <Export-Package>ru.bio4j.ng.service.types.*;org.apache.http.*</Export-Package>
-                        <remoteOBR />
+                        <Import-Package>*,ru.bio4j.ng.model.transport.jstore,ru.bio4j.ng.model.transport.jstore.filter</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
+            <scope>provided</scope>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>org.apache.geronimo.specs</groupId>-->
@@ -49,26 +43,11 @@
             <artifactId>jetty-osgi-servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <scope>compile</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>flexjson</artifactId>
-            <version>${project.version}</version>
+            <artifactId>bio4j-ng-stypes</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -78,19 +57,20 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-dbapi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-commons</artifactId>
+            <artifactId>bio4j-ng-crudhandler</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
 
 </project>
