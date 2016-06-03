@@ -4,7 +4,7 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <version>1.4.1</version>
     </parent>
 
     <artifactId>bio4j-ng-security-module-x</artifactId>
