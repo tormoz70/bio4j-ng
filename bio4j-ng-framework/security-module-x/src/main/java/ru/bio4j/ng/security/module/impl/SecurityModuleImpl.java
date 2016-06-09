@@ -33,6 +33,11 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     private EventAdmin eventAdmin;
 
     @Override
+    public String getKey() {
+        return "security";
+    }
+
+    @Override
     protected EventAdmin getEventAdmin() {
         return eventAdmin;
     }
