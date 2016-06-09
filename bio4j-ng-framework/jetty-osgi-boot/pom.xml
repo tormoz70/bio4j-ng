@@ -138,6 +138,7 @@
                             org.slf4j.helpers;resolution:=optional,
                             org.xml.sax,
                             org.xml.sax.helpers,
+                            org.glassfish.jersey.servlet,
                             *
                         </Import-Package>
                         <_nouses>true</_nouses>
