@@ -10,6 +10,7 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public enum BioRoute {
     UNKNOWN("unknown", null, null),
     PING("ping", BioRequestPing.class, BioRequestFactory.Ping.class),
+    LOGIN("login", BioRequestLogin.class, BioRequestFactory.Login.class),
     LOGOUT("logout", BioRequestLogout.class, BioRequestFactory.Logout.class),
     CRUD_JSON_GET("crud.json.get", BioRequestGetJson.class, BioRequestFactory.GetJson.class),
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),

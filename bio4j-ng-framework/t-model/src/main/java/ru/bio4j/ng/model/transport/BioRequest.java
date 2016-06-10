@@ -8,6 +8,9 @@ import java.util.List;
  */
 public class BioRequest {
 
+    private String remoteIP;
+    private String remoteClient;
+
     private String moduleKey;
 
     /**
@@ -114,5 +117,21 @@ public class BioRequest {
 
     public void setModuleKey(String moduleKey) {
         this.moduleKey = moduleKey;
+    }
+
+    public String getRemoteIP() {
+        return remoteIP;
+    }
+
+    public void setRemoteIP(String remoteIP) {
+        this.remoteIP = remoteIP;
+    }
+
+    public String getRemoteClient() {
+        return remoteClient;
+    }
+
+    public void setRemoteClient(String remoteClient) {
+        this.remoteClient = remoteClient;
     }
 }

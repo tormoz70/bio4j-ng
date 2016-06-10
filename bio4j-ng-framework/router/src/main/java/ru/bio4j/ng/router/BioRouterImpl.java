@@ -68,6 +68,17 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
+            routeMap.put(BioRoute.LOGIN, new BioRouteHandler<BioRequest>() {
+                @Override
+                public void handle(BioRequest request, HttpServletResponse response) throws Exception {
+                    final String moduleKey = request.getModuleKey();
+                    final String login = request.getLogin();
+                    User user = securityProvider.login(login, request.getRemoteIP());
+                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
+                    response.getWriter().append(responseBuilder.json());
+                }
+            });
+
             routeMap.put(BioRoute.LOGOUT, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
@@ -185,6 +196,8 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 throw new Exception(String.format("Route for requestType \"%s\" not found!", requestType));
             BioRequestFactory factory = route.getFactory();
             bioRequest = factory.restore(request, moduleKey, route, usr);
+            bioRequest.setRemoteIP(Httpc.extractRealRemoteAddr(request));
+            bioRequest.setRemoteClient(null);
         } catch (Exception e) {
             LOG.debug("Unexpected error while decoding BioRequest: \n"+
                     " - Error: {}", e.getMessage());
