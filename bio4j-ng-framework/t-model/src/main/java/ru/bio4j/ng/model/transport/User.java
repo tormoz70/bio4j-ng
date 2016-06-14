@@ -2,7 +2,7 @@ package ru.bio4j.ng.model.transport;
 
 public class User {
 
-    public static final String BIO_ANONYMOUS_USER_LOGIN = "$bio-anonymous$";
+    public static final String BIO_ANONYMOUS_UID = "$bio-anonymous$";
 
     private String uid;
     private String login;
@@ -59,7 +59,7 @@ public class User {
     }
 
     public Boolean isAnonymous() {
-        return BIO_ANONYMOUS_USER_LOGIN.equals(login);
+        return BIO_ANONYMOUS_UID.equals(login);
     }
 
     public String getEmail() {

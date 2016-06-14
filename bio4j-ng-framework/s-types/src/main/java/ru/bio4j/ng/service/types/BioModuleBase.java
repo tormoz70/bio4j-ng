@@ -11,19 +11,17 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 //import ru.bio4j.ng.database.oracle.SQLContextFactory;
 //import ru.bio4j.ng.database.pgsql.SQLContextFactory;
-import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
 import ru.bio4j.ng.service.api.Configurator;
+import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +29,6 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);

@@ -345,29 +345,28 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testSQLCommandStoredProc() throws Exception {
         try {
-            int role = -1;
-            int org_id = -1;
+
             Paramus paramus = Paramus.set(new ArrayList<Param>());
-            paramus.add("p_user_name", "coordinator")
-                    .add("p_password", "siolopon")
-                    .add(Param.builder()./*owner(paramus.get()).*/name("v_role_id").type(MetaType.INTEGER).direction(Param.Direction.OUT).build())
-                    .add(Param.builder()./*owner(paramus.get()).*/name("v_org_id").type(MetaType.INTEGER).direction(Param.Direction.OUT).build());
+            paramus.add("p_login", "qweqwe@asd.com/qegedipe")
+                   .add(Param.builder().name("v_uid").type(MetaType.STRING).direction(Param.Direction.OUT).build());
             List<Param> params = paramus.pop();
-            context.execBatch(new SQLAction<List<Param>, Object>() {
+            String uid = context.execBatch(new SQLAction<List<Param>, String>() {
                 @Override
-                public Object exec(SQLContext context, Connection conn, List<Param> param) throws Exception {
+                public String exec(SQLContext context, Connection conn, List<Param> param) throws Exception {
                     SQLStoredProc prc = context.createStoredProc();
-                    prc.init(conn, "gacc.check_login", param).execSQL();
-                    return null;
+                    prc.init(conn, "bio_login2.check_login", param).execSQL();
+                    try(Paramus paramus = Paramus.set(prc.getParams())) {
+                        return paramus.getValueAsStringByName("v_uid", true);
+                    }
+
                 }
             }, params);
-            role = getParamValue(params, int.class, "v_role_id");
-            org_id = getParamValue(params, int.class, "v_org_id");
-            LOG.debug(String.format("Login: OK; role: %d; org_id: %d", role, org_id));
-            Assert.assertEquals(role, 6);
+
+            LOG.debug(String.format("Login: OK; uid: %s", uid));
+            Assert.assertEquals(uid, "FTW");
         } catch (SQLException ex) {
             LOG.error("Error!!!", ex);
         }

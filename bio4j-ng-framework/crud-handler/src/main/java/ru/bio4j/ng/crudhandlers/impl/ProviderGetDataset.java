@@ -8,7 +8,6 @@ import ru.bio4j.ng.database.commons.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
@@ -64,7 +63,7 @@ public class ProviderGetDataset extends ProviderAn {
                             cur.getSelectSqlDef().setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
                         } else {
                             LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
-                            result.exception(new BioError.LacationFail(cur.getSelectSqlDef().getLocation()));
+                            result.exception(new BioError.LocationFail(cur.getSelectSqlDef().getLocation()));
                         }
                     }
                 }

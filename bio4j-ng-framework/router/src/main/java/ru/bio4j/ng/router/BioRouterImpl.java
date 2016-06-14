@@ -5,14 +5,13 @@ import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
-import ru.bio4j.ng.service.types.SrvcUtils;
+import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,22 +70,24 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.LOGIN, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
-                    final String moduleKey = request.getModuleKey();
-                    final String login = request.getLogin();
-                    User user = securityProvider.login(login, request.getRemoteIP());
-                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
-                    response.getWriter().append(responseBuilder.json());
+//                    final String moduleKey = request.getModuleKey();
+//                    final String login = request.getLogin();
+//                    User user = securityProvider.login(login, request.getRemoteIP());
+//                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
+//                    response.getWriter().append(responseBuilder.json());
+                    throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
             routeMap.put(BioRoute.LOGOUT, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
-                    final String moduleKey = request.getModuleKey();
-                    final String userUID = request.getUser().getUid();
-                    securityProvider.logoff(userUID);
-                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
-                    response.getWriter().append(responseBuilder.json());
+//                    final String moduleKey = request.getModuleKey();
+//                    final String userUID = request.getUser().getUid();
+//                    securityProvider.logoff(userUID);
+//                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
+//                    response.getWriter().append(responseBuilder.json());
+                    throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
@@ -169,20 +170,20 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     @Override
     public void route(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        final String method = request.getMethod();
-        final String moduleKey = request.getParameter(SrvcUtils.QRY_PARAM_NAME_MODULE);
-        final String userUID = request.getParameter(SrvcUtils.QRY_PARAM_NAME_UID);
+        final SrvcUtils.BioQueryParams qprms = SrvcUtils.decodeBioQueryParams(request);
 
-        final User usr = securityProvider.getUser(userUID, Httpc.extractRealRemoteAddr(request));
+        final User usr = securityProvider.getUser(qprms.uid, qprms.remoteIP);
+        if(usr == null && !qprms.requestType.equalsIgnoreCase(BioRoute.LOGIN.getAlias()))
+            throw new BioError.Login.LoginExpired();
 
         final String requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
-        LOG.debug("Recived-{}: \"{}\" - request...", method, requestType);
+        LOG.debug("Recived-{}: \"{}\" - request...", qprms.method, requestType);
         if(isNullOrEmpty(requestType))
             throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE));
 
-        BioAppModule bioModule = moduleProvider.getAppModule(moduleKey);
+        BioAppModule bioModule = moduleProvider.getAppModule(qprms.moduleKey);
         if(bioModule == null)
-            throw new IllegalArgumentException(String.format("Module with key \"%s\" not registered!", moduleKey));
+            throw new IllegalArgumentException(String.format("Module with key \"%s\" not registered!", qprms.moduleKey));
         BioHttpRequestProcessor requestProcessor = bioModule.getHttpRequestProcessor(requestType);
         if(requestProcessor != null){
             requestProcessor.doPost(request, response);
@@ -195,9 +196,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             if(route == null)
                 throw new Exception(String.format("Route for requestType \"%s\" not found!", requestType));
             BioRequestFactory factory = route.getFactory();
-            bioRequest = factory.restore(request, moduleKey, route, usr);
-            bioRequest.setRemoteIP(Httpc.extractRealRemoteAddr(request));
-            bioRequest.setRemoteClient(null);
+            bioRequest = factory.restore(qprms, route.getClazz(), usr);
         } catch (Exception e) {
             LOG.debug("Unexpected error while decoding BioRequest: \n"+
                     " - Error: {}", e.getMessage());

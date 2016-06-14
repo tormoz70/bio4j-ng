@@ -34,28 +34,23 @@ public abstract class BioRequestFactory {
 
     }
 
-    public BioRequest restore(HttpServletRequest request, final String moduleKey, final BioRoute route, final User usr) throws Exception {
-        Filter f = new Filter();
-        f = null;
-        final String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
-        StringBuilder jd = new StringBuilder();
-        if(!isNullOrEmpty(jsonDataAsQueryParam))
-            jd.append(jsonDataAsQueryParam);
-        else
-            Httpc.readDataFromRequest(request, jd);
-        if(jd.length() == 0)
-            jd.append("{}");
+    public BioRequest restore(
+            final SrvcUtils.BioQueryParams qprms,
+            final Class<? extends BioRequest> bioRequestClass,
+            final User usr) throws Exception {
         BioRequest bioRequest;
-        String bioRequestJson = jd.toString();
+        String bioRequestJson = qprms.jsonData;
         try {
-            Class<? extends BioRequest> clazz = route.getClazz();
-            bioRequest = Jsons.decode(bioRequestJson, clazz);
+            bioRequest = Jsons.decode(bioRequestJson, bioRequestClass);
         } catch (Exception e) {
             throw new Exception(String.format("Unexpected error while decoding BioRequest JSON: %s\n"+
                     " - Error: %s", bioRequestJson, e.getMessage()), e);
         }
-        bioRequest.setModuleKey(moduleKey);
-        bioRequest.setRequestType(route.getAlias());
+        bioRequest.setModuleKey(qprms.moduleKey);
+        bioRequest.setBioCode(qprms.bioCode);
+        bioRequest.setRequestType(qprms.requestType);
+        bioRequest.setRemoteIP(qprms.remoteIP);
+        bioRequest.setRemoteClient(qprms.remoteIP);
         bioRequest.setUser(usr);
         return bioRequest;
     }
@@ -86,7 +81,10 @@ public abstract class BioRequestFactory {
 
     public static class FormUpload extends BioRequestFactory {
         @Override
-        public BioRequest restore(HttpServletRequest request, final String moduleKey, final BioRoute route, final User usr) throws Exception {
+        public BioRequest restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<? extends BioRequest> bioRequestClass,
+                final User usr) throws Exception {
             return null;
         }
 

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -27,9 +28,7 @@ public class BioServletLoginBase extends BioServletBase {
         loginProcessor.setSecurityProvider(securityProvider);
         SrvcUtils.BioQueryParams prms = SrvcUtils.decodeBioQueryParams(request);
 
-        User usr = loginProcessor.login(prms);
-        brsp.user(usr)
-            .exception((brsp.getUser() != null ? null : new BioError.Login.BadLogin()));
+        brsp.user(loginProcessor.login(prms));
         return brsp;
     }
 }

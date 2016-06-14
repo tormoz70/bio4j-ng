@@ -127,10 +127,10 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     @Override
     public User getUser(final String uid, String remoteIP) throws Exception {
 
-        if(User.BIO_ANONYMOUS_USER_LOGIN.equals(uid.toLowerCase())) {
+        if(User.BIO_ANONYMOUS_UID.equals(uid.toLowerCase())) {
             User usr = new User();
-            usr.setUid(User.BIO_ANONYMOUS_USER_LOGIN);
-            usr.setLogin(User.BIO_ANONYMOUS_USER_LOGIN);
+            usr.setUid(User.BIO_ANONYMOUS_UID);
+            usr.setLogin(User.BIO_ANONYMOUS_UID);
             usr.setFio("Anonymous User");
             usr.setRoles("*");
             usr.setGrants("*");
