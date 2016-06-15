@@ -75,7 +75,7 @@ public class WarSecurityFilterBase implements Filter {
         loginProcessor.setSecurityProvider(securityProvider);
     }
 
-    private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (user != null) {
             Map<String, String[]> extraParams = new TreeMap<>();
             extraParams.putAll(request.getParameterMap());
@@ -84,20 +84,13 @@ public class WarSecurityFilterBase implements Filter {
             rslt.appendParams(extraParams);
             return rslt;
         } else {
-            BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(new BioError.Login.BadLogin()), response, bioDebug);
-            return request;
+            throw new BioError.Login.BadLogin();
         }
     }
 
     private boolean detectWeAreInPublicAreas(String bioCode) {
         return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
     }
-
-    //private void processBadLoginError(final HttpServletResponse response) throws IOException {
-        //BioError.Login.BadLogin e = new BioError.Login.BadLogin();
-        //BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(e), resp, bioDebug);
-        //log_error("An error while checking User!", e);
-    //}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -125,7 +118,6 @@ public class WarSecurityFilterBase implements Filter {
                     if (user.isAnonymous() && !weAreInPublicAreas) {
                         debug("Anonymous not in public area for bioCode \"{}\"!", qprms.bioCode);
                         throw new BioError.Login.BadLogin();
-                        //processBadLoginError(resp);
                     } else {
                         HttpServletRequest wrappedRequest = processUser(user, req, resp);
                         chn.doFilter(wrappedRequest, resp);
@@ -133,22 +125,14 @@ public class WarSecurityFilterBase implements Filter {
                 }
             } else {
                 throw new BioError("Security provider not defined!");
-                //BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
-                //log_error("An error while checking User!", e);
             }
 
         } catch (BioError.Login e) {
             log_error("Authentication error (Level-0)!", e);
-//            resp.setStatus(e.getErrCode());
-//            resp.sendError(e.getErrCode());
-//            resp.addHeader("WWW-Authenticate", "Basic realm=\"myRealm\"");
-//            resp.addHeader("HTTP/1.0 401 Unauthorized", null);
             BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
         } catch (Exception e) {
-            //BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
             BioError err = BioError.wrap(e);
             log_error("Unexpected error while filtering (Level-1)!", err);
-//            resp.sendError(err.getErrCode());
             BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
         }
     }

@@ -439,8 +439,6 @@
     <modules>
         <!-- Common services -->
         <module>jetty-osgi-boot</module>
-
-        <!--<module>dependency-security-filter</module>-->
         <module>flexjson</module>
         <module>t-model</module>
         <module>commons</module>
@@ -453,23 +451,15 @@
         <module>sql-context</module>
         <module>crud-handler</module>
         <module>security-provider</module>
-        <module>remote-api-http</module>
         <!--<module>e-hcache</module>-->
         <!--<module>content-resolver</module>-->
         <module>config</module>
         <module>router</module>
-        <!--<module>remote-api-rmi</module>-->
         <module>remote-api</module>
         <module>remote-api-wab</module>
         <!--bio-modules-->
         <module>module-provider</module>
         <module>security-module-x</module>
-
-        <!-- Special services -->
-        <!-- Distribution -->
-        <!--<module>as-distribution</module>-->
-        <!--<module>as-distribution-as</module>-->
-        <!--<module>test-rmi-client</module>-->
 
     </modules>
 

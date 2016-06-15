@@ -2,7 +2,11 @@ package ru.bio4j.ng.model.transport;
 
 public class BioError extends Exception {
 
-    private int errCode;
+    private int errCode = 6000;
+
+    public BioError() {
+        super();
+    }
 
     public BioError(int code) {
         super();
@@ -15,7 +19,6 @@ public class BioError extends Exception {
     }
     public BioError(String message) {
         super(message);
-        errCode = 500;
     }
     public BioError(int code, String message, Exception e) {
         super(message, e);
@@ -23,7 +26,6 @@ public class BioError extends Exception {
     }
     public BioError(String message, Exception e) {
         super(message, e);
-        errCode = 500;
     }
 
     private BioError(int code, Exception e) {
@@ -32,7 +34,6 @@ public class BioError extends Exception {
     }
     private BioError(Exception e) {
         super(e);
-        errCode = 500;
     }
 
     public static BioError wrap(Exception e) {
@@ -49,29 +50,32 @@ public class BioError extends Exception {
 
     public static abstract class SysError extends BioError {
         public SysError() {
-            super(500);
+            super(6500);
+        }
+        public SysError(int code) {
+            super(code);
         }
         public SysError(String message) {
-            super(500, message);
+            super(6500, message);
         }
     }
 
     public static abstract class AppError extends BioError {
         public AppError() {
-            super(200);
+            super(6200);
         }
         public AppError(String message) {
-            super(200, message);
+            super(6200, message);
         }
     }
 
     public static class BadRequestType extends BioError {
 
         public BadRequestType() {
-            super(400);
+            super(6400);
         }
         public BadRequestType(String requestType) {
-            super(400, String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType));
+            super(6400, String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType));
         }
     }
 
@@ -86,62 +90,42 @@ public class BioError extends Exception {
 
 
     public static abstract class Login extends BioError {
-        public Login() {
-            super(401);
+        public Login(int code) {
+            super(code);
         }
-        public Login(String message) {
-            super(401, message);
+        public Login(int code, String message) {
+            super(code, message);
         }
 
         public static class BadLogin extends BioError.Login {
             public BadLogin() {
-                super("Не верное имя или пароль пользователя!");
-            }
-            public BadLogin(String message) {
-                super(message);
+                super(6401, "Не верное имя или пароль пользователя!");
             }
         }
         public static class LoginExpired extends BioError.Login {
             public LoginExpired() {
-                super("Сеанс связи не существует!");
-            }
-            public LoginExpired(String message) {
-                super(message);
+                super(6402, "Сеанс связи не существует!");
             }
         }
 
         public static class UserBlocked extends BioError.Login {
             public UserBlocked() {
-                super("Пользователь заблокирован!");
-            }
-            public UserBlocked(String message) {
-                super(message);
+                super(6403, "Пользователь заблокирован!");
             }
         }
 
         public static class UserNotConfirmed extends BioError.Login {
             public UserNotConfirmed() {
-                super("Пользователь не подтвержден!");
-            }
-            public UserNotConfirmed(String message) {
-                super(message);
+                super(6404, "Пользователь не подтвержден!");
             }
         }
 
         public static class UserDeleted extends BioError.Login {
             public UserDeleted() {
-                super("Пользователь удален!");
-            }
-            public UserDeleted(String message) {
-                super(message);
+                super(6405, "Пользователь удален!");
             }
         }
 
-//        public static class LoginGet extends BioError.Login {
-//            public LoginGet() {
-//                super("Введите имя и пароль пользователя!");
-//            }
-//        }
     }
 
     public static class BadIODescriptor extends SysError {

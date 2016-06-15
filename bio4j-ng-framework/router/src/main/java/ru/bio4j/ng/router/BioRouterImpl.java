@@ -173,8 +173,8 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         final SrvcUtils.BioQueryParams qprms = SrvcUtils.decodeBioQueryParams(request);
 
         final User usr = securityProvider.getUser(qprms.uid, qprms.remoteIP);
-        if(usr == null && !qprms.requestType.equalsIgnoreCase(BioRoute.LOGIN.getAlias()))
-            throw new BioError.Login.LoginExpired();
+        if(usr == null)
+            throw new Exception("Something wrong! Var \"usr\" cannot be null in this way!");
 
         final String requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
         LOG.debug("Recived-{}: \"{}\" - request...", qprms.method, requestType);
@@ -190,7 +190,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             return;
         }
 
-        BioRequest bioRequest = null;
+        BioRequest bioRequest;
         try {
             BioRoute route = BioRoute.getType(requestType);
             if(route == null)
