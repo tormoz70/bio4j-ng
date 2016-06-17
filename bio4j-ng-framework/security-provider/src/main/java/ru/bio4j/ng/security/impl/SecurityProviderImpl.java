@@ -132,7 +132,7 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
     }
 
     @Override
-    public void logoff(final String uid) throws Exception {
+    public void logoff(final String uid, final String remoteIP) throws Exception {
         removeUser(uid);
     }
 

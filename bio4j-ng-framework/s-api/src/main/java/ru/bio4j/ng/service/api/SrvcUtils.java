@@ -37,27 +37,4 @@ public class SrvcUtils {
         public String jsonData;
     }
 
-    public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws IOException {
-        BioQueryParams result = new BioQueryParams();
-        result.method = request.getMethod();
-        result.requestType = request.getParameter(QRY_PARAM_NAME_REQUEST_TYPE);
-        result.moduleKey = request.getParameter(QRY_PARAM_NAME_MODULE);
-        result.bioCode = request.getParameter(QRY_PARAM_NAME_BIOCODE);
-        result.uid = request.getParameter(QRY_PARAM_NAME_UID);
-        result.remoteIP = Httpc.extractRealRemoteAddr(request);
-        if(Strings.isNullOrEmpty(result.uid))
-            result.uid = User.BIO_ANONYMOUS_UID;
-
-        final String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
-        StringBuilder jd = new StringBuilder();
-        if(!isNullOrEmpty(jsonDataAsQueryParam))
-            jd.append(jsonDataAsQueryParam);
-        else
-            Httpc.readDataFromRequest(request, jd);
-        if(jd.length() == 0)
-            jd.append("{}");
-        result.jsonData = jd.toString();
-        return result;
-    }
-
 }

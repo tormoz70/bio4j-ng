@@ -26,7 +26,7 @@ public class BioServletLoginBase extends BioServletBase {
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
         loginProcessor.setSecurityProvider(securityProvider);
-        SrvcUtils.BioQueryParams prms = SrvcUtils.decodeBioQueryParams(request);
+        SrvcUtils.BioQueryParams prms = ((BioWrappedRequest)request).getBioQueryParams();
 
         brsp.user(loginProcessor.login(prms));
         return brsp;

@@ -31,4 +31,13 @@ public class BioLoginProcessor {
         return securityProvider.login(request.getLogin(), qprms.remoteIP);
     }
 
+    public void logoff(SrvcUtils.BioQueryParams qprms) throws Exception {
+        if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias()))
+            throw new IllegalArgumentException(String.format("prms.requestType must be \"%s\"!", BioRoute.LOGOUT.getAlias()));
+        if(securityProvider == null)
+            throw new IllegalArgumentException("SecurityHandler not defined!");
+
+        securityProvider.logoff(qprms.uid, qprms.remoteIP);
+    }
+
 }

@@ -19,9 +19,7 @@ public class Httpc {
     }
 
     public static void readDataFromRequest(HttpServletRequest request, StringBuilder jd) throws IOException {
-//        BufferedReader reader = request.getReader();
-
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));) {
             String line;
             while ((line = reader.readLine()) != null)
                 jd.append(line);

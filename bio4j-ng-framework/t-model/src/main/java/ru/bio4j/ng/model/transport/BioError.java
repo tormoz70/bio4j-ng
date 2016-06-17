@@ -37,9 +37,12 @@ public class BioError extends Exception {
     }
 
     public static BioError wrap(Exception e) {
-        if(e instanceof BioError)
-            return (BioError)e;
-        return new BioError(e);
+        if(e != null) {
+            if (e instanceof BioError)
+                return (BioError) e;
+            return new BioError(e);
+        }
+        return null;
     }
 
     public int getErrCode() {

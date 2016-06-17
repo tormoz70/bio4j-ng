@@ -12,6 +12,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 import ru.bio4j.ng.service.api.SrvcUtils;
+import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -170,13 +171,13 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     @Override
     public void route(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        final SrvcUtils.BioQueryParams qprms = SrvcUtils.decodeBioQueryParams(request);
+        final SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
 
         final User usr = securityProvider.getUser(qprms.uid, qprms.remoteIP);
         if(usr == null)
             throw new Exception("Something wrong! Var \"usr\" cannot be null in this way!");
 
-        final String requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
+        final String requestType = qprms.requestType;
         LOG.debug("Recived-{}: \"{}\" - request...", qprms.method, requestType);
         if(isNullOrEmpty(requestType))
             throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE));
