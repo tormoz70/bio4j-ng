@@ -51,21 +51,6 @@ public class Jsons {
 				.deepSerialize(object);
 	}
 
-//    public static String encode(Object object) throws Exception {
-//        ObjectMapper mapper = new ObjectMapper();
-//        return mapper.writeValueAsString(object);
-//    }
-
-//	public static Object decode(String json) {
-//		JSONDeserializer<Object> deserializer = new JSONDeserializer<Object>().use(Date.class, new ObjectFactory() {
-//			@Override
-//			public Object instantiate(ObjectBinder context, Object value, Type targetType, @SuppressWarnings("rawtypes") Class targetClass) {
-//				return Types.parse((String) value, csDateTimeFormat);
-//			}
-//		});
-//		return deserializer.deserialize(json);
-//	}
-
     private static <T> JSONDeserializer<T> createDeserializer(T target) {
         return new JSONDeserializer<T>()
                 .use(Date.class, new ObjectFactory() {
