@@ -84,22 +84,24 @@ public class Types {
     }
 
     public static <T> T number2Number(Number inValue, Class<T> targetType) {
-        if (targetType == Byte.class)
-            return (T)new Byte(inValue.byteValue());
-        if (targetType == Short.class)
-            return (T)new Short(inValue.shortValue());
-        if (targetType == Integer.class)
-            return (T)new Integer(inValue.intValue());
-        if (targetType == Long.class)
-            return (T)new Long(inValue.longValue());
-        if (targetType == Float.class)
-            return (T)new Float(inValue.floatValue());
-        if (targetType == Double.class)
-            return (T)new Double(inValue.doubleValue());
-        if (targetType == BigDecimal.class)
-            return (T)new BigDecimal(inValue.doubleValue());
-        if (targetType == BigInteger.class)
-            return (T)new BigInteger(inValue.toString());
+        if(inValue != null) {
+            if (targetType == Byte.class)
+                return (T) new Byte(inValue.byteValue());
+            if (targetType == Short.class)
+                return (T) new Short(inValue.shortValue());
+            if (targetType == Integer.class)
+                return (T) new Integer(inValue.intValue());
+            if (targetType == Long.class)
+                return (T) new Long(inValue.longValue());
+            if (targetType == Float.class)
+                return (T) new Float(inValue.floatValue());
+            if (targetType == Double.class)
+                return (T) new Double(inValue.doubleValue());
+            if (targetType == BigDecimal.class)
+                return (T) new BigDecimal(inValue.doubleValue());
+            if (targetType == BigInteger.class)
+                return (T) new BigInteger(inValue.toString());
+        }
         return null;
     }
 
