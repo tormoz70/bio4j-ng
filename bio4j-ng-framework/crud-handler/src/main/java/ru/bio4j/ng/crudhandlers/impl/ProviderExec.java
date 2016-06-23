@@ -23,7 +23,7 @@ public class ProviderExec extends ProviderAn {
                 cmd.execSQL();
                 return cmd.getParams();
             }
-        });
+        }, request.getUser());
         result.bioParams(r);
         return result.exception(null);
     }

@@ -65,7 +65,7 @@ public class SQLFactoryTest {
                     cs.execute(sql);
                     return null;
                 }
-            });
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
         }
@@ -86,7 +86,7 @@ public class SQLFactoryTest {
                     cs.execute("drop table test_tbl");
                     return null;
                 }
-            });
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
         }
@@ -101,7 +101,7 @@ public class SQLFactoryTest {
                 Assert.assertNotNull(conn);
                 return null;
             }
-        });
+        }, null);
 
     }
 
@@ -122,7 +122,7 @@ public class SQLFactoryTest {
                     }
                     return dummysum;
                 }
-            });
+            }, null);
             LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 101.0);
         } catch (Exception ex) {
@@ -155,7 +155,7 @@ public class SQLFactoryTest {
                     }
                     return dummysum;
                 }
-            });
+            }, null);
             LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 0.0);
         } catch (Exception ex) {
@@ -185,7 +185,7 @@ public class SQLFactoryTest {
                     }
                     return schema;
                 }
-            });
+            }, null);
             Assert.assertTrue(schema.length > 0);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -221,7 +221,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -254,7 +254,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -291,7 +291,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -310,7 +310,7 @@ public class SQLFactoryTest {
                     StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto("test_stored_error", conn, null);
                     return null;
                 }
-            }, "AnContext");
+            }, "AnContext", null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
@@ -340,7 +340,7 @@ public class SQLFactoryTest {
                     cmd.execSQL();
                     return null;
                 }
-            }, "AnContext");
+            }, "AnContext", null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getCause().getMessage(), "ERROR: FTW");
@@ -372,7 +372,7 @@ public class SQLFactoryTest {
                     }
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (Exception ex) {
@@ -409,7 +409,7 @@ public class SQLFactoryTest {
                     prc.init(conn, "gacc.check_login", param).execSQL();
                     return null;
                 }
-            }, params);
+            }, params, null);
             role = getParamValue(params, int.class, "v_role_id");
             org_id = getParamValue(params, int.class, "v_org_id");
             LOG.debug(String.format("Login: OK; role: %d; org_id: %d", role, org_id));
@@ -449,7 +449,7 @@ public class SQLFactoryTest {
                     }
                     return 0;
                 }
-            });
+            }, null);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
             Assert.fail();

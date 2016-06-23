@@ -12,6 +12,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.User;
 
 import javax.sql.DataSource;
 
@@ -26,25 +27,9 @@ public abstract class DbContextAbstract implements SQLContext {
 
     protected final SQLConnectionPoolConfig config;
 
-    protected DbContextAbstract(DataSource cpool, SQLConnectionPoolConfig config) throws Exception {
+    protected DbContextAbstract(final DataSource cpool, final SQLConnectionPoolConfig config) throws Exception {
         this.cpool = cpool;
         this.config = config;
-        if(this.config.getCurrentSchema() != null) {
-            this.innerAfterEvents.add(
-                    new SQLConnectionConnectedEvent() {
-                        @Override
-                        public void handle(SQLContext sender, Attributes attrs) throws SQLException {
-                            if(attrs.getConnection() != null) {
-                                String curSchema = DbContextAbstract.this.config.getCurrentSchema().toUpperCase();
-                                LOG.debug("onAfterGetConnection - start setting current_schema="+curSchema);
-                                CallableStatement cs1 = attrs.getConnection().prepareCall( "alter session set current_schema="+curSchema);
-                                cs1.execute();
-                                LOG.debug("onAfterGetConnection - OK. current_schema now is "+curSchema);
-                            }
-                        }
-                    }
-            );
-        }
     }
 
     @Override
@@ -70,16 +55,17 @@ public abstract class DbContextAbstract implements SQLContext {
 
     protected static final int CONNECTION_TRY_COUNT = 3;
     protected static final long CONNECTION_AFTER_FAIL_PAUSE = 15L; // secs
-    protected Connection getConnection(String userName, String password) throws SQLException {
+//    protected Connection getConnection(String userName, String password) throws SQLException {
+    protected Connection getConnection(User user) throws SQLException {
         LOG.debug("Getting connection from pool...");
         Connection conn = null;
         int connectionPass = 0;
         while(connectionPass < CONNECTION_TRY_COUNT) {
             connectionPass++;
-            if (Strings.isNullOrEmpty(userName))
-                conn = this.cpool.getConnection();
-            else
-                conn = this.cpool.getConnection(userName, password);
+//            if (Strings.isNullOrEmpty(userName))
+            conn = this.cpool.getConnection();
+//            else
+//                conn = this.cpool.getConnection(userName, password);
             if (conn.isClosed() || !conn.isValid(5)) {
                 LOG.debug("Connection is not valid or closed...");
                 conn = null;
@@ -97,13 +83,13 @@ public abstract class DbContextAbstract implements SQLContext {
         if(conn == null)
             LOG.debug("All trying of connecting to database ({}) failed...", CONNECTION_TRY_COUNT);
 
-        this.doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn));
+        this.doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn, user));
         return conn;
     }
 
-    public Connection getConnection() throws SQLException {
-        return getConnection(null, null);
-    }
+//    public Connection getConnection() throws SQLException {
+//        return getConnection(null, null);
+//    }
 
     /**
      * Выполняет batch в рамках одной транзакции.
@@ -116,12 +102,13 @@ public abstract class DbContextAbstract implements SQLContext {
      * @param scope - ссылка на объект, который будет param'ом
      * @param batch - то что нужно выполнить в рамках сессии
      * @param context - дополнительные параметры, которые передаются в batch
+     * @param user - профиль текущего пользователя
      * @return - объект типа T
      * @throws Exception
      */
-    public <S, C, R> R execBatch (final S scope, final SQLActionExt<S, C, R> batch, final C context) throws Exception {
+    public <S, C, R> R execBatch (final S scope, final SQLActionExt<S, C, R> batch, final C context, final User user) throws Exception {
         R result = null;
-        try(Connection conn = this.getConnection()){
+        try(Connection conn = this.getConnection(user)){
             conn.setAutoCommit(false);
             try {
                 if (batch != null)
@@ -138,7 +125,7 @@ public abstract class DbContextAbstract implements SQLContext {
         return result;
     }
 
-    public <C, R> R execBatch (final SQLAction<C, R> batch, final C context) throws Exception {
+    public <C, R> R execBatch (final SQLAction<C, R> batch, final C context, final User user) throws Exception {
         return execBatch(this, new SQLActionExt<DbContextAbstract, C, R>() {
             @Override
             public R exec(DbContextAbstract context, Connection conn, C param) throws Exception {
@@ -146,10 +133,10 @@ public abstract class DbContextAbstract implements SQLContext {
                     return batch.exec(context, conn, param);
                 return null;
             }
-        }, context);
+        }, context, user);
     }
 
-    public <R> R execBatch (final SQLActionScalar<R> batch) throws Exception {
+    public <R> R execBatch (final SQLActionScalar<R> batch, final User user) throws Exception {
         return execBatch(new SQLAction<Object, R>() {
             @Override
             public R exec(SQLContext context, Connection conn, Object param) throws Exception {
@@ -157,7 +144,7 @@ public abstract class DbContextAbstract implements SQLContext {
                     return batch.exec(context, conn);
                 return null;
             }
-        }, null);
+        }, null, user);
     }
 
     /**
@@ -243,6 +230,10 @@ public abstract class DbContextAbstract implements SQLContext {
         return wrappers;
     }
 
+    @Override
+    public SQLConnectionPoolConfig getConfig() {
+        return config;
+    }
 
     public static <T extends DbContextAbstract> SQLContext create(SQLConnectionPoolConfig config, Class<T> clazz) throws Exception {
         LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));

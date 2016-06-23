@@ -121,16 +121,13 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
     protected void fireEventModuleUpdated() throws Exception {
         // Откладываем отправку события чтобы успел инициализироваться логгер
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(new Runnable() {
-            @Override
-            public void run() {
+        service.schedule(() -> {
             String selfModuleKey = getKey();
             LOG.debug("Sending event [bio-module-updated] for module \"{}\"...", selfModuleKey);
             Map<String, Object> props = new HashMap<>();
             props.put("bioModuleKey", selfModuleKey);
             getEventAdmin().postEvent(new Event("bio-module-updated", props));
             LOG.debug("Event sent.");
-            }
         }, 1, TimeUnit.SECONDS);
 
     }

@@ -66,7 +66,7 @@ public class SQLFactoryTest {
                     cs.execute();
                     return null;
                 }
-            });
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
         }
@@ -91,7 +91,7 @@ public class SQLFactoryTest {
                     cs.execute();
                     return null;
                 }
-            });
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
         }
@@ -106,7 +106,7 @@ public class SQLFactoryTest {
                 Assert.assertNotNull(conn);
                 return null;
             }
-        });
+        }, null);
 
     }
 
@@ -127,7 +127,7 @@ public class SQLFactoryTest {
                     }
                     return dummysum;
                 }
-            });
+            }, null);
             LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 101.0);
         } catch (Exception ex) {
@@ -157,7 +157,7 @@ public class SQLFactoryTest {
                     }
                     return schema;
                 }
-            });
+            }, null);
             Assert.assertTrue(schema.length > 0);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -193,7 +193,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -226,7 +226,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -263,7 +263,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -294,7 +294,7 @@ public class SQLFactoryTest {
                     cmd.execSQL();
                     return null;
                 }
-            }, "AnContext");
+            }, "AnContext", null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
@@ -326,7 +326,7 @@ public class SQLFactoryTest {
                     }
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (Exception ex) {
@@ -363,7 +363,7 @@ public class SQLFactoryTest {
                     }
 
                 }
-            }, params);
+            }, params, null);
 
             LOG.debug(String.format("Login: OK; uid: %s", uid));
             Assert.assertEquals(uid, "FTW");
@@ -402,7 +402,7 @@ public class SQLFactoryTest {
                     }
                     return 0;
                 }
-            });
+            }, null);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
             Assert.fail();
@@ -602,7 +602,7 @@ public class SQLFactoryTest {
                     }
                     return ""+cnt;
                 }
-            });
+            }, null);
             Assert.assertEquals("25", rslt);
         } catch (Exception ex) {
             LOG.error("Error!", ex);

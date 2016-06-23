@@ -96,7 +96,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
                     LOG.debug("User not found!");
                     return null;
                 }
-            }, cursor);
+            }, cursor, null);
             return newUsr;
         } catch (SQLException ex) {
             switch (ex.getErrorCode()) {

@@ -6,6 +6,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -72,7 +73,7 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
+    public static List<Param> processExec(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final BioCursor.SQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
@@ -84,11 +85,11 @@ public class DbUtils {
                 cmd.execSQL();
                 return cmd.getParams();
             }
-        });
+        }, user);
         return r;
     }
 
-    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction<SQLReader, Integer> delegateAction) throws Exception {
+    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction<SQLReader, Integer> delegateAction, final User user) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
@@ -101,10 +102,10 @@ public class DbUtils {
                 }
                 return 0;
             }
-        });
+        }, user);
     }
 
-    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
+    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
@@ -117,7 +118,7 @@ public class DbUtils {
                 }
                 return null;
             }
-        });
+        }, user);
         return r;
     }
 

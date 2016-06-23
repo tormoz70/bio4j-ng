@@ -33,7 +33,7 @@ public class ProviderGetJson extends ProviderAn {
                 }
                 return result.exception(null);
             }
-        }, cursor);
+        }, cursor, request.getUser());
         return response;
 
     }

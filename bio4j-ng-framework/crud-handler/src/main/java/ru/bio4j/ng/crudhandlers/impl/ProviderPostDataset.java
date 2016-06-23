@@ -126,7 +126,7 @@ public class ProviderPostDataset extends ProviderAn {
                     tryPrepareSessionContext(usr.getUid(), conn);
                     return processRequestPost((BioRequestJStorePost)request, context, conn, null, null, null);
                 }
-            }, null);
+            }, null, request.getUser());
             return response;
         } finally {
             LOG.debug("Processed postDataSet for \"{}\" - returning response...", request);
