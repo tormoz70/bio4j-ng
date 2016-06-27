@@ -237,7 +237,9 @@ public class Param {
         if (this.getInnerObject() == null){
             objsStr.append(objsStr.length() == 0 ? innrObjStr : ";"+innrObjStr);
         }
-        String valStr = this.getValue() + (objsStr.length() > 0 ? "(" + objsStr.toString() + ")" : null);
+        Object val = this.getValue();
+        String valStr = String.format((val instanceof String) ? "\"%s\"" : "[%s]", val);
+        valStr = valStr + (objsStr.length() > 0 ? "(" + objsStr.toString() + ")" : null);
         return String.format("(%s=[%s]; tp:%s; sz:%d; dr:%s; fx:%s; fm:%s)", this.getName(), valStr, this.getType(), this.getSize(), this.getDirection(), this.getFixed(), this.getFormat());
     }
 

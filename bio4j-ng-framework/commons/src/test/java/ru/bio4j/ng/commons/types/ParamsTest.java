@@ -266,4 +266,21 @@ public class ParamsTest {
         Assert.assertEquals(prms.get(0).getValue(), 101);
     }
 
+    @Test(enabled = false)
+    public void toStringTest() throws Exception {
+        List<Param> prms = Paramus.set(new ArrayList<>())
+                .add("dummy1", 101)
+                .add("dummy2", "101")
+                .add("dummy3", null)
+                .pop();
+        StringBuilder sb = new StringBuilder();
+        sb.append("{Params: {\n");
+        for (Param p : prms)
+            sb.append("\t"+p.toString()+",\n");
+        sb.append("}}");
+        String prmsStr = sb.toString();
+
+        Assert.assertEquals(prmsStr, "");
+    }
+
 }

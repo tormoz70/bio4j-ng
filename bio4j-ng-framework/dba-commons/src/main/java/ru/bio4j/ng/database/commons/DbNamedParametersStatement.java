@@ -44,12 +44,14 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
             int indx = 1;
             String paramName = null;
             String paramDir = null;
+            Object parVal = null;
             for (String key : paramNames) {
                 paramDir = outParamTypes.containsKey(key.toLowerCase()) ?
                         String.format("%s(out)(%s)", key.toLowerCase(), outParamTypes.get(key.toLowerCase())) :
                         String.format("%s(in)(%s)", key.toLowerCase(), paramTypes.get(key.toLowerCase()));
                 paramName = "\t" + Strings.padLeft(""+indx, 4) + "-" + Strings.padRight(paramDir, 50).replace(" ", ".");
-                Strings.append(sb, String.format("%s%s", paramName, "" + paramValues.get(key.toLowerCase())), ";\n");
+                parVal = paramValues.get(key.toLowerCase());
+                Strings.append(sb, String.format(parVal instanceof String ? "%s\"%s\"" : "%s[%s]", paramName, ""+parVal), ";\n");
                 indx++;
             }
             return sb.toString() + ";\n";

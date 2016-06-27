@@ -54,7 +54,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
                     BioRespBuilder.Builder brsp = BioRespBuilder.anErrorBuilder()
-                            .exception(new BioError.BadRequestType(request.getRequestType())).user(request.getUser());
+                            .exception(new BioError.BadRequestType(request.getRequestType()));
                     response.getWriter().append(brsp.json());
 
                 }
@@ -71,11 +71,6 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.LOGIN, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
-//                    final String moduleKey = request.getModuleKey();
-//                    final String login = request.getLogin();
-//                    User user = securityProvider.login(login, request.getRemoteIP());
-//                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
-//                    response.getWriter().append(responseBuilder.json());
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
@@ -83,11 +78,6 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
             routeMap.put(BioRoute.LOGOUT, new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
-//                    final String moduleKey = request.getModuleKey();
-//                    final String userUID = request.getUser().getUid();
-//                    securityProvider.logoff(userUID);
-//                    BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
-//                    response.getWriter().append(responseBuilder.json());
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
@@ -96,7 +86,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_JSON_GET);
-                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_JSON_GET, request).user(request.getUser());
+                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_JSON_GET, request);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
@@ -105,7 +95,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStoreGetDataSet request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_GET);
-                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_DATASET_GET, request).user(request.getUser());
+                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_DATASET_GET, request);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
@@ -114,7 +104,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStoreGetRecord request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_RECORD_GET);
-                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_RECORD_GET, request).user(request.getUser());
+                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_RECORD_GET, request);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
@@ -123,7 +113,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_POST);
-                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_DATASET_POST, request).user(request.getUser());
+                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_DATASET_POST, request);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
@@ -132,7 +122,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestStoredProg request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_EXEC);
-                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_EXEC, request).user(request.getUser());
+                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_EXEC, request);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
@@ -141,7 +131,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 @Override
                 public void handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FORM_UPLOAD);
-                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_FORM_UPLOAD, request).user(request.getUser());
+                    BioRespBuilder.Builder responseBuilder = dataProvider.processRequest(BioRoute.CRUD_FORM_UPLOAD, request);
                     response.getWriter().append(responseBuilder.json());
                 }
             });
