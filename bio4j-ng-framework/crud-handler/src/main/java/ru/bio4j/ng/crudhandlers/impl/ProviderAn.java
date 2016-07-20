@@ -13,6 +13,7 @@ import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioAppModule;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,6 +117,6 @@ public abstract class ProviderAn {
         return totalCount;
     }
 
-    public abstract BioRespBuilder.Builder process(final BioRequest request) throws Exception;
+    public abstract void process(final BioRequest request, final HttpServletResponse response) throws Exception;
 
 }

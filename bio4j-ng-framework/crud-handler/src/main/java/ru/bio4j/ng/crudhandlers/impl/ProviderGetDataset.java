@@ -11,6 +11,7 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.List;
 
@@ -125,7 +126,8 @@ public class ProviderGetDataset extends ProviderAn {
         sqlDef.setSort(request.getSort());
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    @Override
+    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
@@ -135,12 +137,14 @@ public class ProviderGetDataset extends ProviderAn {
             context.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());
             context.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor.getSelectSqlDef());
             context.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor.getSelectSqlDef());
+            BioRespBuilder.DataBuilder responseBuilder;
             if(cursor.getSelectSqlDef().getPageSize() < 0) {
-                return processCursorAsSelectableSinglePage((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
+                responseBuilder = processCursorAsSelectableSinglePage((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
             }else {
                 context.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor.getSelectSqlDef());
-                return processCursorAsSelectableWithPagging((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
+                responseBuilder = processCursorAsSelectableWithPagging((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
             }
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
         }

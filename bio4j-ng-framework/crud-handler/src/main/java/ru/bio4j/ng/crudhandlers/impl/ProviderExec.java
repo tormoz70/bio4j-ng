@@ -4,6 +4,7 @@ import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.List;
 
@@ -28,15 +29,15 @@ public class ProviderExec extends ProviderAn {
         return result.exception(null);
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    @Override
+    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process exec for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
             final BioCursor cursor = module.getCursor(request);
 
-            BioRespBuilder.DataBuilder response = processExec((BioRequestStoredProg)request, context, cursor);
-
-            return response;
+            BioRespBuilder.DataBuilder responseBuilder = processExec((BioRequestStoredProg)request, context, cursor);
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed exec for \"{}\" - returning response...", request);
         }

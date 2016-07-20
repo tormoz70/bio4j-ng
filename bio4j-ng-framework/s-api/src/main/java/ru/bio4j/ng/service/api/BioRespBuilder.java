@@ -8,6 +8,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
+import java.io.InputStream;
 import java.util.List;
 
 public class BioRespBuilder {

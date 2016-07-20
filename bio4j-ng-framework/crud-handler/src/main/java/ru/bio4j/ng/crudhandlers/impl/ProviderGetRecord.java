@@ -12,6 +12,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 
 /**
@@ -42,14 +43,15 @@ public class ProviderGetRecord extends ProviderAn {
 
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
 //            cursor.getSelectSqlDef().setParams(request.getBioParams());
 
             context.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
-            return processCursorAsSelectableSingleRecord((BioRequestJStoreGetRecord)request, context, cursor, LOG);
+            BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord((BioRequestJStoreGetRecord)request, context, cursor, LOG);
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getRecord for \"{}\" - returning response...", request.getBioCode());
         }

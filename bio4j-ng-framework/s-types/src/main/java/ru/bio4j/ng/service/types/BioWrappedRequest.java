@@ -32,6 +32,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         result.bioCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_BIOCODE);
         result.uid = request.getParameter(SrvcUtils.QRY_PARAM_NAME_UID);
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
+        result.fileHashCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_FILE_HASH_CODE);
         if(Strings.isNullOrEmpty(result.uid))
             result.uid = User.BIO_ANONYMOUS_UID;
 

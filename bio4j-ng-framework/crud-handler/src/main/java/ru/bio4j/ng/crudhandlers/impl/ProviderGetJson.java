@@ -9,6 +9,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
@@ -38,12 +39,12 @@ public class ProviderGetJson extends ProviderAn {
 
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-//            cursor.getSelectSqlDef().setParams(request.getBioParams());
-            return processCursorAsJsonProvider((BioRequestGetJson) request, context, cursor, LOG);
+            BioRespBuilder.JsonBuilder responseBuilder = processCursorAsJsonProvider((BioRequestGetJson) request, context, cursor, LOG);
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
         }

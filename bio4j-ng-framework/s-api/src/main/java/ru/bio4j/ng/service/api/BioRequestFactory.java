@@ -7,10 +7,7 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.*;
 
@@ -65,6 +62,20 @@ public abstract class BioRequestFactory {
     }
 
     public static class GetJson extends BioRequestFactory {
+    }
+
+    public static class GetFile extends BioRequestFactory {
+
+        @Override
+        public BioRequest restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<? extends BioRequest> bioRequestClass,
+                final User usr) throws Exception {
+            BioRequest bioRequest = super.restore(qprms, bioRequestClass, usr);
+            ((BioRequestGetFile)bioRequest).setFileHashCode(qprms.fileHashCode);
+            return bioRequest;
+        }
+
     }
 
     public static class GetDataSet extends BioRequestFactory {

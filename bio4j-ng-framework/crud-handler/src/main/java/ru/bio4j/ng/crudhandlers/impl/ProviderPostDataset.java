@@ -9,6 +9,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,18 +117,18 @@ public class ProviderPostDataset extends ProviderAn {
         return result.exception(null);
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process postDataSet for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
-            BioRespBuilder.DataBuilder response = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
+            BioRespBuilder.DataBuilder responseBuilder = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
                 @Override
                 public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj) throws Exception {
                     tryPrepareSessionContext(usr.getUid(), conn);
                     return processRequestPost((BioRequestJStorePost)request, context, conn, null, null, null);
                 }
             }, null, request.getUser());
-            return response;
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed postDataSet for \"{}\" - returning response...", request);
         }

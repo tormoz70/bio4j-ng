@@ -13,6 +13,7 @@ public enum BioRoute {
     LOGIN("login", BioRequestLogin.class, BioRequestFactory.Login.class),
     LOGOUT("logout", BioRequestLogout.class, BioRequestFactory.Logout.class),
     CRUD_JSON_GET("crud.json.get", BioRequestGetJson.class, BioRequestFactory.GetJson.class),
+    CRUD_FILE_GET("crud.file.get", BioRequestGetFile.class, BioRequestFactory.GetFile.class),
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
     CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class),
     CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class),
