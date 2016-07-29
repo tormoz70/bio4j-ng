@@ -36,15 +36,15 @@ public class ProviderGetDataset extends ProviderAn {
                 boolean requestCached = false; //requestCached(request, LOG);
 
                 int totalCount = requestCached ? request.getTotalCount() : 0;
-                if(totalCount == 0) {
-                    LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
-                    try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
-                        if (c.reader().next())
-                            totalCount = c.reader().getValue(1, int.class);
-                    }
-                    LOG.debug("Count records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
-                }
+//                if(totalCount == 0) {
+//                    LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
+//                    try (SQLCursor c = context.createCursor()
+//                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
+//                        if (c.reader().next())
+//                            totalCount = c.reader().getValue(1, int.class);
+//                    }
+//                    LOG.debug("Count records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
+//                }
 
                 if(cur.getSelectSqlDef().getLocation() != null) {
                     LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
