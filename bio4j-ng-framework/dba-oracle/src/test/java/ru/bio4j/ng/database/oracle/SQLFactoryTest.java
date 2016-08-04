@@ -17,13 +17,13 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 public class SQLFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest.class);
     private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
-    private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.30:1521:GIVCDB";
+    private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.30:1521:EKBS02";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@stat4-ora-dev:1521:MICEXDB";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
@@ -445,7 +445,7 @@ public class SQLFactoryTest {
         LOG.debug(msg);
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSQLCommandOpenCursor2() {
         try {
 
@@ -590,6 +590,73 @@ public class SQLFactoryTest {
                     //params.add(Param.builder().name("p_sys_curusr_grants").type(MetaType.STRING).build());
                     //params.add(Param.builder().name("prm1").value("qwe").build());
                     //params.add(Param.builder().name("prm2").value("qwe").build());
+                    params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
+                    params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
+
+                    try(SQLCursor c = context.createCursor()
+                            .init(conn, sql, params).open();){
+                        while(c.reader().next()){
+//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
+                            cnt++;
+                        }
+                    }
+                    return ""+cnt;
+                }
+            }, null);
+            Assert.assertEquals("25", rslt);
+        } catch (Exception ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+
+    }
+
+    @Test(enabled = false)
+    public void testSQLCommandOpenCursor3() {
+        try {
+
+            SQLContext contextLocal = DbContextAbstract.create(
+                    SQLConnectionPoolConfig.builder()
+                            .poolName("TEST-CONN-POOL-123")
+                            .dbDriverName(testDBDriverName)
+                            .dbConnectionUrl(testDBUrl)
+                            .dbConnectionUsr("GIVCADMIN")
+                            .dbConnectionPwd("j12")
+                            .build(),
+                    OraContext.class);
+
+            String rslt = contextLocal.execBatch(new SQLActionScalar<String>() {
+                @Override
+                public String exec(SQLContext context, Connection conn) throws Exception {
+                    String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
+
+                    int cnt = 0;
+                    List<Param> params = new ArrayList<>();
+
+/*
+                    1-p_sys_curusr_roles(in)(VARCHAR)..................."6";
+                    2-p_sys_curusr_org_uid(in)(VARCHAR)................."5567";
+                    3-org_id(in)(INTEGER)...............................[244];
+                    4-reg_from(in)(DATE)................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    5-reg_to(in)(DATE)..................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    6-film(in)(VARCHAR)................................."";
+                    7-sroom_id(in)(INTEGER).............................[null];
+                    8-force_org_id(in)(VARCHAR).........................[null];
+                    9-paging$offset(in)(INTEGER)........................[0];
+                    10-paging$last(in)(INTEGER)..........................[25];
+*/
+
+                    params.add(Param.builder().name("p_sys_curusr_roles").value("6").type(MetaType.STRING).build());
+                    params.add(Param.builder().name("p_sys_curusr_org_uid").value("5567").type(MetaType.STRING).build());
+                    params.add(Param.builder().name("org_id").value(244).type(MetaType.INTEGER).build());
+
+                    java.util.Date testDateValue = new java.util.Date();
+                    params.add(Param.builder().name("reg_from").value(testDateValue).type(MetaType.DATE).build());
+                    params.add(Param.builder().name("reg_to").value(testDateValue).type(MetaType.DATE).build());
+
+                    params.add(Param.builder().name("film").value("").type(MetaType.STRING).build());
+
+                            params.add(Param.builder().name("force_org_id").type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
 
