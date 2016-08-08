@@ -611,7 +611,7 @@ public class SQLFactoryTest {
 
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testSQLCommandOpenCursor3() {
         try {
 
@@ -670,7 +670,7 @@ public class SQLFactoryTest {
                     return ""+cnt;
                 }
             }, null);
-            Assert.assertEquals("25", rslt);
+            Assert.assertEquals(rslt, "17");
         } catch (Exception ex) {
             LOG.error("Error!", ex);
             Assert.fail();
