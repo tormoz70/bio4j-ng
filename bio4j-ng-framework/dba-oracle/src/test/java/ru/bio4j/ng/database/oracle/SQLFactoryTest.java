@@ -15,6 +15,7 @@ import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.StoreData;
 
 import java.sql.*;
 import java.sql.Date;
@@ -345,7 +346,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSQLCommandStoredProc() throws Exception {
         try {
 
@@ -611,7 +612,7 @@ public class SQLFactoryTest {
 
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSQLCommandOpenCursor3() {
         try {
 
@@ -678,4 +679,67 @@ public class SQLFactoryTest {
 
     }
 
+    @Test(enabled = true)
+    public void testSQLCommandOpenCursor4() throws Exception {
+
+        SQLContext ctx = DbContextAbstract.create(
+                SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL-123")
+                        .dbDriverName(testDBDriverName)
+                        .dbConnectionUrl(testDBUrl)
+                        .dbConnectionUsr("GIVCADMIN")
+                        .dbConnectionPwd("j12")
+                        .build(),
+                OraContext.class);
+
+
+        String rslt = ctx.execBatch(new SQLAction<BioCursor, String>() {
+            @Override
+            public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+
+                String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
+
+                int cnt = 0;
+                List<Param> params = new ArrayList<>();
+
+/*
+                    1-p_sys_curusr_roles(in)(VARCHAR)..................."6";
+                    2-p_sys_curusr_org_uid(in)(VARCHAR)................."5567";
+                    3-org_id(in)(INTEGER)...............................[244];
+                    4-reg_from(in)(DATE)................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    5-reg_to(in)(DATE)..................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    6-film(in)(VARCHAR)................................."";
+                    7-sroom_id(in)(INTEGER).............................[null];
+                    8-force_org_id(in)(VARCHAR).........................[null];
+                    9-paging$offset(in)(INTEGER)........................[0];
+                    10-paging$last(in)(INTEGER)..........................[25];
+*/
+
+                params.add(Param.builder().name("p_sys_curusr_roles").value("6").type(MetaType.STRING).build());
+                params.add(Param.builder().name("p_sys_curusr_org_uid").value("5567").type(MetaType.STRING).build());
+                params.add(Param.builder().name("org_id").value(244).type(MetaType.INTEGER).build());
+
+                java.util.Date testDateValue = new java.util.Date();
+                params.add(Param.builder().name("reg_from").value(testDateValue).type(MetaType.DATE).build());
+                params.add(Param.builder().name("reg_to").value(testDateValue).type(MetaType.DATE).build());
+
+                params.add(Param.builder().name("film").value("").type(MetaType.STRING).build());
+
+                params.add(Param.builder().name("force_org_id").type(MetaType.INTEGER).build());
+                params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
+                params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
+
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, sql, params).open();){
+                    while(c.reader().next()){
+//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
+                        cnt++;
+                    }
+                }
+                return ""+cnt;
+
+            }
+        }, null, null);
+        //response;
+    }
 }
