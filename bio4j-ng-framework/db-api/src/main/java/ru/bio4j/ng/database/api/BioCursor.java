@@ -87,6 +87,10 @@ public class BioCursor {
     }
 
     public static class SelectSQLDef extends SQLDef {
+
+        public static final String PAGING_PARAM_OFFSET = "paging$offset";
+        public static final String PAGING_PARAM_LAST = "paging$last";
+
         private byte wrapMode = WrapMode.ALL.code();
         private String totalsSql;
         private String locateSql;
@@ -120,7 +124,11 @@ public class BioCursor {
 
         public int getOffset() { return offset; }
 
-        public void setOffset(int offset) { this.offset = offset; }
+        public void setOffset(int offset) {
+            this.offset = offset;
+            this.setParamValue(PAGING_PARAM_OFFSET, this.getOffset());
+            this.setParamValue(PAGING_PARAM_LAST, this.getOffset() + this.getPageSize());
+        }
 
         public int getPageSize() { return pageSize; }
 
