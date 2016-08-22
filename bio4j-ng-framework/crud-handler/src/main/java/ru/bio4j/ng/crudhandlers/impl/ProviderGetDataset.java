@@ -86,7 +86,7 @@ public class ProviderGetDataset extends ProviderAn {
 
                 result.packet(data);
 
-                if(data.getRows().size() < data.getPageSize()){
+                if((data.getOffset() == 0) && (data.getRows().size() < data.getPageSize())){
                     data.setResults(data.getRows().size());
                 }
 
