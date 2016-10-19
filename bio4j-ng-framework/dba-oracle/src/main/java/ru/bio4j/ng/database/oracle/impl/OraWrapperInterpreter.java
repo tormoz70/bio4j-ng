@@ -99,7 +99,7 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
                 fieldName = s.getFieldName();
                 direction = s.getDirection();
                 if(!Strings.isNullOrEmpty(fieldName))
-                result.append(String.format("%s %s.%s %s", comma, alias, fieldName.toUpperCase(), direction.toString()));
+                result.append(String.format("%s %s.%s %s NULLS LAST", comma, alias, fieldName.toUpperCase(), direction.toString()));
             }
             return result.toString();
         }

@@ -9,4 +9,5 @@ public interface BioAppModule extends BioModule {
     BioCursor getCursor(String bioCode) throws Exception;
     SQLContext getSQLContext() throws Exception;
     BioHttpRequestProcessor getHttpRequestProcessor(String requestType);
+    ExpDatasetApi getExpDatasetApi();
 }

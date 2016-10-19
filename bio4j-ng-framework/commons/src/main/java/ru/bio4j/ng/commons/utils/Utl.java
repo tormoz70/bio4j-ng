@@ -12,7 +12,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -490,5 +492,11 @@ public class Utl {
         return (count == 1 && conf.get(componentKey) != null);
     }
 
+    public static void encode2xml(Object object, OutputStream stream) throws JAXBException {
+            JAXBContext context = JAXBContext.newInstance(object.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(object, stream);
+    }
 }
 

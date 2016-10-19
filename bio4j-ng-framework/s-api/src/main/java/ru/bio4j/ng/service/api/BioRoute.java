@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.model.transport.*;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
@@ -15,6 +16,7 @@ public enum BioRoute {
     CRUD_JSON_GET("crud.json.get", BioRequestGetJson.class, BioRequestFactory.GetJson.class),
     CRUD_FILE_GET("crud.file.get", BioRequestGetFile.class, BioRequestFactory.GetFile.class),
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
+    CRUD_DATASET_EXP("crud.ds.exp", BioRequestJStoreExpDataSet.class, BioRequestFactory.ExpDataSet.class),
     CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class),
     CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class),
     CRUD_EXEC("crud.exec", BioRequestStoredProg.class, BioRequestFactory.StoredProg.class),

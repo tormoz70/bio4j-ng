@@ -81,6 +81,9 @@ public abstract class BioRequestFactory {
     public static class GetDataSet extends BioRequestFactory {
     }
 
+    public static class ExpDataSet extends BioRequestFactory {
+    }
+
     public static class GetRecord extends BioRequestFactory {
     }
 

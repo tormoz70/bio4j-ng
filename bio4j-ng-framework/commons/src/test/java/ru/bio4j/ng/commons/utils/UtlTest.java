@@ -7,7 +7,9 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
@@ -203,6 +205,15 @@ public class UtlTest {
         Assert.assertEquals(Utl.extractBioPath("qwe.asd.fgh.fgh"), "/qwe/asd/fgh/fgh");
         Assert.assertEquals(Utl.extractBioParentPath("qwe.asd.fgh.fgh"), "/qwe/asd/fgh");
         Assert.assertEquals(Utl.extractBioParentPath("qwe"), "/");
+    }
+
+    @Test(enabled = true)
+    public void encode2xmlTest() throws Exception {
+        try(OutputStream s = new FileOutputStream("d:\\tmp\\test-encode2xml.xml")) {
+            XLRCfg testBox = new XLRCfg();
+            testBox.setBioCode("Test-Box");
+            Utl.encode2xml(testBox, s);
+        }
     }
 
 }

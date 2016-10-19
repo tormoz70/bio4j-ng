@@ -8,6 +8,9 @@ import java.util.List;
  */
 public class BioRequest {
 
+
+    private String origJson;
+
     private String remoteIP;
     private String remoteClient;
 
@@ -135,4 +138,11 @@ public class BioRequest {
         this.remoteClient = remoteClient;
     }
 
+    public String getOrigJson() {
+        return origJson;
+    }
+
+    public void setOrigJson(String origJson) {
+        this.origJson = origJson;
+    }
 }

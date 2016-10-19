@@ -87,6 +87,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         if(providerMap == null){
             providerMap = new HashMap<>();
             providerMap.put(BioRoute.CRUD_DATASET_GET, new ProviderGetDataset());
+            providerMap.put(BioRoute.CRUD_DATASET_EXP, new ProviderExpDataset());
             providerMap.put(BioRoute.CRUD_RECORD_GET, new ProviderGetRecord());
             providerMap.put(BioRoute.CRUD_DATASET_POST, new ProviderPostDataset());
             providerMap.put(BioRoute.CRUD_EXEC, new ProviderExec());
