@@ -10,6 +10,7 @@ import ru.bio4j.ng.commons.types.Prop;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
@@ -212,6 +213,19 @@ public class UtlTest {
         try(OutputStream s = new FileOutputStream("d:\\tmp\\test-encode2xml.xml")) {
             XLRCfg testBox = new XLRCfg();
             testBox.setBioCode("Test-Box");
+
+            XLRCfg.DataSource ds = new XLRCfg.DataSource();
+            XLRCfg.ColumnDefinition cd = new XLRCfg.ColumnDefinition();
+
+            cd.setFieldName("ID");
+            cd.setTitle("Идентификатор");
+            cd.setFormat("0");
+
+            ds.setRangeName("mRng");
+            ds.getColumnDefinitions().add(cd);
+
+            testBox.getDss().add(ds);
+
             Utl.encode2xml(testBox, s);
         }
     }
