@@ -223,7 +223,9 @@ public class UtlTest {
 
             ds.setRangeName("mRng");
             ds.getColumnDefinitions().add(cd);
+            ds.setSql("select * from dual");
 
+            testBox.setTitle("Экспорт ИО");
             testBox.getDss().add(ds);
 
             Utl.encode2xml(testBox, s);

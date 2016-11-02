@@ -29,7 +29,7 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public class BioRouterImpl extends BioServiceBase implements BioRouter {
     private static final Logger LOG = LoggerFactory.getLogger(BioRouterImpl.class);
 
-    private Map<BioRoute, BioRouteHandler> routeMap;
+    private Map<String, BioRouteHandler> routeMap;
 
     @Requires
     private SecurityProvider securityProvider;
@@ -53,7 +53,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         if(routeMap == null) {
             routeMap = new HashMap<>();
 
-            routeMap.put(BioRoute.UNKNOWN, new BioRouteHandler<BioRequest>() {
+            routeMap.put(BioRoute.UNKNOWN.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
                     BioRespBuilder.Builder brsp = BioRespBuilder.anErrorBuilder()
@@ -63,7 +63,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.PING, new BioRouteHandler<BioRequest>() {
+            routeMap.put(BioRoute.PING.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
                     BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
@@ -71,21 +71,21 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.LOGIN, new BioRouteHandler<BioRequest>() {
+            routeMap.put(BioRoute.LOGIN.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
-            routeMap.put(BioRoute.LOGOUT, new BioRouteHandler<BioRequest>() {
+            routeMap.put(BioRoute.LOGOUT.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public void handle(BioRequest request, HttpServletResponse response) throws Exception {
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_JSON_GET, new BioRouteHandler<BioRequestGetJson>() {
+            routeMap.put(BioRoute.CRUD_JSON_GET.getAlias(), new BioRouteHandler<BioRequestGetJson>() {
                 @Override
                 public void handle(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_JSON_GET);
@@ -93,7 +93,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_FILE_GET, new BioRouteHandler<BioRequestGetFile>() {
+            routeMap.put(BioRoute.CRUD_FILE_GET.getAlias(), new BioRouteHandler<BioRequestGetFile>() {
                 @Override
                 public void handle(final BioRequestGetFile request, final HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FILE_GET);
@@ -102,7 +102,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_DATASET_GET, new BioRouteHandler<BioRequestJStoreGetDataSet>() {
+            routeMap.put(BioRoute.CRUD_DATASET_GET.getAlias(), new BioRouteHandler<BioRequestJStoreGetDataSet>() {
                 @Override
                 public void handle(BioRequestJStoreGetDataSet request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_GET);
@@ -110,7 +110,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_RECORD_GET, new BioRouteHandler<BioRequestJStoreGetRecord>() {
+            routeMap.put(BioRoute.CRUD_RECORD_GET.getAlias(), new BioRouteHandler<BioRequestJStoreGetRecord>() {
                 @Override
                 public void handle(BioRequestJStoreGetRecord request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_RECORD_GET);
@@ -118,7 +118,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_DATASET_POST, new BioRouteHandler<BioRequestJStorePost>() {
+            routeMap.put(BioRoute.CRUD_DATASET_POST.getAlias(), new BioRouteHandler<BioRequestJStorePost>() {
                 @Override
                 public void handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_POST);
@@ -126,7 +126,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_EXEC, new BioRouteHandler<BioRequestStoredProg>() {
+            routeMap.put(BioRoute.CRUD_EXEC.getAlias(), new BioRouteHandler<BioRequestStoredProg>() {
                 @Override
                 public void handle(BioRequestStoredProg request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_EXEC);
@@ -134,7 +134,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_FORM_UPLOAD, new BioRouteHandler<BioRequestJStorePost>() {
+            routeMap.put(BioRoute.CRUD_FORM_UPLOAD.getAlias(), new BioRouteHandler<BioRequestJStorePost>() {
                 @Override
                 public void handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FORM_UPLOAD);
@@ -201,7 +201,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         }
 
         BioRoute type = BioRoute.getType(bioRequest.getRequestType());
-        routeMap.get(type).handle(bioRequest, response);
+        routeMap.get(type.getAlias()).handle(bioRequest, response);
 
     }
 }

@@ -492,11 +492,11 @@ public class Utl {
         return (count == 1 && conf.get(componentKey) != null);
     }
 
-    public static void encode2xml(Object object, OutputStream stream) throws JAXBException {
-            JAXBContext context = JAXBContext.newInstance(object.getClass());
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(object, stream);
+    public static void encode2xml(Object object, OutputStream stream) throws Exception {
+        JAXBContext context = JAXBContext.newInstance(object.getClass());
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(object, stream);
     }
 }
 
