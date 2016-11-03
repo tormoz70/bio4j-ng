@@ -15,6 +15,7 @@ import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioHttpRequestProcessor;
+import ru.bio4j.ng.service.api.BioRouteHandler;
 import ru.bio4j.ng.service.api.Configurator;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
@@ -149,5 +150,24 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         if(httpRequestProcessors.containsKey(requestType))
             return httpRequestProcessors.get(requestType);
         return null;
+    }
+
+    private Map<String, BioRouteHandler> routeMap;
+
+    public BioRouteHandler getRouteHandler(String key) {
+        if(routeMap.containsKey(key))
+            return routeMap.get(key);
+        return null;
+    }
+
+    protected void registerRouteHandler(String key, BioRouteHandler routeHandler) {
+        if(routeMap.containsKey(key))
+            throw new IllegalArgumentException(String.format("%s with key \"%s\" already registered!", BioRouteHandler.class.getSimpleName(), key));
+        routeMap.put(key, routeHandler);
+    }
+
+    protected void unregisterRouteHandler(String key) {
+        if(routeMap.containsKey(key))
+            routeMap.remove(key);
     }
 }

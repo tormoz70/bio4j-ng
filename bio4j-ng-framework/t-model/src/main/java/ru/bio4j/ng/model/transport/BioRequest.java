@@ -145,4 +145,12 @@ public class BioRequest {
     public void setOrigJson(String origJson) {
         this.origJson = origJson;
     }
+
+    public RmtCommand getCmd() {
+        return cmd;
+    }
+
+    public void setCmd(RmtCommand cmd) {
+        this.cmd = cmd;
+    }
 }

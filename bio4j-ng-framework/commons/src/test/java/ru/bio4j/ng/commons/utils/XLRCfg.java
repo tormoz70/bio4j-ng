@@ -1,9 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
-import com.sun.xml.internal.txw2.annotation.XmlCDATA;
 import ru.bio4j.ng.commons.types.CDATAAdapter;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import javax.xml.bind.annotation.XmlAttribute;

@@ -1,7 +1,5 @@
 package ru.bio4j.ng.service.api;
 
-import ru.bio4j.ng.commons.types.Prop;
-
 /**
  * Created by ayrat.haliullin on 19.10.2016.
  */
@@ -9,38 +7,38 @@ public class ExpDatasetApi {
     /**
      * Код инф. объекта, который выполняет команду "Run" для процесса экспорта набора данных
      */
-    private String exportDatasetApiRun;
+    private String runCommand;
     /**
-     * Код инф. объекта, который выполняет команду "GetState" для процесса экспорта набора данных
+     * Код инф. объекта, который выполняет команду "State" для процесса экспорта набора данных
      */
-    private String exportDatasetApiGetState;
+    private String stateCommand;
 
     /**
      * Код инф. объекта, который выполняет команду "Break" для процесса экспорта набора данных
      */
-    private String exportDatasetApiBreak;
+    private String breakCommand;
 
-    public String getExportDatasetApiRun() {
-        return exportDatasetApiRun;
+    public String getRunCommand() {
+        return runCommand;
     }
 
-    public void setExportDatasetApiRun(String exportDatasetApiRun) {
-        this.exportDatasetApiRun = exportDatasetApiRun;
+    public void setRunCommand(String runCommand) {
+        this.runCommand = runCommand;
     }
 
-    public String getExportDatasetApiGetState() {
-        return exportDatasetApiGetState;
+    public String getStateCommand() {
+        return stateCommand;
     }
 
-    public void setExportDatasetApiGetState(String exportDatasetApiGetState) {
-        this.exportDatasetApiGetState = exportDatasetApiGetState;
+    public void setStateCommand(String stateCommand) {
+        this.stateCommand = stateCommand;
     }
 
-    public String getExportDatasetApiBreak() {
-        return exportDatasetApiBreak;
+    public String getBreakCommand() {
+        return breakCommand;
     }
 
-    public void setExportDatasetApiBreak(String exportDatasetApiBreak) {
-        this.exportDatasetApiBreak = exportDatasetApiBreak;
+    public void setBreakCommand(String breakCommand) {
+        this.breakCommand = breakCommand;
     }
 }

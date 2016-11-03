@@ -6,6 +6,7 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.*;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
@@ -110,6 +111,13 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
+            routeMap.put(BioRoute.CRUD_DATASET_EXP.getAlias(), new BioRouteHandler<BioRequestJStoreExpDataSet>() {
+                @Override
+                public void handle(BioRequestJStoreExpDataSet request, HttpServletResponse response) throws Exception {
+                    LOG.debug("Request {} not implemented.", BioRoute.CRUD_DATASET_EXP);
+                }
+            });
+
             routeMap.put(BioRoute.CRUD_RECORD_GET.getAlias(), new BioRouteHandler<BioRequestJStoreGetRecord>() {
                 @Override
                 public void handle(BioRequestJStoreGetRecord request, HttpServletResponse response) throws Exception {
@@ -182,26 +190,34 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         if(bioModule == null)
             throw new IllegalArgumentException(String.format("Module with key \"%s\" not registered!", qprms.moduleKey));
         BioHttpRequestProcessor requestProcessor = bioModule.getHttpRequestProcessor(requestType);
+
         if(requestProcessor != null){
+            //Do processing with BioHttpRequestProcessor
             requestProcessor.doPost(request, response);
-            return;
-        }
+        } else {
+            //Do processing with BioRoute
 
-        BioRequest bioRequest;
-        try {
             BioRoute route = BioRoute.getType(requestType);
-            if(route == null)
+            if (route == null)
                 throw new Exception(String.format("Route for requestType \"%s\" not found!", requestType));
-            BioRequestFactory factory = route.getFactory();
-            bioRequest = factory.restore(qprms, route.getClazz(), usr);
-        } catch (Exception e) {
-            LOG.debug("Unexpected error while decoding BioRequest: \n"+
-                    " - Error: {}", e.getMessage());
-            throw e;
+
+            BioRequest bioRequest;
+            try {
+                BioRequestFactory factory = route.getFactory();
+                bioRequest = factory.restore(qprms, route.getClazz(), usr);
+            } catch (Exception e) {
+                LOG.debug("Unexpected error while decoding BioRequest: \n" +
+                        " - Error: {}", e.getMessage());
+                throw e;
+            }
+
+            BioRouteHandler routeHandler = bioModule.getRouteHandler(route.getAlias());
+            if(routeHandler == null)
+                routeHandler = routeMap.get(route.getAlias());
+            if(routeHandler == null)
+                throw new Exception(String.format("RouteHandler for requestType \"%s\" not found!", route.getAlias()));
+
+            routeHandler.handle(bioRequest, response);
         }
-
-        BioRoute type = BioRoute.getType(bioRequest.getRequestType());
-        routeMap.get(type.getAlias()).handle(bioRequest, response);
-
     }
 }
