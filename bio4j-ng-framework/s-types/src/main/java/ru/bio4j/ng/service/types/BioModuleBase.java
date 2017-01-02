@@ -155,19 +155,21 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
     private Map<String, BioRouteHandler> routeMap;
 
     public BioRouteHandler getRouteHandler(String key) {
-        if(routeMap.containsKey(key))
+        if(routeMap != null && routeMap.containsKey(key))
             return routeMap.get(key);
         return null;
     }
 
     protected void registerRouteHandler(String key, BioRouteHandler routeHandler) {
+        if(routeMap == null)
+            routeMap = new HashMap<>();
         if(routeMap.containsKey(key))
             throw new IllegalArgumentException(String.format("%s with key \"%s\" already registered!", BioRouteHandler.class.getSimpleName(), key));
         routeMap.put(key, routeHandler);
     }
 
     protected void unregisterRouteHandler(String key) {
-        if(routeMap.containsKey(key))
+        if(routeMap != null && routeMap.containsKey(key))
             routeMap.remove(key);
     }
 }
