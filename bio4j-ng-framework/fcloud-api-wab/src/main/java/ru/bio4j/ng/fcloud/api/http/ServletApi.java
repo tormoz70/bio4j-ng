@@ -1,4 +1,4 @@
-package ru.bio4j.ng.remote.api.http;
+package ru.bio4j.ng.fcloud.api.http;
 
 import ru.bio4j.ng.commons.collections.Pair;
 import ru.bio4j.ng.model.transport.BioError;
@@ -35,21 +35,16 @@ public class ServletApi extends BioServletApiBase {
         }
 
         try {
-            initRouter(this.getServletContext());
             initServices(this.getServletContext());
-            doRoute(request, response);
         } catch (BioError e) {
-            if(e.getErrCode() == 200){
+            if(e.getErrCode() == 200)
                 LOG.error("Server application error (Level-0)!", e);
-//                responseError(BioError.wrap(e), response);
-            }else{
+            else
                 LOG.error("Expected server error (Level-0)!", e);
-//                response.sendError(e.getErrCode());
-            }
+
             responseError(e, response);
         } catch (Exception e) {
             LOG.error("Unexpected server error (Level-0)!", e);
-            //response.sendError(500);
             responseError(BioError.wrap(e), response);
         }
     }

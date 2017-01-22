@@ -6,12 +6,12 @@
         <version>1.4.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-rapi-wab</artifactId>
+    <artifactId>bio4j-ng-fcloud-wab</artifactId>
     <packaging>war</packaging>
 
     <properties>
-        <wab.name>Bio4j Remote API WAB Service</wab.name>
-        <wab.context.path>/bio4j</wab.context.path>
+        <wab.name>Bio4j File Cloud API WAB Service</wab.name>
+        <wab.context.path>/fcloud</wab.context.path>
     </properties>
 
     <build>
@@ -25,13 +25,7 @@
                         <Bundle-Name>${wab.name}</Bundle-Name>
                         <Bundle-Vendor>bio4j.ru</Bundle-Vendor>
                         <Bundle-Category>bio4j</Bundle-Category>
-                        <!--<Bundle-Description>WebClient Test-service</Bundle-Description>-->
-                        <!--<Bundle-Activator>org.example.Activator</Bundle-Activator>-->
                         <Web-ContextPath>${wab.context.path}</Web-ContextPath>
-                        <!--<Import-Package>*,-->
-                        <!--org.apache.shiro.web.env;version="[1.2,2)"-->
-                        <!--</Import-Package>-->
-                        <!-- By default, we don't export anything -->
                         <Export-Package />
                         <Import-Package>*,ru.bio4j.ng.model.transport.jstore,ru.bio4j.ng.model.transport.jstore.filter</Import-Package>
                     </instructions>
@@ -98,20 +92,11 @@
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.felix</groupId>-->
-            <!--<artifactId>org.apache.felix.ipojo</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.geronimo.specs</groupId>-->
-            <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.eclipse.jetty.toolchain</groupId>
             <artifactId>jetty-osgi-servlet-api</artifactId>
@@ -122,18 +107,6 @@
             <artifactId>jetty-servlets</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.ops4j.pax.logging</groupId>-->
-            <!--<artifactId>pax-logging-api</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.ops4j.pax.logging</groupId>-->
-            <!--<artifactId>pax-logging-service</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-stypes</artifactId>

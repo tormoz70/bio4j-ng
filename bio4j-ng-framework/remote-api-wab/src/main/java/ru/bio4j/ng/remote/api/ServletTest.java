@@ -1,4 +1,4 @@
-package ru.bio4j.ng.remote.api.http;
+package ru.bio4j.ng.remote.api;
 
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.service.types.BioServletApiBase;

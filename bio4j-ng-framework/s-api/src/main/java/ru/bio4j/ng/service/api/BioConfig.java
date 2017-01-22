@@ -13,6 +13,9 @@ public class BioConfig {
     @Prop(name = "content.resolver.path")
     private String contentResolverPath = null;
 
+    @Prop(name = "files.cloud.path")
+    private String filesCloudPath = null;
+
     @Prop(name = "global.pool.name")
     private String poolName;
     @Prop(name = "global.driver.name")
