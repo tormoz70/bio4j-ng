@@ -177,7 +177,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
         final SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
 
-        final User usr = securityProvider.getUser(qprms.uid, qprms.remoteIP);
+        final User usr = securityProvider.getUser(qprms.stoken, qprms.remoteIP);
         if(usr == null)
             throw new Exception("Something wrong! Var \"usr\" cannot be null in this way!");
 

@@ -18,7 +18,7 @@ public class SrvcUtils {
     public static final String QRY_PARAM_NAME_REQUEST_TYPE = "rqt";
     public static final String QRY_PARAM_NAME_MODULE = "bm";
     public static final String QRY_PARAM_NAME_BIOCODE = "biocd";
-    public static final String QRY_PARAM_NAME_UID = "uid";
+    public static final String QRY_PARAM_NAME_STOKEN = "stoken";
     public static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
     public static final String QRY_PARAM_NAME_FILE_HASH_CODE = "hf";
 
@@ -33,7 +33,7 @@ public class SrvcUtils {
         public String requestType;
         public String moduleKey;
         public String bioCode;
-        public String uid;
+        public String stoken;
         public String remoteIP;
         public String jsonData;
         public String fileHashCode;

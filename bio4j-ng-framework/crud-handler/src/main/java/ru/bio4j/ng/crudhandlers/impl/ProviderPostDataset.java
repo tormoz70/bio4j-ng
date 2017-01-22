@@ -124,7 +124,7 @@ public class ProviderPostDataset extends ProviderAn {
             BioRespBuilder.DataBuilder responseBuilder = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
                 @Override
                 public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj) throws Exception {
-                    tryPrepareSessionContext(usr.getUid(), conn);
+                    tryPrepareSessionContext(usr.getInnerUid(), conn);
                     return processRequestPost((BioRequestJStorePost)request, context, conn, null, null, null);
                 }
             }, null, request.getUser());

@@ -42,7 +42,7 @@ public class ProviderGetFile extends ProviderAn {
         final BioCursor.SQLDef sqlExecDef = cursor.getExecSqlDef();
 
         sqlContext.execBatch((ctx, conn, cur) -> {
-            tryPrepareSessionContext(request.getUser().getUid(), conn);
+            tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
 
             if(sqlSelectDef != null) {
                 try(Paramus p = Paramus.set(sqlSelectDef.getParams())){

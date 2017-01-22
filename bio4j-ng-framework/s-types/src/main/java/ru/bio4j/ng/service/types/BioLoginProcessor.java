@@ -17,7 +17,7 @@ public class BioLoginProcessor {
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 
-        return securityProvider.getUser(prms.uid, prms.remoteIP);
+        return securityProvider.getUser(prms.stoken, prms.remoteIP);
     }
 
     public User login(SrvcUtils.BioQueryParams qprms) throws Exception {
@@ -37,7 +37,7 @@ public class BioLoginProcessor {
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 
-        securityProvider.logoff(qprms.uid, qprms.remoteIP);
+        securityProvider.logoff(qprms.stoken, qprms.remoteIP);
     }
 
 }

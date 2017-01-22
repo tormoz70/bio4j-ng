@@ -5,15 +5,15 @@ import ru.bio4j.ng.database.api.SQLContextConfig;
 
 public class SecurityConfig extends SQLContextConfig {
 
-//    @Prop(name = "bio.screenplays.path")
-//    private String screenplaysPath = null;
-//
-//    public String getScreenplaysPath() {
-//        return screenplaysPath;
-//    }
-//
-//    public void setScreenplaysPath(String screenplaysPath) {
-//        this.screenplaysPath = screenplaysPath;
-//    }
+    @Prop(name = "bio.screenplays.path")
+    private String screenplaysPath = null;
+
+    public String getScreenplaysPath() {
+        return screenplaysPath;
+    }
+
+    public void setScreenplaysPath(String screenplaysPath) {
+        this.screenplaysPath = screenplaysPath;
+    }
 
 }
