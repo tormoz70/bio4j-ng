@@ -7,14 +7,11 @@ public class BioConfig {
     @Prop(name = "bio.debug")
     private boolean bioDebug = false;
 
-    @Prop(name = "ehcache.persistent.path")
-    private String cachePersistentPath = null;
+    //@Prop(name = "ehcache.persistent.path")
+    //private String cachePersistentPath = null;
 
-    @Prop(name = "content.resolver.path")
-    private String contentResolverPath = null;
-
-    @Prop(name = "files.cloud.path")
-    private String filesCloudPath = null;
+    //@Prop(name = "content.resolver.path")
+    //private String contentResolverPath = null;
 
     @Prop(name = "global.pool.name")
     private String poolName;
@@ -37,22 +34,6 @@ public class BioConfig {
     @Prop(name = "global.current.schema")
     private String currentSchema = null;
 
-
-    public String getCachePersistentPath() {
-        return Utl.normalizePath(cachePersistentPath);
-    }
-
-    public void setCachePersistentPath(String cachePersistentPath) {
-        this.cachePersistentPath = cachePersistentPath;
-    }
-
-    public String getContentResolverPath() {
-        return contentResolverPath;
-    }
-
-    public void setContentResolverPath(String contentResolverPath) {
-        this.contentResolverPath = contentResolverPath;
-    }
 
     public String getDbConnectionUrl() {
         return dbConnectionUrl;

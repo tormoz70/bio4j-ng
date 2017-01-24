@@ -6,6 +6,7 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
@@ -148,34 +149,41 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     public void logoff(final String stoken) throws Exception {
         final BioCursor cursor = this.getCursor("bio.logoff");
         final SQLContext context = this.getSQLContext();
-        try {
-            String rslt = context.execBatch(new SQLAction<BioCursor, String>() {
-                @Override
-                public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                    cur.getExecSqlDef().setParamValue("p_stoken", stoken);
-                    SQLStoredProc sp = context.createStoredProc();
-                    sp.init(conn, cur.getExecSqlDef().getPreparedSql(), cur.getExecSqlDef().getParams())
-                            .execSQL();
-                    try(Paramus paramus = Paramus.set(sp.getParams())) {
-                        return paramus.getValueAsStringByName("v_rslt", true);
-                    }
-                }
-            }, cursor, null);
 
-        } catch (SQLException ex) {
-            switch (ex.getErrorCode()) {
-                case 20401:
-                    throw new BioError.Login.BadLogin();
-                case 20402:
-                    throw new BioError.Login.UserBlocked();
-                case 20403:
-                    throw new BioError.Login.UserNotConfirmed();
-                case 20404:
-                    throw new BioError.Login.UserDeleted();
-                default:
-                    throw ex;
+        String rslt = context.execBatch(new SQLAction<BioCursor, String>() {
+            @Override
+            public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                cur.getExecSqlDef().setParamValue("p_stoken", stoken);
+                SQLStoredProc sp = context.createStoredProc();
+                sp.init(conn, cur.getExecSqlDef().getPreparedSql(), cur.getExecSqlDef().getParams())
+                        .execSQL();
+                try(Paramus paramus = Paramus.set(sp.getParams())) {
+                    return paramus.getValueAsStringByName("v_rslt", true);
+                }
             }
-        }
+        }, cursor, null);
+        LOG.debug("Logoff rslt: {}", rslt);
+    }
+
+    @Override
+    public Boolean loggedin(final String stoken) throws Exception {
+        final BioCursor cursor = this.getCursor("bio.loggedin");
+        final SQLContext context = this.getSQLContext();
+
+        String rslt = context.execBatch(new SQLAction<BioCursor, String>() {
+            @Override
+            public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+                cur.getExecSqlDef().setParamValue("p_stoken", stoken);
+                SQLStoredProc sp = context.createStoredProc();
+                sp.init(conn, cur.getExecSqlDef().getPreparedSql(), cur.getExecSqlDef().getParams())
+                        .execSQL();
+                try(Paramus paramus = Paramus.set(sp.getParams())) {
+                    return paramus.getValueAsStringByName("v_rslt", true);
+                }
+            }
+        }, cursor, null);
+        LOG.debug("Loggedin rslt: {}", rslt);
+        return Strings.compare(rslt, "OK", true);
     }
 
     @Updated

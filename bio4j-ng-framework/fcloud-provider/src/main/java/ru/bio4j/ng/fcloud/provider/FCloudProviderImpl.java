@@ -1,7 +1,6 @@
-package ru.bio4j.ng.config;
+package ru.bio4j.ng.fcloud.provider;
 
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,16 +8,12 @@ import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Component(managedservice="bio4j.config")
 @Instantiate
 @Provides(specifications = ConfigProvider.class)
-public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements ConfigProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigProviderImpl.class);
+public class FCloudProviderImpl extends BioServiceBase<FCloudConfig> implements FCloudProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(FCloudProviderImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;

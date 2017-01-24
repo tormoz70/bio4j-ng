@@ -67,6 +67,11 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
         getSecurityModule().logoff(stoken);
     }
 
+    @Override
+    public Boolean loggedin(final String stoken) throws Exception {
+        return getSecurityModule().loggedin(stoken);
+    }
+
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
