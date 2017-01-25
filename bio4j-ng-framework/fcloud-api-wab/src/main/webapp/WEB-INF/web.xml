@@ -7,7 +7,7 @@
     <!--Servlets-->
     <servlet>
         <servlet-name>rapi</servlet-name>
-        <servlet-class>ServletApi</servlet-class>
+        <servlet-class>ru.bio4j.ng.fcloud.api.ServletApi</servlet-class>
         <init-param>
             <param-name>bioDebug</param-name>
             <param-value>${bioDebug}</param-value>
@@ -20,7 +20,7 @@
     </servlet>
     <servlet>
         <servlet-name>test</servlet-name>
-        <servlet-class>ServletTest</servlet-class>
+        <servlet-class>ru.bio4j.ng.fcloud.api.ServletTest</servlet-class>
     </servlet>
 
     <!--Filters-->
@@ -30,7 +30,7 @@
     </filter>
     <filter>
         <filter-name>proxy</filter-name>
-        <filter-class>ProxyFilter</filter-class>
+        <filter-class>ru.bio4j.ng.fcloud.api.ProxyFilter</filter-class>
     </filter>
 
     <!--Mapping-->

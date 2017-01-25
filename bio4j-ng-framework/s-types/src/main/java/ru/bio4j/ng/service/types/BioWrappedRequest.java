@@ -31,8 +31,17 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         result.moduleKey = request.getParameter(SrvcUtils.QRY_PARAM_NAME_MODULE);
         result.bioCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_BIOCODE);
         result.stoken = request.getParameter(SrvcUtils.QRY_PARAM_NAME_STOKEN);
+        result.login = request.getParameter(SrvcUtils.QRY_PARAM_NAME_LOGIN);
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
         result.fileHashCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_FILE_HASH_CODE);
+
+        if(result.method == "POST"){
+            String usrname = request.getParameter("usrname");
+            String passwd = request.getParameter("passwd");
+            if(!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
+                result.login = usrname+"/"+passwd;
+            }
+        }
 
         final String jsonDataAsQueryParam = request.getParameter(SrvcUtils.QRY_PARAM_NAME_JSON_DATA);
         StringBuilder jd = new StringBuilder();

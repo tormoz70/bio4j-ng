@@ -9,7 +9,7 @@ import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.Dictionary;
 
-@Component(managedservice="bio4j.config")
+@Component(managedservice="fcloud.config")
 @Instantiate
 @Provides(specifications = ConfigProvider.class)
 public class FCloudProviderImpl extends BioServiceBase<FCloudConfig> implements FCloudProvider {
@@ -25,7 +25,7 @@ public class FCloudProviderImpl extends BioServiceBase<FCloudConfig> implements 
 
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
-        doOnUpdated(conf, "bio-config-updated");
+        doOnUpdated(conf, "fcloud-config-updated");
     }
 
     @Validate

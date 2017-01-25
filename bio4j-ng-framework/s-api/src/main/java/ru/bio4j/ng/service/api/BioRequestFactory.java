@@ -6,6 +6,7 @@ import ru.bio4j.ng.commons.converter.hanlers.MetaTypeHandler;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
@@ -48,6 +49,8 @@ public abstract class BioRequestFactory {
         bioRequest.setRequestType(qprms.requestType);
         bioRequest.setRemoteIP(qprms.remoteIP);
         bioRequest.setRemoteClient(qprms.remoteIP);
+        if(!Strings.isNullOrEmpty(qprms.login))
+            bioRequest.setLogin(qprms.login);
         bioRequest.setUser(usr);
         return bioRequest;
     }

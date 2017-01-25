@@ -64,7 +64,7 @@ public class User {
     }
 
     public Boolean isAnonymous() {
-        return this.anonymous;
+        return this.anonymous == true;
     }
 
     public String getEmail() {
@@ -122,5 +122,9 @@ public class User {
 
     public void setInnerUid(String innerUid) {
         this.innerUid = innerUid;
+    }
+
+    public void setAnonymous(Boolean anonymous) {
+        this.anonymous = anonymous;
     }
 }

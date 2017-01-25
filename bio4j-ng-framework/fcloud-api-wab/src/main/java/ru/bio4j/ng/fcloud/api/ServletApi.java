@@ -1,4 +1,4 @@
-package ru.bio4j.ng.fcloud.api.http;
+package ru.bio4j.ng.fcloud.api;
 
 import ru.bio4j.ng.commons.collections.Pair;
 import ru.bio4j.ng.model.transport.BioError;
@@ -30,7 +30,7 @@ public class ServletApi extends BioServletApiBase {
         if(c != null) {
             LOG.debug("Parts recived: {}", c.size());
             for (Part p : c) {
-                LOG.debug(" - part: ", p.getName());
+                LOG.debug(" - part: {}; size: {}; fileName: {}", p.getName(), p.getSize(), p.getSubmittedFileName());
             }
         }
 

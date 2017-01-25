@@ -21,8 +21,8 @@ public class BioLoginProcessor {
     }
 
     public User login(SrvcUtils.BioQueryParams qprms) throws Exception {
-        if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGIN.getAlias()))
-            throw new IllegalArgumentException(String.format("prms.requestType must be \"%s\"!", BioRoute.LOGIN.getAlias()));
+        //if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGIN.getAlias()))
+        //    throw new IllegalArgumentException(String.format("prms.requestType must be \"%s\"!", BioRoute.LOGIN.getAlias()));
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 

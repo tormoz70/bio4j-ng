@@ -1,4 +1,4 @@
-package ru.bio4j.ng.fcloud.api.http;
+package ru.bio4j.ng.fcloud.api;
 
 import ru.bio4j.ng.service.api.SrvcUtils;
 import ru.bio4j.ng.service.types.BioWrappedRequest;

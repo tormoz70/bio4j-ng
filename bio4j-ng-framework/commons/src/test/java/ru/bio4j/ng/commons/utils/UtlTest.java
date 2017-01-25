@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -232,4 +233,16 @@ public class UtlTest {
         }
     }
 
+    @Test
+    public void getPath() {
+        for (int i = 0; i < 1000; i++) {
+            UUID uuid = UUID.randomUUID();
+            String hex = uuid.toString().replace("-", "").toLowerCase();
+            Assert.assertTrue(hex.length() == 32 /* UUID is 128 bit (32 hex byte)! */, "Bad UUID format");
+            System.out.println(hex.substring(0, 4) + "/" + hex.substring(4, 8) + "/" + hex.substring(8, 12));
+        }
+        // normal UUID looks like 'd3761577-a7f1-41ae-b2a3-adbb1ae987a4' in any letters case
+        // therefore we need to remove '-' and convert to lowercase
+
+    }
 }

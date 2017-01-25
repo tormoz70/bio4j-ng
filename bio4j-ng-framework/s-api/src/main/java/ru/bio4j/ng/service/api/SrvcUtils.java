@@ -19,6 +19,7 @@ public class SrvcUtils {
     public static final String QRY_PARAM_NAME_MODULE = "bm";
     public static final String QRY_PARAM_NAME_BIOCODE = "biocd";
     public static final String QRY_PARAM_NAME_STOKEN = "stoken";
+    public static final String QRY_PARAM_NAME_LOGIN = "login";
     public static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
     public static final String QRY_PARAM_NAME_FILE_HASH_CODE = "hf";
 
@@ -37,6 +38,7 @@ public class SrvcUtils {
         public String remoteIP;
         public String jsonData;
         public String fileHashCode;
+        public String login;
     }
 
 }

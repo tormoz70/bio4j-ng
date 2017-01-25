@@ -95,7 +95,7 @@ public class WarSecurityFilterBase {
                 final SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
                 final boolean weAreInPublicAreas = detectWeAreInPublicAreas(qprms.bioCode);
                 if (securityProvider != null) {
-                    if (qprms.requestType != null && qprms.requestType.equalsIgnoreCase(BioRoute.LOGIN.getAlias())) {
+                    if (!Strings.isNullOrEmpty(qprms.login)) {
                         User user = loginProcessor.login(qprms);
                         BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
                         response.getWriter().append(responseBuilder.json());
