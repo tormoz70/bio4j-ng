@@ -79,7 +79,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
             throw new BioError.Login.BadLogin();
         LOG.debug("User login:{} logging in...", login);
 
-        final BioCursor cursor = this.getCursor("bio.login");
+        final BioCursor cursor = this.getCursor("bio.login", null);
         final SQLContext context = this.getSQLContext();
 
         String stoken = context.execBatch(new SQLAction<BioCursor, String>() {
@@ -111,7 +111,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
             throw new BioError.Login.BadLogin();
 
         LOG.debug("User stoken:{} getting...", stoken);
-        final BioCursor cursor = this.getCursor("bio.get-user");
+        final BioCursor cursor = this.getCursor("bio.get-user", null);
         final SQLContext sqlContext = this.getSQLContext();
         User result = sqlContext.execBatch(new SQLAction<BioCursor, User>() {
             @Override
@@ -147,7 +147,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
 
     @Override
     public void logoff(final String stoken) throws Exception {
-        final BioCursor cursor = this.getCursor("bio.logoff");
+        final BioCursor cursor = this.getCursor("bio.logoff", null);
         final SQLContext context = this.getSQLContext();
 
         String rslt = context.execBatch(new SQLAction<BioCursor, String>() {
@@ -167,7 +167,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
 
     @Override
     public Boolean loggedin(final String stoken) throws Exception {
-        final BioCursor cursor = this.getCursor("bio.loggedin");
+        final BioCursor cursor = this.getCursor("bio.loggedin", null);
         final SQLContext context = this.getSQLContext();
 
         String rslt = context.execBatch(new SQLAction<BioCursor, String>() {

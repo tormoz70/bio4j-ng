@@ -57,16 +57,18 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     protected abstract BundleContext bundleContext();
 
-    protected static void applyCurrentUserParams(final User usr, Collection<BioCursor.SQLDef> sqlDefs) {
-        for(BioCursor.SQLDef sqlDef : sqlDefs) {
-            if(sqlDef != null)
-                try (Paramus p = Paramus.set(sqlDef.getParams())) {
-                    p.setValue(SrvcUtils.PARAM_CURUSR_UID,      usr.getInnerUid(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID,  usr.getOrgId(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_ROLES,    usr.getRoles(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS,   usr.getGrants(), Param.Direction.IN, true);
-                    p.setValue(SrvcUtils.PARAM_CURUSR_IP,       usr.getRemoteIP(), Param.Direction.IN, true);
-                }
+    protected static void applyCurrentUserParams(final User usr, final Collection<BioCursor.SQLDef> sqlDefs) {
+        if (usr != null && sqlDefs != null) {
+            for (BioCursor.SQLDef sqlDef : sqlDefs) {
+                if (sqlDef != null)
+                    try (Paramus p = Paramus.set(sqlDef.getParams())) {
+                        p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
+                        p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
+                        p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
+                        p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
+                        p.setValue(SrvcUtils.PARAM_CURUSR_IP, usr.getRemoteIP(), Param.Direction.IN, true);
+                    }
+            }
         }
     }
 
@@ -77,8 +79,9 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
         }
     }
 
-    public BioCursor getCursor(String bioCode) throws Exception {
+    public BioCursor getCursor(String bioCode, User usr) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
+        applyCurrentUserParams(usr, cursor.sqlDefs());
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
         return cursor;
@@ -86,10 +89,8 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
 
     public BioCursor getCursor(BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
-        BioCursor cursor = getCursor(bioCode);
+        BioCursor cursor = getCursor(bioCode, bioRequest.getUser());
 
-        final User usr = bioRequest.getUser();
-        applyCurrentUserParams(usr, cursor.sqlDefs());
         applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
 
         return cursor;
