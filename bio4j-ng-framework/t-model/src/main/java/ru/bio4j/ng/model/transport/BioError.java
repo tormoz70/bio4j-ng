@@ -80,6 +80,9 @@ public class BioError extends Exception {
         public BadRequestType(String requestType) {
             super(6400, String.format("Value of argument \"requestType\":\"%s\" is unknown!", requestType));
         }
+        public BadRequestType(String msgTemplate, String requestType) {
+            super(6400, String.format(msgTemplate, requestType));
+        }
     }
 
     public static class LocationFail extends SysError {

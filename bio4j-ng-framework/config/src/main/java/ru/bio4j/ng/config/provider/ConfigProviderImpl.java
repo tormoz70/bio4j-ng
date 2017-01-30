@@ -1,4 +1,4 @@
-package ru.bio4j.ng.fcloud.provider;
+package ru.bio4j.ng.config.provider;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.service.event.EventAdmin;

@@ -20,10 +20,14 @@
                             !org.apache.commons.logging,
                             !org.apache.tools.ant.*,
                             *</Import-Package>
-                        <Embed-Dependency>commons-beanutils-core</Embed-Dependency>
+                        <Embed-Dependency>
+                            commons-beanutils-core,
+                            commons-codec
+                        </Embed-Dependency>
                         <Export-Package>
                             ru.bio4j.ng.commons.*,
-                            org.apache.commons.beanutils.*
+                            org.apache.commons.beanutils.*,
+                            org.apache.commons.codec.*
                         </Export-Package>
                         <!--<Export-Package>-->
                             <!--com.google.common.*,-->
@@ -46,6 +50,13 @@
             <version>1.8.3</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>com.google.guava</groupId>-->
             <!--<artifactId>guava</artifactId>-->

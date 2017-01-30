@@ -79,6 +79,5 @@ public class BioServletBase extends HttpServlet {
     protected void responseError(BioError error, HttpServletResponse response) throws IOException {
         writeError(BioRespBuilder.anErrorBuilder()
                 .exception(error), response, bioDebug);
-
     }
 }

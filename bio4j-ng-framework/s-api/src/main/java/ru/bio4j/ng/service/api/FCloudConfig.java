@@ -4,25 +4,25 @@ import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Utl;
 
 public class FCloudConfig {
-    @Prop(name = "files.cloud.path")
-    private String filesCloudPath = null;
+    @Prop(name = "cloud.root.path")
+    private String cloudRootPath = null;
 
-    @Prop(name = "thread.pool.size")
-    private String threadPoolSize = null;
+    @Prop(name = "cloud.tmp.path")
+    private String cloudTmpPath = null;
 
-    public String getFilesCloudPath() {
-        return filesCloudPath;
+    public String getCloudRootPath() {
+        return cloudRootPath;
     }
 
-    public void setFilesCloudPath(String filesCloudPath) {
-        this.filesCloudPath = filesCloudPath;
+    public void setCloudRootPath(String cloudRootPath) {
+        this.cloudRootPath = cloudRootPath;
     }
 
-    public String getThreadPoolSize() {
-        return threadPoolSize;
+    public String getCloudTmpPath() {
+        return cloudTmpPath;
     }
 
-    public void setThreadPoolSize(String threadPoolSize) {
-        this.threadPoolSize = threadPoolSize;
+    public void setCloudTmpPath(String cloudTmpPath) {
+        this.cloudTmpPath = cloudTmpPath;
     }
 }

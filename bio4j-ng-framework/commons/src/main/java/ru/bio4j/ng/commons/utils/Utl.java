@@ -19,6 +19,9 @@ import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +39,7 @@ public class Utl {
      */
     public static String fileName(String filePath) {
         if(isNullOrEmpty(filePath)){
-            int p = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+            int p = filePath.lastIndexOf(File.separator);
             if (p >= 0)
                 return filePath.substring(p+1);
             return filePath;
@@ -53,7 +56,7 @@ public class Utl {
         String extension = "";
 
         int i = fileName.lastIndexOf('.');
-        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+        int p = fileName.lastIndexOf(File.separator);
 
         if (i > p) {
             extension = fileName.substring(i+1);
@@ -169,7 +172,7 @@ public class Utl {
 		for (Annotation annotation : clazz.getDeclaredAnnotations()) {
 			Class<?> atype = annotation.annotationType();
 		    if(typesIsAssignable(atype, annotationType))
-		    	return (T)annotation; 
+		    	return (T)annotation;
 		}
 		return null;
 	}
@@ -191,7 +194,7 @@ public class Utl {
 	public static String pkg2path(String packageName) {
 		return (isNullOrEmpty(packageName) ? null : "/"+packageName.replace('.', '/')+"/");
 	}
-	
+
 	/**
 	 * @param path
 	 * @return
@@ -205,7 +208,7 @@ public class Utl {
 			result = result.substring(0, result.length()-1);
 		return result;
 	}
-	
+
 	/**
 	 * @param path
 	 * @return
@@ -385,7 +388,7 @@ public class Utl {
             pathSeparator =  File.separatorChar;
         rslt = rslt.replace('\\', pathSeparator);
         rslt = rslt.replace('/', pathSeparator);
-        rslt = (rslt.charAt(rslt.length()-1) == pathSeparator) ? rslt : rslt + pathSeparator;
+        rslt = rslt.endsWith(""+pathSeparator) ? rslt : rslt + pathSeparator;
         return rslt;
     }
     public static String normalizePath(String path) {
@@ -498,5 +501,27 @@ public class Utl {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         marshaller.marshal(object, stream);
     }
+
+    public static String md5(String fileName) throws IOException {
+        String md5 = null;
+        try (FileInputStream fis = new FileInputStream(new File(fileName))) {
+            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+        }
+        return md5;
+    }
+
+    public static String storeInputStream(InputStream inputStream, String path) throws IOException {
+        Path _path = Paths.get(path);
+        Files.createDirectories(_path.getParent());
+        try(OutputStream out = new FileOutputStream(new File(_path.toString()))) {
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+            while ((read = inputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        }
+        return _path.toString();
+    }
+
 }
 
