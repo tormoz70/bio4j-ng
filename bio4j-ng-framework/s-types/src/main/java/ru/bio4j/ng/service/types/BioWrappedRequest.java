@@ -1,7 +1,9 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.utils.Httpc;
+import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
@@ -22,6 +24,18 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
     public SrvcUtils.BioQueryParams getBioQueryParams() {
         return bioQueryParams;
+    }
+
+    public static class LoginParamObj {
+        private String login;
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
     }
 
     public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws IOException {
@@ -52,6 +66,14 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         if(jd.length() == 0)
             jd.append("{}");
         result.jsonData = jd.toString();
+        if(Strings.isNullOrEmpty(result.login)) {
+            try {
+                LoginParamObj loginParamObj = Jsons.decode(result.jsonData, LoginParamObj.class);
+                if (loginParamObj != null && !Strings.isNullOrEmpty(loginParamObj.getLogin()))
+                    result.login = loginParamObj.getLogin();
+            } catch (Exception e) {
+            }
+        }
         return result;
     }
 
