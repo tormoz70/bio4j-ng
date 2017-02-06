@@ -462,7 +462,7 @@
         <!--bio-modules-->
         <module>module-provider</module>
         <module>security-module-x</module>
-        <!--<module>fcloud-provider</module>-->
+        <module>fcloud-provider</module>
 
     </modules>
 

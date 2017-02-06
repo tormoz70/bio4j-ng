@@ -37,7 +37,11 @@
             <artifactId>jetty-osgi-servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -52,6 +56,26 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-tmodel</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-dbapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-dba-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-dba-pgsql</artifactId>
             <scope>provided</scope>
         </dependency>
 

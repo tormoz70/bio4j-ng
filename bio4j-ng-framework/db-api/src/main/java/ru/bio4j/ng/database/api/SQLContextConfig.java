@@ -7,25 +7,25 @@ import ru.bio4j.ng.commons.types.Prop;
  */
 public class SQLContextConfig {
 
-    @Prop(name = "crud.pool.name")
+    @Prop(name = "context.pool.name")
     private String poolName;
-    @Prop(name = "crud.driver.name")
+    @Prop(name = "context.driver.name")
     private String driverName;
-    @Prop(name = "crud.connection.url")
+    @Prop(name = "context.connection.url")
     private String dbConnectionUrl;
-    @Prop(name = "crud.connection.usr")
+    @Prop(name = "context.connection.usr")
     private String dbConnectionUsr;
-    @Prop(name = "crud.connection.pwd")
+    @Prop(name = "context.connection.pwd")
     private String dbConnectionPwd;
-    @Prop(name = "crud.min.pool.size")
+    @Prop(name = "context.min.pool.size")
     private int minPoolSize = 2;
-    @Prop(name = "crud.max.pool.size")
+    @Prop(name = "context.max.pool.size")
     private int maxPoolSize = 10;
-    @Prop(name = "crud.connection.wait.timeout")
+    @Prop(name = "context.connection.wait.timeout")
     private int connectionWaitTimeout = 5;
-    @Prop(name = "crud.initial.pool.size")
+    @Prop(name = "context.initial.pool.size")
     private int initialPoolSize = 5;
-    @Prop(name = "crud.current.schema")
+    @Prop(name = "context.current.schema")
     private String currentSchema = null;
 
 
