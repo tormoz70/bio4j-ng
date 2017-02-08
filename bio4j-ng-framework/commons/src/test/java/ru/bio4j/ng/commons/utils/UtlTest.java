@@ -8,6 +8,7 @@ import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -245,4 +246,19 @@ public class UtlTest {
         // therefore we need to remove '-' and convert to lowercase
 
     }
+
+    @Test
+    public void storeStringTest() throws IOException {
+        Utl.storeString("Тест", "d:\\storeStringTest.txt");
+        Assert.assertTrue(true);
+    }
+
+    @Test
+    public void openFileTest() throws IOException {
+        Utl.storeString("Тест", "d:\\storeStringTest.txt");
+        InputStream ins = Utl.openFile("d:\\storeStringTest.txt");
+        String rslt = Utl.readStream(ins);
+        Assert.assertTrue("Тест".equals(rslt.trim()));
+    }
+
 }

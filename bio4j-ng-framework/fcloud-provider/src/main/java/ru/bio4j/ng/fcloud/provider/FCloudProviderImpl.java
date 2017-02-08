@@ -70,6 +70,11 @@ public class FCloudProviderImpl extends BioServiceBase implements FCloudProvider
         return file;
     }
 
+    @Override
+    public InputStream getFile(String fileUUID) throws Exception {
+        return getApi().getFile(fileUUID);
+    }
+
     @Validate
     public void start() throws Exception {
         LOG.debug("Starting...");

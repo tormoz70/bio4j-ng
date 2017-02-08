@@ -523,5 +523,24 @@ public class Utl {
         return _path.toString();
     }
 
+
+    public static void storeString(String text, String path, String encoding) throws IOException {
+        try (PrintStream out = new PrintStream(new FileOutputStream(path), true, encoding)) {
+            out.print(text);
+        }
+    }
+    public static void storeString(String text, String path) throws IOException {
+        storeString(text, path, "utf-8");
+    }
+
+    public static InputStream openFile(String filePath) throws IOException {
+        File file = new File(filePath);
+        if(file.exists()){
+            InputStream inputStream = new FileInputStream(file);
+            return inputStream;
+        }
+        return null;
+    }
+
 }
 

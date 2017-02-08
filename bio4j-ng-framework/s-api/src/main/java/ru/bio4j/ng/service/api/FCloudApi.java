@@ -23,4 +23,6 @@ public interface FCloudApi {
             final String remoteHost,
             final String uploadDesc
     ) throws Exception;
+
+    InputStream getFile(String fileUUID) throws Exception;
 }
