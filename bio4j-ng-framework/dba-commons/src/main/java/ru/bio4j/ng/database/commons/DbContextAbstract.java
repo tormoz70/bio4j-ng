@@ -204,6 +204,33 @@ public abstract class DbContextAbstract implements SQLContext {
         }, null);
     }
 
+    public <S, C, R> R execSQL(final S scope, final Connection conn, final SQLActionExt<S, C, R> action, final C context) throws Exception {
+        if (action != null) {
+            return action.exec(scope, conn, context);
+        }
+        return null;
+    }
+
+    public <C, R> R execSQL(final Connection conn, final SQLAction<C, R> action, final C context) throws Exception {
+        return execSQL(this, conn, new SQLActionExt<DbContextAbstract, C, R>() {
+            @Override
+            public R exec(DbContextAbstract context, Connection conn, C param) throws Exception {
+                if (action != null)
+                    action.exec(context, conn, param);
+                return null;
+            }
+        }, context);
+    }
+
+    @Override
+    public <R> R execSQL(Connection conn, SQLActionScalar<R> action) throws Exception {
+        return execSQL(conn, (context, conn1, param) -> {
+            if(action != null)
+                action.exec(context, conn1);
+            return null;
+        }, null);
+    }
+
     @Override
     public SQLCursor createCursor(){
         return new DbCursor(this);

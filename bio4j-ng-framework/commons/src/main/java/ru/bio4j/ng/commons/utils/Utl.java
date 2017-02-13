@@ -542,5 +542,11 @@ public class Utl {
         return null;
     }
 
+    public static String generateUUID(){
+        UUID uuid = UUID.randomUUID();
+        String hex = uuid.toString().replace("-", "").toLowerCase();
+        return hex;
+    }
+
 }
 

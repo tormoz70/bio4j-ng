@@ -1,11 +1,9 @@
 package ru.bio4j.ng.database.api;
 
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.commons.types.AnConfig;
 
-/**
- * Created by ayrat on 22.04.14.
- */
-public class SQLContextConfig {
+public class SQLContextConfig extends AnConfig {
 
     @Prop(name = "context.pool.name")
     private String poolName;

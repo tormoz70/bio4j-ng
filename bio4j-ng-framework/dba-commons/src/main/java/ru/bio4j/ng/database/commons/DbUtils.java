@@ -1,8 +1,12 @@
 package ru.bio4j.ng.database.commons;
 
+import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.DelegateAction;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
@@ -121,5 +125,35 @@ public class DbUtils {
         }, user);
         return r;
     }
+
+    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+        if(reader == null)
+            throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
+        if(clazz == null)
+            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+        T result = (T)clazz.newInstance();
+        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
+            String fldName = fld.getName();
+            Prop p = Utl.findAnnotation(Prop.class, fld);
+            if(p != null)
+                fldName = p.name();
+            Object valObj = null;
+            DBField f = reader.getField(fldName);
+            if (f != null)
+                valObj = reader.getValue(f.getId());
+
+            if(valObj != null){
+                try {
+                    Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
+                    fld.setAccessible(true);
+                    fld.set(result, val);
+                } catch (Exception e) {
+                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+                }
+            }
+        }
+        return result;
+    }
+
 
 }

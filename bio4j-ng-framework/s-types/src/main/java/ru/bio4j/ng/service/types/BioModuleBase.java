@@ -6,6 +6,7 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import ru.bio4j.ng.commons.types.AnConfig;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
@@ -31,7 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServiceBase<T> {
+public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
 
     private static Document loadDocument(InputStream inputStream) throws Exception {
@@ -103,8 +104,10 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
             localSQLContextIsInited = true;
             T cfg = configurator.getConfig();
             if(cfg == null)
-                throw new Exception(String.format("Config not found for module \"%s\"!", this.getKey()));
-            sqlContext = createSQLContext(cfg);
+                LOG.debug("Config not found for module \"{}\"!", this.getKey());
+            if(cfg instanceof SQLContextConfig) {
+                sqlContext = createSQLContext((SQLContextConfig) cfg);
+            }
         }
 
     }
@@ -132,6 +135,19 @@ public abstract class BioModuleBase<T extends SQLContextConfig> extends BioServi
             LOG.debug("Event sent.");
         }, 1, TimeUnit.SECONDS);
 
+    }
+
+    protected void fireEventModuleStarted() throws Exception {
+        // Откладываем отправку события чтобы успел инициализироваться логгер
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.schedule(() -> {
+            String selfModuleKey = this.getKey();
+            LOG.debug("Sending event [bio-module-started] for module \"{}\"...", selfModuleKey);
+            HashMap props = new HashMap();
+            props.put("bioModuleKey", selfModuleKey);
+            this.getEventAdmin().postEvent(new Event("bio-module-started", props));
+            LOG.debug("Event sent.");
+        }, 1L, TimeUnit.SECONDS);
     }
 
     //public abstract User login(final String login) throws Exception;

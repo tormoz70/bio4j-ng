@@ -14,6 +14,9 @@ public interface SQLContext {
     <S, C, T> T execSQLAtomic(final S scope, final Connection conn, final SQLActionExt<S, C, T> action, final C context) throws Exception;
     <C, R> R execSQLAtomic(final Connection conn, final SQLAction<C, R> action, final C context) throws Exception;
     <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> action) throws Exception;
+    <S, C, R> R execSQL(final S scope, final Connection conn, final SQLActionExt<S, C, R> action, final C context) throws Exception;
+    <C, R> R execSQL(final Connection conn, final SQLAction<C, R> action, final C context) throws Exception;
+    <R> R execSQL(final Connection conn, final SQLActionScalar<R> action) throws Exception;
 
 //    SQLConnectionPoolStat getStat();
     void addAfterEvent(SQLConnectionConnectedEvent e);

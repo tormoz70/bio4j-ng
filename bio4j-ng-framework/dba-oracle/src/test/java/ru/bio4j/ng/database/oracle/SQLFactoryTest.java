@@ -2,6 +2,7 @@ package ru.bio4j.ng.database.oracle;
 
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
+import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -617,14 +619,14 @@ public class SQLFactoryTest {
         try {
 
             SQLContext contextLocal = DbContextAbstract.create(
-                    SQLConnectionPoolConfig.builder()
-                            .poolName("TEST-CONN-POOL-123")
-                            .dbDriverName(testDBDriverName)
-                            .dbConnectionUrl(testDBUrl)
-                            .dbConnectionUsr("GIVCADMIN")
-                            .dbConnectionPwd("j12")
-                            .build(),
-                    OraContext.class);
+                SQLConnectionPoolConfig.builder()
+                    .poolName("TEST-CONN-POOL-123")
+                    .dbDriverName(testDBDriverName)
+                    .dbConnectionUrl(testDBUrl)
+                    .dbConnectionUsr("GIVCADMIN")
+                    .dbConnectionPwd("j12")
+                    .build(),
+                OraContext.class);
 
             String rslt = contextLocal.execBatch(new SQLActionScalar<String>() {
                 @Override
@@ -644,7 +646,7 @@ public class SQLFactoryTest {
                     7-sroom_id(in)(INTEGER).............................[null];
                     8-force_org_id(in)(VARCHAR).........................[null];
                     9-paging$offset(in)(INTEGER)........................[0];
-                    10-paging$last(in)(INTEGER)..........................[25];
+                    10-paging$last(in)(INTEGER).........................[25];
 */
 
                     params.add(Param.builder().name("p_sys_curusr_roles").value("6").type(MetaType.STRING).build());
@@ -741,5 +743,47 @@ public class SQLFactoryTest {
             }
         }, null, null);
         //response;
+    }
+
+    public static class TestROject {
+        @Prop(name = "id")
+        public Integer fid;
+        @Prop(name = "name")
+        public String fname;
+    }
+
+    @Test(enabled = true)
+    public void test67() throws Exception {
+
+        SQLContext ctx = DbContextAbstract.create(
+                SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL-123")
+                        .dbDriverName(testDBDriverName)
+                        .dbConnectionUrl(testDBUrl)
+                        .dbConnectionUsr("GIVCADMIN")
+                        .dbConnectionPwd("j12")
+                        .build(),
+                OraContext.class);
+
+
+        String rslt = ctx.execBatch(new SQLAction<BioCursor, String>() {
+            @Override
+            public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+
+                String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("222.sql"));
+
+                List<Param> params = new ArrayList<>();
+                TestROject r = null;
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, sql, params).open();){
+                    if(c.reader().next()){
+                        r = DbUtils.createBeanFromReader(c.reader(), TestROject.class);
+                    }
+                }
+                return r.fname;
+
+            }
+        }, null, null);
+        Assert.assertEquals(rslt, "qwe");
     }
 }

@@ -10,6 +10,8 @@ public class FileSpec {
     private String remoteIpAddress;
     private String adesc;
 
+    private String threadUID;
+
     public String getFileUUID() {
         return fileUUID;
     }
@@ -72,5 +74,13 @@ public class FileSpec {
 
     public void setUploadUID(String uploadUID) {
         this.uploadUID = uploadUID;
+    }
+
+    public String getThreadUID() {
+        return threadUID;
+    }
+
+    public void setThreadUID(String threadUID) {
+        this.threadUID = threadUID;
     }
 }
