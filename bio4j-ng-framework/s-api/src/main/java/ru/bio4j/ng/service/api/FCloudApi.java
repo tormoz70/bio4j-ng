@@ -25,4 +25,6 @@ public interface FCloudApi {
     ) throws Exception;
 
     InputStream getFile(String fileUUID) throws Exception;
+
+    void runImport() throws Exception;
 }

@@ -8,4 +8,5 @@ import java.io.InputStream;
  *  Created by ayrat on 08.05.14.
  */
 public interface BioFCloudApiModule extends BioModule, FCloudApi {
+
 }

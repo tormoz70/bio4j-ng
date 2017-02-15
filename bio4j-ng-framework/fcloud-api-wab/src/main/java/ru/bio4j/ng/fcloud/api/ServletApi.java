@@ -2,13 +2,11 @@ package ru.bio4j.ng.fcloud.api;
 
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.FCloudApi;
-import ru.bio4j.ng.service.api.FCloudProvider;
-import ru.bio4j.ng.service.api.FileSpec;
-import ru.bio4j.ng.service.api.SrvcUtils;
+import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServletApiBase;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
 
@@ -80,6 +78,11 @@ public class ServletApi extends BioServletApiBase {
         //response.getWriter().append(responseBuilder.json());
     }
 
+    public void runImport(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        fcloudProvider.runImport();
+        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
+        response.getWriter().append(responseBuilder.json());
+    }
 
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
@@ -92,8 +95,13 @@ public class ServletApi extends BioServletApiBase {
             SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
             User usr = this.securityProvider.getUser(qprms.stoken, qprms.remoteIP);
             fcloudProvider.init(usr);
-
-            processUpload(request, response);
+            String fcmd = request.getParameter("fcmd");
+            if(!Strings.isNullOrEmpty(fcmd)) {
+                if(fcmd.compareToIgnoreCase("upload") == 0)
+                    processUpload(request, response);
+                if(fcmd.compareToIgnoreCase("runimport") == 0)
+                    runImport(request, response);
+            }
         } catch (BioError e) {
             if(e.getErrCode() == 200)
                 LOG.error("Server application error (Level-0)!", e);
