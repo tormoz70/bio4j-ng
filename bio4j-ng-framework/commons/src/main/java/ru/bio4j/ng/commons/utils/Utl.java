@@ -510,19 +510,21 @@ public class Utl {
         return md5;
     }
 
-    public static String storeInputStream(InputStream inputStream, String path) throws IOException {
-        Path _path = Paths.get(path);
-        Files.createDirectories(_path.getParent());
-        try(OutputStream out = new FileOutputStream(new File(_path.toString()))) {
+    public static Path storeInputStream(InputStream inputStream, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
+        try(OutputStream out = new FileOutputStream(new File(path.toString()))) {
             int read = 0;
             final byte[] bytes = new byte[1024];
             while ((read = inputStream.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
         }
-        return _path.toString();
+        return path;
     }
 
+    public static String storeInputStream(InputStream inputStream, String path) throws IOException {
+        return storeInputStream(inputStream, Paths.get(path)).toString();
+    }
 
     public static void storeString(String text, String path, String encoding) throws IOException {
         try (PrintStream out = new PrintStream(new FileOutputStream(path), true, encoding)) {
