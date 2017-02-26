@@ -14,8 +14,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface SQLStoredProc extends SQLCommand {
-    SQLStoredProc init(Connection conn, String storedProcName, List<Param> params, int timeout) throws SQLException;
-    SQLStoredProc init(Connection conn, String storedProcName, List<Param> params) throws SQLException;
-    void execSQL(List<Param> params) throws Exception;
+    SQLStoredProc init(Connection conn, String storedProcName, Object params, int timeout) throws Exception;
+    SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception;
+    void execSQL(Object params) throws Exception;
     void execSQL() throws Exception;
 }

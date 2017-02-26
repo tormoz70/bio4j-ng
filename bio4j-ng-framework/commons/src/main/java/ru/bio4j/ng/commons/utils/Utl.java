@@ -5,7 +5,9 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import javax.servlet.ServletContext;
@@ -548,6 +550,37 @@ public class Utl {
         UUID uuid = UUID.randomUUID();
         String hex = uuid.toString().replace("-", "").toLowerCase();
         return hex;
+    }
+
+    public static List<Param> beanToParams(Object bean) throws Exception {
+        List<Param> result = new ArrayList<>();
+        if(bean == null)
+            return result;
+        Class<?> srcType = bean.getClass();
+        for(java.lang.reflect.Field fld : getAllObjectFields(srcType)) {
+            String paramName = fld.getName();
+            if(!paramName.toLowerCase().startsWith("p_"))
+                paramName = "p_" + paramName.toLowerCase();
+            fld.setAccessible(true);
+            Object valObj = fld.get(bean);
+            Param.Direction direction = Param.Direction.IN;
+            Prop prp = fld.getAnnotation(Prop.class);
+            MetaType metaType = MetaTypeConverter.read(fld.getType());
+            if(prp != null) {
+                if(!Strings.isNullOrEmpty(prp.name()))
+                    paramName = prp.name().toLowerCase();
+                if(prp.metaType() != MetaType.UNDEFINED)
+                    metaType = prp.metaType();
+                direction = prp.direction();
+            }
+            result.add(Param.builder()
+                    .name(paramName)
+                    .type(metaType)
+                    .direction(direction)
+                    .value(valObj)
+                    .build());
+        }
+        return result;
     }
 
 }

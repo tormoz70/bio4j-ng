@@ -6,15 +6,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.model.transport.Param;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -259,6 +257,23 @@ public class UtlTest {
         InputStream ins = Utl.openFile("d:\\storeStringTest.txt");
         String rslt = Utl.readStream(ins);
         Assert.assertTrue("Тест".equals(rslt.trim()));
+    }
+
+    @Test
+    public void beanToParamsTest() throws Exception {
+        TObject o = new TObject(){{
+            tobject_id = null;
+            factory_org_id = 123L;
+            tobjtype_id = 345L;
+            autor_person_uid = "qwe";
+            filesuid = "asd";
+            aname = "dfg";
+            adesc = null;
+            prodplace = "fgh";
+
+        }};
+        List<Param> p = Utl.beanToParams(o);
+        Assert.assertTrue(true);
     }
 
 }

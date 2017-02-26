@@ -197,4 +197,8 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return this.preparedSQL;
     }
 
+    public <T> T getParamValue(String paramName, Class<T> type, T defaultValue) throws Exception {
+        return Paramus.paramValue(this.getParams(), paramName, type, defaultValue);
+    }
+
 }

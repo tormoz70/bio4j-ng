@@ -449,6 +449,14 @@ public class Paramus implements Closeable {
         }
 	}
 
+    public static <T> T paramValue(List<Param> params, String paramName, Class<T> type, T defaultValue) throws Exception {
+        T rslt = null;
+        try (Paramus paramus = Paramus.set(params)) {
+            rslt = Utl.nvl(paramus.getParamValue(paramName, type), defaultValue);
+        }
+        return rslt;
+    }
+
 //	@Override
 //    public Param clone() throws CloneNotSupportedException {
 //		Param.Builder builder = Param.builder().override(this, this.getOwner());

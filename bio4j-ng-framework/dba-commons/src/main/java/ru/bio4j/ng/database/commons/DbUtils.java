@@ -155,5 +155,15 @@ public class DbUtils {
         return result;
     }
 
+    public static List<Param> decodeParams(Object params) throws Exception {
+        List<Param> rslt = null;
+        if(params != null){
+            if(params instanceof List)
+                rslt = (List<Param>)params;
+            else
+                rslt = Utl.beanToParams(params);
+        }
+        return rslt;
+    }
 
 }
