@@ -64,7 +64,7 @@ public class User {
     }
 
     public Boolean isAnonymous() {
-        return this.anonymous == true;
+        return (this.anonymous != null) ? this.anonymous : false;
     }
 
     public String getEmail() {

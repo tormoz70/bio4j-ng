@@ -88,6 +88,10 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
         return cursor;
     }
 
+    public BioCursor getCursor(String bioCode) throws Exception {
+        return getCursor(bioCode, null);
+    }
+
     public BioCursor getCursor(BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
         BioCursor cursor = getCursor(bioCode, bioRequest.getUser());

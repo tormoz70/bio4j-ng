@@ -276,4 +276,9 @@ public class UtlTest {
         Assert.assertTrue(true);
     }
 
+    @Test
+    public void BooleanTest() throws Exception {
+        Boolean b = null;
+        Assert.assertTrue(b == null);
+    }
 }

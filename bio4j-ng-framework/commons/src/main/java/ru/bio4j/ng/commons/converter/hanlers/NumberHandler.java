@@ -1,5 +1,6 @@
 package ru.bio4j.ng.commons.converter.hanlers;
 
+import flexjson.factories.BigDecimalFactory;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;
@@ -7,6 +8,7 @@ import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.Param;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number> {
@@ -32,6 +34,10 @@ public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number
         throw new ConvertValueException(value, valType, genericType);
     }
 
+    private BigDecimal number2bigDecimal(Number value) {
+        return new BigDecimal(value.toString());
+    }
+
     @Override
     public <T> T write(Number value, Class<T> targetType) throws ConvertValueException {
         Class<?> targetTypeWrapped = Types.wrapPrimitiveType(targetType);
@@ -39,9 +45,9 @@ public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number
             return (T) value;
         else if (Types.typeIsDate(targetTypeWrapped))
             return (T) Types.date2Date(new Date(Types.number2Number(value, long.class)), targetTypeWrapped);
-        else if (targetTypeWrapped == Boolean.class)
-            return (T) value;
-        else if (Types.typeIsNumber(targetTypeWrapped))
+        else if (targetTypeWrapped == Boolean.class) {
+            return number2bigDecimal(value).compareTo(BigDecimal.valueOf(0L)) > 0 ? (T)new Boolean(true) : (T)new Boolean(false);
+        } else if (Types.typeIsNumber(targetTypeWrapped))
             return (T) Types.number2Number(value, targetTypeWrapped);
         else if (targetTypeWrapped == String.class)
             return (T) value.toString();
