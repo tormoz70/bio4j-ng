@@ -2,6 +2,8 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Strings;
@@ -98,9 +100,12 @@ public abstract class ProviderAn {
                 Map<String, Object> vals = new HashMap<>();
                 for (Field field : fields) {
                     DBField f = c.reader().getField(field.getName());
-                    if (f != null)
-                        vals.put(field.getName().toLowerCase(), c.reader().getValue(f.getId()));
-                    else
+                    if (f != null) {
+                        Object val = c.reader().getValue(f.getId());
+                        Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
+                        Object valTyped = Converter.toType(val, clazz);
+                        vals.put(field.getName().toLowerCase(), valTyped);
+                    } else
                         vals.put(field.getName().toLowerCase(), null);
                 }
                 r.setData(vals);
