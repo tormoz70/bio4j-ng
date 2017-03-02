@@ -103,17 +103,25 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     private SQLContext sqlContext = null;
     private boolean localSQLContextIsInited = false;
-    protected void initSqlContext(Configurator<T> configurator) throws Exception {
+    protected synchronized void initSqlContext(Configurator<T> configurator) throws Exception {
         if(sqlContext == null && !localSQLContextIsInited) {
+            LOG.debug("Start initSqlContext for module \"{}\"...", this.getKey());
             localSQLContextIsInited = true;
             T cfg = configurator.getConfig();
             if(cfg == null)
                 LOG.debug("Config not found for module \"{}\"!", this.getKey());
+            else
+                LOG.debug("Config found for module \"{}\"!", this.getKey());
             if(cfg instanceof SQLContextConfig) {
+                LOG.debug("Try to create SQLContext for module \"{}\"...", this.getKey());
                 sqlContext = createSQLContext((SQLContextConfig) cfg);
+                if(sqlContext != null)
+                    LOG.debug("SQLContext for module \"{}\" CREATED!", this.getKey());
+                else
+                    LOG.debug("SQLContext for module \"{}\" NOT CREATED!", this.getKey());
             }
+            LOG.debug("Exit initSqlContext for module \"{}\".", this.getKey());
         }
-
     }
 
     public SQLContext getSQLContext() throws Exception {
