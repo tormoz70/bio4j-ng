@@ -11,9 +11,10 @@ import java.util.List;
 public class BioRequestJStoreGetDataSet extends BioRequest {
 
     /**
-     * Всего записей в запросе
+     * Общее количество записей передается в случае кеширования данных на сервере
      */
     private int totalCount;
+
     /**
      * Начальная позиция
      */
@@ -39,8 +40,6 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
      * Примечание: необходимо использовать в сочетании с offset
      */
     private Object location;
-
-    private String origJson;
 
     public int getOffset() {
         return offset;
@@ -82,14 +81,6 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
         this.location = location;
     }
 
-    public String getOrigJson() {
-        return origJson;
-    }
-
-    public void setOrigJson(String origJson) {
-        this.origJson = origJson;
-    }
-
     public int getTotalCount() {
         return totalCount;
     }
@@ -97,6 +88,5 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
     }
-
 }
 

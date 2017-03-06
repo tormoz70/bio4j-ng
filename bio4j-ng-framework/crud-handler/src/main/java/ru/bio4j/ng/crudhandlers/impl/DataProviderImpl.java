@@ -37,6 +37,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private ModuleProvider moduleProvider;
     @Requires
     private SQLContextProvider sqlContextProvider;
+    @Requires
+    private FCloudProvider fcloudProvider;
+
 
     private BioAppModule getActualModule(final BioRequest request) throws Exception {
         String altModuleKey = Utl.extractModuleKey(request.getBioCode());
@@ -93,6 +96,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             providerMap.put(BioRoute.CRUD_EXEC, new ProviderExec());
             providerMap.put(BioRoute.CRUD_JSON_GET, new ProviderGetJson());
             providerMap.put(BioRoute.CRUD_FILE_GET, new ProviderGetFile());
+            providerMap.put(BioRoute.CRUD_FORM_UPLOAD, new ProviderUpload());
         }
         this.ready = true;
         LOG.debug("Started");

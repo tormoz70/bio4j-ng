@@ -43,6 +43,7 @@ public class ProviderGetRecord extends ProviderAn {
 
     }
 
+    @Override
     public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {

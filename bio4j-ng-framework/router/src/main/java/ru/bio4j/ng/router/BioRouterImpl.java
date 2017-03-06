@@ -142,9 +142,9 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_FORM_UPLOAD.getAlias(), new BioRouteHandler<BioRequestJStorePost>() {
+            routeMap.put(BioRoute.CRUD_FORM_UPLOAD.getAlias(), new BioRouteHandler<BioRequestUpload>() {
                 @Override
-                public void handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
+                public void handle(BioRequestUpload request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FORM_UPLOAD);
                     dataProvider.processRequest(BioRoute.CRUD_FORM_UPLOAD, request, response);
                 }

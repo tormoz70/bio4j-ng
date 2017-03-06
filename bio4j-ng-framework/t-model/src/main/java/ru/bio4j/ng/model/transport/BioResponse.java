@@ -56,14 +56,15 @@ public class BioResponse {
     private Sort sort;
 
     /**
+     * Фильтрация, которая использовалясь при запросе к БД
+     */
+    private Expression filter;
+
+    /**
      * Ответы от дочерних post-запросов
      */
     private List<BioResponse> slaveResponses;
 
-    /**
-     * Фильтрация, которая использовалясь при запросе к БД
-     */
-    private Expression filter;
 
     public boolean isSuccess() {
         return success;

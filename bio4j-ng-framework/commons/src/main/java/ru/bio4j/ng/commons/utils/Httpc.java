@@ -180,7 +180,16 @@ public class Httpc {
     public static String extractRealRemoteAddr(HttpServletRequest request) {
         if(request != null) {
             String realRemoteAddr = request.getHeader("X-Real-IP");
+            if(Strings.isNullOrEmpty(realRemoteAddr))
+                realRemoteAddr = request.getHeader("X-Forwarded-For");
             return Strings.isNullOrEmpty(realRemoteAddr) ? request.getRemoteAddr() : realRemoteAddr;
+        }
+        return null;
+    }
+    public static String extractRealRemoteClient(HttpServletRequest request) {
+        if(request != null) {
+            String realRemoteClient = request.getHeader("X-Real-Client");
+            return Strings.isNullOrEmpty(realRemoteClient) ? request.getRemoteUser() : realRemoteClient;
         }
         return null;
     }

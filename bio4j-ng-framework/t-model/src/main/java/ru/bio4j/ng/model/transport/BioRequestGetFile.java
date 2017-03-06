@@ -17,6 +17,5 @@ public class BioRequestGetFile extends BioRequest {
     public void setFileHashCode(String fileHashCode) {
         this.fileHashCode = fileHashCode;
     }
-
 }
 

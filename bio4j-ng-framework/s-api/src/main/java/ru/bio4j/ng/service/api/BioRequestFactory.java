@@ -37,21 +37,26 @@ public abstract class BioRequestFactory {
             final Class<? extends BioRequest> bioRequestClass,
             final User usr) throws Exception {
         BioRequest bioRequest;
-        String bioRequestJson = qprms.jsonData;
         try {
-            bioRequest = Jsons.decode(bioRequestJson, bioRequestClass);
+            bioRequest = Jsons.decode(qprms.jsonData, bioRequestClass);
         } catch (Exception e) {
             throw new Exception(String.format("Unexpected error while decoding BioRequest JSON: %s\n"+
-                    " - Error: %s", bioRequestJson, e.getMessage()), e);
+                    " - Error: %s", qprms.jsonData, e.getMessage()), e);
         }
+        bioRequest.setHttpRequest(qprms.request);
+        bioRequest.setOrigJson(qprms.jsonData);
         bioRequest.setModuleKey(qprms.moduleKey);
         bioRequest.setBioCode(qprms.bioCode);
         bioRequest.setRequestType(qprms.requestType);
         bioRequest.setRemoteIP(qprms.remoteIP);
-        bioRequest.setRemoteClient(qprms.remoteIP);
+        bioRequest.setRemoteClient(qprms.remoteClient);
         if(!Strings.isNullOrEmpty(qprms.login))
             bioRequest.setLogin(qprms.login);
         bioRequest.setUser(usr);
+
+        if(bioRequest instanceof BioRequestGetFile)
+            ((BioRequestGetFile)bioRequest).setFileHashCode(qprms.fileHashCode);
+
         return bioRequest;
     }
 
@@ -68,17 +73,6 @@ public abstract class BioRequestFactory {
     }
 
     public static class GetFile extends BioRequestFactory {
-
-        @Override
-        public BioRequest restore(
-                final SrvcUtils.BioQueryParams qprms,
-                final Class<? extends BioRequest> bioRequestClass,
-                final User usr) throws Exception {
-            BioRequest bioRequest = super.restore(qprms, bioRequestClass, usr);
-            ((BioRequestGetFile)bioRequest).setFileHashCode(qprms.fileHashCode);
-            return bioRequest;
-        }
-
     }
 
     public static class GetDataSet extends BioRequestFactory {
@@ -97,14 +91,6 @@ public abstract class BioRequestFactory {
     }
 
     public static class FormUpload extends BioRequestFactory {
-        @Override
-        public BioRequest restore(
-                final SrvcUtils.BioQueryParams qprms,
-                final Class<? extends BioRequest> bioRequestClass,
-                final User usr) throws Exception {
-            return null;
-        }
-
     }
 
 }

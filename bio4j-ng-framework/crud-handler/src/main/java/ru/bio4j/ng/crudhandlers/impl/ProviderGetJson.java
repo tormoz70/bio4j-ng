@@ -39,6 +39,7 @@ public class ProviderGetJson extends ProviderAn {
 
     }
 
+    @Override
     public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {

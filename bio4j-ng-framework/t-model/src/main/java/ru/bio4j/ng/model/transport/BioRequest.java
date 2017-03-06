@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -8,6 +9,8 @@ import java.util.List;
  */
 public class BioRequest {
 
+
+    private HttpServletRequest httpRequest;
 
     private String origJson;
 
@@ -27,14 +30,6 @@ public class BioRequest {
      */
     private User user;
 
-    /** Параметры запроса.
-     * Данные параметры передаются на сервер в виде параметров Http-запроса
-     * При этом параметры, которые являются служебными параметрами
-     * протокола сюда не попадают (при дисереализации),
-     * только параметры, которые добавлены к запросу вручную
-     */
-    private List<Param> params;
-
     /** Логин в виде username/password */
     private String login;
 
@@ -52,19 +47,6 @@ public class BioRequest {
      * параметры информационного объекта
      */
     private List<Param> bioParams;
-
-    /** Команда которую надо передать на сервер
-     * для управления удаленным процессом
-     */
-    private RmtCommand cmd;
-
-    public List<Param> getParams() {
-        return params;
-    }
-
-    public void setParams(List<Param> params) {
-        this.params = params;
-    }
 
     public String getLogin() {
         return login;
@@ -146,11 +128,12 @@ public class BioRequest {
         this.origJson = origJson;
     }
 
-    public RmtCommand getCmd() {
-        return cmd;
+    public HttpServletRequest getHttpRequest() {
+        return httpRequest;
     }
 
-    public void setCmd(RmtCommand cmd) {
-        this.cmd = cmd;
+    public void setHttpRequest(HttpServletRequest httpRequest) {
+        this.httpRequest = httpRequest;
     }
+
 }

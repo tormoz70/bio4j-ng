@@ -30,12 +30,14 @@ public class SrvcUtils {
     public static final String PARAM_CURUSR_IP         = "p_sys_curusr_ip";
 
     public static class BioQueryParams {
+        public HttpServletRequest request;
         public String method;
         public String requestType;
         public String moduleKey;
         public String bioCode;
         public String stoken;
         public String remoteIP;
+        public String remoteClient;
         public String jsonData;
         public String fileHashCode;
         public String login;

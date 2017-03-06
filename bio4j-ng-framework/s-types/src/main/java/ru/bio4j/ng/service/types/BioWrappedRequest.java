@@ -40,6 +40,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
     public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws IOException {
         SrvcUtils.BioQueryParams result = new SrvcUtils.BioQueryParams();
+        result.request = request;
         result.method = request.getMethod();
         result.requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
         result.moduleKey = request.getParameter(SrvcUtils.QRY_PARAM_NAME_MODULE);
@@ -47,6 +48,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         result.stoken = request.getParameter(SrvcUtils.QRY_PARAM_NAME_STOKEN);
         result.login = request.getParameter(SrvcUtils.QRY_PARAM_NAME_LOGIN);
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
+        result.remoteClient = Httpc.extractRealRemoteClient(request);
         result.fileHashCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_FILE_HASH_CODE);
 
         if(result.method == "POST"){
