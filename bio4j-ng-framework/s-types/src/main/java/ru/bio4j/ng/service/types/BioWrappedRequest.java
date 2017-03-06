@@ -7,6 +7,7 @@ import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.FCloudCommand;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.SrvcUtils;
@@ -70,22 +71,23 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     private static void extractBioParamsFromQuery(SrvcUtils.BioQueryParams qparams) {
         List<String> sysParamNames = extractSysParamNames();
         qparams.bioParams = new ArrayList<>();
-        while(qparams.request.getParameterNames().hasMoreElements()){
-            String paramName = qparams.request.getParameterNames().nextElement();
+        Enumeration<String> paramNames = qparams.request.getParameterNames();
+        while(paramNames.hasMoreElements()){
+            String paramName = paramNames.nextElement();
             String val = qparams.request.getParameter(paramName);
             if(sysParamNames.indexOf(paramName) == -1){
-                qparams.bioParams.add(Param.builder().name(paramName).value(val).build());
+                qparams.bioParams.add(Param.builder().name(paramName).type(MetaType.STRING).value(val).build());
             }
         }
-        if(!Strings.isNullOrEmpty(qparams.jsonData)) {
-            BioParamObj bioParamObj = null;
-            try {
-                bioParamObj = Jsons.decode(qparams.jsonData, BioParamObj.class);
-            } catch (Exception e) {
-            }
-            if (bioParamObj != null && bioParamObj.getBioParams() != null)
-                qparams.bioParams = Paramus.set(qparams.bioParams).merge(bioParamObj.getBioParams(), true).pop();
-        }
+//        if(!Strings.isNullOrEmpty(qparams.jsonData)) {
+//            BioParamObj bioParamObj = null;
+//            try {
+//                bioParamObj = Jsons.decode(qparams.jsonData, BioParamObj.class);
+//            } catch (Exception e) {
+//            }
+//            if (bioParamObj != null && bioParamObj.getBioParams() != null)
+//                qparams.bioParams = Paramus.set(qparams.bioParams).merge(bioParamObj.getBioParams(), true).pop();
+//        }
 
     }
 

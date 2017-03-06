@@ -53,6 +53,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
         if(!Strings.isNullOrEmpty(qprms.login))
             bioRequest.setLogin(qprms.login);
         bioRequest.setUser(usr);
+        bioRequest.setBioParams(Paramus.set(qprms.bioParams).merge(bioRequest.getBioParams(), true).pop());
 
         return bioRequest;
     }
