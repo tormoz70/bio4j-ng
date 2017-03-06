@@ -17,8 +17,6 @@ import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -142,11 +140,11 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_FORM_UPLOAD.getAlias(), new BioRouteHandler<BioRequestUpload>() {
+            routeMap.put(BioRoute.CRUD_FCLOUD.getAlias(), new BioRouteHandler<BioRequestFCloud>() {
                 @Override
-                public void handle(BioRequestUpload request, HttpServletResponse response) throws Exception {
-                    LOG.debug("Processing {} request...", BioRoute.CRUD_FORM_UPLOAD);
-                    dataProvider.processRequest(BioRoute.CRUD_FORM_UPLOAD, request, response);
+                public void handle(BioRequestFCloud request, HttpServletResponse response) throws Exception {
+                    LOG.debug("Processing {} request...", BioRoute.CRUD_FCLOUD);
+                    dataProvider.processRequest(BioRoute.CRUD_FCLOUD, request, response);
                 }
             });
 
@@ -184,7 +182,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
         final String requestType = qprms.requestType;
         LOG.debug("Recived-{}: \"{}\" - request...", qprms.method, requestType);
         if(isNullOrEmpty(requestType))
-            throw new IllegalArgumentException(String.format("Parameter \"%s\" cannot be null or empty!", SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE));
+            throw new IllegalArgumentException(String.format("Parameter \"requestType\" cannot be null or empty!"));
 
         BioAppModule bioModule = moduleProvider.getAppModule(qprms.moduleKey);
         if(bioModule == null)

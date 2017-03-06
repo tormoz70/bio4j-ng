@@ -1,9 +1,13 @@
 package ru.bio4j.ng.service.types;
 
+import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.FCloudCommand;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
@@ -38,18 +42,59 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
     }
 
-    public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws IOException {
-        SrvcUtils.BioQueryParams result = new SrvcUtils.BioQueryParams();
+    public static class BioParamObj {
+        private List<Param> bioParams;
+
+        public List<Param> getBioParams() {
+            return bioParams;
+        }
+
+        public void setBioParams(List<Param> bioParams) {
+            this.bioParams = bioParams;
+        }
+    }
+
+    private static List<String> extractSysParamNames() {
+        List<String> rslt = new ArrayList<>();
+        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(SrvcUtils.BioQueryParams.class)) {
+            String fldName = fld.getName();
+            Prop p = Utl.findAnnotation(Prop.class, fld);
+            if(p != null) {
+                fldName = p.name();
+                rslt.add(fldName);
+            }
+        }
+        return rslt;
+    }
+
+    private static void extractBioParamsFromQuery(SrvcUtils.BioQueryParams qparams) {
+        List<String> sysParamNames = extractSysParamNames();
+        qparams.bioParams = new ArrayList<>();
+        while(qparams.request.getParameterNames().hasMoreElements()){
+            String paramName = qparams.request.getParameterNames().nextElement();
+            String val = qparams.request.getParameter(paramName);
+            if(sysParamNames.indexOf(paramName) == -1){
+                qparams.bioParams.add(Param.builder().name(paramName).value(val).build());
+            }
+        }
+        if(!Strings.isNullOrEmpty(qparams.jsonData)) {
+            BioParamObj bioParamObj = null;
+            try {
+                bioParamObj = Jsons.decode(qparams.jsonData, BioParamObj.class);
+            } catch (Exception e) {
+            }
+            if (bioParamObj != null && bioParamObj.getBioParams() != null)
+                qparams.bioParams = Paramus.set(qparams.bioParams).merge(bioParamObj.getBioParams(), true).pop();
+        }
+
+    }
+
+    public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
+        SrvcUtils.BioQueryParams result = Httpc.createBeanFromHttpRequest(request, SrvcUtils.BioQueryParams.class);
         result.request = request;
         result.method = request.getMethod();
-        result.requestType = request.getParameter(SrvcUtils.QRY_PARAM_NAME_REQUEST_TYPE);
-        result.moduleKey = request.getParameter(SrvcUtils.QRY_PARAM_NAME_MODULE);
-        result.bioCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_BIOCODE);
-        result.stoken = request.getParameter(SrvcUtils.QRY_PARAM_NAME_STOKEN);
-        result.login = request.getParameter(SrvcUtils.QRY_PARAM_NAME_LOGIN);
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
         result.remoteClient = Httpc.extractRealRemoteClient(request);
-        result.fileHashCode = request.getParameter(SrvcUtils.QRY_PARAM_NAME_FILE_HASH_CODE);
 
         if(result.method == "POST"){
             String usrname = request.getParameter("usrname");
@@ -59,16 +104,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             }
         }
 
-        final String jsonDataAsQueryParam = request.getParameter(SrvcUtils.QRY_PARAM_NAME_JSON_DATA);
-        StringBuilder jd = new StringBuilder();
-        if(!isNullOrEmpty(jsonDataAsQueryParam))
-            jd.append(jsonDataAsQueryParam);
-        else
-            Httpc.readDataFromRequest(request, jd);
-        if(jd.length() == 0)
-            jd.append("{}");
-        result.jsonData = jd.toString();
-        if(Strings.isNullOrEmpty(result.login)) {
+        if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(result.jsonData)) {
             try {
                 LoginParamObj loginParamObj = Jsons.decode(result.jsonData, LoginParamObj.class);
                 if (loginParamObj != null && !Strings.isNullOrEmpty(loginParamObj.getLogin()))
@@ -76,6 +112,11 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             } catch (Exception e) {
             }
         }
+
+        result.fcloudCmd = FCloudCommand.decode(result.fcloudCmdOrig);
+
+        extractBioParamsFromQuery(result);
+
         return result;
     }
 

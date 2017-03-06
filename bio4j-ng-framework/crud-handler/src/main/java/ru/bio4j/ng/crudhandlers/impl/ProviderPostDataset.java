@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by ayrat on 07.03.2016.
  */
-public class ProviderPostDataset extends ProviderAn {
+public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
     private static final String STD_PARAM_PREFIX = "p_";
 
@@ -118,7 +118,7 @@ public class ProviderPostDataset extends ProviderAn {
     }
 
     @Override
-    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
+    public void process(final BioRequestJStorePost request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process postDataSet for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
@@ -126,7 +126,7 @@ public class ProviderPostDataset extends ProviderAn {
                 @Override
                 public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj) throws Exception {
                     tryPrepareSessionContext(usr.getInnerUid(), conn);
-                    return processRequestPost((BioRequestJStorePost)request, context, conn, null, null, null);
+                    return processRequestPost(request, context, conn, null, null, null);
                 }
             }, null, request.getUser());
             response.getWriter().append(responseBuilder.json());

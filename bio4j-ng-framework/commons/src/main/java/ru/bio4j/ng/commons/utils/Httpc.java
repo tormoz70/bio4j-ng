@@ -2,6 +2,8 @@ package ru.bio4j.ng.commons.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.types.Prop;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +27,42 @@ public class Httpc {
                 jd.append(line);
         }
     }
+
+    private static String readJsonDataFromRequest(HttpServletRequest request, String jsonDataParam) throws IOException {
+        final String jsonDataAsQueryParam = request.getParameter(jsonDataParam);
+        StringBuilder jd = new StringBuilder();
+        if (!Strings.isNullOrEmpty(jsonDataAsQueryParam))
+            jd.append(jsonDataAsQueryParam);
+        else
+            Httpc.readDataFromRequest(request, jd);
+        if (jd.length() == 0)
+            jd.append("{}");
+        return jd.toString();
+    }
+
+    public static <T> T createBeanFromHttpRequest(HttpServletRequest request, Class<T> clazz) throws Exception {
+        if(request == null)
+            throw new IllegalArgumentException("Argument \"request\" cannot be null!");
+        if(clazz == null)
+            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+        T result = (T)clazz.newInstance();
+        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
+            String fldName = fld.getName();
+            Prop p = Utl.findAnnotation(Prop.class, fld);
+            if(p != null) {
+                fldName = p.name();
+                String val = null;
+                if(fldName.equals("jsonData"))
+                    val = readJsonDataFromRequest(request, fldName);
+                else
+                    val = request.getParameter(fldName);
+                fld.setAccessible(true);
+                fld.set(result, val);
+            }
+        }
+        return result;
+    }
+
 
     public static void forwardStream(InputStream inputStream, OutputStream outputStream) throws IOException {
         byte[] buffer = new byte[4096];

@@ -44,40 +44,12 @@ public class FCloudProviderImpl extends BioServiceBase implements FCloudProvider
 
     private BioFCloudApiModule fcloudApi;
 
-    private BioFCloudApiModule getApi() throws Exception {
+    @Override
+    public BioFCloudApiModule getApi() throws Exception {
         if(fcloudApi == null) {
             fcloudApi = moduleProvider.getFCloudApiModule("fcloud-api");
         }
         return fcloudApi;
-    }
-
-    @Override
-    public void init(User usr) throws Exception {
-        getApi().init(usr);
-    }
-
-    @Override
-    public FileSpec regFile(
-            final String uploadUID,
-            final String fileName,
-            final InputStream inputStream,
-            final long fileSize,
-            final String contentType,
-            final String remoteHost,
-            final String uploadDesc
-    ) throws Exception {
-        FileSpec file = getApi().regFile(uploadUID, fileName, inputStream, fileSize, contentType, remoteHost, uploadDesc);
-        return file;
-    }
-
-    @Override
-    public InputStream getFile(String fileUUID) throws Exception {
-        return getApi().getFile(fileUUID);
-    }
-
-    @Override
-    public void runImport() throws Exception {
-        getApi().runImport();
     }
 
     @Validate

@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Created by ayrat on 07.03.2016.
  */
-public abstract class ProviderAn {
+public abstract class ProviderAn<T extends BioRequest> {
     protected final Logger LOG;
 
     protected static final int MAX_RECORDS_FETCH_LIMIT = 500;
@@ -122,6 +122,6 @@ public abstract class ProviderAn {
         return totalCount;
     }
 
-    public abstract void process(final BioRequest request, final HttpServletResponse response) throws Exception;
+    public abstract void process(final T request, final HttpServletResponse response) throws Exception;
 
 }

@@ -11,7 +11,6 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.BioRoute;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
@@ -96,7 +95,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
             providerMap.put(BioRoute.CRUD_EXEC, new ProviderExec());
             providerMap.put(BioRoute.CRUD_JSON_GET, new ProviderGetJson());
             providerMap.put(BioRoute.CRUD_FILE_GET, new ProviderGetFile());
-            providerMap.put(BioRoute.CRUD_FORM_UPLOAD, new ProviderUpload());
+            providerMap.put(BioRoute.CRUD_FCLOUD, new ProviderFCloud(fcloudProvider));
         }
         this.ready = true;
         LOG.debug("Started");

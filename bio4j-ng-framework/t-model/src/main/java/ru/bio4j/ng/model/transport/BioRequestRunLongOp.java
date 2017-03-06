@@ -12,9 +12,9 @@ public class BioRequestRunLongOp extends BioRequest {
     private RmtCommand cmd;
 
     /**
-     * UID сессии которая идентифицирует запущенный процесс
+     * UID запущенного процесса
      */
-    private String sessionUID;
+    private String sessionuid;
 
     public RmtCommand getCmd() {
         return cmd;
@@ -24,11 +24,11 @@ public class BioRequestRunLongOp extends BioRequest {
         this.cmd = cmd;
     }
 
-    public String getSessionUID() {
-        return sessionUID;
+    public String getSessionuid() {
+        return sessionuid;
     }
 
-    public void setSessionUID(String sessionUID) {
-        this.sessionUID = sessionUID;
+    public void setSessionuid(String sessionuid) {
+        this.sessionuid = sessionuid;
     }
 }

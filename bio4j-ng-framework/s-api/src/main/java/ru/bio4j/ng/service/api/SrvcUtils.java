@@ -1,12 +1,16 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.model.transport.FCloudCommand;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -15,13 +19,17 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
  */
 public class SrvcUtils {
 
-    public static final String QRY_PARAM_NAME_REQUEST_TYPE = "rqt";
-    public static final String QRY_PARAM_NAME_MODULE = "bm";
-    public static final String QRY_PARAM_NAME_BIOCODE = "biocd";
-    public static final String QRY_PARAM_NAME_STOKEN = "stoken";
-    public static final String QRY_PARAM_NAME_LOGIN = "login";
-    public static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
-    public static final String QRY_PARAM_NAME_FILE_HASH_CODE = "hf";
+//    public static final String QRY_PARAM_NAME_REQUEST_TYPE = "rqt";
+//    public static final String QRY_PARAM_NAME_MODULE = "bm";
+//    public static final String QRY_PARAM_NAME_BIOCODE = "biocd";
+//    public static final String QRY_PARAM_NAME_STOKEN = "stoken";
+//    public static final String QRY_PARAM_NAME_LOGIN = "login";
+//    public static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
+//    public static final String QRY_PARAM_NAME_FILE_HASH_CODE = "hf";
+//    public static final String QRY_PARAM_NAME_FCLOUD_CMD = "fcmd";
+//    public static final String QRY_PARAM_NAME_FCLOUD_FILEUID = "fluid";
+//    public static final String QRY_PARAM_NAME_FCLOUD_UPLOADUID = "uplduid";
+//    public static final String QRY_PARAM_NAME_FCLOUD_UPLOADDESC = "uplddsc";
 
     public static final String PARAM_CURUSR_UID        = "p_sys_curusr_uid";
     public static final String PARAM_CURUSR_ORG_UID    = "p_sys_curusr_org_uid";
@@ -32,15 +40,35 @@ public class SrvcUtils {
     public static class BioQueryParams {
         public HttpServletRequest request;
         public String method;
-        public String requestType;
-        public String moduleKey;
-        public String bioCode;
-        public String stoken;
         public String remoteIP;
         public String remoteClient;
+
+        @Prop(name = "rqt")
+        public String requestType;
+        @Prop(name = "bm")
+        public String moduleKey;
+        @Prop(name = "biocd")
+        public String bioCode;
+        @Prop(name = "stoken")
+        public String stoken;
+        @Prop(name = "jsonData")
         public String jsonData;
+        @Prop(name = "hf")
         public String fileHashCode;
+        @Prop(name = "login")
         public String login;
+        @Prop(name = "fcmd")
+        public String fcloudCmdOrig;
+        public FCloudCommand fcloudCmd;
+        @Prop(name = "fluid")
+        public String fcloudFileUid;
+        @Prop(name = "uplduid")
+        public String fcloudUploadUid;
+        @Prop(name = "uplddsc")
+        public String fcloudUploadDesc;
+
+        public List<Param> bioParams;
     }
+
 
 }

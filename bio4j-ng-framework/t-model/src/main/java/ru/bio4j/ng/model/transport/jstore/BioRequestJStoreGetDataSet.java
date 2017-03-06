@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport.jstore;
 
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.BioRequestRunLongOp;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Запрос на получение данных в JStoreClient
  */
-public class BioRequestJStoreGetDataSet extends BioRequest {
+public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp {
 
     /**
      * Общее количество записей передается в случае кеширования данных на сервере

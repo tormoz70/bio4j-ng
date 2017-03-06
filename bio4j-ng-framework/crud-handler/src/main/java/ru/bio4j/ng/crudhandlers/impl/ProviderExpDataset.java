@@ -7,6 +7,7 @@ import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by ayrat on 07.03.2016.
  */
-public class ProviderExpDataset extends ProviderAn {
+public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
 
     protected static int calcOffset(int locatedPos, int pageSize){
         int pg = ((int)((double)(locatedPos-1) / (double)pageSize) + 1);
@@ -129,7 +130,7 @@ public class ProviderExpDataset extends ProviderAn {
 
     }
 
-    private static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreGetDataSet request) {
+    private static void initSelectSqlDef(final BioCursor.SelectSQLDef sqlDef, final BioRequestJStoreExpDataSet request) {
 //        sqlDef.setParams(request.getBioParams());
         //sqlDef.setOffset(request.getOffset());
         //sqlDef.setPageSize(request.getPageSize());
@@ -139,17 +140,17 @@ public class ProviderExpDataset extends ProviderAn {
     }
 
     @Override
-    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
+    public void process(final BioRequestJStoreExpDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-            initSelectSqlDef(cursor.getSelectSqlDef(), (BioRequestJStoreGetDataSet)request);
+            initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
             context.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());
             //context.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());
             context.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor.getSelectSqlDef());
             //context.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor.getSelectSqlDef());
-            BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSinglePage((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
+            BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());

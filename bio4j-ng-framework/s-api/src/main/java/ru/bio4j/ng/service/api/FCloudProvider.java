@@ -5,5 +5,6 @@ import java.io.InputStream;
 /**
  *  Created by ayrat on 08.05.14.
  */
-public interface FCloudProvider extends FCloudApi, BioService {
+public interface FCloudProvider extends BioService {
+    BioFCloudApiModule getApi() throws Exception;
 }

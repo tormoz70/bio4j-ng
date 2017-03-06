@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class ProviderGetFile extends ProviderAn {
+public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
 
     private static final int BUFFER_SIZE = 4096;
 
@@ -112,11 +112,11 @@ public class ProviderGetFile extends ProviderAn {
     }
 
     @Override
-    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
+    public void process(final BioRequestGetFile request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-            processCursorAsFileProvider((BioRequestGetFile) request, response, context, cursor, LOG);
+            processCursorAsFileProvider(request, response, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
         }

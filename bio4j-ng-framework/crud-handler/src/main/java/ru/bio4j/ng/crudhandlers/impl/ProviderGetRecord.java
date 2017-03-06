@@ -18,7 +18,7 @@ import java.sql.Connection;
 /**
  * Created by ayrat on 07.03.2016.
  */
-public class ProviderGetRecord extends ProviderAn {
+public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
 
     protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
@@ -44,14 +44,14 @@ public class ProviderGetRecord extends ProviderAn {
     }
 
     @Override
-    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
+    public void process(final BioRequestJStoreGetRecord request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
 //            cursor.getSelectSqlDef().setParams(request.getBioParams());
 
             context.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
-            BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord((BioRequestJStoreGetRecord)request, context, cursor, LOG);
+            BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getRecord for \"{}\" - returning response...", request.getBioCode());

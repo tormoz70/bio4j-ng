@@ -50,7 +50,7 @@ public class ServletApi extends BioServletApiBase {
         writeResponse(json, response);
     }
 
-    public void processUpload(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void processUpload(final HttpServletRequest request, final HttpServletResponse response, final User usr) throws Exception {
         Collection<Part> parts = null;
         try {
             parts = request.getParts();
@@ -59,14 +59,15 @@ public class ServletApi extends BioServletApiBase {
             //LOG.debug("Parts recived: {}", parts.size());
             List<FileSpec> files = new ArrayList<>();
             for (Part p : parts) {
-                FileSpec file = fcloudProvider.regFile(
+                FileSpec file = fcloudProvider.getApi().regFile(
                         request.getParameter("uplduid"),
                         Httpc.extractFileNameFromPart(p),
                         p.getInputStream(),
                         p.getSize(),
                         p.getContentType(),
                         request.getRemoteHost(),
-                        request.getParameter("adesc")
+                        request.getParameter("adesc"),
+                        usr
                 );
                 if(file != null)
                     files.add(file);
@@ -78,8 +79,8 @@ public class ServletApi extends BioServletApiBase {
         //response.getWriter().append(responseBuilder.json());
     }
 
-    public void runImport(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        fcloudProvider.runImport();
+    public void runImport(final HttpServletRequest request, final HttpServletResponse response, final User usr) throws Exception {
+        fcloudProvider.getApi().runImport(usr);
         BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
         response.getWriter().append(responseBuilder.json());
     }
@@ -94,13 +95,12 @@ public class ServletApi extends BioServletApiBase {
 
             SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
             User usr = this.securityProvider.getUser(qprms.stoken, qprms.remoteIP);
-            fcloudProvider.init(usr);
             String fcmd = request.getParameter("fcmd");
             if(!Strings.isNullOrEmpty(fcmd)) {
                 if(fcmd.compareToIgnoreCase("upload") == 0)
-                    processUpload(request, response);
+                    processUpload(request, response, usr);
                 if(fcmd.compareToIgnoreCase("runimport") == 0)
-                    runImport(request, response);
+                    runImport(request, response, usr);
             }
         } catch (BioError e) {
             if(e.getErrCode() == 200)

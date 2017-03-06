@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
 
-public class ProviderGetJson extends ProviderAn {
+public class ProviderGetJson extends ProviderAn<BioRequestGetJson> {
 
     private static BioRespBuilder.JsonBuilder processCursorAsJsonProvider(final BioRequestGetJson request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as JsonProvider!!!", cursor.getBioCode());
@@ -40,11 +40,11 @@ public class ProviderGetJson extends ProviderAn {
     }
 
     @Override
-    public void process(final BioRequest request, final HttpServletResponse response) throws Exception {
+    public void process(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-            BioRespBuilder.JsonBuilder responseBuilder = processCursorAsJsonProvider((BioRequestGetJson) request, context, cursor, LOG);
+            BioRespBuilder.JsonBuilder responseBuilder = processCursorAsJsonProvider(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
