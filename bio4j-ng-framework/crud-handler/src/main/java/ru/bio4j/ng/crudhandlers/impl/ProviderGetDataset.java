@@ -93,6 +93,10 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 return result.exception(null);
             }
         }, cursor, request.getUser());
+        response.bioParams(request.getBioParams());
+        response.sort(request.getSort());
+        response.filter(request.getFilter());
+        response.location(request.getLocation());
         return response;
     }
 
@@ -125,6 +129,10 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 return result.exception(null);
             }
         }, cursor, request.getUser());
+        response.bioParams(request.getBioParams());
+        response.sort(request.getSort());
+        response.filter(request.getFilter());
+        response.location(request.getLocation());
         return response;
 
     }

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public abstract class BioRequestFactory<T extends BioRequest> {
-    private static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
+//    private static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
 
     private void prepareBioParams(BioRequest bioRequest){
         if(bioRequest.getBioParams() != null && !bioRequest.getBioParams().isEmpty()){
@@ -82,18 +82,65 @@ public abstract class BioRequestFactory<T extends BioRequest> {
     }
 
     public static class GetDataSet extends BioRequestFactory<BioRequestJStoreGetDataSet> {
+        public BioRequestJStoreGetDataSet restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestJStoreGetDataSet> clazz,
+                final User usr) throws Exception {
+            BioRequestJStoreGetDataSet rslt = super.restore(qprms, clazz, usr);
+            if(rslt.getOffset() == null && qprms.offset != null)
+                rslt.setOffset(qprms.offset);
+            if(rslt.getPageSize() == null && qprms.pageSize != null)
+                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
+                rslt.setLocation(Integer.getInteger(qprms.location));
+            if(rslt.getSort() == null && qprms.sort != null)
+                rslt.setSort(qprms.sort);
+            if(rslt.getFilter() == null && qprms.filter != null)
+                rslt.setFilter(qprms.filter);
+            return rslt;
+        }
     }
 
     public static class ExpDataSet extends BioRequestFactory<BioRequestJStoreExpDataSet> {
+        public BioRequestJStoreExpDataSet restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestJStoreExpDataSet> clazz,
+                final User usr) throws Exception {
+            BioRequestJStoreExpDataSet rslt = super.restore(qprms, clazz, usr);
+            if(rslt.getOffset() == null && qprms.offset != null)
+                rslt.setOffset(qprms.offset);
+            if(rslt.getPageSize() == null && qprms.pageSize != null)
+                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
+                rslt.setLocation(Integer.getInteger(qprms.location));
+            return rslt;
+        }
     }
 
     public static class GetRecord extends BioRequestFactory<BioRequestJStoreGetRecord> {
+        public BioRequestJStoreGetRecord restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestJStoreGetRecord> clazz,
+                final User usr) throws Exception {
+            BioRequestJStoreGetRecord rslt = super.restore(qprms, clazz, usr);
+            rslt.setId(qprms.id);
+            return rslt;
+        }
     }
 
     public static class DataSetPost extends BioRequestFactory<BioRequestJStorePost> {
     }
 
     public static class StoredProg extends BioRequestFactory<BioRequestStoredProg> {
+        public BioRequestStoredProg restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestStoredProg> clazz,
+                final User usr) throws Exception {
+            BioRequestStoredProg rslt = super.restore(qprms, clazz, usr);
+            rslt.setCmd(qprms.rmtCommand);
+            rslt.setSessionUid(qprms.rmtSessionUid);
+            return rslt;
+        }
     }
 
     public static class FCloud extends BioRequestFactory<BioRequestFCloud> {

@@ -124,15 +124,18 @@ public class BioCursor {
 
         public int getOffset() { return offset; }
 
-        public void setOffset(int offset) {
-            this.offset = offset;
-            this.setParamValue(PAGING_PARAM_OFFSET, this.getOffset());
-            this.setParamValue(PAGING_PARAM_LAST, this.getOffset() + this.getPageSize());
+        public void setOffset(Integer offset) {
+            this.offset = offset == null ? 0 : offset;
+            this.setParamValue(PAGING_PARAM_OFFSET, this.offset);
+            this.setParamValue(PAGING_PARAM_LAST, this.offset + this.pageSize);
         }
 
         public int getPageSize() { return pageSize; }
 
-        public void setPageSize(int pageSize) { this.pageSize = pageSize; }
+        public void setPageSize(Integer pageSize) {
+            this.pageSize = pageSize == null || pageSize.intValue() == 0 ? 30 : pageSize;
+            this.setParamValue(PAGING_PARAM_LAST, this.offset + this.pageSize);
+        }
 
         public boolean isReadonly() { return readonly; }
 

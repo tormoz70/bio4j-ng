@@ -22,17 +22,7 @@ public class ServletApi extends BioServletApiBase {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
         response.setCharacterEncoding("UTF-8");
-
-        Collection<Part> c = null;
-        try {
-            c = request.getParts();
-        } catch (Exception e) {}
-        if(c != null) {
-            LOG.debug("Parts recived: {}", c.size());
-            for (Part p : c) {
-                LOG.debug(" - part: ", p.getName());
-            }
-        }
+        response.setContentType("application/json");
 
         try {
             initRouter(this.getServletContext());
@@ -41,15 +31,12 @@ public class ServletApi extends BioServletApiBase {
         } catch (BioError e) {
             if(e.getErrCode() == 200){
                 LOG.error("Server application error (Level-0)!", e);
-//                responseError(BioError.wrap(e), response);
             }else{
                 LOG.error("Expected server error (Level-0)!", e);
-//                response.sendError(e.getErrCode());
             }
             responseError(e, response);
         } catch (Exception e) {
             LOG.error("Unexpected server error (Level-0)!", e);
-            //response.sendError(500);
             responseError(BioError.wrap(e), response);
         }
     }

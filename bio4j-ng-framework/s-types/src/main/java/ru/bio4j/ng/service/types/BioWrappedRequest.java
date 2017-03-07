@@ -1,15 +1,15 @@
 package ru.bio4j.ng.service.types;
 
+import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.FCloudCommand;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.*;
+import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
 import java.io.IOException;
@@ -43,18 +43,28 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
     }
 
-    public static class BioParamObj {
-        private List<Param> bioParams;
+    public static class SortAndFilterObj {
+        private List<Sort> sort;
+        private Filter filter;
 
-        public List<Param> getBioParams() {
-            return bioParams;
+        public List<Sort> getSort() {
+            return sort;
         }
 
-        public void setBioParams(List<Param> bioParams) {
-            this.bioParams = bioParams;
+        public void setSort(List<Sort> sort) {
+            this.sort = sort;
+        }
+
+        public Filter getFilter() {
+            return filter;
+        }
+
+        public void setFilter(Filter filter) {
+            this.filter = filter;
         }
     }
 
+    private static final String[] ACS_SYS_PAR_NAMES = {"_dc"};
     private static List<String> extractSysParamNames() {
         List<String> rslt = new ArrayList<>();
         for(java.lang.reflect.Field fld : Utl.getAllObjectFields(SrvcUtils.BioQueryParams.class)) {
@@ -65,6 +75,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 rslt.add(fldName);
             }
         }
+        for (String s : ACS_SYS_PAR_NAMES)
+            rslt.add(s);
         return rslt;
     }
 
@@ -76,7 +88,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             String paramName = paramNames.nextElement();
             String val = qparams.request.getParameter(paramName);
             if(sysParamNames.indexOf(paramName) == -1){
-                qparams.bioParams.add(Param.builder().name(paramName).type(MetaType.STRING).value(val).build());
+                qparams.bioParams.add(Param.builder().name(paramName).type(MetaType.STRING).direction(Param.Direction.IN).value(val).build());
             }
         }
 //        if(!Strings.isNullOrEmpty(qparams.jsonData)) {
@@ -107,15 +119,33 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
 
         if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(result.jsonData)) {
+            LoginParamObj obj = null;
             try {
-                LoginParamObj loginParamObj = Jsons.decode(result.jsonData, LoginParamObj.class);
-                if (loginParamObj != null && !Strings.isNullOrEmpty(loginParamObj.getLogin()))
-                    result.login = loginParamObj.getLogin();
+                obj = Jsons.decode(result.jsonData, LoginParamObj.class);
             } catch (Exception e) {
             }
+            if (obj != null && !Strings.isNullOrEmpty(obj.getLogin()))
+                result.login = obj.getLogin();
         }
 
         result.fcloudCmd = FCloudCommand.decode(result.fcloudCmdOrig);
+        result.rmtCommand = RmtCommand.decode(result.rmtCommandOrg);
+
+        if((result.sort == null || result.filter == null) && !Strings.isNullOrEmpty(result.jsonData)) {
+            SortAndFilterObj obj = null;
+            try {
+                obj = Jsons.decode(result.jsonData, SortAndFilterObj.class);
+            } catch (Exception e) {
+            }
+            if (obj != null && result.sort == null)
+                result.sort = obj.getSort();
+            if (obj != null && result.filter == null)
+                result.filter = obj.getFilter();
+        }
+
+        result.page = Converter.toType(result.pageOrig, Integer.class);
+        result.offset = Converter.toType(result.offsetOrig, Integer.class);
+        result.pageSize = Converter.toType(result.pageSizeOrig, Integer.class);
 
         extractBioParamsFromQuery(result);
 

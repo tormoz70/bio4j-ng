@@ -126,6 +126,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
                 return result.exception(null);
             }
         }, cursor, request.getUser());
+        response.bioParams(request.getBioParams());
         return response;
 
     }

@@ -114,6 +114,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         data.setRows(request.getModified());
 
         result.packet(data);
+        result.bioParams(request.getBioParams());
         return result.exception(null);
     }
 

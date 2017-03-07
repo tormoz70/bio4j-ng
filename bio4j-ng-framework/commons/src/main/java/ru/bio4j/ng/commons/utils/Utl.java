@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.utils;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
@@ -428,9 +429,13 @@ public class Utl {
     public static <T> T getService(ServletContext servletContext, Class<T> serviceInterface) {
         BundleContext bundleContext = (BundleContext) servletContext.getAttribute("osgi-bundlecontext");
         if (bundleContext == null)
-            throw new IllegalStateException("osgi-bundlecontext not registered");
+            throw new IllegalStateException("osgi-bundlecontext not registered!");
 
-        return (T)bundleContext.getService(bundleContext.getServiceReference(serviceInterface));
+        ServiceReference<T> serviceReference = bundleContext.getServiceReference(serviceInterface);
+        if(serviceReference != null)
+            return (T)bundleContext.getService(serviceReference);
+        else
+            throw new IllegalStateException(String.format("Service %s not registered!", serviceInterface.getName()));
     }
 
     public static String extractModuleKey(String bioCode) {

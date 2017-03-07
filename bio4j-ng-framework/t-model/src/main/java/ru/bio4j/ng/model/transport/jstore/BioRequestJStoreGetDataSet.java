@@ -19,12 +19,12 @@ public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp {
     /**
      * Начальная позиция
      */
-    private int offset;
+    private Integer offset;
 
     /**
      * Размер страницы
      */
-    private int pageSize;
+    private Integer pageSize;
 
     /**
      * Параметры сортировки для запросов GET
@@ -42,19 +42,19 @@ public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp {
      */
     private Object location;
 
-    public int getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
-    public int getPageSize() {
+    public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(int pageSize) {
+    public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
 

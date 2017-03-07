@@ -9,5 +9,14 @@ public enum RmtCommand {
 	public int getCode() {
 		return this.ordinal();
 	}
-	
+
+    public static RmtCommand decode(String str) {
+        for (RmtCommand cmd : RmtCommand.values()) {
+            if (cmd.toString().equalsIgnoreCase(str)) {
+                return cmd;
+            }
+        }
+        return null;
+    }
+
 }

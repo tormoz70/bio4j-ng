@@ -6,8 +6,6 @@ import ru.bio4j.ng.database.api.SQLAction;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.WrapQueryType;
 import ru.bio4j.ng.database.commons.wrappers.filtering.GetrowWrapper;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -15,9 +13,6 @@ import ru.bio4j.ng.service.api.BioRespBuilder;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 
-/**
- * Created by ayrat on 07.03.2016.
- */
 public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
 
     protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
@@ -39,6 +34,8 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
                 return result.exception(null);
             }
         }, cursor, request.getUser());
+        response.bioParams(request.getBioParams());
+        response.id(request.getId());
         return response;
 
     }
@@ -48,8 +45,6 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-//            cursor.getSelectSqlDef().setParams(request.getBioParams());
-
             context.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
