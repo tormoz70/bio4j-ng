@@ -13,6 +13,7 @@ public interface FCloudApi {
             final String contentType,
             final String remoteHost,
             final String uploadDesc,
+            final String extParam,
             final User usr
     ) throws Exception;
 

@@ -69,6 +69,8 @@ public class SrvcUtils {
         public String fcloudUploadUid;
         @Prop(name = "uplddsc")
         public String fcloudUploadDesc;
+        @Prop(name = "upldprm")
+        public String fcloudExtParam;
 
         @Prop(name = "page")
         public String pageOrig;

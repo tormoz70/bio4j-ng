@@ -67,6 +67,7 @@ public class ServletApi extends BioServletApiBase {
                         p.getContentType(),
                         request.getRemoteHost(),
                         request.getParameter("adesc"),
+                        request.getParameter("extprm"),
                         usr
                 );
                 if(file != null)

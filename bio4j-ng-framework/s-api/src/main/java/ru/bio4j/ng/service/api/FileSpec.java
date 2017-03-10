@@ -9,7 +9,7 @@ public class FileSpec {
     private String contentType;
     private String remoteIpAddress;
     private String adesc;
-
+    private String extParam;
     private String threadUID;
 
     public String getFileUUID() {
@@ -82,5 +82,13 @@ public class FileSpec {
 
     public void setThreadUID(String threadUID) {
         this.threadUID = threadUID;
+    }
+
+    public String getExtParam() {
+        return extParam;
+    }
+
+    public void setExtParam(String extParam) {
+        this.extParam = extParam;
     }
 }

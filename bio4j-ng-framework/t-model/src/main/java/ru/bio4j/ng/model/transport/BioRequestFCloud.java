@@ -9,6 +9,7 @@ public class BioRequestFCloud extends BioRequest {
     private String fileUid;
     private String uploadUid;
     private String uploadDesc;
+    private String extParam;
 
     public FCloudCommand getCmd() {
         return cmd;
@@ -40,5 +41,13 @@ public class BioRequestFCloud extends BioRequest {
 
     public void setUploadDesc(String uploadDesc) {
         this.uploadDesc = uploadDesc;
+    }
+
+    public String getExtParam() {
+        return extParam;
+    }
+
+    public void setExtParam(String extParam) {
+        this.extParam = extParam;
     }
 }

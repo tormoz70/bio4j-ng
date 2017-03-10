@@ -62,6 +62,7 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
                         p.getContentType(),
                         request.getRemoteIP(),
                         request.getUploadDesc(),
+                        request.getExtParam(),
                         request.getUser()
                 );
                 if(file != null)
