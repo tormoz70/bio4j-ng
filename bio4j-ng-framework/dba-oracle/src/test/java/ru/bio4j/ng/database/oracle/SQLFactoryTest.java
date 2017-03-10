@@ -2,6 +2,7 @@ package ru.bio4j.ng.database.oracle;
 
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
@@ -11,19 +12,21 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
+import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.StoreData;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 public class SQLFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest.class);
     private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
-    private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.30:1521:GIVCDB";
+    private static final String testDBUrl = "jdbc:oracle:thin:@192.168.50.30:1521:EKBS02";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@stat4-ora-dev:1521:MICEXDB";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
@@ -66,7 +69,7 @@ public class SQLFactoryTest {
                     cs.execute();
                     return null;
                 }
-            });
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
         }
@@ -91,7 +94,7 @@ public class SQLFactoryTest {
                     cs.execute();
                     return null;
                 }
-            });
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
         }
@@ -106,7 +109,7 @@ public class SQLFactoryTest {
                 Assert.assertNotNull(conn);
                 return null;
             }
-        });
+        }, null);
 
     }
 
@@ -127,7 +130,7 @@ public class SQLFactoryTest {
                     }
                     return dummysum;
                 }
-            });
+            }, null);
             LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 101.0);
         } catch (Exception ex) {
@@ -157,7 +160,7 @@ public class SQLFactoryTest {
                     }
                     return schema;
                 }
-            });
+            }, null);
             Assert.assertTrue(schema.length > 0);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -193,7 +196,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -226,7 +229,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -263,7 +266,7 @@ public class SQLFactoryTest {
                     conn.rollback();
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
@@ -294,7 +297,7 @@ public class SQLFactoryTest {
                     cmd.execSQL();
                     return null;
                 }
-            }, "AnContext");
+            }, "AnContext", null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
@@ -326,7 +329,7 @@ public class SQLFactoryTest {
                     }
                     return leng;
                 }
-            });
+            }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (Exception ex) {
@@ -348,26 +351,25 @@ public class SQLFactoryTest {
     @Test(enabled = false)
     public void testSQLCommandStoredProc() throws Exception {
         try {
-            int role = -1;
-            int org_id = -1;
+
             Paramus paramus = Paramus.set(new ArrayList<Param>());
-            paramus.add("p_user_name", "coordinator")
-                    .add("p_password", "siolopon")
-                    .add(Param.builder()./*owner(paramus.get()).*/name("v_role_id").type(MetaType.INTEGER).direction(Param.Direction.OUT).build())
-                    .add(Param.builder()./*owner(paramus.get()).*/name("v_org_id").type(MetaType.INTEGER).direction(Param.Direction.OUT).build());
+            paramus.add("p_login", "qweqwe@asd.com/qegedipe")
+                   .add(Param.builder().name("v_uid").type(MetaType.STRING).direction(Param.Direction.OUT).build());
             List<Param> params = paramus.pop();
-            context.execBatch(new SQLAction<List<Param>, Object>() {
+            String uid = context.execBatch(new SQLAction<List<Param>, String>() {
                 @Override
-                public Object exec(SQLContext context, Connection conn, List<Param> param) throws Exception {
+                public String exec(SQLContext context, Connection conn, List<Param> param) throws Exception {
                     SQLStoredProc prc = context.createStoredProc();
-                    prc.init(conn, "gacc.check_login", param).execSQL();
-                    return null;
+                    prc.init(conn, "bio_login2.check_login", param).execSQL();
+                    try(Paramus paramus = Paramus.set(prc.getParams())) {
+                        return paramus.getValueAsStringByName("v_uid", true);
+                    }
+
                 }
-            }, params);
-            role = getParamValue(params, int.class, "v_role_id");
-            org_id = getParamValue(params, int.class, "v_org_id");
-            LOG.debug(String.format("Login: OK; role: %d; org_id: %d", role, org_id));
-            Assert.assertEquals(role, 6);
+            }, params, null);
+
+            LOG.debug(String.format("Login: OK; uid: %s", uid));
+            Assert.assertEquals(uid, "FTW");
         } catch (SQLException ex) {
             LOG.error("Error!!!", ex);
         }
@@ -403,7 +405,7 @@ public class SQLFactoryTest {
                     }
                     return 0;
                 }
-            });
+            }, null);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
             Assert.fail();
@@ -446,7 +448,7 @@ public class SQLFactoryTest {
         LOG.debug(msg);
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSQLCommandOpenCursor2() {
         try {
 
@@ -603,7 +605,7 @@ public class SQLFactoryTest {
                     }
                     return ""+cnt;
                 }
-            });
+            }, null);
             Assert.assertEquals("25", rslt);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -612,4 +614,176 @@ public class SQLFactoryTest {
 
     }
 
+    @Test(enabled = false)
+    public void testSQLCommandOpenCursor3() {
+        try {
+
+            SQLContext contextLocal = DbContextAbstract.create(
+                SQLConnectionPoolConfig.builder()
+                    .poolName("TEST-CONN-POOL-123")
+                    .dbDriverName(testDBDriverName)
+                    .dbConnectionUrl(testDBUrl)
+                    .dbConnectionUsr("GIVCADMIN")
+                    .dbConnectionPwd("j12")
+                    .build(),
+                OraContext.class);
+
+            String rslt = contextLocal.execBatch(new SQLActionScalar<String>() {
+                @Override
+                public String exec(SQLContext context, Connection conn) throws Exception {
+                    String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
+
+                    int cnt = 0;
+                    List<Param> params = new ArrayList<>();
+
+/*
+                    1-p_sys_curusr_roles(in)(VARCHAR)..................."6";
+                    2-p_sys_curusr_org_uid(in)(VARCHAR)................."5567";
+                    3-org_id(in)(INTEGER)...............................[244];
+                    4-reg_from(in)(DATE)................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    5-reg_to(in)(DATE)..................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    6-film(in)(VARCHAR)................................."";
+                    7-sroom_id(in)(INTEGER).............................[null];
+                    8-force_org_id(in)(VARCHAR).........................[null];
+                    9-paging$offset(in)(INTEGER)........................[0];
+                    10-paging$last(in)(INTEGER).........................[25];
+*/
+
+                    params.add(Param.builder().name("p_sys_curusr_roles").value("6").type(MetaType.STRING).build());
+                    params.add(Param.builder().name("p_sys_curusr_org_uid").value("5567").type(MetaType.STRING).build());
+                    params.add(Param.builder().name("org_id").value(244).type(MetaType.INTEGER).build());
+
+                    java.util.Date testDateValue = new java.util.Date();
+                    params.add(Param.builder().name("reg_from").value(testDateValue).type(MetaType.DATE).build());
+                    params.add(Param.builder().name("reg_to").value(testDateValue).type(MetaType.DATE).build());
+
+                    params.add(Param.builder().name("film").value("").type(MetaType.STRING).build());
+
+                            params.add(Param.builder().name("force_org_id").type(MetaType.INTEGER).build());
+                    params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
+                    params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
+
+                    try(SQLCursor c = context.createCursor()
+                            .init(conn, sql, params).open();){
+                        while(c.reader().next()){
+//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
+                            cnt++;
+                        }
+                    }
+                    return ""+cnt;
+                }
+            }, null);
+            Assert.assertEquals(rslt, "17");
+        } catch (Exception ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+
+    }
+
+    @Test(enabled = true)
+    public void testSQLCommandOpenCursor4() throws Exception {
+
+        SQLContext ctx = DbContextAbstract.create(
+                SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL-123")
+                        .dbDriverName(testDBDriverName)
+                        .dbConnectionUrl(testDBUrl)
+                        .dbConnectionUsr("GIVCADMIN")
+                        .dbConnectionPwd("j12")
+                        .build(),
+                OraContext.class);
+
+
+        String rslt = ctx.execBatch(new SQLAction<BioCursor, String>() {
+            @Override
+            public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+
+                String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
+
+                int cnt = 0;
+                List<Param> params = new ArrayList<>();
+
+/*
+                    1-p_sys_curusr_roles(in)(VARCHAR)..................."6";
+                    2-p_sys_curusr_org_uid(in)(VARCHAR)................."5567";
+                    3-org_id(in)(INTEGER)...............................[244];
+                    4-reg_from(in)(DATE)................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    5-reg_to(in)(DATE)..................................[Thu Aug 04 00:00:00 GMT+03:00 2016];
+                    6-film(in)(VARCHAR)................................."";
+                    7-sroom_id(in)(INTEGER).............................[null];
+                    8-force_org_id(in)(VARCHAR).........................[null];
+                    9-paging$offset(in)(INTEGER)........................[0];
+                    10-paging$last(in)(INTEGER)..........................[25];
+*/
+
+                params.add(Param.builder().name("p_sys_curusr_roles").value("6").type(MetaType.STRING).build());
+                params.add(Param.builder().name("p_sys_curusr_org_uid").value("5567").type(MetaType.STRING).build());
+                params.add(Param.builder().name("org_id").value(244).type(MetaType.INTEGER).build());
+
+                java.util.Date testDateValue = new java.util.Date();
+                params.add(Param.builder().name("reg_from").value(testDateValue).type(MetaType.DATE).build());
+                params.add(Param.builder().name("reg_to").value(testDateValue).type(MetaType.DATE).build());
+
+                params.add(Param.builder().name("film").value("").type(MetaType.STRING).build());
+
+                params.add(Param.builder().name("force_org_id").type(MetaType.INTEGER).build());
+                params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
+                params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
+
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, sql, params).open();){
+                    while(c.reader().next()){
+//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
+                        cnt++;
+                    }
+                }
+                return ""+cnt;
+
+            }
+        }, null, null);
+        //response;
+    }
+
+    public static class TestROject {
+        @Prop(name = "id")
+        public Integer fid;
+        @Prop(name = "name")
+        public String fname;
+    }
+
+    @Test(enabled = true)
+    public void test67() throws Exception {
+
+        SQLContext ctx = DbContextAbstract.create(
+                SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL-123")
+                        .dbDriverName(testDBDriverName)
+                        .dbConnectionUrl(testDBUrl)
+                        .dbConnectionUsr("GIVCADMIN")
+                        .dbConnectionPwd("j12")
+                        .build(),
+                OraContext.class);
+
+
+        String rslt = ctx.execBatch(new SQLAction<BioCursor, String>() {
+            @Override
+            public String exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+
+                String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("222.sql"));
+
+                List<Param> params = new ArrayList<>();
+                TestROject r = null;
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, sql, params).open();){
+                    if(c.reader().next()){
+                        r = DbUtils.createBeanFromReader(c.reader(), TestROject.class);
+                    }
+                }
+                return r.fname;
+
+            }
+        }, null, null);
+        Assert.assertEquals(rslt, "qwe");
+    }
 }

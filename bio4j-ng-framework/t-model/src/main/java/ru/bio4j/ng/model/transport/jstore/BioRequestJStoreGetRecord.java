@@ -16,16 +16,6 @@ public class BioRequestJStoreGetRecord extends BioRequest {
      */
     private Object id;
 
-    private String origJson;
-
-    public String getOrigJson() {
-        return origJson;
-    }
-
-    public void setOrigJson(String origJson) {
-        this.origJson = origJson;
-    }
-
     public Object getId() {
         return id;
     }

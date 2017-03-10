@@ -8,43 +8,50 @@ import ru.bio4j.ng.database.commons.wrappers.pagination.PaginationWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.List;
 
 /**
  * Created by ayrat on 07.03.2016.
  */
-public class ProviderGetDataset extends ProviderAn {
+public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
 
     protected static int calcOffset(int locatedPos, int pageSize){
         int pg = ((int)((double)(locatedPos-1) / (double)pageSize) + 1);
         return (pg - 1) * pageSize;
     }
 
+    private static final int UNKNOWN_RECS_TOTAL = 999999999;
+
     private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
         final BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
             @Override
             public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                tryPrepareSessionContext(request.getUser().getUid(), conn);
+                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
                 final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
                 result.bioCode(cur.getBioCode());
                 boolean requestCached = false; //requestCached(request, LOG);
 
-                int totalCount = requestCached ? request.getTotalCount() : 0;
-                if(totalCount == 0) {
+                int totalCount = requestCached ? request.getTotalCount() : UNKNOWN_RECS_TOTAL;
+                if(request.getOffset() == (UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
+//                if(totalCount == 0) {
                     LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
                     try (SQLCursor c = context.createCursor()
                             .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
-                        if (c.reader().next())
+                        if (c.reader().next()) {
                             totalCount = c.reader().getValue(1, int.class);
+                            int newOffset = (int)Math.floor(totalCount / request.getPageSize()) * request.getPageSize();
+                            request.setOffset(newOffset);
+                        }
                     }
                     LOG.debug("Count records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
                 }
+                cur.getSelectSqlDef().setOffset(request.getOffset());
 
                 if(cur.getSelectSqlDef().getLocation() != null) {
                     LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
@@ -60,11 +67,11 @@ public class ProviderGetDataset extends ProviderAn {
                             int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
                             LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), cur.getSelectSqlDef().getLocation(), locatedPos, offset);
                             cur.getSelectSqlDef().setOffset(offset);
-                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset());
-                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
+//                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset());
+//                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
                         } else {
                             LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
-                            result.exception(new BioError.LacationFail(cur.getSelectSqlDef().getLocation()));
+                            result.exception(new BioError.LocationFail(cur.getSelectSqlDef().getLocation()));
                         }
                     }
                 }
@@ -78,9 +85,18 @@ public class ProviderGetDataset extends ProviderAn {
                 readStoreData(data, context, conn, cur, LOG);
 
                 result.packet(data);
+
+                if((data.getOffset() == 0) && (data.getRows().size() < data.getPageSize())){
+                    data.setResults(data.getRows().size());
+                }
+
                 return result.exception(null);
             }
-        }, cursor);
+        }, cursor, request.getUser());
+        response.bioParams(request.getBioParams());
+        response.sort(request.getSort());
+        response.filter(request.getFilter());
+        response.location(request.getLocation());
         return response;
     }
 
@@ -89,7 +105,7 @@ public class ProviderGetDataset extends ProviderAn {
         BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
             @Override
             public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                tryPrepareSessionContext(request.getUser().getUid(), conn);
+                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
                 final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
                 result.bioCode(cur.getBioCode());
 
@@ -112,7 +128,11 @@ public class ProviderGetDataset extends ProviderAn {
                 result.packet(data);
                 return result.exception(null);
             }
-        }, cursor);
+        }, cursor, request.getUser());
+        response.bioParams(request.getBioParams());
+        response.sort(request.getSort());
+        response.filter(request.getFilter());
+        response.location(request.getLocation());
         return response;
 
     }
@@ -126,22 +146,25 @@ public class ProviderGetDataset extends ProviderAn {
         sqlDef.setSort(request.getSort());
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    @Override
+    public void process(final BioRequestJStoreGetDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-            initSelectSqlDef(cursor.getSelectSqlDef(), (BioRequestJStoreGetDataSet)request);
+            initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
             context.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());
             context.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());
             context.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor.getSelectSqlDef());
             context.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor.getSelectSqlDef());
+            BioRespBuilder.DataBuilder responseBuilder;
             if(cursor.getSelectSqlDef().getPageSize() < 0) {
-                return processCursorAsSelectableSinglePage((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
+                responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
                 context.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor.getSelectSqlDef());
-                return processCursorAsSelectableWithPagging((BioRequestJStoreGetDataSet)request, context, cursor, LOG);
+                responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
         }

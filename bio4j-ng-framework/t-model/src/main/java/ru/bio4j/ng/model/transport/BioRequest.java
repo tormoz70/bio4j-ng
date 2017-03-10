@@ -1,12 +1,21 @@
 package ru.bio4j.ng.model.transport;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
  * Базовый класс для всех запросов
  */
 public class BioRequest {
+
+
+    private HttpServletRequest httpRequest;
+
+    private String origJson;
+
+    private String remoteIP;
+    private String remoteClient;
 
     private String moduleKey;
 
@@ -20,14 +29,6 @@ public class BioRequest {
      * либо логин в формате <имя>/<пароль>
      */
     private User user;
-
-    /** Параметры запроса.
-     * Данные параметры передаются на сервер в виде параметров Http-запроса
-     * При этом параметры, которые являются служебными параметрами
-     * протокола сюда не попадают (при дисереализации),
-     * только параметры, которые добавлены к запросу вручную
-     */
-    private List<Param> params;
 
     /** Логин в виде username/password */
     private String login;
@@ -46,19 +47,6 @@ public class BioRequest {
      * параметры информационного объекта
      */
     private List<Param> bioParams;
-
-    /** Команда которую надо передать на сервер
-     * для управления удаленным процессом
-     */
-    private RmtCommand cmd;
-
-    public List<Param> getParams() {
-        return params;
-    }
-
-    public void setParams(List<Param> params) {
-        this.params = params;
-    }
 
     public String getLogin() {
         return login;
@@ -115,4 +103,37 @@ public class BioRequest {
     public void setModuleKey(String moduleKey) {
         this.moduleKey = moduleKey;
     }
+
+    public String getRemoteIP() {
+        return remoteIP;
+    }
+
+    public void setRemoteIP(String remoteIP) {
+        this.remoteIP = remoteIP;
+    }
+
+    public String getRemoteClient() {
+        return remoteClient;
+    }
+
+    public void setRemoteClient(String remoteClient) {
+        this.remoteClient = remoteClient;
+    }
+
+    public String getOrigJson() {
+        return origJson;
+    }
+
+    public void setOrigJson(String origJson) {
+        this.origJson = origJson;
+    }
+
+    public HttpServletRequest getHttpRequest() {
+        return httpRequest;
+    }
+
+    public void setHttpRequest(HttpServletRequest httpRequest) {
+        this.httpRequest = httpRequest;
+    }
+
 }

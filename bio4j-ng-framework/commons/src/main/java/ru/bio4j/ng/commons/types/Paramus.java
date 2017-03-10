@@ -149,19 +149,6 @@ public class Paramus implements Closeable {
 		return rslt;
 	}
 
-//	private Boolean alredyExists(String name) {
-//		Boolean result = false;
-//		Param exists = this.getParam(name);
-//		if (exists != null) {
-////			if (replaceIfExists) {
-////                get().remove(exists);
-////				exists = null;
-////			} else
-//				result = true;
-//		}
-//		return result;
-//	}
-
 	public Paramus add(Param item, Boolean replaceIfExists) {
 		if (item != null) {
             Param exists = this.getParam(item.getName());
@@ -182,21 +169,30 @@ public class Paramus implements Closeable {
     }
 
 
-	public Paramus add(String name, Object value, Boolean replaceIfExists) {
+	public Paramus add(String name, Object value, MetaType metaType, Boolean replaceIfExists) {
 		if (!Strings.isNullOrEmpty(name)) {
-//            Class<?> type = (value != null) ? value.getClass() : null;
-			this.add(Param.builder()./*owner(get()).*/name(name).value(value).build(), replaceIfExists);
+			this.add(Param.builder().name(name).type(metaType).value(value).build(), replaceIfExists);
 		}
 		return this;
 	}
 
-	public Paramus add(String name, Object value) {
-		return this.add(name, value, false);
+    public Paramus add(String name, Object value, Boolean replaceIfExists) {
+        if (!Strings.isNullOrEmpty(name)) {
+            this.add(Param.builder().name(name).value(value).build(), replaceIfExists);
+        }
+        return this;
+    }
+
+	public Paramus add(String name, MetaType metaType, Object value) {
+		return this.add(name, value, metaType, false);
 	}
 
-	public Paramus add(String name, Object value, Object innerObject) {
-//        Class<?> type = (value != null) ? value.getClass() : null;
-		return this.add(Param.builder()./*owner(get()).*/name(name).value(value).innerObject(innerObject).build(), false);
+    public Paramus add(String name, Object value) {
+        return this.add(name, value, false);
+    }
+
+    public Paramus add(String name, Object value, Object innerObject) {
+		return this.add(Param.builder().name(name).value(value).innerObject(innerObject).build(), false);
 	}
 
 	public Paramus merge(List<Param> params, Boolean overwrite) {
@@ -452,6 +448,14 @@ public class Paramus implements Closeable {
             return ex.getMessage();
         }
 	}
+
+    public static <T> T paramValue(List<Param> params, String paramName, Class<T> type, T defaultValue) throws Exception {
+        T rslt = null;
+        try (Paramus paramus = Paramus.set(params)) {
+            rslt = Utl.nvl(paramus.getParamValue(paramName, type), defaultValue);
+        }
+        return rslt;
+    }
 
 //	@Override
 //    public Param clone() throws CloneNotSupportedException {

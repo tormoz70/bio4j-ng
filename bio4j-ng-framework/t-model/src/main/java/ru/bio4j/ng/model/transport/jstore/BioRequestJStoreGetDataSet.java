@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport.jstore;
 
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.BioRequestRunLongOp;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.util.List;
@@ -8,21 +9,22 @@ import java.util.List;
 /**
  * Запрос на получение данных в JStoreClient
  */
-public class BioRequestJStoreGetDataSet extends BioRequest {
+public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp {
 
     /**
-     * Всего записей в запросе
+     * Общее количество записей передается в случае кеширования данных на сервере
      */
     private int totalCount;
+
     /**
      * Начальная позиция
      */
-    private int offset;
+    private Integer offset;
 
     /**
      * Размер страницы
      */
-    private int pageSize;
+    private Integer pageSize;
 
     /**
      * Параметры сортировки для запросов GET
@@ -40,21 +42,19 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
      */
     private Object location;
 
-    private String origJson;
-
-    public int getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
-    public int getPageSize() {
+    public Integer getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(int pageSize) {
+    public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
 
@@ -82,14 +82,6 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
         this.location = location;
     }
 
-    public String getOrigJson() {
-        return origJson;
-    }
-
-    public void setOrigJson(String origJson) {
-        this.origJson = origJson;
-    }
-
     public int getTotalCount() {
         return totalCount;
     }
@@ -97,6 +89,5 @@ public class BioRequestJStoreGetDataSet extends BioRequest {
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
     }
-
 }
 

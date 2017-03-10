@@ -6,19 +6,17 @@ import ru.bio4j.ng.commons.converter.hanlers.MetaTypeHandler;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.*;
 
 import javax.servlet.http.HttpServletRequest;
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
-public abstract class BioRequestFactory {
-    private static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
+public abstract class BioRequestFactory<T extends BioRequest> {
+//    private static final String QRY_PARAM_NAME_JSON_DATA = "jsonData";
 
     private void prepareBioParams(BioRequest bioRequest){
         if(bioRequest.getBioParams() != null && !bioRequest.getBioParams().isEmpty()){
@@ -34,59 +32,130 @@ public abstract class BioRequestFactory {
 
     }
 
-    public BioRequest restore(HttpServletRequest request, final String moduleKey, final BioRoute route, final User usr) throws Exception {
-        Filter f = new Filter();
-        f = null;
-        final String jsonDataAsQueryParam = request.getParameter(QRY_PARAM_NAME_JSON_DATA);
-        StringBuilder jd = new StringBuilder();
-        if(!isNullOrEmpty(jsonDataAsQueryParam))
-            jd.append(jsonDataAsQueryParam);
-        else
-            Httpc.readDataFromRequest(request, jd);
-        if(jd.length() == 0)
-            jd.append("{}");
-        BioRequest bioRequest;
-        String bioRequestJson = jd.toString();
+    public T restore(
+            final SrvcUtils.BioQueryParams qprms,
+            final Class<T> clazz,
+            final User usr) throws Exception {
+        T bioRequest;
         try {
-            Class<? extends BioRequest> clazz = route.getClazz();
-            bioRequest = Jsons.decode(bioRequestJson, clazz);
+            bioRequest = Jsons.decode(qprms.jsonData, clazz);
         } catch (Exception e) {
             throw new Exception(String.format("Unexpected error while decoding BioRequest JSON: %s\n"+
-                    " - Error: %s", bioRequestJson, e.getMessage()), e);
+                    " - Error: %s", qprms.jsonData, e.getMessage()), e);
         }
-        bioRequest.setModuleKey(moduleKey);
-        bioRequest.setRequestType(route.getAlias());
+        bioRequest.setHttpRequest(qprms.request);
+        bioRequest.setOrigJson(qprms.jsonData);
+        bioRequest.setModuleKey(qprms.moduleKey);
+        bioRequest.setBioCode(qprms.bioCode);
+        bioRequest.setRequestType(qprms.requestType);
+        bioRequest.setRemoteIP(qprms.remoteIP);
+        bioRequest.setRemoteClient(qprms.remoteClient);
+        if(!Strings.isNullOrEmpty(qprms.login))
+            bioRequest.setLogin(qprms.login);
         bioRequest.setUser(usr);
+        bioRequest.setBioParams(Paramus.set(qprms.bioParams).merge(bioRequest.getBioParams(), true).pop());
+
         return bioRequest;
     }
 
-    public static class Ping extends BioRequestFactory {
+    public static class Ping extends BioRequestFactory<BioRequestPing> {
     }
 
-    public static class Logout extends BioRequestFactory {
+    public static class Logout extends BioRequestFactory<BioRequestLogout> {
     }
 
-    public static class GetJson extends BioRequestFactory {
+    public static class Login extends BioRequestFactory<BioRequestLogin> {
     }
 
-    public static class GetDataSet extends BioRequestFactory {
+    public static class GetJson extends BioRequestFactory<BioRequestGetJson> {
     }
 
-    public static class GetRecord extends BioRequestFactory {
-    }
-
-    public static class DataSetPost extends BioRequestFactory {
-    }
-
-    public static class StoredProg extends BioRequestFactory {
-    }
-
-    public static class FormUpload extends BioRequestFactory {
-        @Override
-        public BioRequest restore(HttpServletRequest request, final String moduleKey, final BioRoute route, final User usr) throws Exception {
-            return null;
+    public static class GetFile extends BioRequestFactory<BioRequestGetFile> {
+        public BioRequestGetFile restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestGetFile> clazz,
+                final User usr) throws Exception {
+            BioRequestGetFile rslt = super.restore(qprms, clazz, usr);
+            rslt.setFileHashCode(qprms.fileHashCode);
+            return rslt;
         }
+    }
 
+    public static class GetDataSet extends BioRequestFactory<BioRequestJStoreGetDataSet> {
+        public BioRequestJStoreGetDataSet restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestJStoreGetDataSet> clazz,
+                final User usr) throws Exception {
+            BioRequestJStoreGetDataSet rslt = super.restore(qprms, clazz, usr);
+            if(rslt.getOffset() == null && qprms.offset != null)
+                rslt.setOffset(qprms.offset);
+            if(rslt.getPageSize() == null && qprms.pageSize != null)
+                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
+                rslt.setLocation(Integer.getInteger(qprms.location));
+            if(rslt.getSort() == null && qprms.sort != null)
+                rslt.setSort(qprms.sort);
+            if(rslt.getFilter() == null && qprms.filter != null)
+                rslt.setFilter(qprms.filter);
+            return rslt;
+        }
+    }
+
+    public static class ExpDataSet extends BioRequestFactory<BioRequestJStoreExpDataSet> {
+        public BioRequestJStoreExpDataSet restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestJStoreExpDataSet> clazz,
+                final User usr) throws Exception {
+            BioRequestJStoreExpDataSet rslt = super.restore(qprms, clazz, usr);
+            if(rslt.getOffset() == null && qprms.offset != null)
+                rslt.setOffset(qprms.offset);
+            if(rslt.getPageSize() == null && qprms.pageSize != null)
+                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
+                rslt.setLocation(Integer.getInteger(qprms.location));
+            return rslt;
+        }
+    }
+
+    public static class GetRecord extends BioRequestFactory<BioRequestJStoreGetRecord> {
+        public BioRequestJStoreGetRecord restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestJStoreGetRecord> clazz,
+                final User usr) throws Exception {
+            BioRequestJStoreGetRecord rslt = super.restore(qprms, clazz, usr);
+            rslt.setId(qprms.id);
+            return rslt;
+        }
+    }
+
+    public static class DataSetPost extends BioRequestFactory<BioRequestJStorePost> {
+    }
+
+    public static class StoredProg extends BioRequestFactory<BioRequestStoredProg> {
+        public BioRequestStoredProg restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestStoredProg> clazz,
+                final User usr) throws Exception {
+            BioRequestStoredProg rslt = super.restore(qprms, clazz, usr);
+            rslt.setCmd(qprms.rmtCommand);
+            rslt.setSessionUid(qprms.rmtSessionUid);
+            return rslt;
+        }
+    }
+
+    public static class FCloud extends BioRequestFactory<BioRequestFCloud> {
+        public BioRequestFCloud restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestFCloud> clazz,
+                final User usr) throws Exception {
+            BioRequestFCloud rslt = super.restore(qprms, clazz, usr);
+            rslt.setCmd(qprms.fcloudCmd);
+            rslt.setFileUid(qprms.fcloudFileUid);
+            rslt.setUploadUid(qprms.fcloudUploadUid);
+            rslt.setUploadDesc(qprms.fcloudUploadDesc);
+            rslt.setExtParam(qprms.fcloudExtParam);
+            return rslt;
+        }
     }
 
 }

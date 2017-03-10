@@ -2,7 +2,6 @@ package ru.bio4j.ng.security.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,37 +21,10 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public class SecurityProviderImpl extends BioServiceBase implements SecurityProvider {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityProviderImpl.class);
 
-//    @Context
-//    private BundleContext bundleContext;
-
     @Requires
     private ModuleProvider moduleProvider;
-//    @Requires
-//    private SQLContextProvider sqlContextProvider;
-
-    private ConcurrentMap<String, Object> onlineUsers = new ConcurrentHashMap<>();
 
     private final String securityModuleKey = "security";
-
-    private static final Object dummy = new Object();
-    private void storeUser(final String userUid) throws Exception {
-        Object existsUser = onlineUsers.get(userUid);
-        if(existsUser != null) {
-            return;
-        }
-        onlineUsers.put(String.format("%s-%s", securityModuleKey, userUid), dummy);
-    }
-
-    private Boolean userIsOnline(final String userUID) {
-        return onlineUsers.get(String.format("%s-%s", securityModuleKey, userUID)) != null;
-    }
-
-    private void removeUser(final String userUID) {
-        onlineUsers.remove(String.format("%s-%s", securityModuleKey, userUID));
-    }
-
-//    private static final String ROOT_USER_LOGIN = "root/root";
-//    private static final String ROOT_USER_UID = "root-user-uid";
 
     private BioSecurityModule _securityModule = null;
     private BioSecurityModule getSecurityModule() throws Exception {
@@ -67,35 +39,16 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
         return _securityModule;
     }
 
-    private Boolean detectAnonymous(String userUid) throws Exception {
-        if(User.BIO_ANONYMOUS_USER_LOGIN.equals(userUid.toLowerCase())) {
-            // Используется для открытых пространств
-            Boolean userIsOnline = userIsOnline(User.BIO_ANONYMOUS_USER_LOGIN);
-            if(!userIsOnline) {
-                storeUser(User.BIO_ANONYMOUS_USER_LOGIN);
-            }
-            return true;
-        }
-        return false;
-    }
 
     @Override
-    public User getUser(final String userUid, final String remoteIP) throws Exception {
-        if(isNullOrEmpty(userUid))
+    public User getUser(final String stoken, final String remoteIP) throws Exception {
+        if(isNullOrEmpty(stoken))
             throw new BioError.Login.BadLogin();
 
-        Boolean anonymousUserIsOk = detectAnonymous(userUid);
-        if(anonymousUserIsOk) {
-            LOG.debug("Anonymous User with uid \"{}\" logged in.", userUid);
-            return getSecurityModule().getUser(userUid, remoteIP);
-        }
-
-        Boolean userIsOnline = userIsOnline(userUid);
-        if(userIsOnline){
-            LOG.debug("User with uid \"{}\" already logged in.", userUid);
-            return getSecurityModule().getUser(userUid, remoteIP);
-        } else
+        User newUsr = getSecurityModule().getUser(stoken, remoteIP);
+        if(newUsr == null)
             throw new BioError.Login.LoginExpired();
+        return newUsr;
     }
 
     @Override
@@ -103,38 +56,20 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
         if(isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
 
-        Boolean anonymousUserIsOk = detectAnonymous(login);
-        if(anonymousUserIsOk) {
-            LOG.debug("Anonymous User with login \"{}\" logged in.", login);
-            return getSecurityModule().getUser(login, remoteIP);
-        }
-
-//        if(ROOT_USER_LOGIN.equals(login.toLowerCase())) {
-//            // Встроенная учетка
-//            User usr = userIsOnline(moduleKey, ROOT_USER_UID);
-//            if(usr == null) {
-//                usr = new User();
-//                usr.setModuleKey(moduleKey);
-//                usr.setUid(ROOT_USER_UID);
-//                usr.setLogin("root");
-//                usr.setFio("Root User FIO");
-//                usr.setRoles("*");
-//                usr.setGrants("*");
-//                storeUser(usr);
-//            }
-//            return usr;
-//        }
-
         User newUsr = getSecurityModule().login(login, remoteIP);
         if(newUsr == null)
             throw new BioError.Login.BadLogin();
-        storeUser(newUsr.getUid());
         return newUsr;
     }
 
     @Override
-    public void logoff(final String uid) throws Exception {
-        removeUser(uid);
+    public void logoff(final String stoken, final String remoteIP) throws Exception {
+        getSecurityModule().logoff(stoken);
+    }
+
+    @Override
+    public Boolean loggedin(final String stoken) throws Exception {
+        return getSecurityModule().loggedin(stoken);
     }
 
     @Validate

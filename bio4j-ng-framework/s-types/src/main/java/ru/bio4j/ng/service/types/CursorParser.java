@@ -135,7 +135,7 @@ public class CursorParser {
             String[] pair = Strings.split(attr.trim(), ATTRS_KEYVALUE_DELIMITER);
             if(pair.length == 2){
                 if(pair[0].equals("type"))
-                    col.setType(MetaType.decode(pair[1].trim()));
+                    col.setMetaType(MetaType.decode(pair[1].trim()));
                 if(pair[0].equals("pk"))
                     col.setPk(Boolean.parseBoolean(pair[1].trim()));
                 if(pair[0].equals("mandatory"))
@@ -237,7 +237,7 @@ public class CursorParser {
                 if(Strings.isNullOrEmpty(header))
                     header = fieldName;
                 col.setTitle(header);
-                col.setType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
+                col.setMetaType(Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class));
                 col.setAlign(Converter.toType(Doms.getAttribute(paramElem, "align", "left", String.class), Alignment.class));
                 col.setHidden(Converter.toType(Doms.getAttribute(paramElem, "hidden", "false", String.class), boolean.class));
                 col.setFilter(Converter.toType(Doms.getAttribute(paramElem, "filter", "false", String.class), boolean.class));

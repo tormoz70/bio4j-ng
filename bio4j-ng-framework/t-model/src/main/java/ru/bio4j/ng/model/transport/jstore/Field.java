@@ -78,7 +78,7 @@ public class Field {
     /**
      * Тип колонки
      */
-    private MetaType type = MetaType.UNDEFINED;
+    private MetaType metaType = MetaType.UNDEFINED;
 
 
 
@@ -162,12 +162,12 @@ public class Field {
         this.defaultVal = defaultVal;
     }
 
-    public MetaType getType() {
-        return type;
+    public MetaType getMetaType() {
+        return metaType;
     }
 
-    public void setType(MetaType value) {
-        this.type = value;
+    public void setMetaType(MetaType value) {
+        this.metaType = value;
     }
 
     /**

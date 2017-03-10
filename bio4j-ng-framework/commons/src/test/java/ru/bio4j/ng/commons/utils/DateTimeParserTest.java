@@ -3,7 +3,7 @@ package ru.bio4j.ng.commons.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateParseException;
 import ru.bio4j.ng.commons.converter.DateTimeParser;

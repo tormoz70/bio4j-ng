@@ -2,25 +2,23 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Httpc;
-import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.api.BioRoute;
 import ru.bio4j.ng.service.api.SecurityProvider;
+import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
-public class WarSecurityFilterBase implements Filter {
+public class WarSecurityFilterBase {
     private Logger LOG;
 
     private boolean bioDebug = false;
@@ -49,7 +47,6 @@ public class WarSecurityFilterBase implements Filter {
             publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
     }
 
-    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG = LoggerFactory.getLogger(this.getClass());
         debug("init...");
@@ -77,32 +74,10 @@ public class WarSecurityFilterBase implements Filter {
         loginProcessor.setSecurityProvider(securityProvider);
     }
 
-    private HttpServletRequest processUser(User user, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if (user != null) {
-            Map<String, String[]> extraParams = new TreeMap<>();
-            extraParams.putAll(request.getParameterMap());
-            extraParams.put(SrvcUtils.QRY_PARAM_NAME_UID, new String[] {user.getUid()});
-            BioWrappedRequest rslt = new BioWrappedRequest(request);
-            rslt.appendParams(extraParams);
-            return rslt;
-        } else {
-            BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(new BioError.Login.BadLogin()), response, bioDebug);
-            return request;
-        }
-    }
-
     private boolean detectWeAreInPublicAreas(String bioCode) {
         return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
     }
 
-    private void processBadLoginError(final HttpServletResponse resp) throws IOException {
-        BioError.Login.BadLogin e = new BioError.Login.BadLogin();
-        BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(e), resp, bioDebug);
-        log_error("An error while checking User!", e);
-
-    }
-
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
@@ -111,35 +86,48 @@ public class WarSecurityFilterBase implements Filter {
         final String servletPath = req.getServletPath();
         final HttpSession session = req.getSession();
 
-        try {
+        if(req.getMethod().equals("GET") || req.getMethod().equals("POST")) {
+            try {
 
-            debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
+                debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
-            initSecurityHandler(req.getServletContext());
-            final SrvcUtils.BioQueryParams prms = SrvcUtils.decodeBioQueryParams(req);
-            final boolean weAreInPublicAreas = detectWeAreInPublicAreas(prms.bioCode);
-            if (securityProvider != null) {
-                User user = loginProcessor.login(prms);
-                if (user.isAnonymous() && !weAreInPublicAreas) {
-                    debug("Anonymous not in public area for bioCode \"{}\"!", prms.bioCode);
-                    processBadLoginError(resp);
+                initSecurityHandler(req.getServletContext());
+                final SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
+                final boolean weAreInPublicAreas = detectWeAreInPublicAreas(qprms.bioCode);
+                if (securityProvider != null) {
+                    if (!Strings.isNullOrEmpty(qprms.login)) {
+                        User user = loginProcessor.login(qprms);
+                        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
+                        response.getWriter().append(responseBuilder.json());
+                    } else if (qprms.requestType != null && qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias())) {
+                            loginProcessor.logoff(qprms);
+                            BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
+                            response.getWriter().append(responseBuilder.json());
+                    } else {
+                        User user = loginProcessor.getUser(qprms);
+                        if (user.isAnonymous() && !weAreInPublicAreas) {
+                            debug("Anonymous not in public area for bioCode \"{}\"!", qprms.bioCode);
+                            throw new BioError.Login.BadLogin();
+                        } else {
+                            //HttpServletRequest wrappedRequest = processUser(user, req, resp);
+                            chn.doFilter(req, resp);
+                        }
+                    }
                 } else {
-                    HttpServletRequest wrappedRequest = processUser(user, req, resp);
-                    chn.doFilter(wrappedRequest, resp);
+                    throw new BioError("Security provider not defined!");
                 }
-            } else {
-                Exception e = new Exception("Security provider not defined!");
-                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
-                log_error("An error while checking User!", e);
-            }
 
-        } catch (Exception e) {
-            BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
-            log_error("Unexpected error while filtering (Level-1)!", e);
+            } catch (BioError.Login e) {
+                log_error("Authentication error (Level-0)!", e);
+                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
+            } catch (Exception e) {
+                BioError err = BioError.wrap(e);
+                log_error("Unexpected error while filtering (Level-1)!", err);
+                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(err), resp, bioDebug);
+            }
         }
     }
 
-    @Override
     public void destroy() {
         debug("Trying destroy");
     }

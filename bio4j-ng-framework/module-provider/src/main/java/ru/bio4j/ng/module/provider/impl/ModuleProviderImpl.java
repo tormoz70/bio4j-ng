@@ -6,11 +6,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.service.api.BioModule;
-import ru.bio4j.ng.service.api.BioSecurityModule;
+import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioModuleHelper;
-import ru.bio4j.ng.service.api.BioAppModule;
-import ru.bio4j.ng.service.api.ModuleProvider;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.util.HashMap;
@@ -47,6 +44,11 @@ public class ModuleProviderImpl extends BioServiceBase implements ModuleProvider
     @Override
     public BioSecurityModule getSecurityModule(String key) throws Exception {
         return getModule(key, BioSecurityModule.class);
+    }
+
+    @Override
+    public BioFCloudApiModule getFCloudApiModule(String key) throws Exception {
+        return getModule(key, BioFCloudApiModule.class);
     }
 
     @Validate

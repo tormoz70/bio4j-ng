@@ -11,10 +11,10 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.BioRoute;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +36,9 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private ModuleProvider moduleProvider;
     @Requires
     private SQLContextProvider sqlContextProvider;
+    @Requires
+    private FCloudProvider fcloudProvider;
+
 
     private BioAppModule getActualModule(final BioRequest request) throws Exception {
         String altModuleKey = Utl.extractModuleKey(request.getBioCode());
@@ -55,18 +58,30 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     }
 
     @Override
-    public BioRespBuilder.Builder processRequest(BioRoute route, final BioRequest request) throws Exception {
+    public void processRequest(BioRoute route, final BioRequest request, final HttpServletResponse response) throws Exception {
         final BioAppModule module = getActualModule(request);
         final SQLContext context = getActualContext(request, module);
         ProviderAn provider = providerMap.get(route);
         if(provider != null) {
             provider.init(module, context);
-            return provider.process(request);
+            provider.process(request, response);
         } else
             throw new IllegalArgumentException(String.format("Для запроса %s не определен обработчик!", route));
-        //final BioRespBuilder.Builder result = BioRespBuilder.dataBuilder().exception(new BioError.BadRequestType(request.getRequestType()));
-        //return result;
     }
+
+//    @Override
+//    public BioRespBuilder.Builder processRequest(BioRoute route, final BioRequest request) throws Exception {
+//        final BioAppModule module = getActualModule(request);
+//        final SQLContext context = getActualContext(request, module);
+//        ProviderAn provider = providerMap.get(route);
+//        if(provider != null) {
+//            provider.init(module, context);
+//            return provider.process(request, re);
+//        } else
+//            throw new IllegalArgumentException(String.format("Для запроса %s не определен обработчик!", route));
+//        //final BioRespBuilder.Builder result = BioRespBuilder.dataBuilder().exception(new BioError.BadRequestType(request.getRequestType()));
+//        //return result;
+//    }
 
     @Validate
     public void doStart() throws Exception {
@@ -74,10 +89,13 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         if(providerMap == null){
             providerMap = new HashMap<>();
             providerMap.put(BioRoute.CRUD_DATASET_GET, new ProviderGetDataset());
+            providerMap.put(BioRoute.CRUD_DATASET_EXP, new ProviderExpDataset());
             providerMap.put(BioRoute.CRUD_RECORD_GET, new ProviderGetRecord());
             providerMap.put(BioRoute.CRUD_DATASET_POST, new ProviderPostDataset());
             providerMap.put(BioRoute.CRUD_EXEC, new ProviderExec());
             providerMap.put(BioRoute.CRUD_JSON_GET, new ProviderGetJson());
+            providerMap.put(BioRoute.CRUD_FILE_GET, new ProviderGetFile());
+            providerMap.put(BioRoute.CRUD_FCLOUD, new ProviderFCloud(fcloudProvider));
         }
         this.ready = true;
         LOG.debug("Started");

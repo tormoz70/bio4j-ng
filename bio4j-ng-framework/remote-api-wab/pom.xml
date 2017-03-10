@@ -3,7 +3,7 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-rapi-wab</artifactId>
@@ -68,7 +68,7 @@
                         </manifestFile>
                         <!-- For some reason, adding Bundle-ClassPath in maven-bundle-plugin-->
                         <!--confuses that plugin and it generates wrong Import-Package, etc. So, we generate-->
-                        <!--it here.-->--&gt;
+                        <!--it here.-->
                         <manifestEntries>
                             <Bundle-ClassPath>WEB-INF/classes/</Bundle-ClassPath>
                         </manifestEntries>

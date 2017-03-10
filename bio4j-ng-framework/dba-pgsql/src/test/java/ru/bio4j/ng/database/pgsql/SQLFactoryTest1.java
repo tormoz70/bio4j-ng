@@ -55,7 +55,7 @@ public class SQLFactoryTest1 {
                 Assert.assertNotNull(conn);
                 return null;
             }
-        });
+        }, null);
 
     }
 

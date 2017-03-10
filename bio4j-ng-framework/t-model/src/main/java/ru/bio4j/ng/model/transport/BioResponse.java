@@ -53,17 +53,28 @@ public class BioResponse {
     /**
      * Сортировка, которая использовалясь при запросе к БД
      */
-    private Sort sort;
+    private List<Sort> sort;
+
+    /**
+     * Фильтрация, которая использовалясь при запросе к БД
+     */
+    private Expression filter;
+
+    /**
+     * Значение первичного ключа, которое использовалось для локации
+     */
+    private Object location;
+
+    /**
+     * Значение первичного ключа, которое использовалось для получения единичной записи
+     */
+    private Object id;
 
     /**
      * Ответы от дочерних post-запросов
      */
     private List<BioResponse> slaveResponses;
 
-    /**
-     * Фильтрация, которая использовалясь при запросе к БД
-     */
-    private Expression filter;
 
     public boolean isSuccess() {
         return success;
@@ -113,11 +124,11 @@ public class BioResponse {
         this.packet = packet;
     }
 
-    public Sort getSort() {
+    public List<Sort> getSort() {
         return sort;
     }
 
-    public void setSort(Sort sort) {
+    public void setSort(List<Sort> sort) {
         this.sort = sort;
     }
 
@@ -143,5 +154,21 @@ public class BioResponse {
 
     public void setSlaveResponses(List<BioResponse> slaveResponses) {
         this.slaveResponses = slaveResponses;
+    }
+
+    public Object getLocation() {
+        return location;
+    }
+
+    public void setLocation(Object location) {
+        this.location = location;
+    }
+
+    public Object getId() {
+        return id;
+    }
+
+    public void setId(Object id) {
+        this.id = id;
     }
 }

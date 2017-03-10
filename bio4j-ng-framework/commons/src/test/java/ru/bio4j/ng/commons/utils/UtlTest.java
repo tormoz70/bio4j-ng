@@ -6,10 +6,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.model.transport.Param;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.io.OutputStream;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -205,4 +208,77 @@ public class UtlTest {
         Assert.assertEquals(Utl.extractBioParentPath("qwe"), "/");
     }
 
+    @Test(enabled = true)
+    public void encode2xmlTest() throws Exception {
+        try(OutputStream s = new FileOutputStream("d:\\tmp\\test-encode2xml.xml")) {
+            XLRCfg testBox = new XLRCfg();
+            testBox.setBioCode("Test-Box");
+
+            XLRCfg.DataSource ds = new XLRCfg.DataSource();
+            XLRCfg.ColumnDefinition cd = new XLRCfg.ColumnDefinition();
+
+            cd.setFieldName("ID");
+            cd.setTitle("Идентификатор");
+            cd.setFormat("0");
+
+            ds.setRangeName("mRng");
+            ds.getColumnDefinitions().add(cd);
+            ds.setSql("select * from dual");
+
+            testBox.setTitle("Экспорт ИО");
+            testBox.getDss().add(ds);
+
+            Utl.encode2xml(testBox, s);
+        }
+    }
+
+    @Test
+    public void getPath() {
+        for (int i = 0; i < 1000; i++) {
+            UUID uuid = UUID.randomUUID();
+            String hex = uuid.toString().replace("-", "").toLowerCase();
+            Assert.assertTrue(hex.length() == 32 /* UUID is 128 bit (32 hex byte)! */, "Bad UUID format");
+            System.out.println(hex.substring(0, 4) + "/" + hex.substring(4, 8) + "/" + hex.substring(8, 12));
+        }
+        // normal UUID looks like 'd3761577-a7f1-41ae-b2a3-adbb1ae987a4' in any letters case
+        // therefore we need to remove '-' and convert to lowercase
+
+    }
+
+    @Test
+    public void storeStringTest() throws IOException {
+        Utl.storeString("Тест", "d:\\storeStringTest.txt");
+        Assert.assertTrue(true);
+    }
+
+    @Test
+    public void openFileTest() throws IOException {
+        Utl.storeString("Тест", "d:\\storeStringTest.txt");
+        InputStream ins = Utl.openFile("d:\\storeStringTest.txt");
+        String rslt = Utl.readStream(ins);
+        Assert.assertTrue("Тест".equals(rslt.trim()));
+    }
+
+    @Test
+    public void beanToParamsTest() throws Exception {
+        TObject o = new TObject(){{
+            tobject_id = null;
+            factory_org_id = 123L;
+            tobjtype_id = 345L;
+            autor_person_uid = "qwe";
+            filesuid = "asd";
+            aname = "dfg";
+            adesc = null;
+            prodplace = "fgh";
+
+        }};
+        List<Param> p = Utl.beanToParams(o);
+        Assert.assertTrue(true);
+    }
+
+    @Test
+    public void BooleanTest() throws Exception {
+        Boolean b = null;
+        Assert.assertTrue(b == null);
+    }
 }

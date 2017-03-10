@@ -48,7 +48,7 @@ public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursor.
         sql = sql.replace(WHERE_CLAUSE, whereclause);
         sqlDef.setPreparedSql(sql);
         List<Param> prms = new ArrayList<>();
-        prms.add(Param.builder().name(PKVAL).type(pkCol.getType()).build());
+        prms.add(Param.builder().name(PKVAL).type(pkCol.getMetaType()).build());
         sqlDef.setParams(prms);
         return sqlDef;
     }

@@ -38,16 +38,16 @@ public class PgSQLUtils implements RDBMSUtils {
      * @return
      */
     private PgSQLUtils.PackageName parsStoredProcName(String storedProcName) {
-        String pkgName = null;
-        String methodName = null;
-        String[] storedProcNameParts = Strings.split(storedProcName, ".");
-        if(storedProcNameParts.length == 1)
-            methodName = storedProcNameParts[0];
-        if(storedProcNameParts.length == 2) {
-            pkgName    = storedProcNameParts[0];
-            methodName = storedProcNameParts[1];
-        }
-        PackageName pkg = new PgSQLUtils.PackageName(pkgName, methodName);
+        //String pkgName = null;
+        //String methodName = null;
+        //String[] storedProcNameParts = Strings.split(storedProcName, ".");
+        //if(storedProcNameParts.length == 1)
+        //    methodName = storedProcNameParts[0];
+        //if(storedProcNameParts.length == 2) {
+        //    pkgName    = storedProcNameParts[0];
+        //    methodName = storedProcNameParts[1];
+        //}
+        PackageName pkg = new PgSQLUtils.PackageName(null, storedProcName);
     	return pkg;
     }
 

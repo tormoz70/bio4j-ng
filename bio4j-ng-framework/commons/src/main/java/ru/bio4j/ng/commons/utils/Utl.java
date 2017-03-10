@@ -2,21 +2,29 @@ package ru.bio4j.ng.commons.utils;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +42,7 @@ public class Utl {
      */
     public static String fileName(String filePath) {
         if(isNullOrEmpty(filePath)){
-            int p = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+            int p = filePath.lastIndexOf(File.separator);
             if (p >= 0)
                 return filePath.substring(p+1);
             return filePath;
@@ -51,7 +59,7 @@ public class Utl {
         String extension = "";
 
         int i = fileName.lastIndexOf('.');
-        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+        int p = fileName.lastIndexOf(File.separator);
 
         if (i > p) {
             extension = fileName.substring(i+1);
@@ -167,7 +175,7 @@ public class Utl {
 		for (Annotation annotation : clazz.getDeclaredAnnotations()) {
 			Class<?> atype = annotation.annotationType();
 		    if(typesIsAssignable(atype, annotationType))
-		    	return (T)annotation; 
+		    	return (T)annotation;
 		}
 		return null;
 	}
@@ -189,7 +197,7 @@ public class Utl {
 	public static String pkg2path(String packageName) {
 		return (isNullOrEmpty(packageName) ? null : "/"+packageName.replace('.', '/')+"/");
 	}
-	
+
 	/**
 	 * @param path
 	 * @return
@@ -203,7 +211,7 @@ public class Utl {
 			result = result.substring(0, result.length()-1);
 		return result;
 	}
-	
+
 	/**
 	 * @param path
 	 * @return
@@ -383,7 +391,7 @@ public class Utl {
             pathSeparator =  File.separatorChar;
         rslt = rslt.replace('\\', pathSeparator);
         rslt = rslt.replace('/', pathSeparator);
-        rslt = (rslt.charAt(rslt.length()-1) == pathSeparator) ? rslt : rslt + pathSeparator;
+        rslt = rslt.endsWith(""+pathSeparator) ? rslt : rslt + pathSeparator;
         return rslt;
     }
     public static String normalizePath(String path) {
@@ -421,9 +429,13 @@ public class Utl {
     public static <T> T getService(ServletContext servletContext, Class<T> serviceInterface) {
         BundleContext bundleContext = (BundleContext) servletContext.getAttribute("osgi-bundlecontext");
         if (bundleContext == null)
-            throw new IllegalStateException("osgi-bundlecontext not registered");
+            throw new IllegalStateException("osgi-bundlecontext not registered!");
 
-        return (T)bundleContext.getService(bundleContext.getServiceReference(serviceInterface));
+        ServiceReference<T> serviceReference = bundleContext.getServiceReference(serviceInterface);
+        if(serviceReference != null)
+            return (T)bundleContext.getService(serviceReference);
+        else
+            throw new IllegalStateException(String.format("Service %s not registered!", serviceInterface.getName()));
     }
 
     public static String extractModuleKey(String bioCode) {
@@ -488,6 +500,92 @@ public class Utl {
             count++;
         }
         return (count == 1 && conf.get(componentKey) != null);
+    }
+
+    public static void encode2xml(Object object, OutputStream stream) throws Exception {
+        JAXBContext context = JAXBContext.newInstance(object.getClass());
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(object, stream);
+    }
+
+    public static String md5(String fileName) throws IOException {
+        String md5 = null;
+        try (FileInputStream fis = new FileInputStream(new File(fileName))) {
+            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+        }
+        return md5;
+    }
+
+    public static Path storeInputStream(InputStream inputStream, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
+        try(OutputStream out = new FileOutputStream(new File(path.toString()))) {
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+            while ((read = inputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        }
+        return path;
+    }
+
+    public static String storeInputStream(InputStream inputStream, String path) throws IOException {
+        return storeInputStream(inputStream, Paths.get(path)).toString();
+    }
+
+    public static void storeString(String text, String path, String encoding) throws IOException {
+        try (PrintStream out = new PrintStream(new FileOutputStream(path), true, encoding)) {
+            out.print(text);
+        }
+    }
+    public static void storeString(String text, String path) throws IOException {
+        storeString(text, path, "utf-8");
+    }
+
+    public static InputStream openFile(String filePath) throws IOException {
+        File file = new File(filePath);
+        if(file.exists()){
+            InputStream inputStream = new FileInputStream(file);
+            return inputStream;
+        }
+        return null;
+    }
+
+    public static String generateUUID(){
+        UUID uuid = UUID.randomUUID();
+        String hex = uuid.toString().replace("-", "").toLowerCase();
+        return hex;
+    }
+
+    public static List<Param> beanToParams(Object bean) throws Exception {
+        List<Param> result = new ArrayList<>();
+        if(bean == null)
+            return result;
+        Class<?> srcType = bean.getClass();
+        for(java.lang.reflect.Field fld : getAllObjectFields(srcType)) {
+            String paramName = fld.getName();
+            if(!paramName.toLowerCase().startsWith("p_"))
+                paramName = "p_" + paramName.toLowerCase();
+            fld.setAccessible(true);
+            Object valObj = fld.get(bean);
+            Param.Direction direction = Param.Direction.IN;
+            Prop prp = fld.getAnnotation(Prop.class);
+            MetaType metaType = MetaTypeConverter.read(fld.getType());
+            if(prp != null) {
+                if(!Strings.isNullOrEmpty(prp.name()))
+                    paramName = prp.name().toLowerCase();
+                if(prp.metaType() != MetaType.UNDEFINED)
+                    metaType = prp.metaType();
+                direction = prp.direction();
+            }
+            result.add(Param.builder()
+                    .name(paramName)
+                    .type(metaType)
+                    .direction(direction)
+                    .value(valObj)
+                    .build());
+        }
+        return result;
     }
 
 }

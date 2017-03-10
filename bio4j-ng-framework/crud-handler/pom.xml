@@ -4,7 +4,7 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>bio4j-ng-crudhandler</artifactId>
@@ -32,6 +32,16 @@
             <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.jetty.toolchain</groupId>
+            <artifactId>jetty-osgi-servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>

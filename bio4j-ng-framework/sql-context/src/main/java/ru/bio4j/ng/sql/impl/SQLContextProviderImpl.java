@@ -17,13 +17,6 @@ import ru.bio4j.ng.service.types.BioServiceBase;
 public class SQLContextProviderImpl extends BioServiceBase implements SQLContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(SQLContextProviderImpl.class);
 
-//    private SQLContext globalSQLContext;
-//
-//    @Override
-//    public SQLContext globalContext() throws Exception {
-//        return globalSQLContext;
-//    }
-
     @Override
     public SQLContext selectContext(BioAppModule module) throws Exception {
         LOG.debug("About selecting sqlContext...");

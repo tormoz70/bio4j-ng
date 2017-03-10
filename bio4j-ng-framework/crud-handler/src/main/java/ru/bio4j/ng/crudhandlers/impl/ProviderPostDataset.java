@@ -9,6 +9,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Created by ayrat on 07.03.2016.
  */
-public class ProviderPostDataset extends ProviderAn {
+public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
     private static final String STD_PARAM_PREFIX = "p_";
 
@@ -113,21 +114,23 @@ public class ProviderPostDataset extends ProviderAn {
         data.setRows(request.getModified());
 
         result.packet(data);
+        result.bioParams(request.getBioParams());
         return result.exception(null);
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    @Override
+    public void process(final BioRequestJStorePost request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process postDataSet for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
-            BioRespBuilder.DataBuilder response = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
+            BioRespBuilder.DataBuilder responseBuilder = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
                 @Override
                 public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj) throws Exception {
-                    tryPrepareSessionContext(usr.getUid(), conn);
-                    return processRequestPost((BioRequestJStorePost)request, context, conn, null, null, null);
+                    tryPrepareSessionContext(usr.getInnerUid(), conn);
+                    return processRequestPost(request, context, conn, null, null, null);
                 }
-            }, null);
-            return response;
+            }, null, request.getUser());
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed postDataSet for \"{}\" - returning response...", request);
         }

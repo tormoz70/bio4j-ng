@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.model.transport.*;
+import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
@@ -10,13 +11,16 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 public enum BioRoute {
     UNKNOWN("unknown", null, null),
     PING("ping", BioRequestPing.class, BioRequestFactory.Ping.class),
+    LOGIN("login", BioRequestLogin.class, BioRequestFactory.Login.class),
     LOGOUT("logout", BioRequestLogout.class, BioRequestFactory.Logout.class),
     CRUD_JSON_GET("crud.json.get", BioRequestGetJson.class, BioRequestFactory.GetJson.class),
+    CRUD_FILE_GET("crud.file.get", BioRequestGetFile.class, BioRequestFactory.GetFile.class),
     CRUD_DATASET_GET("crud.ds.get", BioRequestJStoreGetDataSet.class, BioRequestFactory.GetDataSet.class),
+    CRUD_DATASET_EXP("crud.ds.exp", BioRequestJStoreExpDataSet.class, BioRequestFactory.ExpDataSet.class),
     CRUD_RECORD_GET("crud.rec.get", BioRequestJStoreGetRecord.class, BioRequestFactory.GetRecord.class),
     CRUD_DATASET_POST("crud.ds.post", BioRequestJStorePost.class, BioRequestFactory.DataSetPost.class),
     CRUD_EXEC("crud.exec", BioRequestStoredProg.class, BioRequestFactory.StoredProg.class),
-    CRUD_FORM_UPLOAD("crud.form.upload", BioRequestJStorePost.class, BioRequestFactory.FormUpload.class);
+    CRUD_FCLOUD("crud.fcloud", BioRequestFCloud.class, BioRequestFactory.FCloud.class);
 
     private String alias;
     private Class<? extends BioRequest> clazz;

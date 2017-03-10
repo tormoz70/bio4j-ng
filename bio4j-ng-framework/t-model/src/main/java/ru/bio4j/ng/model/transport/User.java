@@ -1,10 +1,13 @@
 package ru.bio4j.ng.model.transport;
 
+import flexjson.JSON;
+
 public class User {
 
-    public static final String BIO_ANONYMOUS_USER_LOGIN = "$bio-anonymous$";
+    //public static final String BIO_ANONYMOUS_STOKEN = "$bio-anonymous$";
 
-    private String uid;
+    private String innerUid;
+    private String stoken;
     private String login;
     private String fio;
     private String email;
@@ -18,8 +21,10 @@ public class User {
 
     private String remoteIP;
 
-    public String getUid() {
-        return uid;
+    private Boolean anonymous;
+
+    public String getStoken() {
+        return stoken;
     }
 
     public String getLogin() {
@@ -38,8 +43,8 @@ public class User {
         return grants;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setStoken(String stoken) {
+        this.stoken = stoken;
     }
 
     public void setLogin(String login) {
@@ -59,7 +64,7 @@ public class User {
     }
 
     public Boolean isAnonymous() {
-        return BIO_ANONYMOUS_USER_LOGIN.equals(login);
+        return (this.anonymous != null) ? this.anonymous : false;
     }
 
     public String getEmail() {
@@ -108,5 +113,18 @@ public class User {
 
     public void setRemoteIP(String remoteIP) {
         this.remoteIP = remoteIP;
+    }
+
+    @JSON(include = false)
+    public String getInnerUid() {
+        return innerUid;
+    }
+
+    public void setInnerUid(String innerUid) {
+        this.innerUid = innerUid;
+    }
+
+    public void setAnonymous(Boolean anonymous) {
+        this.anonymous = anonymous;
     }
 }

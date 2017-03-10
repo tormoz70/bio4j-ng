@@ -8,6 +8,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
+import java.io.InputStream;
 import java.util.List;
 
 public class BioRespBuilder {
@@ -51,7 +52,7 @@ public class BioRespBuilder {
         public BioResponse build() {
             BioResponse response = new BioResponse();
             response.setSuccess(success);
-            if(!user.isAnonymous())
+            if(user != null && !user.isAnonymous())
                 response.setUser(user);
             response.setException(this.exception);
             return response;
@@ -91,8 +92,10 @@ public class BioRespBuilder {
         private List<Param> bioParams;
         private RmtStatePack rmtStatePack;
         private StoreData packet;
-        private Sort sort;
+        private List<Sort> sort;
         private Expression filter;
+        private Object location;
+        private Object id;
         private List<BioResponse> slaveResponses;
 
 
@@ -116,12 +119,21 @@ public class BioRespBuilder {
             return this;
         }
 
-        public DataBuilder sort(Sort value) {
+        public DataBuilder sort(List<Sort> value) {
             sort = value;
             return this;
         }
         public DataBuilder filter(Expression value) {
             filter = value;
+            return this;
+        }
+
+        public DataBuilder location(Object value){
+            location = value;
+            return this;
+        }
+        public DataBuilder id(Object value){
+            id = value;
             return this;
         }
 
@@ -140,32 +152,10 @@ public class BioRespBuilder {
             response.setPacket(packet);
             response.setSort(sort);
             response.setFilter(filter);
+            response.setLocation(location);
+            response.setId(id);
             response.setSlaveResponses(slaveResponses);
             return response;
-        }
-
-        public String getBioCode() {
-            return bioCode;
-        }
-
-        public List<Param> getBioParams() {
-            return bioParams;
-        }
-
-        public RmtStatePack getRmtStatePack() {
-            return rmtStatePack;
-        }
-
-        public StoreData getPacket() {
-            return packet;
-        }
-
-        public Sort getSort() {
-            return sort;
-        }
-
-        public Expression getFilter() {
-            return filter;
         }
 
     }

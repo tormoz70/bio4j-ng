@@ -4,7 +4,7 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
 		<artifactId>bio4j-ng-framework</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
     <artifactId>bio4j-ng-tmodel</artifactId>
     <packaging>bundle</packaging>
@@ -18,13 +18,18 @@
         </plugins>
     </build>
 
-    <!--<dependencies>-->
-        <!--<dependency>-->
-            <!--<groupId>${project.groupId}</groupId>-->
-            <!--<artifactId>flexjson</artifactId>-->
-            <!--<version>${project.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-    <!--</dependencies>-->
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.jetty.toolchain</groupId>
+            <artifactId>jetty-osgi-servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>flexjson</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>

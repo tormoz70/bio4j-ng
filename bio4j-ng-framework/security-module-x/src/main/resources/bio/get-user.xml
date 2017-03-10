@@ -5,21 +5,22 @@
         multiselection="false">
 	<SQL action="select">
 		<text><![CDATA[
-                select
-                    usr_uid, usr_login, usr_fio,
-                    email_addr, usr_phone,
-                    org_uid, org_name, org_desc,
-                    usr_roles, usr_grants
-                from statm_api.usr_user_get(:p_login)
-        ]]></text>
+select
+    usr_uid, usr_uid as security_token, usr_login,
+    usr_fio, email_addr, usr_phone,
+    org_id, org_name, org_desc,
+    usr_roles, usr_grants
+from EFOND2_API.get_usr(:p_security_token)
+		]]></text>
 	</SQL>
  	<fields>
         <field name="usr_uid" type="string" pk="true"/>
+        <field name="security_token" type="string"/>
         <field name="usr_login" type="string"/>
         <field name="usr_fio" type="string"/>
         <field name="email_addr" type="string"/>
         <field name="usr_phone" type="string"/>
-        <field name="org_uid" type="string"/>
+        <field name="org_id" type="string"/>
         <field name="org_name" type="string"/>
         <field name="org_desc" type="string"/>
         <field name="usr_roles" type="string"/>

@@ -9,18 +9,19 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
 
-public class ProviderGetJson extends ProviderAn {
+public class ProviderGetJson extends ProviderAn<BioRequestGetJson> {
 
     private static BioRespBuilder.JsonBuilder processCursorAsJsonProvider(final BioRequestGetJson request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as JsonProvider!!!", cursor.getBioCode());
         BioRespBuilder.JsonBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.JsonBuilder>() {
             @Override
             public BioRespBuilder.JsonBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                tryPrepareSessionContext(request.getUser().getUid(), conn);
+                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
                 final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder();
 
                 try(SQLCursor c = context.createCursor()
@@ -33,17 +34,18 @@ public class ProviderGetJson extends ProviderAn {
                 }
                 return result.exception(null);
             }
-        }, cursor);
+        }, cursor, request.getUser());
         return response;
 
     }
 
-    public BioRespBuilder.Builder process(final BioRequest request) throws Exception {
+    @Override
+    public void process(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
             BioCursor cursor = module.getCursor(request);
-//            cursor.getSelectSqlDef().setParams(request.getBioParams());
-            return processCursorAsJsonProvider((BioRequestGetJson) request, context, cursor, LOG);
+            BioRespBuilder.JsonBuilder responseBuilder = processCursorAsJsonProvider(request, context, cursor, LOG);
+            response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());
         }

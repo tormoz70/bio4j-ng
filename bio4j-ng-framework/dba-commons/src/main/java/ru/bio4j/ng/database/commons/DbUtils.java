@@ -1,11 +1,16 @@
 package ru.bio4j.ng.database.commons;
 
+import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.DelegateAction;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -72,7 +77,7 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
+    public static List<Param> processExec(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final BioCursor.SQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
@@ -84,11 +89,11 @@ public class DbUtils {
                 cmd.execSQL();
                 return cmd.getParams();
             }
-        });
+        }, user);
         return r;
     }
 
-    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction<SQLReader, Integer> delegateAction) throws Exception {
+    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction<SQLReader, Integer> delegateAction, final User user) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
@@ -101,10 +106,10 @@ public class DbUtils {
                 }
                 return 0;
             }
-        });
+        }, user);
     }
 
-    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
+    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
@@ -117,8 +122,48 @@ public class DbUtils {
                 }
                 return null;
             }
-        });
+        }, user);
         return r;
+    }
+
+    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+        if(reader == null)
+            throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
+        if(clazz == null)
+            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+        T result = (T)clazz.newInstance();
+        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
+            String fldName = fld.getName();
+            Prop p = Utl.findAnnotation(Prop.class, fld);
+            if(p != null)
+                fldName = p.name();
+            Object valObj = null;
+            DBField f = reader.getField(fldName);
+            if (f != null)
+                valObj = reader.getValue(f.getId());
+
+            if(valObj != null){
+                try {
+                    Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
+                    fld.setAccessible(true);
+                    fld.set(result, val);
+                } catch (Exception e) {
+                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+                }
+            }
+        }
+        return result;
+    }
+
+    public static List<Param> decodeParams(Object params) throws Exception {
+        List<Param> rslt = null;
+        if(params != null){
+            if(params instanceof List)
+                rslt = (List<Param>)params;
+            else
+                rslt = Utl.beanToParams(params);
+        }
+        return rslt;
     }
 
 }

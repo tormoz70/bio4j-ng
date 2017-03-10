@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport.jstore;
 
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.BioRequestRunLongOp;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 
 /**
@@ -8,7 +9,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.Expression;
  * запуская на выполнение хранимую процедуру execBioCode.
  * При этом все колонки курсора передаются как параметры в хранимую процедуру execBioCode.
  */
-public class BioRequestJSFetch extends BioRequest {
+public class BioRequestJSFetch extends BioRequestRunLongOp {
 
     /**
      * Накладывается как дополнительный фильтр на курсор

@@ -230,4 +230,30 @@ public class ConverterTest {
         Byte[] dir = Converter.toType(instr, Byte[].class);
         Assert.assertEquals(dir[0], instr[0]);
     }
+
+    @Test
+    public void ConvertNumber2Boolean() {
+        try {
+            //BigDecimal ddd = new BigDecimal(new Long(0).toString());
+            Boolean actual = Converter.toType(0, Boolean.class);
+            Boolean expected = false;
+            Assert.assertEquals(actual, expected);
+
+            actual = Converter.toType(1, Boolean.class);
+            expected = true;
+            Assert.assertEquals(actual, expected);
+
+            actual = Converter.toType(5L, Boolean.class);
+            expected = true;
+            Assert.assertEquals(actual, expected);
+
+            actual = Converter.toType(-5D, Boolean.class);
+            expected = false;
+            Assert.assertEquals(actual, expected);
+
+        } catch (ConvertValueException ex) {
+            Assert.fail(ex.getMessage());
+        }
+    }
+
 }

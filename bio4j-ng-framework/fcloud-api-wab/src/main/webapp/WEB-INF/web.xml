@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+    <display-name>Archetype Created Web Application</display-name>
+
+    <!--Servlets-->
+    <servlet>
+        <servlet-name>rapi</servlet-name>
+        <servlet-class>ru.bio4j.ng.fcloud.api.ServletApi</servlet-class>
+        <init-param>
+            <param-name>bioDebug</param-name>
+            <param-value>${bioDebug}</param-value>
+        </init-param>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>
+            <max-request-size>20971520</max-request-size>
+            <file-size-threshold>5242880</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet>
+        <servlet-name>test</servlet-name>
+        <servlet-class>ru.bio4j.ng.fcloud.api.ServletTest</servlet-class>
+    </servlet>
+
+    <!--Filters-->
+    <filter>
+        <filter-name>cross-origin</filter-name>
+        <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>proxy</filter-name>
+        <filter-class>ru.bio4j.ng.fcloud.api.ProxyFilter</filter-class>
+    </filter>
+
+    <!--Mapping-->
+    <servlet-mapping>
+        <servlet-name>rapi</servlet-name>
+        <url-pattern>/rapi</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>test</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
+    <filter-mapping>
+        <filter-name>cross-origin</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>proxy</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+</web-app>

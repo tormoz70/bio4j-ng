@@ -26,12 +26,13 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     }
 
 	@Override
-	public SQLStoredProc init(Connection conn, String storedProcName, List<Param> params, int timeout) throws SQLException {
+	public SQLStoredProc init(Connection conn, String storedProcName, Object params, int timeout) throws Exception {
         this.storedProcName = storedProcName;
-		return super.init(conn, params, timeout);
+        List<Param> prms = DbUtils.decodeParams(params);
+        return super.init(conn, prms, timeout);
 	}
     @Override
-    public SQLStoredProc init(Connection conn, String storedProcName, List<Param> params) throws SQLException {
+    public SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception {
         return this.init(conn, storedProcName, params, 60);
     }
 
@@ -49,8 +50,9 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 	
     @Override
-	public void execSQL(List<Param> params) throws Exception {
-        this.processStatement(params, new DelegateSQLAction() {
+	public void execSQL(Object params) throws Exception {
+        List<Param> prms = DbUtils.decodeParams(params);
+        this.processStatement(prms, new DelegateSQLAction() {
             @Override
             public void execute() throws SQLException {
                 final DbStoredProc self = DbStoredProc.this;

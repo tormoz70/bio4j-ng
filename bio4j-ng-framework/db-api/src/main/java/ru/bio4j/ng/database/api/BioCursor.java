@@ -14,7 +14,7 @@ import java.util.*;
 public class BioCursor {
 
     public static enum Type {
-        SELECT, UPDATE, DELETE, EXECUTE
+        SELECT, UPDATE, DELETE, EXECUTE, AFTERSELECT
     }
     public static enum WrapMode {
         NONE((byte)0), FILTER((byte)1), SORT((byte)2), PAGING((byte)4), ALL((byte)7);
@@ -87,6 +87,10 @@ public class BioCursor {
     }
 
     public static class SelectSQLDef extends SQLDef {
+
+        public static final String PAGING_PARAM_OFFSET = "paging$offset";
+        public static final String PAGING_PARAM_LAST = "paging$last";
+
         private byte wrapMode = WrapMode.ALL.code();
         private String totalsSql;
         private String locateSql;
@@ -120,11 +124,18 @@ public class BioCursor {
 
         public int getOffset() { return offset; }
 
-        public void setOffset(int offset) { this.offset = offset; }
+        public void setOffset(Integer offset) {
+            this.offset = offset == null ? 0 : offset;
+            this.setParamValue(PAGING_PARAM_OFFSET, this.offset);
+            this.setParamValue(PAGING_PARAM_LAST, this.offset + this.pageSize);
+        }
 
         public int getPageSize() { return pageSize; }
 
-        public void setPageSize(int pageSize) { this.pageSize = pageSize; }
+        public void setPageSize(Integer pageSize) {
+            this.pageSize = pageSize == null || pageSize.intValue() == 0 ? 30 : pageSize;
+            this.setParamValue(PAGING_PARAM_LAST, this.offset + this.pageSize);
+        }
 
         public boolean isReadonly() { return readonly; }
 
@@ -229,6 +240,10 @@ public class BioCursor {
 
     public SelectSQLDef getSelectSqlDef() {
         return (SelectSQLDef)sqlDefs.get(Type.SELECT);
+    }
+
+    public SQLDef getAfterselectSqlDef() {
+        return sqlDefs.get(Type.AFTERSELECT);
     }
 
     public Collection<SQLDef> sqlDefs(){
