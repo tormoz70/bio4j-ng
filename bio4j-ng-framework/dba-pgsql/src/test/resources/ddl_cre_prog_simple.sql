@@ -1,5 +1,5 @@
-create or replace function test_stored_prop(p_param1 in varchar, p_param2 out integer)
-returns integer as
+create or replace function test_stored_prop(p_param1 in text, p_param2 out numeric)
+returns numeric as
 $BODY$
 begin
   insert into test_tbl values('test', 1);

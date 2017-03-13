@@ -16,6 +16,7 @@ import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import java.sql.Types;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -240,17 +241,57 @@ public class SQLFactoryTest {
                     LOG.debug("conn: " + conn);
 
                     SQLStoredProc cmd = context.createStoredProc();
+                    List<Param> prms;
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add(Param.builder().name("p_param1").type(MetaType.INTEGER).value(null).build())
                                 .add("p_param2", "QWE")
-                                .add(Param.builder().name("p_param3").type(MetaType.BOOLEAN).value(true).build())
-                                .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value("").build());
-                        cmd.init(conn, "test_stored_inout", paramus.get());
+                                .add(Param.builder().name("p_param3").type(MetaType.INTEGER).value(1).build())
+                                .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value(0).build());
+                        prms = paramus.get();
                     }
+                    cmd.init(conn, "test_stored_inout", prms);
                     cmd.execSQL();
-                    try(Paramus paramus = Paramus.set(cmd.getParams())) {
-                        leng = Utl.nvl(paramus.getParamValue("p_param1", Integer.class), 0);
-                    }
+                    leng = cmd.getParamValue("p_param1", Integer.class, null);
+                    conn.rollback();
+                    return leng;
+                }
+            }, null);
+            LOG.debug("leng: " + leng);
+            Assert.assertEquals(leng, 3);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    private static class TestParamObj {
+        public Long param1;
+        public String param2;
+        public Integer param3;
+        public Double param4;
+    }
+
+    @Test(enabled = true)
+    public void testSQLCommandExecINOUTSQL1() throws Exception {
+        try {
+            long leng = context.execBatch(new SQLActionScalar<Long>() {
+                @Override
+                public Long exec(SQLContext context, Connection conn) throws Exception {
+                    long leng = 0;
+                    LOG.debug("conn: " + conn);
+
+                    SQLStoredProc cmd = context.createStoredProc();
+
+                    TestParamObj prms = new TestParamObj() {{
+                        param1 = null;
+                        param2 = "QWE";
+                        param3 = 1;
+                        param4 = null;
+                    }};
+
+                    cmd.init(conn, "test_stored_inout", prms);
+                    cmd.execSQL();
+                    leng = cmd.getParamValue("p_param1", Long.class, null);
                     conn.rollback();
                     return leng;
                 }

@@ -13,7 +13,7 @@ public class PgSQLTypeConverterImpl extends SqlTypeConverterImpl {
                 (type == Character.class)) {
             return (stringSize <= (isCallableStatment ? 32000 : 4000)) ? java.sql.Types.VARCHAR : java.sql.Types.CLOB;
         } else if (ru.bio4j.ng.commons.converter.Types.typeIsInteger(type)) {
-            return java.sql.Types.INTEGER;
+            return java.sql.Types.NUMERIC;
         } else if (ru.bio4j.ng.commons.converter.Types.typeIsReal(type)) {
             return java.sql.Types.NUMERIC;
         } else if ((type == boolean.class) || (type == Boolean.class)) {

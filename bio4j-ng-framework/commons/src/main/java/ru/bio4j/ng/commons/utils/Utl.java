@@ -564,11 +564,12 @@ public class Utl {
         Class<?> srcType = bean.getClass();
         for(java.lang.reflect.Field fld : getAllObjectFields(srcType)) {
             String paramName = fld.getName();
+            if(paramName.equals("this$1")) continue;
             if(!paramName.toLowerCase().startsWith("p_"))
                 paramName = "p_" + paramName.toLowerCase();
             fld.setAccessible(true);
             Object valObj = fld.get(bean);
-            Param.Direction direction = Param.Direction.IN;
+            Param.Direction direction = Param.Direction.UNDEFINED;
             Prop prp = fld.getAnnotation(Prop.class);
             MetaType metaType = MetaTypeConverter.read(fld.getType());
             if(prp != null) {
