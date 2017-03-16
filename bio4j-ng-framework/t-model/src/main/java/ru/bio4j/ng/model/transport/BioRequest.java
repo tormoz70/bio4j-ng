@@ -2,6 +2,9 @@ package ru.bio4j.ng.model.transport;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -24,9 +27,8 @@ public class BioRequest {
      */
     private String requestType;
 
-    /** UID пользователя
-     * Это может быть либо реальный UID пользователя,
-     * либо логин в формате <имя>/<пароль>
+    /**
+     * Объект пользователя присваивается на входе, после удачной аутентификации
      */
     private User user;
 
@@ -46,7 +48,8 @@ public class BioRequest {
     /**
      * параметры информационного объекта
      */
-    private List<Param> bioParams;
+    private Object bioParams;
+    private List<Param> _bioParams;
 
     public String getLogin() {
         return login;
@@ -65,7 +68,23 @@ public class BioRequest {
     }
 
     public List<Param> getBioParams() {
-        return bioParams;
+        if(_bioParams == null) {
+            if(bioParams instanceof ArrayList && ((ArrayList)bioParams).size() > 0) {
+                Object item = ((ArrayList)bioParams).get(0);
+                if (item instanceof Param)
+                    _bioParams = (List<Param>) bioParams;
+                else {
+                    _bioParams = new ArrayList<>();
+                    HashMap<String, Object> prms = (HashMap)item;
+                    for(String paramName : prms.keySet()) {
+                        Object val = prms.get(paramName);
+                        _bioParams.add(Param.builder().name(paramName).value(val).build());
+                    }
+                }
+            } else
+                _bioParams = new ArrayList<>();
+        }
+        return _bioParams;
     }
 
     public void setBioParams(List<Param> bioParams) {
