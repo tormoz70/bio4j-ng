@@ -73,7 +73,7 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
         }
     }
 
-    protected static void applyBioParams(final List<Param> bioParams, Collection<BioCursor.SQLDef> sqlDefs) {
+    protected static void applyBioParams(final List<Param> bioParams, Collection<BioCursor.SQLDef> sqlDefs) throws Exception {
         for(BioCursor.SQLDef sqlDef : sqlDefs) {
             if(sqlDef != null)
                 sqlDef.setParams(bioParams);

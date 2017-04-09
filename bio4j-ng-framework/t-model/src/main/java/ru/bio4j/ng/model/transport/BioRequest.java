@@ -89,6 +89,20 @@ public class BioRequest {
 
     public void setBioParams(List<Param> bioParams) {
         this.bioParams = bioParams;
+        if(bioParams instanceof ArrayList && ((ArrayList)bioParams).size() > 0) {
+            Object item = ((ArrayList)bioParams).get(0);
+            if (item instanceof Param)
+                _bioParams = (List<Param>) bioParams;
+            else {
+                _bioParams = new ArrayList<>();
+                HashMap<String, Object> prms = (HashMap)item;
+                for(String paramName : prms.keySet()) {
+                    Object val = prms.get(paramName);
+                    _bioParams.add(Param.builder().name(paramName).value(val).build());
+                }
+            }
+        } else
+            _bioParams = new ArrayList<>();
     }
 
     public User getUser() {

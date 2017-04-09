@@ -1,14 +1,19 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
+import javax.management.Query;
 import java.util.*;
 
 public class BioCursor {
@@ -62,9 +67,29 @@ public class BioCursor {
             return setParamValue(name, value, true);
         }
 
-        public SQLDef setParams(List<Param> params) {
-            try(Paramus p = Paramus.set(this.params)) {
-                p.apply(params);
+        public SQLDef setParams(List<Param> params) throws Exception {
+            try(Paramus paramus = Paramus.set(this.params)) {
+               for (Param pa : params) {
+                   Param existsParam = paramus.getParam(pa.getName());
+                   Object val = pa.getValue();
+                   if(existsParam != null) {
+                       if(existsParam.getType() == MetaType.UNDEFINED) {
+                           MetaType inType = pa.getType();
+                           if(inType == MetaType.UNDEFINED && val != null)
+                               inType = MetaTypeConverter.read(val.getClass());
+                           existsParam.setType(inType);
+                       }
+                       if(existsParam.getDirection() == Param.Direction.UNDEFINED)
+                           existsParam.setDirection(pa.getDirection());
+
+                       if(existsParam.getType() != MetaType.UNDEFINED){
+                           Class<?> toType = MetaTypeConverter.write(existsParam.getType());
+                           val = Converter.toType(val, toType);
+                       }
+                       existsParam.setValue(val);
+                   } else
+                       paramus.add((Param) Utl.cloneBean(pa));
+                }
             }
             return this;
         }
