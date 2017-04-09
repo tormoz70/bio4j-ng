@@ -12,7 +12,6 @@ import java.sql.SQLException;
 public class OraContext extends DbContextAbstract {
     private static final Logger LOG = LoggerFactory.getLogger(OraContext.class);
 
-
     public OraContext(final DataSource cpool, final SQLConnectionPoolConfig config) throws Exception {
         super(cpool, config);
 

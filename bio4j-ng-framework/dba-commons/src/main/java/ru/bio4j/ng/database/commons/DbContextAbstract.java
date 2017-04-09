@@ -12,6 +12,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
 import javax.sql.DataSource;
@@ -147,6 +148,23 @@ public abstract class DbContextAbstract implements SQLContext {
         }, null, user);
     }
 
+    public <R> R execSQL (final Connection connection, final BioCursor cursor) throws Exception {
+        SQLStoredProc sp = this.createStoredProc();
+        sp.init(connection, cursor.getExecSqlDef().getPreparedSql(), cursor.getExecSqlDef().getParams()).execSQL();
+        List<Param> params = cursor.getExecSqlDef().getParams();
+        for (Param p : params)
+            if (p.getDirection() == Param.Direction.INOUT || p.getDirection() == Param.Direction.OUT)
+                return (R) p.getValue();
+        return null;
+    }
+
+    public <R> R execSQL (final BioCursor cursor, final User user) throws Exception {
+        return execBatch((context, conn, param) -> execSQL(conn, cursor), null, user);
+    }
+    public <R> R execSQL (final BioCursor cursor) throws Exception {
+        return execSQL(cursor, null);
+    }
+
     /**
      * Выполняет action внутри batch.
      * Перед началом выполнения создается "точка отката".
@@ -194,13 +212,10 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     public <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> action) throws Exception {
-        return execSQLAtomic(conn, new SQLAction<Object, R>() {
-            @Override
-            public R exec(SQLContext context, Connection conn, Object param) throws Exception {
-                if(action != null)
-                    action.exec(context, conn);
-                return null;
-            }
+        return execSQLAtomic(conn, (context, conn1, param) -> {
+            if(action != null)
+                action.exec(context, conn1);
+            return null;
         }, null);
     }
 

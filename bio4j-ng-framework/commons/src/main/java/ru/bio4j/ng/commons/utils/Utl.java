@@ -547,8 +547,8 @@ public class Utl {
         if(file.exists()){
             InputStream inputStream = new FileInputStream(file);
             return inputStream;
-        }
-        return null;
+        } else
+            throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
     }
 
     public static String generateUUID(){
