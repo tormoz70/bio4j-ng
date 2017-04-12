@@ -14,8 +14,8 @@
         <!-- oracle -->
         <!--<ojdbc6.version>12.1.0</ojdbc6.version>-->
         <!--<oucp.version>12.1.0</oucp.version>-->
-        <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
-        <tomcat-juli.version>8.0.3</tomcat-juli.version>
+        <!--<tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>-->
+        <!--<tomcat-juli.version>8.0.3</tomcat-juli.version>-->
     </properties>
     <build>
         <plugins>
