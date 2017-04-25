@@ -89,7 +89,7 @@ public class SrvcUtils {
         public String id;
 
         @Prop(name = "rmtcmd")
-        public String rmtCommandOrg;
+        public String rmtCommandOrig;
         public RmtCommand rmtCommand;
         @Prop(name = "rmtsessionuid")
         public String rmtSessionUid;

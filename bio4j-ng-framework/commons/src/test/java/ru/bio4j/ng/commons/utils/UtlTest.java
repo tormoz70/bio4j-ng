@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.XLRCfg;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

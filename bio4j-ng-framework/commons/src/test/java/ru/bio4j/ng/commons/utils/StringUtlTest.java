@@ -3,6 +3,11 @@ package ru.bio4j.ng.commons.utils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class StringUtlTest {
 
 	@Test
@@ -112,5 +117,25 @@ public class StringUtlTest {
         final String src = "Something in the air!!!";
         Assert.assertEquals(Strings.replace(src, "in ", "qwe"), "Something qwethe air!!!");
         Assert.assertEquals(Strings.replace(src, "air!!!", "qwe"), "Something in the qwe");
+    }
+
+    @Test(enabled = true)
+    public void replace5() throws Exception {
+        Set<String> src = new HashSet<>();
+        src.add("qwe");
+        src.add("FTW");
+        src.add("asd");
+        Assert.assertTrue(Strings.containsIgnoreCase(src, "QWE"));
+        Assert.assertTrue(Strings.containsIgnoreCase(src, "ftW"));
+    }
+
+    @Test(enabled = true)
+    public void replace6() throws Exception {
+        Map<String, String> src = new HashMap<>();
+        src.put("qwe", "1");
+        src.put("FTW", "2");
+        src.put("asd", "3");
+        Assert.assertEquals(Strings.findIgnoreCase(src, "QWE"), "1");
+        Assert.assertEquals(Strings.findIgnoreCase(src, "ftW"), "2");
     }
 }

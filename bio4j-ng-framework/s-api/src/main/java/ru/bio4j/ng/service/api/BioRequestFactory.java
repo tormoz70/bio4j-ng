@@ -117,6 +117,12 @@ public abstract class BioRequestFactory<T extends BioRequest> {
                 rslt.setPageSize(qprms.pageSize);
             if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
                 rslt.setLocation(Integer.getInteger(qprms.location));
+
+            if(rslt.getCmd() == null && qprms.rmtCommand != null)
+                rslt.setCmd(qprms.rmtCommand);
+            if(rslt.getSessionUid() == null && !Strings.isNullOrEmpty(qprms.rmtSessionUid))
+                rslt.setSessionUid(qprms.rmtSessionUid);
+
             return rslt;
         }
     }

@@ -1,7 +1,6 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
@@ -12,13 +11,10 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
-import java.io.IOException;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class BioWrappedRequest extends HttpServletRequestWrapper {
 
@@ -129,7 +125,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
 
         result.fcloudCmd = FCloudCommand.decode(result.fcloudCmdOrig);
-        result.rmtCommand = RmtCommand.decode(result.rmtCommandOrg);
+        result.rmtCommand = RmtCommand.decode(result.rmtCommandOrig);
 
         if((result.sort == null || result.filter == null) && !Strings.isNullOrEmpty(result.jsonData)) {
             SortAndFilterObj obj = null;

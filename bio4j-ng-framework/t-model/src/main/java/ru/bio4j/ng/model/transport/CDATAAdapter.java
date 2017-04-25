@@ -1,4 +1,4 @@
-package ru.bio4j.ng.commons.types;
+package ru.bio4j.ng.model.transport;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

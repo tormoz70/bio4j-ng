@@ -1,7 +1,4 @@
-package ru.bio4j.ng.commons.utils;
-
-import ru.bio4j.ng.commons.types.CDATAAdapter;
-import ru.bio4j.ng.model.transport.Param;
+package ru.bio4j.ng.model.transport;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,7 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @XmlRootElement(name = "report")
