@@ -1,7 +1,7 @@
 package ru.bio4j.ng.database.commons;
 
 import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.types.DelegateAction;
+import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
@@ -93,7 +93,7 @@ public class DbUtils {
         return r;
     }
 
-    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction<SQLReader, Integer> delegateAction, final User user) throws Exception {
+    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override

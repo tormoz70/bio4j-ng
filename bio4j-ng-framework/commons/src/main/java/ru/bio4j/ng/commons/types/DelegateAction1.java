@@ -1,5 +1,5 @@
 package ru.bio4j.ng.commons.types;
 
-public interface DelegateAction1<T1, T2, R> {
-    R callback(T1 param1, T2 param2) throws Exception;
+public interface DelegateAction1<T, R> {
+    R callback(T item) throws Exception;
 }
