@@ -1,5 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.commons.beanutils.BeanUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -503,10 +504,11 @@ public class Utl {
     }
 
     public static void encode2xml(Object object, OutputStream stream) throws Exception {
-        JAXBContext context = JAXBContext.newInstance(object.getClass());
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(object, stream);
+//        JAXBContext context = JAXBContext.newInstance(object.getClass());
+//        Marshaller marshaller = context.createMarshaller();
+//        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//        marshaller.marshal(object, stream);
+        XStreamUtility.getInstance().toXml(object, stream);
     }
 
     public static String md5(String fileName) throws IOException {

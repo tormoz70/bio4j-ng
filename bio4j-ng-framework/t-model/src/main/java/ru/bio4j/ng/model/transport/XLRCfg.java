@@ -1,27 +1,29 @@
 package ru.bio4j.ng.model.transport;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.exts.XStreamCDATA;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement(name = "report")
+@XStreamAlias("report")
 public class XLRCfg {
 
+    @XStreamAlias("col")
     public static class ColumnDefinition {
+        @XStreamAsAttribute
         private String fieldName;
+        @XStreamAsAttribute
         private String title;
+        @XStreamAsAttribute
         private String format;
 
         public String getFieldName() {
             return fieldName;
         }
 
-        @XmlAttribute
         public void setFieldName(String fieldName) {
             this.fieldName = fieldName;
         }
@@ -30,7 +32,6 @@ public class XLRCfg {
             return title;
         }
 
-        @XmlAttribute
         public void setTitle(String title) {
             this.title = title;
         }
@@ -39,24 +40,29 @@ public class XLRCfg {
             return format;
         }
 
-        @XmlAttribute
         public void setFormat(String format) {
             this.format = format;
         }
     }
 
+    @XStreamAlias("ds")
     public static class DataSource {
+        @XStreamAlias("range")
+        @XStreamAsAttribute
         private String rangeName;
+        @XStreamCDATA
         private String sql;
+        @XStreamAlias("cols")
         private List<ColumnDefinition> columnDefinitions = new ArrayList<>();
+        @XStreamAsAttribute
         private Boolean singleRow;
+        @XStreamAsAttribute
         private Long maxRowsLimit;
 
         public String getRangeName() {
             return rangeName;
         }
 
-        @XmlAttribute
         public void setRangeName(String rangeName) {
             this.rangeName = rangeName;
         }
@@ -65,8 +71,6 @@ public class XLRCfg {
             return sql;
         }
 
-        @XmlElement
-        @XmlJavaTypeAdapter(value=CDATAAdapter.class)
         public void setSql(String sql) {
             this.sql = sql;
         }
@@ -75,8 +79,6 @@ public class XLRCfg {
             return columnDefinitions;
         }
 
-        @XmlElement(name = "col")
-        @XmlElementWrapper(name = "cols")
         public void setColumnDefinitions(List<ColumnDefinition> columnDefinitions) {
             this.columnDefinitions = columnDefinitions;
         }
@@ -85,7 +87,6 @@ public class XLRCfg {
             return singleRow;
         }
 
-        @XmlAttribute
         public void setSingleRow(Boolean singleRow) {
             this.singleRow = singleRow;
         }
@@ -94,20 +95,23 @@ public class XLRCfg {
             return maxRowsLimit;
         }
 
-        @XmlAttribute
         public void setMaxRowsLimit(Long maxRowsLimit) {
             this.maxRowsLimit = maxRowsLimit;
         }
     }
 
+    @XStreamAsAttribute
     private String bioCode;
 
     private String title;
     private String subject;
     private String autor;
 
+    @XStreamAsAttribute
     private Boolean convertResultToPDF;
+    @XStreamOmitField
     private List<Param> inPrms;
+    @XStreamAlias("params")
     private List<Param> rptPrms;
 
     private List<DataSource> dss = new ArrayList<>();
@@ -116,7 +120,6 @@ public class XLRCfg {
         return bioCode;
     }
 
-    @XmlAttribute
     public void setBioCode(String bioCode) {
         this.bioCode = bioCode;
     }
@@ -125,7 +128,6 @@ public class XLRCfg {
         return title;
     }
 
-    @XmlElement
     public void setTitle(String title) {
         this.title = title;
     }
@@ -134,7 +136,6 @@ public class XLRCfg {
         return subject;
     }
 
-    @XmlElement
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -143,7 +144,6 @@ public class XLRCfg {
         return autor;
     }
 
-    @XmlElement
     public void setAutor(String autor) {
         this.autor = autor;
     }
@@ -152,7 +152,6 @@ public class XLRCfg {
         return convertResultToPDF;
     }
 
-    @XmlAttribute
     public void setConvertResultToPDF(Boolean convertResultToPDF) {
         this.convertResultToPDF = convertResultToPDF;
     }
@@ -169,7 +168,6 @@ public class XLRCfg {
         return rptPrms;
     }
 
-    @XmlElement
     public void setRptPrms(List<Param> rptPrms) {
         this.rptPrms = rptPrms;
     }
@@ -178,8 +176,6 @@ public class XLRCfg {
         return dss;
     }
 
-    @XmlElement(name = "ds")
-    @XmlElementWrapper
     public void setDss(List<DataSource> dss) {
         this.dss = dss;
     }

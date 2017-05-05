@@ -114,6 +114,8 @@
         <postgresql-jdbc.version>9.4-1201.jdbc41</postgresql-jdbc.version>
         <!--<commons-codec.version>1.9</commons-codec.version>-->
         <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
+
+        <xstream.version>1.4.9</xstream.version>
 	</properties>
 
     <build>
@@ -318,6 +320,13 @@
                 <version>${postgresql-jdbc.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>${xstream.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
             <!--bio4j-->
             <!--<dependency>-->
                 <!--<groupId>${project.groupId}</groupId>-->
@@ -440,6 +449,7 @@
         <!-- Common services -->
         <module>jetty-osgi-boot</module>
         <module>flexjson</module>
+        <module>XStreamExts</module>
         <module>marc4j</module>
         <module>t-model</module>
         <module>commons</module>

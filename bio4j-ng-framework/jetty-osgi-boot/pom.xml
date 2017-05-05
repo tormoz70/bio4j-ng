@@ -54,6 +54,20 @@
             <artifactId>jetty-servlets</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.sun.xml.bind</groupId>-->
+            <!--<artifactId>jaxb-osgi</artifactId>-->
+            <!--<version>2.2.11</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>bio4j-ng-commons</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
     </dependencies>
 
     <build>
