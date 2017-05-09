@@ -10,6 +10,6 @@ rem mvn install:install-file -Dfile=txw2-20110809.jar -DgroupId=com.sun.xml.txw2
 
 rem mvn install:install-file -Dfile=jaxb-core-2.2.11.jar -DgroupId=com.sun.xml.bind -DartifactId=jaxb-core -Dversion=2.2.11 -Dpackaging=jar
 
-rem mvn install:install-file -Dfile=xstream-1.4.9.jar -DgroupId=com.thoughtworks.xstream -DartifactId=xstream -Dversion=1.4.9 -Dpackaging=jar
+start mvn install:install-file -Dfile=xstream-1.4.9.jar -DgroupId=com.thoughtworks.xstream -DartifactId=xstream -Dversion=1.4.9 -Dpackaging=jar
 
-mvn install:install-file -Dfile=xpp3-1.1.4c.jar -DgroupId=xpp3 -DartifactId=xpp3 -Dversion=1.1.4c -Dpackaging=jar
+start mvn install:install-file -Dfile=xpp3-1.1.4c.jar -DgroupId=xpp3 -DartifactId=xpp3 -Dversion=1.1.4c -Dpackaging=jar
