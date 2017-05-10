@@ -1,7 +1,5 @@
 package ru.bio4j.ng.commons.utils;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.apache.commons.beanutils.BeanUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -13,12 +11,9 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.Part;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.beans.XMLEncoder;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -27,8 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -503,13 +496,6 @@ public class Utl {
         return (count == 1 && conf.get(componentKey) != null);
     }
 
-    public static void encode2xml(Object object, OutputStream stream) throws Exception {
-//        JAXBContext context = JAXBContext.newInstance(object.getClass());
-//        Marshaller marshaller = context.createMarshaller();
-//        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//        marshaller.marshal(object, stream);
-        XStreamUtility.getInstance().toXml(object, stream);
-    }
 
     public static String md5(String fileName) throws IOException {
         String md5 = null;

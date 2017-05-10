@@ -1,7 +1,6 @@
-package ru.bio4j.ng.commons.utils;
+package com.thoughtworks.xstream.exts;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.exts.XStreamFactory;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

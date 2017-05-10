@@ -1,4 +1,4 @@
-package ru.bio4j.ng.commons.utils;
+package com.thoughtworks.xstream.exts;
 
 import java.io.*;
 import java.util.Iterator;

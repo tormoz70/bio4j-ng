@@ -7,12 +7,9 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.XLRCfg;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -209,29 +206,29 @@ public class UtlTest {
         Assert.assertEquals(Utl.extractBioParentPath("qwe"), "/");
     }
 
-    @Test(enabled = true)
-    public void encode2xmlTest() throws Exception {
-        try(OutputStream s = new FileOutputStream("d:\\tmp\\test-encode2xml.xml")) {
-            XLRCfg testBox = new XLRCfg();
-            testBox.setBioCode("Test-Box");
-
-            XLRCfg.DataSource ds = new XLRCfg.DataSource();
-            XLRCfg.ColumnDefinition cd = new XLRCfg.ColumnDefinition();
-
-            cd.setFieldName("ID");
-            cd.setTitle("Идентификатор");
-            cd.setFormat("0");
-
-            ds.setRangeName("mRng");
-            ds.getColumnDefinitions().add(cd);
-            ds.setSql("select * from dual");
-
-            testBox.setTitle("Экспорт ИО");
-            testBox.getDss().add(ds);
-
-            Utl.encode2xml(testBox, s);
-        }
-    }
+//    @Test(enabled = true)
+//    public void encode2xmlTest() throws Exception {
+//        try(OutputStream s = new FileOutputStream("d:\\tmp\\test-encode2xml.xml")) {
+//            XLRCfg testBox = new XLRCfg();
+//            testBox.setBioCode("Test-Box");
+//
+//            XLRCfg.DataSource ds = new XLRCfg.DataSource();
+//            XLRCfg.ColumnDefinition cd = new XLRCfg.ColumnDefinition();
+//
+//            cd.setFieldName("ID");
+//            cd.setTitle("Идентификатор");
+//            cd.setFormat("0");
+//
+//            ds.setRangeName("mRng");
+//            ds.getColumnDefinitions().add(cd);
+//            ds.setSql("select * from dual");
+//
+//            testBox.setTitle("Экспорт ИО");
+//            testBox.getDss().add(ds);
+//
+//            Utl.encode2xml(testBox, s);
+//        }
+//    }
 
     @Test
     public void getPath() {
