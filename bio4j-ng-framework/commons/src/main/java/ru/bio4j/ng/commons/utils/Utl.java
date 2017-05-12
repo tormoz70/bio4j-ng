@@ -342,7 +342,7 @@ public class Utl {
                     if(valObj.getClass().isArray()) {
                         val = arrayCopyOf(valObj);
                     } else {
-                        val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
+                        val = (fld.getType().equals(Object.class) || fld.getType().equals(valObj.getClass())) ? valObj : Converter.toType(valObj, fld.getType());
                     }
                     fld.setAccessible(true);
                     fld.set(bean, val);
@@ -371,6 +371,15 @@ public class Utl {
         if(bean != null && !bean.getClass().isPrimitive()) {
             Class<?> type = bean.getClass();
             Object newBean = type.newInstance();
+            applyValuesToBeanFromBean(bean, newBean);
+            return newBean;
+        }
+        return null;
+    }
+
+    public static <T> T cloneBean1(T bean, Class<T> clazz) throws Exception {
+        if(bean != null && !clazz.isPrimitive()) {
+            T newBean = clazz.newInstance();
             applyValuesToBeanFromBean(bean, newBean);
             return newBean;
         }

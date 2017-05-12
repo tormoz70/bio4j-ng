@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -134,6 +135,15 @@ public class UtlTest {
         ImsConfig c2 = new ImsConfig();
         Utl.applyValuesToBeanFromBean(c1, c2);
         Assert.assertEquals(c2.getPoolName(), c1.getPoolName());
+    }
+
+    @Test
+    public void applyValuesToBeanTest4() throws Exception {
+        Sort s1 = new Sort();
+        s1.setFieldName("f1");
+        s1.setDirection(Sort.Direction.DESC);
+        Sort s2 = (Sort)Utl.cloneBean(s1);
+        Assert.assertEquals(s2.getFieldName(), s1.getFieldName());
     }
 
     @Test(enabled = false)

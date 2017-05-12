@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import com.thoughtworks.xstream.exts.XStreamCDATA;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,25 +48,14 @@ public class XLRCfg {
 
     @XStreamAlias("ds")
     public static class DataSource {
-        @XStreamAlias("range")
-        @XStreamAsAttribute
-        private String rangeName;
         @XStreamCDATA
         private String sql;
         @XStreamAlias("cols")
         private List<ColumnDefinition> columnDefinitions = new ArrayList<>();
-        @XStreamAsAttribute
-        private Boolean singleRow;
+        @XStreamAlias("sort")
+        private List<Sort> sort = new ArrayList<>();
         @XStreamAsAttribute
         private Long maxRowsLimit;
-
-        public String getRangeName() {
-            return rangeName;
-        }
-
-        public void setRangeName(String rangeName) {
-            this.rangeName = rangeName;
-        }
 
         public String getSql() {
             return sql;
@@ -83,12 +73,12 @@ public class XLRCfg {
             this.columnDefinitions = columnDefinitions;
         }
 
-        public Boolean getSingleRow() {
-            return singleRow;
+        public List<Sort> getSort() {
+            return sort;
         }
 
-        public void setSingleRow(Boolean singleRow) {
-            this.singleRow = singleRow;
+        public void setSort(List<Sort> sort) {
+            this.sort = sort;
         }
 
         public Long getMaxRowsLimit() {
@@ -101,52 +91,9 @@ public class XLRCfg {
     }
 
     @XStreamAsAttribute
-    private String bioCode;
-
-    private String title;
-    private String subject;
-    private String autor;
-
-    @XStreamAsAttribute
     private Boolean convertResultToPDF;
-    @XStreamOmitField
-    private List<Param> inPrms;
-    @XStreamAlias("params")
-    private List<Param> rptPrms;
 
-    private List<DataSource> dss = new ArrayList<>();
-
-    public String getBioCode() {
-        return bioCode;
-    }
-
-    public void setBioCode(String bioCode) {
-        this.bioCode = bioCode;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getAutor() {
-        return autor;
-    }
-
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
+    private DataSource dss;
 
     public Boolean getConvertResultToPDF() {
         return convertResultToPDF;
@@ -156,27 +103,11 @@ public class XLRCfg {
         this.convertResultToPDF = convertResultToPDF;
     }
 
-    public List<Param> getInPrms() {
-        return inPrms;
-    }
-
-    public void setInPrms(List<Param> inPrms) {
-        this.inPrms = inPrms;
-    }
-
-    public List<Param> getRptPrms() {
-        return rptPrms;
-    }
-
-    public void setRptPrms(List<Param> rptPrms) {
-        this.rptPrms = rptPrms;
-    }
-
-    public List<DataSource> getDss() {
+    public DataSource getDss() {
         return dss;
     }
 
-    public void setDss(List<DataSource> dss) {
+    public void setDss(DataSource dss) {
         this.dss = dss;
     }
 
