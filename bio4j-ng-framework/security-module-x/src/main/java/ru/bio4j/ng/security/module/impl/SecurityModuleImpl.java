@@ -10,18 +10,13 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioSecurityModule;
 import ru.bio4j.ng.service.api.SecurityProvider;
 import ru.bio4j.ng.service.types.BioModuleBase;
 
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.List;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 

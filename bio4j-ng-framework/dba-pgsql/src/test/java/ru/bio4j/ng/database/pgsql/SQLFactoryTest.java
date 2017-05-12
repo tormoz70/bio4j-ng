@@ -16,7 +16,6 @@ import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import java.sql.Types;
 
 import java.sql.*;
 import java.util.ArrayList;

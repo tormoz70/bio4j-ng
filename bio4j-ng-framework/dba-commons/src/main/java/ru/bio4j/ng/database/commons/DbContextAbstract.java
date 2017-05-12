@@ -7,7 +7,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
@@ -88,32 +87,22 @@ public abstract class DbContextAbstract implements SQLContext {
         return conn;
     }
 
-//    public Connection getConnection() throws SQLException {
-//        return getConnection(null, null);
-//    }
 
     /**
-     * Выполняет batch в рамках одной транзакции.
+     * Выполняет action внутри batch.
+     * Перед началом выполнения создается соединение.
      * Если в процессе выполнения последовательности не было ошибок,
-     * по завершении выполняется commit и соединение закрывается,
-     * иначе транзакция откатывается, соединение закрывается.
-     * @param <S> - тип объекта, который передается в param
-     * @param <C> - тип объекта, который передается в param
-     * @param <R> - тип возвращаемого параметра, если есть
-     * @param scope - ссылка на объект, который будет param'ом
-     * @param batch - то что нужно выполнить в рамках сессии
-     * @param context - дополнительные параметры, которые передаются в batch
-     * @param user - профиль текущего пользователя
-     * @return - объект типа T
-     * @throws Exception
+     * по завершении выполняется commit,
+     * иначе транзакция откатывается.
      */
-    public <S, C, R> R execBatch (final S scope, final SQLActionExt<S, C, R> batch, final C context, final User user) throws Exception {
+    @Override
+    public <P, R> R execBatch (final SQLAction<P, R> batch, final P param, final User user) throws Exception {
         R result = null;
         try(Connection conn = this.getConnection(user)){
             conn.setAutoCommit(false);
             try {
                 if (batch != null)
-                    result = batch.exec(scope, conn, context);
+                    result = batch.exec(this, conn, param);
                 conn.commit();
             } catch (Exception e) {
                 if (conn != null)
@@ -126,28 +115,28 @@ public abstract class DbContextAbstract implements SQLContext {
         return result;
     }
 
-    public <C, R> R execBatch (final SQLAction<C, R> batch, final C context, final User user) throws Exception {
-        return execBatch(this, new SQLActionExt<DbContextAbstract, C, R>() {
-            @Override
-            public R exec(DbContextAbstract context, Connection conn, C param) throws Exception {
-                if (batch != null)
-                    return batch.exec(context, conn, param);
-                return null;
-            }
-        }, context, user);
-    }
-
-    public <R> R execBatch (final SQLActionScalar<R> batch, final User user) throws Exception {
-        return execBatch(new SQLAction<Object, R>() {
-            @Override
-            public R exec(SQLContext context, Connection conn, Object param) throws Exception {
-                if (batch != null)
-                    return batch.exec(context, conn);
-                return null;
-            }
+    @Override
+    public void execBatch (final SQLActionVoid batch, final User user) throws Exception {
+        execBatch((context, conn, param) -> {
+            if (batch != null)
+                batch.exec(context, conn);
+            return null;
         }, null, user);
     }
 
+    @Override
+    public <R> R execBatch (final SQLActionScalar<R> batch, final User user) throws Exception {
+        return execBatch((context, conn, param) -> {
+            if (batch != null)
+                return batch.exec(context, conn);
+            return null;
+        }, null, user);
+    }
+
+    /**
+     * Выполняет exexSQL - курсор.
+     */
+    @Override
     public <R> R execSQL (final Connection connection, final BioCursor cursor) throws Exception {
         SQLStoredProc sp = this.createStoredProc();
         sp.init(connection, cursor.getExecSqlDef().getPreparedSql(), cursor.getExecSqlDef().getParams()).execSQL();
@@ -158,11 +147,43 @@ public abstract class DbContextAbstract implements SQLContext {
         return null;
     }
 
+    @Override
     public <R> R execSQL (final BioCursor cursor, final User user) throws Exception {
         return execBatch((context, conn, param) -> execSQL(conn, cursor), null, user);
     }
+    @Override
     public <R> R execSQL (final BioCursor cursor) throws Exception {
         return execSQL(cursor, null);
+    }
+
+    /**
+     * Выполняет action внутри соединения.
+     */
+    @Override
+    public <P, R> R execSQL(final Connection conn, final SQLAction<P, R> batch, final P param) throws Exception {
+        if (batch != null){
+            return batch.exec(this, conn, param);
+        }
+        return null;
+    }
+
+
+    @Override
+    public <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch) throws Exception {
+        return execSQL(conn, (context, conn1, param) -> {
+            if (batch != null)
+                return batch.exec(context, conn1);
+            return null;
+        }, null);
+    }
+
+    @Override
+    public void execSQL(final Connection conn, final SQLActionVoid action) throws Exception {
+        execSQL(conn, (context, conn1, param) -> {
+            if (action != null)
+                action.exec(context, conn1);
+            return null;
+        }, null);
     }
 
     /**
@@ -173,22 +194,15 @@ public abstract class DbContextAbstract implements SQLContext {
      * иначе транзакция откатывается в "точку отката" и ошибка передается в родительский процесс.
      * Если необходимо просто откатить транзакцию в "точку отката", то внутри action надо возбудить RollbackSQLAtomic.
      * При этом транзакция откатится в "точку отката" и управление вернется в ротительскую процедуру без возбуждения какой либо ошибки.
-     * @param <S> - тип объекта, который передается в param
-     * @param <C> - тип объекта, который передается в param
-     * @param <R> - тип возвращаемого параметра, если есть
-     * @param scope - ссылка на объект, который будет param'ом
-     * @param conn - сессия в рамкох которой необходимо выполнить атомарную операцию
-     * @param action - то, что нужно выполнить
-     * @param context - дополнительные параметры, которые передаются в action
-     * @return
-     * @throws Exception
      */
-    public <S, C, R> R execSQLAtomic(final S scope, final Connection conn, final SQLActionExt<S, C, R> action, final C context) throws Exception {
+    @Override
+    public <P, R> R execSQLAtomic(final Connection conn, final SQLAction<P, R> batch, final P param) throws Exception {
+        R result = null;
         final String savePointId = "DbAtomicActionSavePoint"; //Guid.NewGuid().ToString();
         Savepoint savepoint = conn.setSavepoint(savePointId);
         try {
-            if (action != null){
-                return action.exec(scope, conn, context);
+            if (batch != null){
+                return batch.exec(this, conn, param);
             }
             conn.releaseSavepoint(savepoint);
         } catch (RollbackSQLAtomic e) {
@@ -200,51 +214,25 @@ public abstract class DbContextAbstract implements SQLContext {
         return null;
     }
 
-    public <C, R> R execSQLAtomic(final Connection conn, final SQLAction<C, R> action, final C context) throws Exception {
-        return execSQLAtomic(this, conn, new SQLActionExt<DbContextAbstract, C, R>() {
-            @Override
-            public R exec(DbContextAbstract context, Connection conn, C param) throws Exception {
-                if(action != null)
-                    action.exec(context, conn, param);
-                return null;
-            }
-        }, context);
-    }
 
-    public <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> action) throws Exception {
-        return execSQLAtomic(conn, (context, conn1, param) -> {
-            if(action != null)
-                action.exec(context, conn1);
+    @Override
+    public <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> batch) throws Exception {
+        return execSQLAtomic(conn, (context, conn1, param)->{
+            if (batch != null)
+                return batch.exec(context, conn1);
             return null;
         }, null);
-    }
-
-    public <S, C, R> R execSQL(final S scope, final Connection conn, final SQLActionExt<S, C, R> action, final C context) throws Exception {
-        if (action != null) {
-            return action.exec(scope, conn, context);
-        }
-        return null;
-    }
-
-    public <C, R> R execSQL(final Connection conn, final SQLAction<C, R> action, final C context) throws Exception {
-        return execSQL(this, conn, new SQLActionExt<DbContextAbstract, C, R>() {
-            @Override
-            public R exec(DbContextAbstract context, Connection conn, C param) throws Exception {
-                if (action != null)
-                    action.exec(context, conn, param);
-                return null;
-            }
-        }, context);
     }
 
     @Override
-    public <R> R execSQL(Connection conn, SQLActionScalar<R> action) throws Exception {
-        return execSQL(conn, (context, conn1, param) -> {
+    public void execSQLAtomic(final Connection conn, final SQLActionVoid action) throws Exception {
+        execSQLAtomic(conn, (context, conn1, param) -> {
             if(action != null)
                 action.exec(context, conn1);
             return null;
         }, null);
     }
+
 
     @Override
     public SQLCursor createCursor(){

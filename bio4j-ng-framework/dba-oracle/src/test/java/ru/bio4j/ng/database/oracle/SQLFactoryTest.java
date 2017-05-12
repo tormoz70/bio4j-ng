@@ -17,10 +17,8 @@ import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.jstore.StoreData;
 
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 
 public class SQLFactoryTest {

@@ -4,26 +4,8 @@ import org.apache.felix.ipojo.annotations.*;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.BioCursor;
-import ru.bio4j.ng.database.api.SQLAction;
-import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
-
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.sql.Connection;
-import java.util.Dictionary;
-import java.util.UUID;
-
-import ru.bio4j.ng.model.transport.User;
 
 @Component
 @Instantiate

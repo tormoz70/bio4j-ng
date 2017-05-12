@@ -2,7 +2,6 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;

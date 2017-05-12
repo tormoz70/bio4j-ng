@@ -5,7 +5,6 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
