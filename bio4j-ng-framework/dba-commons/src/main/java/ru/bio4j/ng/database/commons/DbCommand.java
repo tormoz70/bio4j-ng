@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 /**
@@ -137,8 +138,18 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
                 // Объединяем параметры
                 if(this.params == null)
                     this.params = new ArrayList<>();
-                if(params != null)
-                    this.params = Paramus.set(this.params).merge(params, true).pop();
+                if(params != null) {
+                    for(Param p : params){
+                        Param exists = Paramus.getParam(this.params, p.getName());
+                        if(exists != null && exists != p) {
+                            exists.setValue(p.getValue());
+                            if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType())
+                                exists.setType(p.getType());
+                        } else {
+                            Paramus.setParam(this.params, p, false, false);
+                        }
+                    }
+                }
 
                 if(!this.doBeforeStatement(this.params)) // Обрабатываем события
                     return (T)this;

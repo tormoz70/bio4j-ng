@@ -25,7 +25,7 @@ public class ParamsTest {
 	}
 
 	@Test(enabled = true)
-	public void add() {
+	public void add1() {
 		List<Param> testParams = new ArrayList<>();
         try(Paramus paramus  = Paramus.set(testParams);){
             paramus.add("param1", 111).add("param1", 111, true);
@@ -37,6 +37,19 @@ public class ParamsTest {
             Assert.assertTrue(paramus.paramExists("Param3"));
         }
 	}
+    @Test(enabled = true)
+    public void add2() throws Exception {
+        List<Param> testParams = new ArrayList<>();
+        testParams.add(Param.builder().name("p1").value("v1").build());
+        testParams.add(Param.builder().name("p2").value("v2").build());
+        testParams.add(Param.builder().name("p3").value("v3").build());
+
+        Param p22 = Param.builder().name("p2").value("v22").build();
+
+        Paramus.setParam(testParams, p22, true);
+        Assert.assertTrue(Paramus.indexOf(testParams, "p2") == 1);
+        Assert.assertTrue(Paramus.getParam(testParams, "p2") == p22);
+    }
 
 	@Test(enabled = false)
 	public void addListStringObjectchar() {

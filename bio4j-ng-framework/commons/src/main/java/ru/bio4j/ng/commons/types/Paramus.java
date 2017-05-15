@@ -156,8 +156,9 @@ public class Paramus implements Closeable {
                 get().add(item);
             else {
                 if (replaceIfExists) {
+                    int indx = this.getIndexOf(exists.getName());
                     get().remove(exists);
-                    get().add(item);
+                    get().add(indx, item);
                 }
             }
 		}
@@ -214,19 +215,24 @@ public class Paramus implements Closeable {
         return this;
     }
 
-    public Paramus apply(List<Param> params, boolean applyOnliExists) {
+    public Paramus apply(List<Param> params, boolean applyOnliExists, boolean replaceIfExists) {
         if ((params != null) && (params != this.get())) {
+            List<Param> toKill = new ArrayList<>();
             for (Param pp : params) {
                 Param local = this.getParam(pp.getName());
                 if(local != null) {
-                    local.setValue(pp.getValue());
-                    local.setInnerObject(pp.getInnerObject());
-                    MetaType ppType = pp.getType() != null ? pp.getType() : MetaType.UNDEFINED;
-                    if(ppType != MetaType.UNDEFINED)
-                        local.setType(ppType);
-                    Param.Direction ppDirection = pp.getDirection() != null ? pp.getDirection() : Param.Direction.UNDEFINED;
-                    if(ppDirection != Param.Direction.UNDEFINED)
-                        local.setDirection(ppDirection);
+                    if(replaceIfExists){
+                        this.add(pp, true);
+                    }else {
+                        local.setValue(pp.getValue());
+                        local.setInnerObject(pp.getInnerObject());
+                        MetaType ppType = pp.getType() != null ? pp.getType() : MetaType.UNDEFINED;
+                        if (ppType != MetaType.UNDEFINED)
+                            local.setType(ppType);
+                        Param.Direction ppDirection = pp.getDirection() != null ? pp.getDirection() : Param.Direction.UNDEFINED;
+                        if (ppDirection != Param.Direction.UNDEFINED)
+                            local.setDirection(ppDirection);
+                    }
                 } else {
                     if(!applyOnliExists)
                         this.add(pp.export(), false);
@@ -234,6 +240,10 @@ public class Paramus implements Closeable {
             }
         }
         return this;
+    }
+
+    public Paramus apply(List<Param> params, boolean applyOnliExists) {
+        return apply(params, applyOnliExists, false);
     }
 
     public Paramus apply(List<Param> params) {
@@ -455,6 +465,48 @@ public class Paramus implements Closeable {
             rslt = Utl.nvl(paramus.getParamValue(paramName, type), defaultValue);
         }
         return rslt;
+    }
+
+    public static String paramValueAsString(List<Param> params, String paramName, String defaultValue) throws Exception {
+        String rslt = null;
+        try (Paramus paramus = Paramus.set(params)) {
+            rslt = Utl.nvl(paramus.getParamValue(paramName, String.class), defaultValue);
+        }
+        return rslt;
+    }
+
+    public static String paramValueAsString(List<Param> params, String paramName) throws Exception {
+        return paramValueAsString(params, paramName, null);
+    }
+
+    public static void setParamValue(List<Param> params, String paramName, Object value) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.setValue(paramName, value);
+        }
+    }
+
+    public static Param getParam(List<Param> params, String paramName) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            return paramus.getParam(paramName);
+        }
+    }
+
+    public static int indexOf(List<Param> params, String paramName) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            return paramus.getIndexOf(paramName);
+        }
+    }
+
+    public static void setParam(List<Param> params, Param param, boolean applyOnliExists, boolean replaceIfExists) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.apply(Arrays.asList(param), applyOnliExists, replaceIfExists);
+        }
+    }
+
+    public static void setParam(List<Param> params, Param param, boolean replaceIfExists) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.apply(Arrays.asList(param), false, replaceIfExists);
+        }
     }
 
 //	@Override

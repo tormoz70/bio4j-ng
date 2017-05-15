@@ -4,45 +4,57 @@ package ru.bio4j.ng.model.transport;
  * Состояние процесса на сервере
  */
 public enum RmtState {
+    UNDEFINED(-1),
     /**
      * Готов к запуску
      */
-    REDY,
+    REDY(0),
     /**
      * Запускается
      */
-    STARTING,
+    STARTING(1),
     /**
      * Выполняется...
      */
-    RUNNING,
+    RUNNING(2),
     /**
      * Выполнен
      */
-    DONE,
+    DONE(3),
     /**
      * Останов...
      */
-    BREAKING,
+    BREAKING(4),
     /**
      * Остановлен
      */
-    BREAKED,
+    BREAKED(5),
     /**
      * Ошибка
      */
-    ERROR,
+    ERROR(6),
     /**
      * В очереди...
      */
-    WAITING,
+    WAITING(7),
     /**
      * Удален
      */
-    DISPOSED;
+    DISPOSED(8);
 
+    private final int code;
+    RmtState(int code){
+        this.code = code;
+    }
     public int getCode() {
-        return this.ordinal();
+        return this.code;
     }
 
+    public static RmtState decode(int code){
+        for (RmtState type : values()) {
+            if (type.getCode() == code)
+                return type;
+        }
+        return UNDEFINED;
+    }
 }

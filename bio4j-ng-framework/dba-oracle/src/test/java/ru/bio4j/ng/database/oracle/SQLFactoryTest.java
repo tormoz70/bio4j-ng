@@ -204,6 +204,39 @@ public class SQLFactoryTest {
     }
 
     @Test(enabled = true)
+    public void testSQLCommandExecSQL1() throws Exception {
+        try {
+            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+                @Override
+                public Integer exec(SQLContext context, Connection conn) throws Exception {
+                    int leng = 0;
+                    LOG.debug("conn: " + conn);
+
+                    SQLStoredProc cmd = context.createStoredProc();
+                    String storedProgName = "test_stored_prop";
+                    List<Param> prms = new ArrayList<Param>();
+                    prms.add(Param.builder().name("p_param1").value("FTW").build());
+                    prms.add(Param.builder().name("p_param2").type(MetaType.INTEGER).direction(Param.Direction.OUT).build());
+                    cmd.init(conn, storedProgName, prms);
+                    Paramus.setParamValue(prms, "p_param1", "QWE");
+                    Paramus.setParamValue(prms, "p_param3", "ASD");
+                    cmd.execSQL(prms);
+                    try(Paramus paramus = Paramus.set(cmd.getParams())) {
+                        leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
+                    }
+                    conn.rollback();
+                    return leng;
+                }
+            }, null);
+            LOG.debug("leng: " + leng);
+            Assert.assertEquals(leng, 3);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
     public void testSQLCommandExecINOUTSQL() throws Exception {
         try {
             int leng = context.execBatch(new SQLActionScalar<Integer>() {
@@ -741,6 +774,39 @@ public class SQLFactoryTest {
             }
         }, null, null);
         //response;
+    }
+
+    @Test(enabled = false)
+    public void testSQLCommandOpenCursor5() throws Exception {
+
+        SQLContext ctx = DbContextAbstract.create(
+                SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL-123")
+                        .dbDriverName(testDBDriverName)
+                        .dbConnectionUrl(testDBUrl)
+                        .dbConnectionUsr("GIVCADMIN")
+                        .dbConnectionPwd("j12")
+                        .build(),
+                OraContext.class);
+
+        String rslt = ctx.execBatch((context1, conn, cur) -> {
+
+            String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("333.sql"));
+
+            List<Param> params = new ArrayList<>();
+            params.add(Param.builder().name("p_rpt_uid").value("4F923F3C7A395D05E0531E32A8C06A1D").type(MetaType.STRING).build());
+
+            try(SQLCursor c = context1.createCursor()
+                    .init(conn, sql, params).open();) {
+                if(c.reader().next()){
+                    return c.reader().getValue("state_desc", String.class);
+                }
+            }
+            return null;
+
+        }, null, null);
+
+        Assert.assertTrue(rslt.length() > 0);
     }
 
     public static class TestROject {

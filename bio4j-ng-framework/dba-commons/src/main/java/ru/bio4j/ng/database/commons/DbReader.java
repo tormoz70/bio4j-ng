@@ -32,17 +32,19 @@ public class DbReader implements SQLReader {
 
     private static String readClob(Clob clob) throws Exception {
         String result = null;
-        Reader is = clob.getCharacterStream();
-        StringBuffer sb = new StringBuffer();
-        int length = (int) clob.length();
-        if (length > 0) {
-            char[] buffer = new char[length];
-            try {
-                while (is.read(buffer) != -1)
-                    sb.append(buffer);
-                result = new String(sb);
-            } catch (IOException e) {
-                new SQLException(e);
+        if(clob != null) {
+            Reader is = clob.getCharacterStream();
+            StringBuffer sb = new StringBuffer();
+            int length = (int) clob.length();
+            if (length > 0) {
+                char[] buffer = new char[length];
+                try {
+                    while (is.read(buffer) != -1)
+                        sb.append(buffer);
+                    result = new String(sb);
+                } catch (IOException e) {
+                    new SQLException(e);
+                }
             }
         }
         return result;
