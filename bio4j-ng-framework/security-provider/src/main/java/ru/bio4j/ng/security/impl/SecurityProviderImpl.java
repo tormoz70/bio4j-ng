@@ -64,12 +64,12 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
 
     @Override
     public void logoff(final String stoken, final String remoteIP) throws Exception {
-        getSecurityModule().logoff(stoken);
+        getSecurityModule().logoff(stoken, remoteIP);
     }
 
     @Override
-    public Boolean loggedin(final String stoken) throws Exception {
-        return getSecurityModule().loggedin(stoken);
+    public Boolean loggedin(final String stoken, final String remoteIP) throws Exception {
+        return getSecurityModule().loggedin(stoken, remoteIP);
     }
 
     @Validate

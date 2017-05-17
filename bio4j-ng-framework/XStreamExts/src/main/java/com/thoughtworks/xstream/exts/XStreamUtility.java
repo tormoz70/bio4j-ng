@@ -2,6 +2,7 @@ package com.thoughtworks.xstream.exts;
 
 import com.thoughtworks.xstream.XStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -21,7 +22,7 @@ public class XStreamUtility {
         String headLine = String.format("<?xml version=\"1.0\" encoding=\"%s\"?>", encoding);
         if(obj != null) {
             xstream.processAnnotations(obj.getClass());
-            final PrintStream printStream = new PrintStream(stream);
+            final PrintStream printStream = new PrintStream(stream, true, encoding);
             printStream.print(headLine);
             xstream.toXML(obj, stream);
         }
@@ -29,6 +30,12 @@ public class XStreamUtility {
 
     public <T> void toXml(T obj, OutputStream stream) throws Exception {
         toXml(obj, stream, "utf-8");
+    }
+
+    public String toXml(Object obj, String encoding) throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        toXml(obj, output, encoding);
+        return output.toString();
     }
 
     public <T> T toJavaBean(String xmlStr){

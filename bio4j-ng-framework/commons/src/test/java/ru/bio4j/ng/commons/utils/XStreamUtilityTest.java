@@ -4,13 +4,15 @@ import com.thoughtworks.xstream.exts.XStreamUtility;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.XLRCfg;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -23,38 +25,40 @@ public class XStreamUtilityTest {
         XLRCfg.DataSource ds = new XLRCfg.DataSource();
         ds.setSql("select 1 from dual");
 
-        ds.setSort(new ArrayList<>());
+        ds.setSorts(new ArrayList<>());
         Sort s = new Sort();
         s.setFieldName("sortField");
         s.setDirection(Sort.Direction.DESC);
-        ds.getSort().add(s);
+        ds.getSorts().add(s);
 
         XLRCfg.ColumnDefinition cd = new XLRCfg.ColumnDefinition();
         cd.setFieldName("field1");
-        cd.setTitle("Field 1");
+        cd.setTitle("Колонка 1");
         cd.setFormat("##0.00");
         ds.getColumnDefinitions().add(cd);
 
-        xlrCfg.setDss(ds);
+        xlrCfg.setDss(new ArrayList<>());
+        xlrCfg.getDss().add(ds);
 
-        OutputStream output = new OutputStream()
-        {
-            private StringBuilder string = new StringBuilder();
-            @Override
-            public void write(int b) throws IOException {
-                this.string.append((char) b );
-            }
-            public String toString(){
-                return this.string.toString();
-            }
-        };
+        xlrCfg.setAppend(new XLRCfg.Append());
+        xlrCfg.getAppend().setInParams(new ArrayList<>());
+        xlrCfg.getAppend().getInParams().add(Param.builder().name("inparam1").type(MetaType.STRING).direction(Param.Direction.IN).value("inparam1-value").build());
+        xlrCfg.getAppend().setSessionID("sess-id");
+        xlrCfg.getAppend().setUserUID("user-uid");
+        xlrCfg.getAppend().setUserName("user-name");
+        xlrCfg.getAppend().setUserOrgId("user-org-id");
+        xlrCfg.getAppend().setUserRoles("user-roles");
+        xlrCfg.getAppend().setRemoteIP("remote-ip");
 
-        XStreamUtility.getInstance().toXml(xlrCfg, output);
 
-        String aString = output.toString();
-        Assert.assertTrue(aString != null);
+        String encoding = "UTF-8";
+        String aString = XStreamUtility.getInstance().toXml(xlrCfg, encoding);
 
-        XLRCfg restored = XStreamUtility.getInstance().toJavaBean(aString);
-        Assert.assertTrue(restored != null);
+        Assert.assertTrue(true);
+
+        Utl.storeString(aString, "d:\\exp-rpt-cfg-test.xml", encoding);
+
+//        XLRCfg restored = XStreamUtility.getInstance().toJavaBean(aString);
+        Assert.assertTrue(true);
     }
 }

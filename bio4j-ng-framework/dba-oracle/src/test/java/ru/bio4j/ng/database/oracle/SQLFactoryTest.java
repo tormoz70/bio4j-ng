@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.oracle;
 
+import com.thoughtworks.xstream.exts.XStreamUtility;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
@@ -17,6 +18,8 @@ import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.XLRCfg;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.sql.*;
 import java.util.*;
@@ -63,6 +66,10 @@ public class SQLFactoryTest {
                     cs = conn.prepareCall(sql);
                     cs.execute();
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
+                    cs = conn.prepareCall(sql);
+                    cs.execute();
+
+                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_storeclob.sql"));
                     cs = conn.prepareCall(sql);
                     cs.execute();
                     return null;
@@ -263,6 +270,66 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    private String creXML() throws Exception {
+        XLRCfg xlrCfg = new XLRCfg();
+
+        XLRCfg.DataSource ds = new XLRCfg.DataSource();
+        ds.setSql("select 1 from dual");
+
+        ds.setSorts(new ArrayList<>());
+        Sort s = new Sort();
+        s.setFieldName("sortField");
+        s.setDirection(Sort.Direction.DESC);
+        ds.getSorts().add(s);
+
+        XLRCfg.ColumnDefinition cd = new XLRCfg.ColumnDefinition();
+        cd.setFieldName("field1");
+        cd.setTitle("Колонка 1");
+        cd.setFormat("##0.00");
+        ds.getColumnDefinitions().add(cd);
+
+        xlrCfg.setDss(new ArrayList<>());
+        xlrCfg.getDss().add(ds);
+
+        xlrCfg.setAppend(new XLRCfg.Append());
+        xlrCfg.getAppend().setInParams(new ArrayList<>());
+        xlrCfg.getAppend().getInParams().add(Param.builder().name("inparam1").type(MetaType.STRING).direction(Param.Direction.IN).value("inparam1-value").build());
+        xlrCfg.getAppend().setSessionID("sess-id");
+        xlrCfg.getAppend().setUserUID("user-uid");
+        xlrCfg.getAppend().setUserName("user-name");
+        xlrCfg.getAppend().setUserOrgId("user-org-id");
+        xlrCfg.getAppend().setUserRoles("user-roles");
+        xlrCfg.getAppend().setRemoteIP("remote-ip");
+
+
+        String encoding = "UTF-8";
+        return XStreamUtility.getInstance().toXml(xlrCfg, encoding);
+
+    }
+
+    @Test(enabled = true)
+    public void testSQLCommandExecStoreCLOB() throws Exception {
+        try {
+            context.execBatch((context1, conn) -> {
+                LOG.debug("conn: " + conn);
+
+                String xml = creXML();
+
+                SQLStoredProc cmd = context1.createStoredProc();
+                List<Param> prms = new ArrayList<>();
+                        Paramus.setParam(prms, Param.builder().name("p_param1").type(MetaType.STRING).value("ASD").build(), true);
+                        Paramus.setParam(prms, Param.builder().name("p_param2").type(MetaType.INTEGER).value(1).build(), true);
+                        Paramus.setParam(prms, Param.builder().name("p_param3").type(MetaType.CLOB).value(xml).build(), true);
+                cmd.init(conn, "test_store_clob", prms);
+                cmd.execSQL();
+
+            }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();

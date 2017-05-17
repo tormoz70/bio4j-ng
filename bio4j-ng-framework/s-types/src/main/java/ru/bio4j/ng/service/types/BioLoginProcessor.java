@@ -35,7 +35,7 @@ public class BioLoginProcessor {
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 
-        return securityProvider.loggedin(qprms.stoken);
+        return securityProvider.loggedin(qprms.stoken, qprms.remoteIP);
     }
 
     public void logoff(SrvcUtils.BioQueryParams qprms) throws Exception {

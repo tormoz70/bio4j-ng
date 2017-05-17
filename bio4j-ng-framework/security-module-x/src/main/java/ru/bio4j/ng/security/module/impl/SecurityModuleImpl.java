@@ -141,7 +141,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     }
 
     @Override
-    public void logoff(final String stoken) throws Exception {
+    public void logoff(final String stoken, final String remoteIP) throws Exception {
         final BioCursor cursor = this.getCursor("bio.logoff", null);
         final SQLContext context = this.getSQLContext();
 
@@ -161,7 +161,7 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
     }
 
     @Override
-    public Boolean loggedin(final String stoken) throws Exception {
+    public Boolean loggedin(final String stoken, final String remoteIP) throws Exception {
         final BioCursor cursor = this.getCursor("bio.loggedin", null);
         final SQLContext context = this.getSQLContext();
 
