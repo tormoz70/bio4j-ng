@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Jsons {
-	public static String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public static class ExceptionTransformer extends AbstractTransformer {
 
@@ -45,7 +44,7 @@ public class Jsons {
 		JSONSerializer serializer = new JSONSerializer();
 		return serializer
                 .exclude("class")
-				.transform(new DateTransformer(DATE_TIME_FORMAT), Date.class)
+				.transform(new DateTimeBioTransformer(), Date.class)
 				.transform(new ExceptionTransformer(), Exception.class)
                 .transform(new MetaTypeTransformer(), MetaType.class)
 				.deepSerialize(object);
@@ -56,7 +55,7 @@ public class Jsons {
                 .use(Date.class, new ObjectFactory() {
                     @Override
                     public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
-                        return Types.parse((String) value, DATE_TIME_FORMAT);
+                        return DateTimeBioTransformer.parse((String) value);
                     }
                 })
                 .use(MetaType.class, new ObjectFactory() {

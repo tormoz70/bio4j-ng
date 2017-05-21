@@ -83,7 +83,7 @@ public class JsonUtlTest {
         BioRequestJStoreGetDataSet request = Jsons.decode(requestBody, BioRequestJStoreGetDataSet.class);
         LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
-        Date expectedDateTime = Types.parse("1970.03.02T18:43:56.000+0400", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
+        Date expectedDateTime = Types.parse("1970.03.02T18:43:56.000+0300", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
         LOG.debug("expectedDateTime: {}", expectedDateTime);
 
         TimeZone timeZone = TimeZone.getDefault();
