@@ -11,6 +11,7 @@ import javax.servlet.http.Part;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 
 public class Httpc {
@@ -215,12 +216,17 @@ public class Httpc {
         return "";
     }
 
+    private static final String IP6LOCALHOSTADDR = "0:0:0:0:0:0:0:1";
+
     public static String extractRealRemoteAddr(HttpServletRequest request) {
         if(request != null) {
             String realRemoteAddr = request.getHeader("X-Real-IP");
             if(Strings.isNullOrEmpty(realRemoteAddr))
                 realRemoteAddr = request.getHeader("X-Forwarded-For");
-            return Strings.isNullOrEmpty(realRemoteAddr) ? request.getRemoteAddr() : realRemoteAddr;
+            String requestRemoteIP = request.getRemoteAddr();
+            if(IP6LOCALHOSTADDR.equalsIgnoreCase(requestRemoteIP))
+                requestRemoteIP = "127.0.0.1";
+            return Strings.isNullOrEmpty(realRemoteAddr) ? requestRemoteIP : realRemoteAddr;
         }
         return null;
     }

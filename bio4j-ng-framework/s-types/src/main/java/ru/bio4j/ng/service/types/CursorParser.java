@@ -247,6 +247,9 @@ public class CursorParser {
                 col.setUseNull(Converter.toType(Doms.getAttribute(paramElem, "useNull", "true", String.class), boolean.class));
                 col.setReadonly(Converter.toType(Doms.getAttribute(paramElem, "readOnly", "true", String.class), boolean.class));
                 col.setWidth(Doms.getAttribute(paramElem, "width", null, String.class));
+                col.setExpEnabled(Converter.toType(Doms.getAttribute(paramElem, "expEnabled", "true", String.class), boolean.class));
+                col.setExpFormat(Doms.getAttribute(paramElem, "expFormat", null, String.class));
+                col.setExpWidth(Doms.getAttribute(paramElem, "expWidth", null, String.class));
             }
         }
 

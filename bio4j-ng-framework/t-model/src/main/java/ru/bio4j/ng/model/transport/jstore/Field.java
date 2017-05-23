@@ -80,7 +80,9 @@ public class Field {
      */
     private MetaType metaType = MetaType.UNDEFINED;
 
-
+    private Boolean expEnabled;
+    private String expFormat;
+    private String expWidth;
 
     public String getName() {
         return name;
@@ -207,5 +209,29 @@ public class Field {
 
     public void setFilter(boolean filter) {
         this.filter = filter;
+    }
+
+    public Boolean getExpEnabled() {
+        return expEnabled;
+    }
+
+    public void setExpEnabled(Boolean expEnabled) {
+        this.expEnabled = expEnabled;
+    }
+
+    public String getExpFormat() {
+        return expFormat;
+    }
+
+    public void setExpFormat(String expFormat) {
+        this.expFormat = expFormat;
+    }
+
+    public String getExpWidth() {
+        return expWidth;
+    }
+
+    public void setExpWidth(String expWidth) {
+        this.expWidth = expWidth;
     }
 }
