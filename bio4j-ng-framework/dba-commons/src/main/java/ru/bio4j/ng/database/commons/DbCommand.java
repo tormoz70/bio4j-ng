@@ -114,10 +114,9 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
     private static String getSQL2Execute(String sql, List<Param> params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{DbCommand.Params(before exec): {\n");
-        for (Param p : params)
-            sb.append("\t"+p.toString()+",\n");
-        sb.append("}}");
+        sb.append("{DbCommand.Params(before exec): ");
+        sb.append(Paramus.paramsAsString(params));
+        sb.append("}");
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
@@ -130,7 +129,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     }
 
     protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
-        SQLException lastError = null;
+        Exception lastError = null;
         try {
             try {
                 this.resetCommand(); // Сбрасываем состояние
@@ -165,6 +164,9 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
             } catch (SQLException e) {
                 lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
+                throw lastError;
+            } catch (Exception e) {
+                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
                 throw lastError;
             }
         } finally {

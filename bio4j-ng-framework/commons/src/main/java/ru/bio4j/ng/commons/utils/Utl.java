@@ -229,6 +229,21 @@ public class Utl {
         return fields;
     }
 
+    public static String fieldValueAsString(Object bean, java.lang.reflect.Field field){
+        Object val;
+        try {
+            field.setAccessible(true);
+            val = field.get(bean);
+        } catch (IllegalAccessException ex) {
+            val = ex.toString();
+        }
+        String valStr = (val instanceof String) ? ((String)val).trim() : null;
+        if(!Strings.isNullOrEmpty(valStr) && valStr.indexOf("\n") >= 0) {
+            return valStr.substring(0, valStr.indexOf("\n")) + "...";
+        } else
+            return ""+val;
+    }
+
     public static String buildBeanStateInfo(Object bean, String beanName, String tab) {
         if(tab == null) tab = "";
         final String attrFmt = tab + " - %s : %s;\n";
@@ -237,19 +252,7 @@ public class Utl {
         String bnName = isNullOrEmpty(beanName) ? type.getName() : beanName;
         out.append(String.format(tab + "%s {\n", bnName));
         for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
-            Object val;
-            try {
-                fld.setAccessible(true);
-                val = fld.get(bean);
-            } catch (IllegalAccessException ex) {
-                val = ex.toString();
-            }
-            String valStr = (val instanceof String) ? ((String)val).trim() : null;
-            if(!Strings.isNullOrEmpty(valStr) && valStr.indexOf("\n") >= 0) {
-                valStr = valStr.substring(0, valStr.indexOf("\n")) + "...";
-            } else
-                valStr = ""+val;
-            out.append(String.format(attrFmt, fld.getName(), valStr));
+            out.append(String.format(attrFmt, fld.getName(), fieldValueAsString(bean, fld)));
         }
         out.append(tab + "}");
         return out.toString();

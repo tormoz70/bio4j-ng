@@ -337,6 +337,29 @@ public class SQLFactoryTest {
     }
 
     @Test(enabled = true)
+    public void testSQLCommandExecStoreCLOB1() throws Exception {
+        try {
+            context.execBatch((context1, conn) -> {
+                LOG.debug("conn: " + conn);
+
+                String xml = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("qqq.xml"));
+
+                SQLStoredProc cmd = context1.createStoredProc();
+                List<Param> prms = new ArrayList<>();
+                Paramus.setParam(prms, Param.builder().name("p_param1").type(MetaType.STRING).value("ASD").build(), true);
+                Paramus.setParam(prms, Param.builder().name("p_param2").type(MetaType.INTEGER).value(1).build(), true);
+                Paramus.setParam(prms, Param.builder().name("p_param3").type(MetaType.CLOB).value(xml).build(), true);
+                cmd.init(conn, "test_store_clob", prms);
+                cmd.execSQL();
+
+            }, null);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
     public void testSQLCommandExecExtParam() throws Exception {
         try {
             int leng = context.execBatch(new SQLActionScalar<Integer>() {

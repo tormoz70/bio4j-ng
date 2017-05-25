@@ -291,9 +291,21 @@ public class ParamsTest {
         StringBuilder sb = new StringBuilder();
         sb.append("{Params: {\n");
         for (Param p : prms)
-            sb.append("\t"+p.toString()+",\n");
+            sb.append("\t"+Paramus.paramToString(p) + ",\n");
         sb.append("}}");
         String prmsStr = sb.toString();
+
+        Assert.assertEquals(prmsStr, "");
+    }
+
+    @Test(enabled = false)
+    public void toStringTest1() throws Exception {
+        List<Param> prms = Paramus.set(new ArrayList<>())
+                .add("dummy1", 101)
+                .add("dummy2", "101")
+                .add("dummy3", null)
+                .pop();
+        String prmsStr = Paramus.paramsAsString(prms);
 
         Assert.assertEquals(prmsStr, "");
     }

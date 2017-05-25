@@ -525,5 +525,27 @@ public class Paramus implements Closeable {
 //	    return builder.build();
 //    }
 
+    public static String paramToString(Param param) {
+        String innrObjStr = (param.getInnerObject() == null) ? null : "o:" + param.getInnerObject().toString();
+        StringBuilder objsStr = new StringBuilder();
+        if (param.getInnerObject() == null){
+            objsStr.append(objsStr.length() == 0 ? innrObjStr : ";"+innrObjStr);
+        }
+        String objStr = objsStr.toString();
+        Object val = param.getValue();
+        String valStr = String.format((val instanceof String) ? "[\"%s\"]" : "[%s]", val);
+        valStr = valStr + (!Strings.isNullOrEmpty(objStr) ? "(" + objsStr.toString() + ")" : null);
+        return String.format("(%s=%s; tp:%s; sz:%d; dr:%s; fx:%s; fm:%s)", param.getName(), valStr, param.getType(), param.getSize(), param.getDirection(), param.getFixed(), param.getFormat());
+    }
+
+
+    public static String paramsAsString(List<Param> params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[\n");
+        for (Param p : params)
+            sb.append("\t"+paramToString(p)+",\n");
+        sb.append("]");
+        return sb.toString();
+    }
 
 }

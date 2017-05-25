@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.api;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateCheck;
@@ -15,6 +16,8 @@ import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import javax.management.Query;
 import java.util.*;
+
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class BioCursor {
 
@@ -273,6 +276,27 @@ public class BioCursor {
 
     public Collection<SQLDef> sqlDefs(){
         return sqlDefs.values();
+    }
+
+    @Override
+    public String toString() {
+        final String attrFmt = " - %s : %s;\n";
+        StringBuilder out = new StringBuilder();
+        Class<?> type = this.getClass();
+        String bnName = type.getName();
+        out.append(String.format("%s {\n", bnName));
+        out.append(String.format(attrFmt, "bioCode", bioCode));
+        out.append("\tfields: [");
+        for (Field fld : fields){
+            out.append(Utl.buildBeanStateInfo(fld, fld.getName(), "\t\t"));
+        }
+        out.append("\t],");
+        out.append(String.format("\tsql-select: %s,", getSelectSqlDef()));
+        out.append(String.format("\tsql-update: %s,", getUpdateSqlDef()));
+        out.append(String.format("\tsql-delete: %s,", getDeleteSqlDef()));
+        out.append(String.format("\tsql-exec: %s,", getExecSqlDef()));
+        out.append("}");
+        return out.toString();
     }
 
 }

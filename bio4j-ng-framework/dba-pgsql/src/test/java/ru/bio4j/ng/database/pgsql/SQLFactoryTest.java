@@ -26,13 +26,13 @@ public class SQLFactoryTest {
 //    private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@stat4-ora-dev:1521:MICEXDB";
     private static final String testDBDriverName = "org.postgresql.Driver";
-    private static final String testDBUrl = "jdbc:postgresql://192.168.50.47:5432/postgres";
+    private static final String testDBUrl = "jdbc:postgresql://192.168.50.59:5432/stat121";
 
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
     //private static final String testDBUrl = "jdbc:oracle:thin:@https://databasetrial0901-rugivcmkrftrial07058.db.em1.oraclecloudapps.com/apex:1521:databasetrial0901";
-    private static final String testDBUsr = "scott";
-    private static final String testDBPwd = "tiger";
+    private static final String testDBUsr = "master";
+    private static final String testDBPwd = "sysdba";
 
     private static SQLContext context;
 

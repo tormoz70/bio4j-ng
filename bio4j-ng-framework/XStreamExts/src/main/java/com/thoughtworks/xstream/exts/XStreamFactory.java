@@ -59,6 +59,7 @@ public class XStreamFactory {
                 };
             }
         });
+        xStream.registerConverter(new DateConverter());
         return xStream;
     }
 

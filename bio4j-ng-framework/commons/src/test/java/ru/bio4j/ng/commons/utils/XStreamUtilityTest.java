@@ -3,6 +3,7 @@ package ru.bio4j.ng.commons.utils;
 import com.thoughtworks.xstream.exts.XStreamUtility;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
@@ -14,6 +15,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class XStreamUtilityTest {
@@ -21,6 +23,7 @@ public class XStreamUtilityTest {
     @Test
     public void toXmlTest() throws Exception {
         XLRCfg xlrCfg = new XLRCfg();
+        xlrCfg.setFullCode("qwe");
 
         XLRCfg.DataSource ds = new XLRCfg.DataSource();
         ds.setSql("select 1 from dual");
@@ -41,8 +44,13 @@ public class XStreamUtilityTest {
         xlrCfg.getDss().add(ds);
 
         xlrCfg.setAppend(new XLRCfg.Append());
-        xlrCfg.getAppend().setInParams(new ArrayList<>());
-        xlrCfg.getAppend().getInParams().add(Param.builder().name("inparam1").type(MetaType.STRING).direction(Param.Direction.IN).value("inparam1-value").build());
+        List<Param> prms = new ArrayList<>();
+        prms.add(Param.builder().name("inparam1").value("inparam1-value").build());
+        prms.add(Param.builder().name("inparam11").value(1).build());
+        prms.add(Param.builder().name("inparam12").value(1L).build());
+        prms.add(Param.builder().name("inparam13").value(1D).build());
+        prms.add(Param.builder().name("inparam2").value(DateTimeParser.getInstance().pars("2017-01-01T17:55")).build());
+        xlrCfg.getAppend().setInParams(prms);
         xlrCfg.getAppend().setSessionID("sess-id");
         xlrCfg.getAppend().setUserUID("user-uid");
         xlrCfg.getAppend().setUserName("user-name");
@@ -58,7 +66,7 @@ public class XStreamUtilityTest {
 
         Utl.storeString(aString, "d:\\exp-rpt-cfg-test.xml", encoding);
 
-//        XLRCfg restored = XStreamUtility.getInstance().toJavaBean(aString);
-        Assert.assertTrue(true);
+        XLRCfg restored = XStreamUtility.getInstance().toJavaBean(aString);
+        Assert.assertTrue(restored.getFullCode().equals("qwe"));
     }
 }
