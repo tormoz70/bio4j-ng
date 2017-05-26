@@ -496,7 +496,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSQLCommandStoredProcRetCursor() throws Exception {
         try {
             int c = context.execBatch(new SQLActionScalar<Integer>() {

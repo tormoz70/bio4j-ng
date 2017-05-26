@@ -59,6 +59,8 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
                 self.preparedStatement.execute();
             }
         });
+        if(this.preparedStatement != null)
+            try{ this.preparedStatement.close(); } catch (Exception e) {};
 	}
 
     @Override
