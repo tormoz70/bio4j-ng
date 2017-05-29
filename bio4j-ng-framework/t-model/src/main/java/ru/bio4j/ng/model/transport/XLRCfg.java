@@ -13,6 +13,7 @@ import java.util.List;
 @XStreamAlias("report")
 public class XLRCfg {
 
+
     @XStreamAlias("field")
     public static class ColumnDefinition {
         @XStreamAsAttribute
@@ -212,6 +213,8 @@ public class XLRCfg {
     private String fullCode;
     @XStreamAsAttribute
     private String started;
+    @XStreamCDATA
+    private String title;
 
     @XStreamAsAttribute
     private Boolean convertResultToPDF;
@@ -268,5 +271,12 @@ public class XLRCfg {
         this.append = append;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
 }

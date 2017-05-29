@@ -272,6 +272,9 @@ public class CursorParser {
 
     public static BioCursor pars(BundleContext context, final String bioCode, final Document document) throws Exception {
         BioCursor cursor = new BioCursor(bioCode);
+        Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
+        if(exportTitleElem != null)
+            cursor.setExportTitle(exportTitleElem.getTextContent());
         addColsFromXml(cursor, document); // добавляем колонки из XML
         List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
         for (Element sqlElem : sqlTextElems) {

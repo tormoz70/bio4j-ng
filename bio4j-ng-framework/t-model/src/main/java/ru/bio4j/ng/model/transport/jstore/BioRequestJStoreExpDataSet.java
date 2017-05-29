@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class BioRequestJStoreExpDataSet extends BioRequestJStoreGetDataSet {
 
+    private String title;
     /**
      * Заголовки колонок, которые надо выгрузить
      */
@@ -22,6 +23,14 @@ public class BioRequestJStoreExpDataSet extends BioRequestJStoreGetDataSet {
 
     public void setColumns(HashMap<String, String> columns) {
         this.columns = columns;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
 

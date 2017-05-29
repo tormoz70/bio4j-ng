@@ -21,6 +21,14 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class BioCursor {
 
+    public String getExportTitle() {
+        return exportTitle;
+    }
+
+    public void setExportTitle(String exportTitle) {
+        this.exportTitle = exportTitle;
+    }
+
     public static enum Type {
         SELECT, UPDATE, DELETE, EXECUTE, AFTERSELECT
     }
@@ -206,6 +214,8 @@ public class BioCursor {
     }
 
     private final String bioCode;
+
+    private String exportTitle;
 
     private final List<Field> fields = new ArrayList<>();
 
