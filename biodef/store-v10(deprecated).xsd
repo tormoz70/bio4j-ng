@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://bio4j.ru/biodef-repo/store" targetNamespace="http://bio4j.ru/biodef-repo/store"
+           elementFormDefault="qualified">
+    <xs:simpleType name="ftype">
+        <xs:annotation>
+            <xs:documentation>Тип данных</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="undefined"/>
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="integer"/>
+            <xs:enumeration value="decimal"/>
+            <xs:enumeration value="date"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="blob"/>
+            <xs:enumeration value="clob"/>
+            <xs:enumeration value="cursor"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="fencoding">
+        <xs:annotation>
+            <xs:documentation>Кодировка</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="UTF-8"/>
+            <xs:enumeration value="WINDOWS-1251"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="cursor">
+        <xs:annotation>
+            <xs:documentation>Описание курсора.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="exportTitle" type="xs:string" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>Текст заголовка, который будет вставлен в экспортируемый Excel-файл</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="SQL" minOccurs="0" maxOccurs="3">
+                    <xs:annotation>
+                        <xs:documentation>Запрос к БД.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="text" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation>Текст SQL-запроса.</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="param" minOccurs="0" maxOccurs="unbounded">
+                                <xs:annotation>
+                                    <xs:documentation>Описание входящего пареметра запроса.</xs:documentation>
+                                </xs:annotation>
+                                <xs:complexType>
+                                    <xs:attribute name="name" type="xs:string" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation>Имя параметра.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                    <xs:attribute name="type" type="ftype" use="required"/>
+                                    <xs:attribute name="direction" use="optional">
+                                        <xs:annotation>
+                                            <xs:documentation>Направление параметра.</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:NMTOKEN">
+                                                <xs:enumeration value="IN"/>
+                                                <xs:enumeration value="OUT"/>
+                                                <xs:enumeration value="INOUT"/>
+                                                <!--<xs:enumeration value="ReturnValue"/>-->
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:attribute>
+                                    <xs:attribute name="fixed" type="xs:boolean" use="optional">
+                                        <xs:annotation>
+                                            <xs:documentation>Если true, то имя параметра перегружает имя объявленное в процедуре, иначе имя параметра должно совпадать с именем параметра в тпроцедуре</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                    <xs:attribute name="format" type="xs:string" use="optional">
+                                        <xs:annotation>
+                                            <xs:documentation>Формат при конвертации значения в тип параметра.
+Например если тип параметра "string", а значение присваивается "date", то дата будет сконвертирована в строку с данным форматом.
+Задавать в виде: "to_date('yyyy.MM.dd HH:mm:ss');to_number('0.00')". Форматирование для Java.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="action" use="required">
+                            <xs:annotation>
+                                <xs:documentation>Тип действия, совершаемого запросом.</xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="select"/>
+                                    <xs:enumeration value="update"/>
+                                    <xs:enumeration value="delete"/>
+                                    <xs:enumeration value="execute"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="fields">
+                    <xs:annotation>
+                        <xs:documentation>Описание полей набора данных.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="field" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="name" type="xs:string" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Имя поля.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="type" type="ftype" use="required"/>
+                                            <xs:attribute name="encoding" type="fencoding" use="optional">
+                                                <xs:annotation>
+                                                    <xs:documentation>Кодировка для полей типа CLOB. По умолчанию
+                                                        UTF-8
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="width" type="xs:string">
+                                                <xs:annotation>
+                                                    <xs:documentation>Ширина колонки в Grid.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="format" type="xs:string">
+                                                <xs:annotation>
+                                                    <xs:documentation>Формат вывода данных. Например, для типа "date" -
+                                                        "yyyy.MM.dd HH:mm:ss"
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="align">
+                                                <xs:annotation>
+                                                    <xs:documentation>Выравнивание</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:NMTOKEN">
+                                                        <xs:enumeration value="left"/>
+                                                        <xs:enumeration value="center"/>
+                                                        <xs:enumeration value="right"/>
+                                                        <xs:enumeration value="stretch"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                            <xs:attribute name="defaultVal" type="xs:string">
+                                                <xs:annotation>
+                                                    <xs:documentation>Значение по умолчанию. Не работает для поля типа
+                                                        'date'.
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="header" type="xs:string">
+                                                <xs:annotation>
+                                                    <xs:documentation>Заголовок при отображении в DataGrid
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="filter" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>Вкл фитрации по полю
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="hidden" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>Если true, то это скрытая колонка в DataGrid
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="showTooltip" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>Если true, отображать всплывающую подсказаку с полным текстом ячейки
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="readOnly" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>Если true, то это колонка в DataGrid только для
+                                                        чтения. По умолчанию true.
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="boolVals">
+                                                <xs:annotation>
+                                                    <xs:documentation>Значения поля, соответствующие 'true' и 'false'
+                                                        для типа поля 'boolean', разделённые символом ':'.
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="pk" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>Признак того, что поле является первичным ключем
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="useNull" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>На клиенте не приводить значение null к типу колонки
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+
+                                            <xs:attribute name="group" type="xs:byte">
+                                                <xs:annotation>
+                                                    <xs:documentation>Номер группы</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="group_aggr">
+                                                <xs:annotation>
+                                                    <xs:documentation>Агри функция</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:NMTOKEN">
+                                                        <xs:enumeration value="sum"/>
+                                                        <xs:enumeration value="count"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                            <xs:attribute name="generate" type="xs:boolean" default="true">
+                                                <xs:annotation>
+                                                    <xs:documentation>Создавать или нет это поле</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="expEnabled" type="xs:boolean" default="true">
+                                                <xs:annotation>
+                                                    <xs:documentation>Поле доступно для экспорта ИО (по умолчанию
+                                                        "доступно")
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="expWidth" type="xs:integer" default="30">
+                                                <xs:annotation>
+                                                    <xs:documentation>Ширина колонки при экспорте в Excel (по умолчанию
+                                                        30)
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="expFormat" type="xs:string" default="@">
+                                                <xs:annotation>
+                                                    <xs:documentation>Формат колонки при экспорте в Excel (по умолчанию
+                                                        '@')
+                                                    </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="readOnly" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Набор данных только для чтения. По умолчанию true.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="multiselection" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Добавляет в начало колонку с чекбоксами и позволяет выбирать несколько строк на
+                        разных страницах
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="transactionID" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>ID транзакции</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="debug" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Режим отладки</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="maxExpRows" type="xs:integer">
+                <xs:annotation>
+                    <xs:documentation>Максимальное кол-во строк при экспорте в MS Excel</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

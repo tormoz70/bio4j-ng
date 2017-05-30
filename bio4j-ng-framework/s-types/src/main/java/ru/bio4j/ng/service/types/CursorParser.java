@@ -250,6 +250,8 @@ public class CursorParser {
                 col.setExpEnabled(Converter.toType(Doms.getAttribute(paramElem, "expEnabled", "true", String.class), boolean.class));
                 col.setExpFormat(Doms.getAttribute(paramElem, "expFormat", null, String.class));
                 col.setExpWidth(Doms.getAttribute(paramElem, "expWidth", null, String.class));
+                col.setSorter(Doms.getAttribute(paramElem, "sorter", null, String.class));
+                col.setTooltip(Doms.getAttribute(paramElem, "tooltip", null, String.class));
             }
         }
 

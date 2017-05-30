@@ -57,7 +57,7 @@ public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursor
         if((sqlDef.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
             List<Sort> sort = sqlDef.getSort();
             if(sort != null && sort.size() > 0) {
-                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sqlDef.getSort());
+                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sqlDef);
                 sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
             }
         }

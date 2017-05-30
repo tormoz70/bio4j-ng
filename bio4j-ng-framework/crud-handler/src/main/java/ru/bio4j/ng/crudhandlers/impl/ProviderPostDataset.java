@@ -65,7 +65,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         }
     }
 
-    private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) {
+    private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
         if(parentCursorDef != null && parentRow != null)
             for(Field field : cursorDef.getFields()) {
                 if(row.getValue(field.getName()) == null) {

@@ -74,6 +74,15 @@ public class Field {
      */
     private Object defaultVal;
 
+    /**
+     * Имя поля, по которому будет сортировка, если null, то sorter == name
+     */
+    private String sorter;
+
+    /**
+     * Имя поля, из которого будет взято значение для отображения tooltip, если null, то tooltip == name
+     */
+    private String tooltip;
 
     /**
      * Тип колонки
@@ -233,5 +242,21 @@ public class Field {
 
     public void setExpWidth(String expWidth) {
         this.expWidth = expWidth;
+    }
+
+    public String getSorter() {
+        return sorter;
+    }
+
+    public void setSorter(String sorter) {
+        this.sorter = sorter;
+    }
+
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }

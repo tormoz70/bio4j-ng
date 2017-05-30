@@ -17,6 +17,6 @@ public interface WrapperInterpreter {
      * @param filter
      * @return
      */
-    String filterToSQL(String alias, Filter filter);
-    String sortToSQL(String alias, List<Sort> sort);
+    String filterToSQL(String alias, Filter filter) throws Exception ;
+    String sortToSQL(String alias, BioCursor.SelectSQLDef sqlDef) throws Exception ;
 }

@@ -51,8 +51,13 @@ public class BioCursor {
         private final List<Param> params = new ArrayList<>();
 
         public SQLDef(String sql) {
+
             this.sql = sql;
             this.preparedSql = this.sql;
+        }
+
+        public List<Field> getFields() {
+            return owner.getFields();
         }
 
         public Field findPk() {
@@ -225,18 +230,8 @@ public class BioCursor {
         this.bioCode = bioCode;
     }
 
-    public Field findField(final String name) {
-        try {
-            return Lists.first(fields, new DelegateCheck<Field>() {
-                @Override
-                public Boolean callback(Field item) {
-                    return Strings.compare(name, item.getName(), true);
-                }
-            });
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public Field findField(final String name) throws Exception {
+        return Lists.first(fields, item -> Strings.compare(name, item.getName(), true));
     }
 
     public Field findPk() {
