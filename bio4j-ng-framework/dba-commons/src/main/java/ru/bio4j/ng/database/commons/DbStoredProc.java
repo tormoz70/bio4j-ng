@@ -50,7 +50,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 	
     @Override
-	public void execSQL(Object params) throws Exception {
+	public void execSQL(Object params, boolean stayOpened) throws Exception {
         List<Param> prms = DbUtils.decodeParams(params);
         this.processStatement(prms, new DelegateSQLAction() {
             @Override
@@ -59,9 +59,14 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
                 self.preparedStatement.execute();
             }
         });
-        if(this.preparedStatement != null)
+        if(this.preparedStatement != null && !stayOpened)
             try{ this.preparedStatement.close(); } catch (Exception e) {};
 	}
+
+    @Override
+    public void execSQL(Object params) throws Exception {
+        this.execSQL(params, false);
+    }
 
     @Override
     public void execSQL() throws Exception {

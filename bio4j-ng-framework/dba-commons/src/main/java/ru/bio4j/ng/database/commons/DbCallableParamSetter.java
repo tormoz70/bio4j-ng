@@ -57,15 +57,16 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             try {
                                 val = (val != null) ? Converter.toType(val, targetValType) : val;
                             } catch (ConvertValueException e) {
-                                throw new SQLException(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\"",
-                                        paramName, val, valType.getSimpleName(), targetValType.getSimpleName()), e);
+                                throw new SQLException(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\". Message: %s",
+                                        paramName, val, (valType != null ? valType.getSimpleName() : null),
+                                        (targetValType != null ? targetValType.getSimpleName() : null), e.getMessage()), e);
                             }
                         try {
                             sqlType = (sqlType == 0 ? sqlTypeConverter.read(targetValType, charSize, false) : sqlType);
                             callable.setObjectAtName(paramName, val, sqlType);
                         } catch (SQLException e) {
-                            throw new SQLException(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s)",
-                                    paramName, sqlTypeName, val, valType.getSimpleName()), e);
+                            throw new SQLException(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s). Message: %s",
+                                    paramName, sqlTypeName, val, (valType != null ? valType.getSimpleName() : null), e.getMessage()), e);
                         }
                     }
                     if ((param.getDirection() == Param.Direction.OUT) || (param.getDirection() == Param.Direction.INOUT)) {
