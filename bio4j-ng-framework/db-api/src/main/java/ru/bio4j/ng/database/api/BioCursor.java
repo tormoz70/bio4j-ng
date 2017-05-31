@@ -100,7 +100,11 @@ public class BioCursor {
 
                        if(existsParam.getType() != MetaType.UNDEFINED){
                            Class<?> toType = MetaTypeConverter.write(existsParam.getType());
-                           val = Converter.toType(val, toType);
+                           try {
+                               val = Converter.toType(val, toType);
+                           } catch (Exception ex) {
+                               throw new Exception(String.format("Error while converting %s to %s. Message: %s", val, toType, ex.getMessage()));
+                           }
                        }
                        existsParam.setValue(val);
                    } else
