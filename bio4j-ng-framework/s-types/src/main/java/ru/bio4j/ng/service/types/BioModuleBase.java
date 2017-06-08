@@ -82,9 +82,9 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     public BioCursor getCursor(String bioCode, User usr) throws Exception {
         BioCursor cursor = loadCursor(bundleContext(), bioCode);
-        applyCurrentUserParams(usr, cursor.sqlDefs());
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
+        applyCurrentUserParams(usr, cursor.sqlDefs());
         return cursor;
     }
 
