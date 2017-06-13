@@ -54,97 +54,105 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
             routeMap.put(BioRoute.UNKNOWN.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
-                public void handle(BioRequest request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     BioRespBuilder.Builder brsp = BioRespBuilder.anErrorBuilder()
                             .exception(new BioError.BadRequestType(request.getRequestType()));
                     response.getWriter().append(brsp.json());
-
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.PING.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
-                public void handle(BioRequest request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
                     response.getWriter().append(responseBuilder.json());
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.LOGIN.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
-                public void handle(BioRequest request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
             routeMap.put(BioRoute.LOGOUT.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
-                public void handle(BioRequest request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
             routeMap.put(BioRoute.CRUD_JSON_GET.getAlias(), new BioRouteHandler<BioRequestGetJson>() {
                 @Override
-                public void handle(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
+                public boolean handle(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_JSON_GET);
                     dataProvider.processRequest(BioRoute.CRUD_JSON_GET, request, response);
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_FILE_GET.getAlias(), new BioRouteHandler<BioRequestGetFile>() {
                 @Override
-                public void handle(final BioRequestGetFile request, final HttpServletResponse response) throws Exception {
+                public boolean handle(final BioRequestGetFile request, final HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FILE_GET);
                     dataProvider.processRequest(BioRoute.CRUD_FILE_GET, request, response);
-
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_DATASET_GET.getAlias(), new BioRouteHandler<BioRequestJStoreGetDataSet>() {
                 @Override
-                public void handle(BioRequestJStoreGetDataSet request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequestJStoreGetDataSet request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_GET);
                     dataProvider.processRequest(BioRoute.CRUD_DATASET_GET, request, response);
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_DATASET_EXP.getAlias(), new BioRouteHandler<BioRequestJStoreExpDataSet>() {
                 @Override
-                public void handle(BioRequestJStoreExpDataSet request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequestJStoreExpDataSet request, HttpServletResponse response) throws Exception {
                     LOG.debug("Request {} not implemented.", BioRoute.CRUD_DATASET_EXP);
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_RECORD_GET.getAlias(), new BioRouteHandler<BioRequestJStoreGetRecord>() {
                 @Override
-                public void handle(BioRequestJStoreGetRecord request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequestJStoreGetRecord request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_RECORD_GET);
                     dataProvider.processRequest(BioRoute.CRUD_RECORD_GET, request, response);
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_DATASET_POST.getAlias(), new BioRouteHandler<BioRequestJStorePost>() {
                 @Override
-                public void handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequestJStorePost request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_DATASET_POST);
                     dataProvider.processRequest(BioRoute.CRUD_DATASET_POST, request, response);
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_EXEC.getAlias(), new BioRouteHandler<BioRequestStoredProg>() {
                 @Override
-                public void handle(BioRequestStoredProg request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequestStoredProg request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_EXEC);
                     dataProvider.processRequest(BioRoute.CRUD_EXEC, request, response);
+                    return true;
                 }
             });
 
             routeMap.put(BioRoute.CRUD_FCLOUD.getAlias(), new BioRouteHandler<BioRequestFCloud>() {
                 @Override
-                public void handle(BioRequestFCloud request, HttpServletResponse response) throws Exception {
+                public boolean handle(BioRequestFCloud request, HttpServletResponse response) throws Exception {
                     LOG.debug("Processing {} request...", BioRoute.CRUD_FCLOUD);
                     dataProvider.processRequest(BioRoute.CRUD_FCLOUD, request, response);
+                    return true;
                 }
             });
 
@@ -209,13 +217,17 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 throw e;
             }
 
+            boolean requestHandled = false;
             BioRouteHandler routeHandler = bioModule.getRouteHandler(route.getAlias());
-            if(routeHandler == null)
+            if(routeHandler != null)
+                requestHandled = routeHandler.handle(bioRequest, response);
+            if(!requestHandled) {
                 routeHandler = routeMap.get(route.getAlias());
-            if(routeHandler == null)
-                throw new Exception(String.format("RouteHandler for requestType \"%s\" not found!", route.getAlias()));
+                if (routeHandler == null)
+                    throw new Exception(String.format("RouteHandler for requestType \"%s\" not found!", route.getAlias()));
+                routeHandler.handle(bioRequest, response);
+            }
 
-            routeHandler.handle(bioRequest, response);
         }
     }
 }

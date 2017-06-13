@@ -310,4 +310,18 @@ public class ParamsTest {
         Assert.assertEquals(prmsStr, "");
     }
 
+    @Test(enabled = true)
+    public void setParamsTest() throws Exception {
+        List<Param> testParams = new ArrayList<>();
+        testParams.add(Param.builder().name("p1").value("v1").build());
+        testParams.add(Param.builder().name("p2").value("v2").build());
+        testParams.add(Param.builder().name("p3").value("v3").build());
+
+        List<Param> testParams2 = new ArrayList<>();
+
+        Paramus.setParams(testParams2, testParams);
+        Assert.assertTrue(Paramus.indexOf(testParams2, "p2") == 1);
+        Assert.assertTrue(Paramus.paramValueAsString(testParams2, "p2").equals("v2"));
+    }
+
 }

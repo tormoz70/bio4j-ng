@@ -447,6 +447,13 @@ public class Paramus implements Closeable {
         throw new IllegalArgumentException(String.format("Param \"%s\" not found in collection \"params\"!", paramName));
     }
 
+    public Object getParamValue(String paramName) throws ConvertValueException {
+        Param param = this.getParam(paramName, true);
+        if (param != null)
+            return param.getValue();
+        throw new IllegalArgumentException(String.format("Param \"%s\" not found in collection \"params\"!", paramName));
+    }
+
     public static <T> T paramValue(Param param, Class<T> type) throws ConvertValueException {
         return Converter.toType(param.getValue(), type);
     }
@@ -465,6 +472,12 @@ public class Paramus implements Closeable {
             rslt = Utl.nvl(paramus.getParamValue(paramName, type), defaultValue);
         }
         return rslt;
+    }
+
+    public static Object paramValue(List<Param> params, String paramName) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            return paramus.getParamValue(paramName);
+        }
     }
 
     public static String paramValueAsString(List<Param> params, String paramName, String defaultValue) throws Exception {
@@ -506,6 +519,13 @@ public class Paramus implements Closeable {
     public static void setParam(List<Param> params, Param param, boolean replaceIfExists) throws Exception {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.apply(Arrays.asList(param), false, replaceIfExists);
+        }
+    }
+
+    public static void setParams(List<Param> params, List<Param> paramsFrom) throws Exception {
+        try (Paramus paramus = Paramus.set(paramsFrom)) {
+            for (Param p : paramus.get())
+                Paramus.setParamValue(params, p.getName(), p.getValue());
         }
     }
 
