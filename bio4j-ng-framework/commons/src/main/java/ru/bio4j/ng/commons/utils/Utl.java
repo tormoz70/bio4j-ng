@@ -300,7 +300,7 @@ public class Utl {
     }
 
     private static Field findFieldOfBean(Class<?> type, String fieldName) {
-        for(java.lang.reflect.Field fld : type.getDeclaredFields()) {
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             if(fld.getName().equals(fieldName))
                 return fld;
         }
@@ -589,5 +589,13 @@ public class Utl {
         return result;
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
 }
 

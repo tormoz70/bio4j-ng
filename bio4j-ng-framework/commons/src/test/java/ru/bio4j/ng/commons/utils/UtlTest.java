@@ -289,4 +289,11 @@ public class UtlTest {
         Boolean b = null;
         Assert.assertTrue(b == null);
     }
+
+    @Test
+    public void roundTest() throws Exception {
+        double b = 123.456123;
+        double b1 = Utl.round(b, 2);
+        Assert.assertTrue(b1 == 123.46);
+    }
 }
