@@ -5,13 +5,14 @@ import java.util.regex.Pattern;
 
 public class Regexs {
     public static Matcher match(String line, String regex, int flags) {
+        if(Strings.isNullOrEmpty(line)) return null;
         Pattern pattern = Pattern.compile(regex, flags);
-        return pattern.matcher(line);
+        return pattern != null ? pattern.matcher(line) : null;
     }
 
     public static String find(String line, String regex, int flags) {
         Matcher m = match(line, regex, flags);
-        return m.find() ? m.group() : null;
+        return (m != null && m.find()) ? m.group() : null;
     }
 
     public static int pos(String line, String regex, int flags) {

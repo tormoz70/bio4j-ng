@@ -370,9 +370,11 @@ public class Paramus implements Closeable {
 		return Strings.isNullOrEmpty(rslt) ? "yyyy.MM.dd HH:mm:ss" : rslt;
 	}
 
+    private static final String cs_default_number_format = "##0.##";
 	public static String extractNumberFormat(String fmt){
+        if(Strings.isNullOrEmpty(fmt)) return cs_default_number_format;
 		String rslt = Regexs.find(fmt, "(?<=;to_number\\(').*(?='\\))", Pattern.CASE_INSENSITIVE);
-		return Strings.isNullOrEmpty(rslt) ? "##0.##" : rslt;
+		return Strings.isNullOrEmpty(rslt) ? cs_default_number_format : rslt;
 	}
 
     public Paramus setValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
