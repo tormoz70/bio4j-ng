@@ -14,6 +14,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.List;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
@@ -58,6 +59,15 @@ public abstract class BioRequestFactory<T extends BioRequest> {
         if(qprms.bioParams == null)
             qprms.bioParams = new ArrayList<>();
         bioRequest.setBioParams(Paramus.set(qprms.bioParams).merge(bioRequest.getBioParams(), true).pop());
+
+        if(bioRequest instanceof BioRequestJStoreGetDataSet){
+            if(((BioRequestJStoreGetDataSet)bioRequest).getSort() == null && qprms.sort != null){
+                ((BioRequestJStoreGetDataSet)bioRequest).setSort(qprms.sort);
+            }
+            if(((BioRequestJStoreGetDataSet)bioRequest).getFilter() == null && qprms.filter != null){
+                ((BioRequestJStoreGetDataSet)bioRequest).setFilter(qprms.filter);
+            }
+        }
 
         return bioRequest;
     }

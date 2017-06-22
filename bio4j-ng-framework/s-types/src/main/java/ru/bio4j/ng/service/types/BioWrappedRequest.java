@@ -138,6 +138,12 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             if (obj != null && result.filter == null)
                 result.filter = obj.getFilter();
         }
+        if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrg)) {
+            SortAndFilterObj obj = Jsons.decode("{ \"sort\":" + result.sortOrg + " }", SortAndFilterObj.class);
+            result.sort = obj.sort;
+        }
+        if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrg))
+            result.filter = Jsons.decode(result.filterOrg, Filter.class);
 
         result.page = Converter.toType(result.pageOrig, Integer.class);
         result.offset = Converter.toType(result.offsetOrig, Integer.class);
