@@ -147,19 +147,31 @@ public class PgSQLUtils implements RDBMSUtils {
     private static void parsParam(String paramDesc, Paramus p, StringBuilder args, Param fixedParam) {
         String dirName = extractDirName(paramDesc);
         paramDesc = cutDirNames(paramDesc);
-        String paramName = fixedParam != null ? fixedParam.getName() : paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
-        String paramNameUpper = paramName.toUpperCase();
-        paramDesc = cutDirName(paramDesc, paramName);
+        String paramNameFromDesc = paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
+        String paramNameFixed = fixedParam != null ? fixedParam.getName().toLowerCase() : null;
+        if(paramNameFromDesc.equalsIgnoreCase(paramNameFixed) ||
+                paramNameFromDesc.equals(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramNameFixed)
+                || paramNameFromDesc.equals(DEFAULT_PARAM_PREFIX[1].toLowerCase() + paramNameFixed)) {
+            paramNameFixed = paramNameFromDesc;
+            fixedParam.setName(paramNameFixed);
+        }
+        if (fixedParam != null && !paramNameFromDesc.equalsIgnoreCase(paramNameFixed))
+            throw new IllegalArgumentException("Параметру хранимой процедуры \"" + paramNameFromDesc +
+                    "\" не соответствует параметр на входе \"" + paramNameFixed + "\"!");
+
+
+        paramDesc = cutDirName(paramDesc, paramNameFromDesc);
+        String paramNameUpper = paramNameFromDesc.toUpperCase();
         String typeName = paramDesc;
 
         if (!(paramNameUpper.startsWith(DEFAULT_PARAM_PREFIX[0]) || paramNameUpper.startsWith(DEFAULT_PARAM_PREFIX[1])))
             throw new IllegalArgumentException("Не верный формат наименования аргументов хранимой процедуры.\n" +
                     "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
-        args.append(((args.length() == 0) ? ":" : ",:") + paramName.toLowerCase());
+        args.append(((args.length() == 0) ? ":" : ",:") + paramNameFromDesc);
         MetaType type = decodeType(typeName);
 
         p.add(Param.builder()
-                .name(paramName)
+                .name(paramNameFromDesc)
                 .type(fixedParam != null ? fixedParam.getType() : type)
                 .direction(fixedParam != null ? fixedParam.getDirection() : decodeDirection(dirName))
                 .innerObject(typeName)

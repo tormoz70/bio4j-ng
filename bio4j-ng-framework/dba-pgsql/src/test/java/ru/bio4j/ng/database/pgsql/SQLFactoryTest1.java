@@ -96,4 +96,21 @@ public class SQLFactoryTest1 {
         Assert.assertEquals(params.get(1).getDirection(), Param.Direction.OUT);
         Assert.assertEquals(params.get(1).getType(), MetaType.INTEGER);
     }
+
+    @Test(enabled = true)
+    public void testParsParams1() throws Exception {
+        StringBuilder args = new StringBuilder();
+        String paramsList = "p_param1 character varying, OUT p_param2 integer";
+        List<Param> pps = new ArrayList<>();
+        pps.add(Param.builder().name("param1").value("").type(MetaType.STRING).direction(Param.Direction.INOUT).fixed(true).build());
+        pps.add(Param.builder().name("param2").value(0).type(MetaType.INTEGER).fixed(true).build());
+        List<Param> params = new ArrayList<>();
+        try (Paramus p = Paramus.set(params)) {
+            PgSQLUtils.parsParams(paramsList, p, args, pps);
+        }
+        Assert.assertEquals(params.get(0).getDirection(), Param.Direction.INOUT);
+        Assert.assertEquals(params.get(0).getType(), MetaType.STRING);
+        Assert.assertEquals(params.get(1).getDirection(), Param.Direction.UNDEFINED);
+        Assert.assertEquals(params.get(1).getType(), MetaType.INTEGER);
+    }
 }
