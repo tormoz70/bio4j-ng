@@ -85,19 +85,20 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         List<String> paramNamesList = Sqls.extractParamNamesFromSQL(clearQuery);
         if(paramNames != null) {
             paramNames.clear();
-            paramNames.addAll(paramNamesList);
+            for(String pn : paramNamesList)
+                paramNames.add(pn.toLowerCase());
         }
 
         final String r = "\\:\\b[\\w\\#\\$]+";
         Matcher m = Regexs.match(clearQuery, r, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
         int indx = 1;
         while (m.find()) {
-            String paramName = m.group().substring(1);
+            String paramName = m.group().substring(1).toLowerCase();
 
             List indexList=(List)paramMap.get(paramName);
             if(indexList==null) {
                 indexList=new LinkedList();
-                paramMap.put(paramName.toLowerCase(), indexList);
+                paramMap.put(paramName, indexList);
             }
             indexList.add(new Integer(indx));
 
