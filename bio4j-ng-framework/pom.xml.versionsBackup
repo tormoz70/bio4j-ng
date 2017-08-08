@@ -109,9 +109,9 @@
         <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
         <tomcat-juli.version>8.0.3</tomcat-juli.version>
 
-        <ojdbc6.version>12.1.0</ojdbc6.version>
+        <ojdbc7.version>12.1.0.1</ojdbc7.version>
 
-        <postgresql-jdbc.version>9.4-1201.jdbc41</postgresql-jdbc.version>
+        <postgresql-jdbc.version>42.1.4</postgresql-jdbc.version>
         <!--<commons-codec.version>1.9</commons-codec.version>-->
         <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
 	</properties>

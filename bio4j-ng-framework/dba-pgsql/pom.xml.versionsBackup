@@ -12,7 +12,7 @@
 
     <properties>
         <!-- oracle -->
-        <!--<ojdbc6.version>12.1.0</ojdbc6.version>-->
+        <!--<ojdbc7.version>12.1.0.1</ojdbc7.version>-->
         <!--<oucp.version>12.1.0</oucp.version>-->
         <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
         <tomcat-juli.version>8.0.3</tomcat-juli.version>

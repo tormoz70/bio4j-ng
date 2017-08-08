@@ -8,45 +8,6 @@
     <version>1.4.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>givc-public</id>
-            <name>Public Maven Repo</name>
-            <url>http://192.168.50.100:8081/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>givc-public</id>
-            <name>Public Maven Repo</name>
-            <url>http://192.168.50.100:8081/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-    <distributionManagement>
-        <repository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>http://192.168.50.100:8081/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>http://192.168.50.100:8081/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <!--<scm>-->
         <!--<connection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</connection>-->
         <!--<developerConnection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</developerConnection>-->
@@ -111,9 +72,9 @@
         <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
         <tomcat-juli.version>8.0.3</tomcat-juli.version>
 
-        <ojdbc6.version>12.1.0</ojdbc6.version>
+        <ojdbc7.version>12.1.0.1</ojdbc7.version>
 
-        <postgresql-jdbc.version>9.4-1201.jdbc41</postgresql-jdbc.version>
+        <postgresql-jdbc.version>42.1.4</postgresql-jdbc.version>
         <!--<commons-codec.version>1.9</commons-codec.version>-->
         <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
 
