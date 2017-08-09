@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0"
+	localization="OSGI-INF/metatype/metatype">
+	<OCD id="content.service.config" name="%content.service.config.label"
+		description="%content.service.config.description">
+		<AD id="query.content.files.path" type="String"
+			default="" name="%file.path.label" description="%file.path.description"
+			cardinality="0" />
+	</OCD>
+	<Designate pid="content.service.config">
+		<Object ocdref="content.service.config" />
+	</Designate>
+</metatype:MetaData>
