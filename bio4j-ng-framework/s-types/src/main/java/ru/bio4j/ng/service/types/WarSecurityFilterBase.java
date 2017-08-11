@@ -82,7 +82,7 @@ public class WarSecurityFilterBase {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
         resp.setCharacterEncoding("UTF-8");
-        final HttpServletRequest req = (HttpServletRequest) request;
+        final BioWrappedRequest req = (BioWrappedRequest) request;
         final String servletPath = req.getServletPath();
         final HttpSession session = req.getSession();
 
@@ -92,7 +92,7 @@ public class WarSecurityFilterBase {
                 debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
                 initSecurityHandler(req.getServletContext());
-                final SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
+                final SrvcUtils.BioQueryParams qprms = req.getBioQueryParams();
                 final boolean weAreInPublicAreas = detectWeAreInPublicAreas(qprms.bioCode);
                 if (securityProvider != null) {
                     if (!Strings.isNullOrEmpty(qprms.login)) {
@@ -100,16 +100,16 @@ public class WarSecurityFilterBase {
                         BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
                         response.getWriter().append(responseBuilder.json());
                     } else if (qprms.requestType != null && qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias())) {
-                            loginProcessor.logoff(qprms);
-                            BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
-                            response.getWriter().append(responseBuilder.json());
+                        loginProcessor.logoff(qprms);
+                        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
+                        response.getWriter().append(responseBuilder.json());
                     } else {
                         User user = loginProcessor.getUser(qprms);
+                        req.setUser(user);
                         if (user.isAnonymous() && !weAreInPublicAreas) {
                             debug("Anonymous not in public area for bioCode \"{}\"!", qprms.bioCode);
                             throw new BioError.Login.BadLogin();
                         } else {
-                            //HttpServletRequest wrappedRequest = processUser(user, req, resp);
                             chn.doFilter(req, resp);
                         }
                     }

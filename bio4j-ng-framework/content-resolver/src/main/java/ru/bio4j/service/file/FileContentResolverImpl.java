@@ -29,7 +29,7 @@ import static ru.bio4j.service.file.QueryExtractor.loadQueries;
 import static ru.bio4j.service.file.io.FileLoader.buildCode;
 import static ru.bio4j.util.Strings.empty;
 
-@Component(managedservice="content.service.config")
+@Component(managedservice="content-resolver.service.config")
 @Instantiate
 @Provides(properties =
         {@StaticServiceProperty(name = SERVICE_RANKING,

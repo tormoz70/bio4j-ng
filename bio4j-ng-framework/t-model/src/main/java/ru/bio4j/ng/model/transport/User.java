@@ -2,7 +2,9 @@ package ru.bio4j.ng.model.transport;
 
 import flexjson.JSON;
 
-public class User {
+import java.security.Principal;
+
+public class User implements Principal {
 
     //public static final String BIO_ANONYMOUS_STOKEN = "$bio-anonymous$";
 
@@ -126,5 +128,10 @@ public class User {
 
     public void setAnonymous(Boolean anonymous) {
         this.anonymous = anonymous;
+    }
+
+    @Override
+    public String getName() {
+        return login;
     }
 }

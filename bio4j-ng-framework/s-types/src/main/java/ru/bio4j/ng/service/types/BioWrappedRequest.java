@@ -11,6 +11,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
+import java.security.Principal;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -225,5 +226,17 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return Collections.enumeration(values);
     }
 
+    private User user;
+    public void setUser(User user) {
+        this.user = user;
+    }
 
+    @Override
+    public Principal getUserPrincipal() {
+        return user;
+    }
+
+    public User getUser(){
+        return user;
+    }
 }
