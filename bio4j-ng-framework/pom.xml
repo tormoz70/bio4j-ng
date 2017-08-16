@@ -431,6 +431,7 @@
         <module>dba-pgsql</module>
         <module>sql-context</module>
         <module>crud-handler</module>
+        <module>content-resolver</module>
         <module>security-provider</module>
         <!--<module>e-hcache</module>-->
         <!--<module>content-resolver</module>-->

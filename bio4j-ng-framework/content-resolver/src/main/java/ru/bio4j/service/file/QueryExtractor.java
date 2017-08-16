@@ -2,8 +2,8 @@ package ru.bio4j.service.file;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.collections.KeyValue;
-import ru.bio4j.collections.Pair;
+import ru.bio4j.ng.commons.collections.KeyValue;
+import ru.bio4j.ng.commons.collections.Pair;
 import ru.bio4j.service.file.io.FileLoader;
 
 import java.io.IOException;

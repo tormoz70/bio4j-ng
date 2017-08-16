@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import ru.bio4j.collections.Pair;
+import ru.bio4j.ng.commons.collections.Pair;
 
 import java.io.File;
 import java.io.IOException;

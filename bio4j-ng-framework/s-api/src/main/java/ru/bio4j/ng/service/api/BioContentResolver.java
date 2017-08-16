@@ -1,8 +1,8 @@
-package ru.bio4j.service.file;
+package ru.bio4j.ng.service.api;
 
 import java.io.IOException;
 
-public interface FileContentResolver {
+public interface BioContentResolver {
 
     String getQueryContent(String bioCode) throws IOException;
 
