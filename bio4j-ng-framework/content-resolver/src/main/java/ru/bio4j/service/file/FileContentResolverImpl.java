@@ -4,6 +4,13 @@ import org.apache.felix.ipojo.annotations.*;
 import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.collections.Pair;
+import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.service.api.BioContentResolver;
+import ru.bio4j.ng.service.api.CacheName;
+import ru.bio4j.ng.service.api.CacheService;
+import ru.bio4j.ng.service.api.ConfigProvider;
+import ru.bio4j.ng.service.types.BioServiceBase;
 import ru.bio4j.service.file.io.FileListener;
 import ru.bio4j.service.file.io.FileLoader;
 import ru.bio4j.service.file.io.FileWatcher;
@@ -18,39 +25,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.file.Paths.get;
-import static org.osgi.framework.Constants.SERVICE_RANKING;
-import static ru.bio4j.service.ServiceConstants.PROCESSING_FILE_RANK_IPOJO;
 import static ru.bio4j.service.file.QueryExtractor.extractName;
 import static ru.bio4j.service.file.QueryExtractor.loadQueries;
 import static ru.bio4j.service.file.io.FileLoader.buildCode;
-import static ru.bio4j.util.Strings.empty;
 
-@Component(managedservice="content-resolver.service.config")
+@Component
 @Instantiate
-@Provides(properties =
-        {@StaticServiceProperty(name = SERVICE_RANKING,
-                value = PROCESSING_FILE_RANK_IPOJO, type = "java.lang.Integer")})
-public class FileContentResolverImpl implements FileContentResolver, ManagedService, FileListener {
-
+@Provides(specifications = BioContentResolver.class)
+public class FileContentResolverImpl extends BioServiceBase implements BioContentResolver, FileListener {
     private static final Logger LOG = LoggerFactory.getLogger(FileContentResolverImpl.class);
-
-    private final FileContentResolverConfig fileConf = new FileContentResolverConfig();
     private volatile FileWatcher fileWatcher;
 
+    @Requires
+    private ConfigProvider configProvider;
+    @Requires
     private CacheService cacheService;
 
-    @Updated
-    public synchronized void updated(Dictionary conf) {
-        fileConf.config(conf);
-        if (fileConf.isFilled()) {
-            LOG.info("service updated new values are {}", fileConf);
-            cacheService.clear(CacheName.QUERY);
-            stop();
-            start(fileConf.getPath());
-        }
-    }
+    private String contentPath;
 
-    public void start(String path) {
+    public void startWatcher(String path) {
         try {
             readVersion();
             final Path contentPath = get(path);
@@ -61,6 +54,24 @@ public class FileContentResolverImpl implements FileContentResolver, ManagedServ
         } catch (IOException e) {
             LOG.error("Can't watch dirs", e);
         }
+    }
+
+    @Validate
+    public void doStart() throws Exception {
+        LOG.debug("Starting...");
+
+        if(!configProvider.configIsReady()) {
+            LOG.info("Config is not ready! Waiting...");
+            return;
+        }
+        ready = true;
+        contentPath = configProvider.getConfig().getLiveBioContentPath();
+
+        LOG.info("Service starting on path: {}", contentPath);
+        cacheService.clear(CacheName.QUERY);
+        stop();
+        startWatcher(contentPath);
+        LOG.debug("Started");
     }
 
     @Invalidate
@@ -92,7 +103,7 @@ public class FileContentResolverImpl implements FileContentResolver, ManagedServ
         final Pair<String,String> fileName = extractName(bioCode);
         final HashMap<String, String> content = cacheService.get(CacheName.QUERY, fileName.getRight());
         if (content == null) {
-            final Map<String, String> qMap = loadQueries(fileName.getRight(), fileConf.getPath());
+            final Map<String, String> qMap = loadQueries(fileName.getRight(), contentPath);
             if (qMap != null) {
                 cacheService.put(CacheName.QUERY, fileName.getLeft(), (Serializable)Collections.unmodifiableMap(qMap));
                 return qMap.get(fileName.getLeft());
@@ -104,8 +115,8 @@ public class FileContentResolverImpl implements FileContentResolver, ManagedServ
 
     public String getContent(String bioCode) throws IOException {
         String content = cacheService.get(CacheName.CONTENT, bioCode);
-        if (empty(content)) {
-            content = FileLoader.loadFile(bioCode, fileConf.getPath());
+        if (Strings.isNullOrEmpty(content)) {
+            content = FileLoader.loadFile(bioCode, contentPath);
             cacheService.put(CacheName.CONTENT, bioCode, content);
         }
         return content;
@@ -113,13 +124,9 @@ public class FileContentResolverImpl implements FileContentResolver, ManagedServ
 
     @Override
     public void onEvent(Path name, WatchEvent.Kind<Path> kind) {
-        final String code = buildCode(name, fileConf.getPath());
+        final String code = buildCode(name, contentPath);
         LOG.info("changed code = {} {}", code, kind);
         cacheService.remove(CacheName.QUERY, extractName(code).getRight());
     }
 
-    @Bind
-    public void setCacheService(CacheService cacheService) {
-        this.cacheService = cacheService;
-    }
 }

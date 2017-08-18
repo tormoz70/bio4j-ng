@@ -41,20 +41,6 @@ public class SQLContextProviderImpl extends BioServiceBase implements SQLContext
             LOG.info("Config is not ready! Waiting...");
             return;
         }
-
-//        if(globalSQLContext == null) {
-//            LOG.debug("Creating SQLContext (poolName:{})...", configProvider.getConfig().getPoolName());
-//            try {
-//                SQLContextConfig cfg = new SQLContextConfig();
-//                Utl.applyValuesToBean(configProvider.getConfig(), cfg);
-//                globalSQLContext = SQLContextFactory.create(cfg);
-//            } catch (Exception e) {
-//                LOG.error("Error while creating SQLContext!", e);
-//            }
-//        } else {
-//
-//        }
-
         this.ready = true;
         LOG.debug("Started");
     }

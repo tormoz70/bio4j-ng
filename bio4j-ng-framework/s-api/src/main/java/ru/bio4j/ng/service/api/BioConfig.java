@@ -33,6 +33,8 @@ public class BioConfig {
     private int initialPoolSize = 5;
     @Prop(name = "global.current.schema")
     private String currentSchema = null;
+    @Prop(name = "global.live-bio.content.path")
+    private String liveBioContentPath = null;
 
 
     public String getDbConnectionUrl() {
@@ -117,5 +119,13 @@ public class BioConfig {
 
     public boolean isBioDebug() {
         return bioDebug;
+    }
+
+    public String getLiveBioContentPath() {
+        return liveBioContentPath;
+    }
+
+    public void setLiveBioContentPath(String liveBioContentPath) {
+        this.liveBioContentPath = liveBioContentPath;
     }
 }
