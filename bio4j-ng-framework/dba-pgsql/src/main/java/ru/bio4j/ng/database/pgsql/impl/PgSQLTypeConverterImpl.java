@@ -17,7 +17,7 @@ public class PgSQLTypeConverterImpl extends SqlTypeConverterImpl {
         } else if (ru.bio4j.ng.commons.converter.Types.typeIsReal(type)) {
             return java.sql.Types.NUMERIC;
         } else if ((type == boolean.class) || (type == Boolean.class)) {
-            return Types.BOOLEAN;
+            return Types.CHAR;
         } else if ((type == Date.class) || (type == java.sql.Date.class) || (type == java.sql.Timestamp.class)) {
             return java.sql.Types.DATE;
         } else if ((type == byte[].class)||(type == Byte[].class)) {
