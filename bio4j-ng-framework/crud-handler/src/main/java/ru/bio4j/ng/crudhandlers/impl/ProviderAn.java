@@ -28,7 +28,8 @@ import java.util.Map;
 public abstract class ProviderAn<T extends BioRequest> {
     protected final Logger LOG;
 
-    protected static final int MAX_RECORDS_FETCH_LIMIT = 1500;
+    //TODO Перенести в настройки
+    protected static final int MAX_RECORDS_FETCH_LIMIT = 2500;
 
     protected BioAppModule module;
     protected SQLContext context;
