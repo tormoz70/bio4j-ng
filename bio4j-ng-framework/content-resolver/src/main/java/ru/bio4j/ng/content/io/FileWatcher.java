@@ -1,4 +1,4 @@
-package ru.bio4j.service.file.io;
+package ru.bio4j.ng.content.io;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,11 +83,24 @@ public class FileWatcher extends Thread {
         this.trace = true;
     }
 
+    @Override
+    public void interrupt() {
+        if(watcher != null)
+            try {
+                watcher.close();
+            } catch (IOException e) {
+                LOG.error("Error while closing WatchService!", e);
+            }
+        super.interrupt();
+    }
+
     public void processEvents() {
 
         WatchKey key;
         try {
             key = watcher.take();
+        } catch (ClosedWatchServiceException x) {
+            return;
         } catch (InterruptedException x) {
             return;
         }
@@ -105,7 +118,7 @@ public class FileWatcher extends Thread {
                 continue;
             }
 
-            // Context for directory entry event is the file name of entry
+            // Context for directory entry event is the content name of entry
             WatchEvent<Path> ev = cast(event);
             Path name = ev.context();
             Path child = dir.resolve(name);

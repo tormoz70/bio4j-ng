@@ -1,4 +1,4 @@
-package ru.bio4j.service.ehcache.util;
+package ru.bio4j.ng.ehcache.util;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package ru.bio4j.service.file.io;
+package ru.bio4j.ng.content.io;
 
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;

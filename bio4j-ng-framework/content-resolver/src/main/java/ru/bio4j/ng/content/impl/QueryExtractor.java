@@ -1,10 +1,10 @@
-package ru.bio4j.service.file;
+package ru.bio4j.ng.content.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.collections.KeyValue;
 import ru.bio4j.ng.commons.collections.Pair;
-import ru.bio4j.service.file.io.FileLoader;
+import ru.bio4j.ng.content.io.FileLoader;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,11 +16,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ru.bio4j.service.file.io.FileLoader.buildPath;
+import static ru.bio4j.ng.content.io.FileLoader.buildPath;
 
 public class QueryExtractor {
 
-    public final static String QUERY_NAME = "/\\*#(.*)\\*+/";
+    private final static String QUERY_ENCODING_NAME = "windows-1251";
+    public final static String QUERY_NAME = "(?<=^/\\*\\$\\{sql\\.).+(?=\\}\\*/$)";
     private final static String SEPARATOR = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(QueryExtractor.class);
 
@@ -44,20 +45,25 @@ public class QueryExtractor {
 
     private static Map<String, String> buildQueriesMap(Path fullPath) throws IOException {
         final Pattern pattern = Pattern.compile(QUERY_NAME);
-        final List<String> strings = Files.readAllLines(fullPath, Charset.defaultCharset());
+        final List<String> strings = Files.readAllLines(fullPath, Charset.forName(QUERY_ENCODING_NAME));
         StringBuilder currentQueryText = null;
         final Map<String, StringBuilder> queries = new HashMap<>();
+        boolean curSqlOpened = false;
+        boolean curLineIsSqlName = false;
         for (String string : strings) {
-            final Matcher matcher = pattern.matcher(string);
+            final Matcher matcher = pattern.matcher(string.trim());
             if (matcher.find()) {
-                String currentQuery = matcher.group(1);
+                String currentQuery = matcher.group();
                 currentQueryText = new StringBuilder();
                 queries.put(currentQuery, currentQueryText);
                 LOG.debug("currentQuery = {}", currentQuery);
-            } else {
-                if (currentQueryText == null) {
-                    throw new IllegalArgumentException("query name must be fist");
-                }
+                curSqlOpened = true;
+                curLineIsSqlName = true;
+            } else
+                curLineIsSqlName = false;
+            if (string.trim().equals("/"))
+                curSqlOpened = false;
+            if (curSqlOpened && !curLineIsSqlName) {
                 currentQueryText.append(string).append(SEPARATOR);
             }
         }

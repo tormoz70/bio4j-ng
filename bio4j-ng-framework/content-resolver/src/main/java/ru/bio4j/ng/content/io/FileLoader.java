@@ -1,4 +1,4 @@
-package ru.bio4j.service.file.io;
+package ru.bio4j.ng.content.io;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
