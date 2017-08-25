@@ -23,8 +23,12 @@ import ru.bio4j.ng.ehcache.util.CacheUtil;
 import ru.bio4j.ng.service.types.BioServiceBase;
 import sun.security.krb5.Config;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -228,9 +232,11 @@ public class CacheServiceImpl extends BioServiceBase implements CacheService {
     @Requires
     private ConfigProvider configProvider;
 
-    private DiskStoreConfiguration createDiskStoreConfiguration() {
+    private DiskStoreConfiguration createDiskStoreConfiguration() throws IOException {
         String cachePath = configProvider.getConfig().getCachePersistentPath();
-        LOG.debug("Cache path is {}", cachePath);
+        final Path cachePathPath = Paths.get(cachePath);
+        Files.createDirectories(cachePathPath);
+        LOG.debug("Cache persistent path is {}", cachePath);
         DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
         diskStoreConfiguration.setPath(cachePath);
         return diskStoreConfiguration;

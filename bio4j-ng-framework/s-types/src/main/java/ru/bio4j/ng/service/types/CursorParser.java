@@ -16,8 +16,12 @@ import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -257,8 +261,9 @@ public class CursorParser {
 
     }
 
+    private static String PATTERN_EXTRACT_FILE_NAME = "(?<=\\{text-file:)(\\w|-)+\\.sql(?=\\})";
     private static String tryLoadSQL(final BundleContext context, final String bioCode, String sqlText) throws Exception {
-        Matcher m = Regexs.match(sqlText, "(?<=\\{text-file:)(\\w|-)+\\.sql(?=\\})", Pattern.CASE_INSENSITIVE);
+        Matcher m = Regexs.match(sqlText, PATTERN_EXTRACT_FILE_NAME, Pattern.CASE_INSENSITIVE);
         if(m.find()){
             String sqlFileName = Utl.extractBioParentPath(bioCode) + Utl.DEFAULT_BIO_PATH_SEPARATOR + m.group();
             URL url = context.getBundle().getResource(sqlFileName);
@@ -272,7 +277,36 @@ public class CursorParser {
         return sqlText;
     }
 
-    public static BioCursor pars(BundleContext context, final String bioCode, final Document document) throws Exception {
+    private static String tryLoadSQL(final String contentPath, final String bioCode, String sqlText) throws Exception {
+        Matcher m = Regexs.match(sqlText, PATTERN_EXTRACT_FILE_NAME, Pattern.CASE_INSENSITIVE);
+        if(m.find()){
+            String sqlFileName = Utl.extractBioParentPath(bioCode) + Utl.DEFAULT_BIO_PATH_SEPARATOR + m.group();
+            Path p = Paths.get(sqlFileName);
+            if(Files.exists(p))
+                try (InputStream is = Utl.openFile(sqlFileName)) {
+                    sqlText = Utl.readStream(is);
+                }
+            else
+                throw new Exception(String.format("Файл %s, на который ссылается объект %s не наден в ресурсах!", sqlFileName, bioCode));
+        }
+        return sqlText;
+    }
+
+    private static Document loadXmlDocumentFromRes(final BundleContext context, final String bioCode) throws Exception {
+        String path = Utl.extractBioPath(bioCode);
+        URL url = context.getBundle().getResource(path + ".xml");
+        if(url != null) {
+            LOG.debug("Loading cursor spec from \"{}\"", path + ".xml");
+            try(InputStream inputStream = url.openStream()) {
+                Document document = Utl.loadXmlDocument(inputStream);
+                return document;
+            }
+        }
+        return null;
+    }
+
+    public static BioCursor pars(final BundleContext context, final String bioCode) throws Exception {
+        Document document = loadXmlDocumentFromRes(context, bioCode);
         BioCursor cursor = new BioCursor(bioCode);
         Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
         if(exportTitleElem != null)
@@ -282,6 +316,41 @@ public class CursorParser {
         for (Element sqlElem : sqlTextElems) {
             BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
             String sql = tryLoadSQL(context, bioCode, sqlElem.getTextContent().trim());
+            BioCursor.SQLDef sqlDef;
+            if(curType == BioCursor.Type.SELECT)
+                sqlDef = new BioCursor.SelectSQLDef(sql);
+            else
+                sqlDef = new BioCursor.UpdelexSQLDef(sql);
+            cursor.setSqlDef(curType, sqlDef);
+
+            addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
+            addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
+        }
+        LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
+        return cursor;
+    }
+
+    private static String buildPath(String path, String bioCode, String extension) {
+        return path + File.separator + bioCode.replace(".", File.separator) + extension;
+    }
+
+    private static Document loadXmlDocumentFromPath(final String contentRootPath, final String bioCode) throws Exception {
+        String path = buildPath(contentRootPath, bioCode, ".xml");
+        return Utl.loadXmlDocument(path);
+    }
+
+
+    public static BioCursor pars(final String contentRootPath, final String bioCode) throws Exception {
+        Document document = loadXmlDocumentFromPath(contentRootPath, bioCode);
+        BioCursor cursor = new BioCursor(bioCode);
+        Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
+        if(exportTitleElem != null)
+            cursor.setExportTitle(exportTitleElem.getTextContent());
+        addColsFromXml(cursor, document); // добавляем колонки из XML
+        List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
+        for (Element sqlElem : sqlTextElems) {
+            BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
+            String sql = tryLoadSQL(contentRootPath, bioCode, sqlElem.getTextContent().trim());
             BioCursor.SQLDef sqlDef;
             if(curType == BioCursor.Type.SELECT)
                 sqlDef = new BioCursor.SelectSQLDef(sql);

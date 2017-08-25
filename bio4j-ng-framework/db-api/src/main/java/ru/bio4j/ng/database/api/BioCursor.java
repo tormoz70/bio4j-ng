@@ -15,11 +15,12 @@ import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import javax.management.Query;
+import java.io.Serializable;
 import java.util.*;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
-public class BioCursor {
+public class BioCursor implements Serializable {
 
     public String getExportTitle() {
         return exportTitle;

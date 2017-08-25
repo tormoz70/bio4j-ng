@@ -54,6 +54,11 @@
             <artifactId>bio4j-ng-ehcache</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-dbapi</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>
