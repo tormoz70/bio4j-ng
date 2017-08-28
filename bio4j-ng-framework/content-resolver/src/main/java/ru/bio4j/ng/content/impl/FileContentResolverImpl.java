@@ -2,15 +2,10 @@ package ru.bio4j.ng.content.impl;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import ru.bio4j.ng.commons.collections.Pair;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.content.io.FileListener;
-import ru.bio4j.ng.content.io.FileLoader;
 import ru.bio4j.ng.content.io.FileWatcher;
 import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.service.api.*;
@@ -18,7 +13,6 @@ import ru.bio4j.ng.service.types.BioServiceBase;
 import ru.bio4j.ng.service.types.CursorParser;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
@@ -55,9 +49,11 @@ public class FileContentResolverImpl extends BioServiceBase implements FileConte
     @Override
     public void onEvent(Path name, WatchEvent.Kind<Path> kind) {
         final String bioCode = buildCode(name, configProvider.getConfig().getContentResolverPath());
-        LOG.info("Changed object bioCode: \"{}\" - \"{}\", removing from cache...", bioCode, kind);
-        cacheService.remove(CacheName.CURSOR, bioCode.toLowerCase());
-        LOG.info("Object bioCode: \"{}\" removed from cache.", bioCode, kind);
+        if(cacheService.isKeyInCache(CacheName.CURSOR, bioCode.toLowerCase())) {
+            LOG.info("Changed object bioCode: \"{}\" - \"{}\", removing from cache...", bioCode, kind);
+            cacheService.remove(CacheName.CURSOR, bioCode.toLowerCase());
+            LOG.info("Object bioCode: \"{}\" removed from cache.", bioCode, kind);
+        }
     }
 
     @Validate
