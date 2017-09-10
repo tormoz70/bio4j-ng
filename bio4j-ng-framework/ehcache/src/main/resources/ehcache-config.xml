@@ -1,22 +1,21 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="ehcache.xsd" name="Bio4jCacheService" updateCheck="false">
-	
-    <!-- diskStore path="cache-data"/ -->
-    
-	<defaultCache maxElementsInMemory="10000" eternal="false"
-		timeToLiveSeconds="0" 
-		overflowToDisk="false" 
-		diskPersistent="false" 
-		memoryStoreEvictionPolicy="FIFO"
-		statistics="false" />
+<ehcache name="Bio4jCacheService" updateCheck="false">
 
-	<cache eternal="false" name="objectMap"
-		maxElementsInMemory="100" 
-		overflowToDisk="false" 
-		diskPersistent="false" 
-		timeToIdleSeconds="86400"
-		memoryStoreEvictionPolicy="LRU" 
-		statistics="false"/>
+    <!-- diskStore path="cache-data"/ -->
+
+    <defaultCache maxElementsInMemory="10000" eternal="false"
+                  timeToLiveSeconds="0"
+                  overflowToDisk="false"
+                  diskPersistent="false"
+                  memoryStoreEvictionPolicy="FIFO"
+                  statistics="false"/>
+
+    <cache eternal="false" name="objectMap"
+           maxElementsInMemory="100"
+           overflowToDisk="false"
+           diskPersistent="false"
+           timeToIdleSeconds="86400"
+           memoryStoreEvictionPolicy="LRU"
+           statistics="false"/>
 
     <cache eternal="false" name="query"
            maxElementsInMemory="1000000"

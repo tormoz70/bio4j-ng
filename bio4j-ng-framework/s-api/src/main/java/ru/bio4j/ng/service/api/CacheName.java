@@ -1,9 +1,7 @@
 package ru.bio4j.ng.service.api;
 
 public enum CacheName {
-	OBJECT_MAP("objectMap"),
-    QUERY("query"),
-    CONTENT("content");
+    CURSOR("bio-cursor");
 
 	private final String cacheName;
 

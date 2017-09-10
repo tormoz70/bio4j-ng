@@ -1,6 +1,6 @@
-package ru.bio4j.service.ehcache.util;
+package ru.bio4j.ng.ehcache.util;
 
-import ru.bio4j.service.ehcache.CacheName;
+import ru.bio4j.ng.service.api.CacheName;
 
 import java.io.Serializable;
 

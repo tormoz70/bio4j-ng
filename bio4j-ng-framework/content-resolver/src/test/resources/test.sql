@@ -1,7 +1,16 @@
-/*#select*/
+-- Some comments
+
+/*${sql.select}*/
+-- SQL comments for select
 
         select * from test
-
-/*#insert*/
-
+/
+ /*${sql.insert}*/
+-- SQL comments for insert
         insert
+/
+
+--/*${sql.update}*/
+-- SQL comments for update
+        update
+/

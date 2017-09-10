@@ -1,39 +1,49 @@
-package ru.bio4j.service.ehcache.impl;
+package ru.bio4j.ng.ehcache.impl;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.Configuration;
+import net.sf.ehcache.config.ConfigurationFactory;
+import net.sf.ehcache.config.DiskStoreConfiguration;
+import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.handlers.event.Publishes;
+import org.apache.felix.ipojo.handlers.event.Subscriber;
+import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.cm.ManagedService;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.service.ehcache.CacheName;
-import ru.bio4j.service.ehcache.CacheService;
-import ru.bio4j.service.ehcache.util.CacheEventListener;
-import ru.bio4j.service.ehcache.util.CacheEventListenerWrapper;
-import ru.bio4j.service.ehcache.util.CacheUtil;
+import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.service.api.*;
+import ru.bio4j.ng.ehcache.util.CacheEventListenerWrapper;
+import ru.bio4j.ng.ehcache.util.CacheUtil;
+import ru.bio4j.ng.service.types.BioServiceBase;
+import sun.security.krb5.Config;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CacheServiceImpl implements CacheService {
+import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
+
+@Component
+@Instantiate
+@Provides(specifications = CacheService.class)
+public class CacheServiceImpl extends BioServiceBase implements CacheService {
 
 	private static Logger LOG = LoggerFactory.getLogger(CacheService.class);
 
-	private final CacheManager cacheManager;
-	
-	private final Map<String, CacheConfiguration> configuration;
-	
+    private final static String CACHE_CONFIG_FILE = "ehcache-config.xml";
+
 	private final Map<CacheEventListener, CacheEventListenerWrapper> listeners = new ConcurrentHashMap<>();
-	
-	public CacheServiceImpl(CacheManager cacheManager) {
-		if (cacheManager == null) {
-			throw new IllegalArgumentException("CacheManager is not set");
-		}
-		this.cacheManager = cacheManager;
-		configuration = cacheManager.getConfiguration().getCacheConfigurations();
-	}
 
 	@Override
 	public <Key extends Serializable, T extends Serializable> void put(CacheName cacheName, Key key, T value) {
@@ -143,7 +153,8 @@ public class CacheServiceImpl implements CacheService {
 	}
 	
 	private boolean isDiskPersistence(CacheName cacheName) {
-		return configuration.get(cacheName.cacheName()).isDiskPersistent();
+        Map<String, CacheConfiguration> cacheConfigurations = cacheManager.getConfiguration().getCacheConfigurations();
+		return cacheConfigurations.get(cacheName.cacheName()).isDiskPersistent();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -161,6 +172,8 @@ public class CacheServiceImpl implements CacheService {
 	}
 	
 	private Cache getCache(CacheName cacheName) throws IllegalArgumentException, IllegalStateException {
+        if(cacheManager == null)
+            throw new IllegalStateException("CacheManager is not inited!!!");
 		Cache cache = cacheManager.getCache(cacheName.cacheName());
 		if (cache == null) {
 			throw new IllegalArgumentException("Unknown cache " + cacheName.cacheName());
@@ -202,4 +215,68 @@ public class CacheServiceImpl implements CacheService {
 						"Total size of the memory store for this in bytes is {}",
 				inMemCount, inMemSizeInBytes);
 	}
+
+    private volatile Configuration serviceConfiguration;
+    private void createCacheConfiguration() throws Exception {
+        LOG.debug("Attempting to find cache configuration");
+        InputStream configIn = getClass().getClassLoader().getResourceAsStream(CACHE_CONFIG_FILE);
+        if (configIn == null) {
+            LOG.debug("Could not find configuration content for cache service");
+            throw new IllegalArgumentException("Could not find cache config content");
+        }
+        LOG.debug("Attempting to create new cache service");
+        serviceConfiguration = ConfigurationFactory.parseConfiguration(configIn);
+        serviceConfiguration.diskStore(createDiskStoreConfiguration());
+    }
+
+    @Requires
+    private ConfigProvider configProvider;
+
+    private DiskStoreConfiguration createDiskStoreConfiguration() throws IOException {
+        String cachePath = configProvider.getConfig().getCachePersistentPath();
+        final Path cachePathPath = Paths.get(cachePath);
+        Files.createDirectories(cachePathPath);
+        LOG.debug("Cache persistent path is {}", cachePath);
+        DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
+        diskStoreConfiguration.setPath(cachePath);
+        return diskStoreConfiguration;
+    }
+
+    private CacheManager cacheManager;
+    @Validate
+    public void doStart() throws Exception {
+        LOG.debug("Starting...");
+
+        if(!configProvider.configIsReady()) {
+            LOG.info("Config is not redy! Waiting...");
+            return;
+        }
+
+        try {
+            LOG.debug("Config is not null. Loading CacheConfiguration...");
+            createCacheConfiguration();
+            this.cacheManager = CacheManager.create(serviceConfiguration);
+            this.ready = true;
+        } catch (Exception e) {
+            LOG.error("Error on configuring Ehcache!", e);
+        }
+        LOG.debug("Started.");
+    }
+
+    @Invalidate
+    public void doStop() throws Exception {
+        LOG.debug("Stoping...");
+        this.ready = false;
+        LOG.debug("Stoped.");
+    }
+
+    @Subscriber(
+            name="ehcache.subscriber",
+            topics="bio-config-updated")
+    public void receive(Event e) throws Exception {
+        LOG.debug("Config updated event recived!!!");
+        doStop();
+        doStart();
+    }
+
 }

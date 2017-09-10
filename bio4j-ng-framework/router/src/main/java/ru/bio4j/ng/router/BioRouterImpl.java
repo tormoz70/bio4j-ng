@@ -225,7 +225,14 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 routeHandler = routeMap.get(route.getAlias());
                 if (routeHandler == null)
                     throw new Exception(String.format("RouteHandler for requestType \"%s\" not found!", route.getAlias()));
-                routeHandler.handle(bioRequest, response);
+                try {
+                    routeHandler.handle(bioRequest, response);
+                } catch (Exception e) {
+                    String msg = String.format("Unexpected error while handling BioRequest(%s): \n" +
+                            " - Error: %s", bioRequest.getBioCode(), e.getMessage());
+                    LOG.debug(msg);
+                    throw new Exception(msg, e);
+                }
             }
 
         }

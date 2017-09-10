@@ -35,27 +35,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
 
-    private static Document loadDocument(InputStream inputStream) throws Exception {
-        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-        f.setValidating(false);
-        DocumentBuilder builder = f.newDocumentBuilder();
-        return builder.parse(inputStream);
-    }
-
-    private static BioCursor loadCursor(BundleContext context, String bioCode) throws Exception {
-        BioCursor cursor = null;
-        String path = Utl.extractBioPath(bioCode);
-        URL url = context.getBundle().getResource(path + ".xml");
-        if(url != null) {
-            LOG.debug("Loading cursor spec from \"{}\"", path + ".xml");
-            try(InputStream inputStream = url.openStream()) {
-                Document document = loadDocument(inputStream);
-                cursor = CursorParser.pars(context, bioCode, document);
-            }
-        }
-        return cursor;
-    }
-
     protected abstract BundleContext bundleContext();
 
     protected static void applyCurrentUserParams(final User usr, final Collection<BioCursor.SQLDef> sqlDefs) {
@@ -81,7 +60,7 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
     }
 
     public BioCursor getCursor(String bioCode, User usr) throws Exception {
-        BioCursor cursor = loadCursor(bundleContext(), bioCode);
+        BioCursor cursor = CursorParser.pars(bundleContext(), bioCode);
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
         applyCurrentUserParams(usr, cursor.sqlDefs());

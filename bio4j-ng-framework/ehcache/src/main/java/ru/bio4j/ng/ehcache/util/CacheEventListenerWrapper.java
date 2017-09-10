@@ -1,17 +1,17 @@
-package ru.bio4j.service.ehcache.util;
+package ru.bio4j.ng.ehcache.util;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
 
-import static ru.bio4j.service.ehcache.util.CacheUtil.getCacheByCode;
+import static ru.bio4j.ng.ehcache.util.CacheUtil.getCacheByCode;
 
 public class CacheEventListenerWrapper implements CacheEventListener {
 	
-	ru.bio4j.service.ehcache.util.CacheEventListener listener;
+	ru.bio4j.ng.service.api.CacheEventListener listener;
 	
-	public CacheEventListenerWrapper(ru.bio4j.service.ehcache.util.CacheEventListener listener) {
+	public CacheEventListenerWrapper(ru.bio4j.ng.service.api.CacheEventListener listener) {
 		this.listener = listener;
 	}
 

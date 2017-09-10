@@ -1,10 +1,11 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.database.api.BioCursor;
+
 import java.io.IOException;
 
 public interface FileContentResolver extends BioService {
 
-    String getQueryContent(String bioCode) throws IOException;
+    BioCursor getCursor(String bioCode) throws Exception;
 
-    String getContent(String bioCode) throws IOException;
 }

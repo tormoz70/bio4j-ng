@@ -1,17 +1,16 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.ehcache.impl;
 
 import ru.bio4j.ng.commons.types.Prop;
-import ru.bio4j.ng.commons.utils.Utl;
 
-public class BioConfig {
+public class CacheConfig {
     @Prop(name = "bio.debug")
     private boolean bioDebug = false;
 
-    @Prop(name = "ehcache.persistent.path")
-    private String cachePersistentPath = "./ehcache-persistent";
+    //@Prop(name = "ehcache.persistent.path")
+    //private String cachePersistentPath = null;
 
-    @Prop(name = "content.resolver.path")
-    private String contentResolverPath = "./bio-content";
+    //@Prop(name = "content.resolver.path")
+    //private String contentResolverPath = null;
 
     @Prop(name = "global.pool.name")
     private String poolName;
@@ -127,21 +126,5 @@ public class BioConfig {
 
     public void setLiveBioContentPath(String liveBioContentPath) {
         this.liveBioContentPath = liveBioContentPath;
-    }
-
-    public String getCachePersistentPath() {
-        return cachePersistentPath;
-    }
-
-    public void setCachePersistentPath(String cachePersistentPath) {
-        this.cachePersistentPath = cachePersistentPath;
-    }
-
-    public String getContentResolverPath() {
-        return contentResolverPath;
-    }
-
-    public void setContentResolverPath(String contentResolverPath) {
-        this.contentResolverPath = contentResolverPath;
     }
 }
