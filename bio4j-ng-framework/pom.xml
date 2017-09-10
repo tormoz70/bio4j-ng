@@ -445,8 +445,8 @@
         <module>dba-pgsql</module>
         <module>sql-context</module>
         <module>crud-handler</module>
-        <!--<module>ehcache</module>-->
-        <!--<module>content-resolver</module>-->
+        <module>ehcache</module>
+        <module>content-resolver</module>
         <module>security-provider</module>
         <module>config</module>
         <module>router</module>
