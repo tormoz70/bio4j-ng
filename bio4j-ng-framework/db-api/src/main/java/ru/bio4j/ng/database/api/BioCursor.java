@@ -100,13 +100,8 @@ public class BioCursor implements Serializable {
                            existsParam.setDirection(pa.getDirection());
 
                        if(existsParam.getType() != MetaType.UNDEFINED){
-                           //dummy sift line
                            Class<?> toType = MetaTypeConverter.write(existsParam.getType());
-                           try {
-                               val = Converter.toType(val, toType);
-                           } catch (Exception ex) {
-                               throw new Exception(String.format("Error while converting %s to %s. Message: %s", val, toType, ex.getMessage()));
-                           }
+                           val = Converter.toType(val, toType, true);
                        }
                        existsParam.setValue(val);
                    } else
