@@ -363,6 +363,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-ng-content-resolver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>bio4j-ng-ehcache</artifactId>
                 <version>${project.version}</version>
             </dependency>

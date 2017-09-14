@@ -8,8 +8,9 @@ import ru.bio4j.ng.model.transport.User;
 import java.util.Map;
 
 public interface BioAppModule extends BioModule {
-    BioCursor getCursor(BioRequest bioRequest) throws Exception;
-    BioCursor getCursor(String bioCode, User usr) throws Exception;
+    BioCursor getCursor(String bioCode, User user) throws Exception;
+    BioCursor getCursor(String bioCode) throws Exception;
+    BioCursor getCursor(BioRequest request) throws Exception;
     SQLContext getSQLContext() throws Exception;
 
     BioHttpRequestProcessor getHttpRequestProcessor(String requestType);

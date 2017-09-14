@@ -148,7 +148,8 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
     public void process(final BioRequestJStoreGetDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            BioCursor cursor = module.getCursor(request);
+//            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
+            final BioCursor cursor = module.getCursor(request);
             initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
             context.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());

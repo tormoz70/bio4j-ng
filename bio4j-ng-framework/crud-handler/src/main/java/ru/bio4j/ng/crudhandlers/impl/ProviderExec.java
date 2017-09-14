@@ -34,6 +34,7 @@ public class ProviderExec extends ProviderAn<BioRequestStoredProg> {
         LOG.debug("Process exec for \"{}\" request...", request.getBioCode());
         try {
             final User usr = request.getUser();
+//            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
             final BioCursor cursor = module.getCursor(request);
 
             BioRespBuilder.DataBuilder responseBuilder = processExec(request, context, cursor);

@@ -115,7 +115,8 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
     public void process(final BioRequestGetFile request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            BioCursor cursor = module.getCursor(request);
+//            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
+            final BioCursor cursor = module.getCursor(request);
             processCursorAsFileProvider(request, response, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());

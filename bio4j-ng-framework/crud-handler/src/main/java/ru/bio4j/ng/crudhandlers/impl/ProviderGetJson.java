@@ -38,7 +38,8 @@ public class ProviderGetJson extends ProviderAn<BioRequestGetJson> {
     public void process(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            BioCursor cursor = module.getCursor(request);
+//            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
+            final BioCursor cursor = module.getCursor(request);
             BioRespBuilder.JsonBuilder responseBuilder = processCursorAsJsonProvider(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {

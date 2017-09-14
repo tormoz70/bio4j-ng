@@ -38,6 +38,8 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
     private SQLContextProvider sqlContextProvider;
     @Requires
     private FCloudProvider fcloudProvider;
+//    @Requires
+//    private ContentResolver contentResolver;
 
 
     private BioAppModule getActualModule(final BioRequest request) throws Exception {
@@ -63,7 +65,7 @@ public class DataProviderImpl extends BioServiceBase implements DataProvider {
         final SQLContext context = getActualContext(request, module);
         ProviderAn provider = providerMap.get(route);
         if(provider != null) {
-            provider.init(module, context);
+            provider.init(module, null, context);
             provider.process(request, response);
         } else
             throw new IllegalArgumentException(String.format("Для запроса %s не определен обработчик!", route));

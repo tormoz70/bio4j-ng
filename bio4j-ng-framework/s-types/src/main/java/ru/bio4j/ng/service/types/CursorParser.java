@@ -63,23 +63,6 @@ public class CursorParser {
                 .build();
     }
 
-//    private static void addParamsFromSQLDesc(final BioCursor cursor) throws Exception {
-//        final String sql = cursor.getSql();
-//        final StringBuffer out = new StringBuffer(sql.length());
-//        final Pattern pattern = Pattern.compile(REGEX_PARAMS, Pattern.MULTILINE+Pattern.CASE_INSENSITIVE);
-//        final Matcher matcher = pattern.matcher(sql);
-//        try(Paramus p = Paramus.set(cursor.getParams());) {
-//            while (matcher.find()) {
-//                String text = matcher.group();
-//                Param param = parseParam(text);
-//                p.apply(param);
-//                matcher.appendReplacement(out, ":" + param.getName());
-//            }
-//        }
-//        matcher.appendTail(out);
-//        cursor.setPreparedSql(out.toString());
-//    }
-
     private static final String COL_PREFIX = "col.";
     private static final String REGEX_COLS = "(/\\*\\$\\{"+COL_PREFIX+".*?\\}\\*/)";
     private static final String REGEX_COLS_TITLE = "title:\".*?\"";
@@ -307,6 +290,8 @@ public class CursorParser {
 
     public static BioCursor pars(final BundleContext context, final String bioCode) throws Exception {
         Document document = loadXmlDocumentFromRes(context, bioCode);
+        if(document == null)
+            throw new Exception(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
         BioCursor cursor = new BioCursor(bioCode);
         Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
         if(exportTitleElem != null)

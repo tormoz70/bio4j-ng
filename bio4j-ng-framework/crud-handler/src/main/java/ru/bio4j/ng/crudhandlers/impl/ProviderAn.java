@@ -13,7 +13,7 @@ import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioAppModule;
-import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.api.ContentResolver;
 
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
@@ -32,14 +32,16 @@ public abstract class ProviderAn<T extends BioRequest> {
     protected static final int MAX_RECORDS_FETCH_LIMIT = 2500;
 
     protected BioAppModule module;
+    protected ContentResolver contentResolver;
     protected SQLContext context;
 
     public ProviderAn(){
         LOG = LoggerFactory.getLogger(this.getClass());
     }
 
-    public void init(BioAppModule module, SQLContext context){
+    public void init(BioAppModule module, ContentResolver contentResolver, SQLContext context){
         this.module = module;
+        this.contentResolver = contentResolver;
         this.context = context;
     }
 

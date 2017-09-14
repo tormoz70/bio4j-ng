@@ -81,7 +81,8 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
     private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
-        final BioCursor cursorDef = module.getCursor(request);
+//        final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
+        final BioCursor cursor = module.getCursor(request);
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());
@@ -89,8 +90,8 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
         StoreRow firstRow = null;
         for(StoreRow row : request.getModified()) {
-            applyParentRowToChildren(parentCursorDef, parentRow, cursorDef, row);
-            processUpDelRow(row, ctx, conn, cursorDef);
+            applyParentRowToChildren(parentCursorDef, parentRow, cursor, row);
+            processUpDelRow(row, ctx, conn, cursor);
             if(firstRow == null)
                 firstRow = row;
         }
@@ -99,7 +100,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         List<BioResponse> slaveResponses = new ArrayList<>();
         for(BioRequestJStorePost post : request.getSlavePostData()) {
             post.setModuleKey(request.getModuleKey()); // forward moduleKey
-            BioResponse rsp = processRequestPost(post, ctx, conn, cursorDef, firstRow, usr).build();
+            BioResponse rsp = processRequestPost(post, ctx, conn, cursor, firstRow, usr).build();
             slaveResponses.add(rsp);
         }
         if(slaveResponses.size() > 0)
@@ -108,7 +109,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         StoreData data = new StoreData();
         data.setStoreId(request.getStoreId());
         data.setMetadata(new StoreMetadata());
-        List<Field> cols = cursorDef.getFields();
+        List<Field> cols = cursor.getFields();
         data.getMetadata().setFields(cols);
         data.setRows(request.getModified());
 
