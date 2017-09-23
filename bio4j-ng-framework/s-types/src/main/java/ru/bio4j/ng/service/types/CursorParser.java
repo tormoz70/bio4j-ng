@@ -294,6 +294,11 @@ public class CursorParser {
             throw new Exception(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
         BioCursor cursor = new BioCursor(bioCode);
         Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
+        Boolean readOnly = Doms.getAttribute(document.getDocumentElement(), "readOnly", true, Boolean.class);
+        cursor.setReadOnly(readOnly);
+        Boolean multiSelection = Doms.getAttribute(document.getDocumentElement(), "multiselection", false, Boolean.class);
+        cursor.setMultiSelection(multiSelection);
+
         if(exportTitleElem != null)
             cursor.setExportTitle(exportTitleElem.getTextContent());
         addColsFromXml(cursor, document); // добавляем колонки из XML

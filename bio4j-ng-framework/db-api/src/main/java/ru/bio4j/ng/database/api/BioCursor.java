@@ -30,6 +30,22 @@ public class BioCursor implements Serializable {
         this.exportTitle = exportTitle;
     }
 
+    public Boolean getMultiSelection() {
+        return multiSelection;
+    }
+
+    public void setMultiSelection(Boolean multiSelection) {
+        this.multiSelection = multiSelection;
+    }
+
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     public static enum Type {
         SELECT, UPDATE, DELETE, EXECUTE, AFTERSELECT
     }
@@ -222,6 +238,9 @@ public class BioCursor implements Serializable {
     private final String bioCode;
 
     private String exportTitle;
+
+    private Boolean multiSelection;
+    private Boolean readOnly;
 
     private final List<Field> fields = new ArrayList<>();
 

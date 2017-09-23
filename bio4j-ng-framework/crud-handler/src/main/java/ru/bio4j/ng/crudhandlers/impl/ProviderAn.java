@@ -95,6 +95,8 @@ public abstract class ProviderAn<T extends BioRequest> {
                 .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParams()).open();) {
             LOG.debug("Cursor \"{}\" opened!!!", cursorDef.getBioCode());
             data.setMetadata(new StoreMetadata());
+            data.getMetadata().setReadonly(cursorDef.getReadOnly());
+            data.getMetadata().setMultiSelection(cursorDef.getMultiSelection());
             List<Field> fields = cursorDef.getFields();
             data.getMetadata().setFields(fields);
             List<StoreRow> rows = new ArrayList<>();
