@@ -247,6 +247,33 @@ public class Utl {
             return ""+val;
     }
 
+    public static Object fieldValueAsObject(Object bean, java.lang.reflect.Field field){
+        Object val;
+        try {
+            field.setAccessible(true);
+            val = field.get(bean);
+        } catch (IllegalAccessException ex) {
+            val = ex.toString();
+        }
+        return val;
+    }
+
+    public static Object fieldValueAsObject(Object bean, String fieldName){
+        Object val = null;
+        if(bean != null) {
+            java.lang.reflect.Field field = findFieldOfBean(bean.getClass(), fieldName);
+            if(field != null) {
+                try {
+                    field.setAccessible(true);
+                    val = field.get(bean);
+                } catch (IllegalAccessException ex) {
+                    val = ex.toString();
+                }
+            }
+        }
+        return val;
+    }
+
     public static String buildBeanStateInfo(Object bean, String beanName, String tab) {
         if(tab == null) tab = "";
         final String attrFmt = tab + " - %s : %s;\n";

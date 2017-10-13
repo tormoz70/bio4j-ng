@@ -82,6 +82,20 @@ public abstract class BioRequestFactory<T extends BioRequest> {
     }
 
     public static class GetJson extends BioRequestFactory<BioRequestGetJson> {
+        public BioRequestGetJson restore(
+                final SrvcUtils.BioQueryParams qprms,
+                final Class<BioRequestGetJson> clazz,
+                final User usr) throws Exception {
+            BioRequestGetJson rslt = super.restore(qprms, clazz, usr);
+            setOffset(rslt, qprms);
+            if(rslt.getPageSize() == null && qprms.pageSize != null)
+                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getSort() == null && qprms.sort != null)
+                rslt.setSort(qprms.sort);
+            if (rslt.getFilter() == null && qprms.filter != null)
+                rslt.setFilter(qprms.filter);
+            return rslt;
+        }
     }
 
     public static class GetFile extends BioRequestFactory<BioRequestGetFile> {
@@ -95,12 +109,17 @@ public abstract class BioRequestFactory<T extends BioRequest> {
         }
     }
 
-    private static void setOffset(BioRequestJStoreGetDataSet request, SrvcUtils.BioQueryParams qprms){
+
+    private static void setOffset(BioRequestPagination request, SrvcUtils.BioQueryParams qprms){
         if(request.getOffset() == null && qprms.offset != null) {
             if(qprms.offset == 0 && qprms.page > 1 && qprms.pageSize > 0)
                 request.setOffset((qprms.page - 1) * qprms.pageSize);
             else
                 request.setOffset(qprms.offset);
+            if(request.getPageSize() != null)
+                request.setPage((int)Math.floor(request.getOffset()/request.getPageSize())+1);
+            else
+                request.setPage(1);
         }
     }
 

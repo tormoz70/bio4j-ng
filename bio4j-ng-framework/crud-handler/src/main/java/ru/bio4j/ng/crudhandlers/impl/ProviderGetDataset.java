@@ -2,6 +2,8 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Regexs;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
@@ -12,6 +14,7 @@ import ru.bio4j.ng.service.api.BioRespBuilder;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by ayrat on 07.03.2016.
@@ -55,7 +58,15 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                     LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
                     List<Param> locateParams = Paramus.clone(cur.getSelectSqlDef().getParams());
                     try(Paramus p = Paramus.set(locateParams)){
-                        p.setValue(LocateWrapper.PKVAL, cur.getSelectSqlDef().getLocation());
+                        Object location = cur.getSelectSqlDef().getLocation();
+                        if(location != null && location instanceof String){
+                            if(((String) location).startsWith("1||"))
+                                location = null;
+                            if(((String) location).startsWith("0||")) {
+                                location = Regexs.find((String) location, "(?<=0\\|\\|)(\\w|\\d|-|\\+)+", Pattern.CASE_INSENSITIVE);
+                            }
+                        }
+                        p.setValue(LocateWrapper.PKVAL, location);
                         p.setValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
                     }
                     try (SQLCursor c = context.createCursor()
@@ -163,6 +174,10 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 context.getWrappers().getWrapper(WrapQueryType.PAGING).wrap(cursor.getSelectSqlDef());
                 responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
+            response.addHeader("X-Pagination-Current-Page", ""+request.getPage());
+            response.addHeader("X-Pagination-Per-Page", ""+request.getPageSize());
+//            response.addHeader("X-Pagination-Total-Count", ""+orgs.size());
+
             response.getWriter().append(responseBuilder.json());
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());

@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport.jstore;
 
 import ru.bio4j.ng.model.transport.BioRequest;
+import ru.bio4j.ng.model.transport.BioRequestPagination;
 import ru.bio4j.ng.model.transport.BioRequestRunLongOp;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
@@ -9,12 +10,17 @@ import java.util.List;
 /**
  * Запрос на получение данных в JStoreClient
  */
-public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp {
+public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp implements BioRequestPagination {
 
     /**
      * Общее количество записей передается в случае кеширования данных на сервере
      */
-    private int totalCount;
+    private Integer totalCount;
+
+    /**
+     * Страница
+     */
+    private Integer page;
 
     /**
      * Начальная позиция
@@ -82,12 +88,22 @@ public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp {
         this.location = location;
     }
 
-    public int getTotalCount() {
+    public Integer getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(int totalCount) {
+    public void setTotalCount(Integer totalCount) {
         this.totalCount = totalCount;
+    }
+
+    @Override
+    public Integer getPage() {
+        return page;
+    }
+
+    @Override
+    public void setPage(Integer page) {
+        this.page = page;
     }
 }
 
