@@ -152,7 +152,8 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         sqlDef.setPageSize(request.getPageSize());
         sqlDef.setLocation(request.getLocation());
         sqlDef.setFilter(request.getFilter());
-        sqlDef.setSort(request.getSort());
+        if(request.getSort() != null && request.getSort().size() > 0)
+            sqlDef.setSort(request.getSort());
     }
 
     @Override

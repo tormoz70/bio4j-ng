@@ -18,6 +18,15 @@
             <xs:enumeration value="cursor"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="sortDirectionType">
+        <xs:annotation>
+            <xs:documentation>Направление сортировки (тип)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="ASC"/>
+            <xs:enumeration value="DESC"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="fencoding">
         <xs:annotation>
             <xs:documentation>Кодировка</xs:documentation>
@@ -209,7 +218,6 @@
                                                     </xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
-
                                             <xs:attribute name="group" type="xs:byte">
                                                 <xs:annotation>
                                                     <xs:documentation>Номер группы</xs:documentation>
@@ -260,6 +268,33 @@
                                             <xs:attribute name="tooltip" type="xs:string" default="@">
                                                 <xs:annotation>
                                                     <xs:documentation>Имя колонки, из которой будет браться tooltip</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="defaultSort" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Сортировка по умолчанию для запроса SELECT</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="field" minOccurs="1" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="name" type="xs:string" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Имя поля</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="direction" type="sortDirectionType" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Направление сортировки</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                         </xs:extension>

@@ -15,6 +15,7 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.database.api.BioCursor;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.io.File;
 import java.io.InputStream;
@@ -22,6 +23,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -244,6 +246,26 @@ public class CursorParser {
 
     }
 
+    private static void addDefaultSortFromXml(final BioCursor.SelectSQLDef selectSQLDef, final Document document) throws Exception {
+        Element sqlElem = Doms.findElem(document, "/cursor/defaultSort");
+        if(sqlElem != null) {
+            NodeList fieldNodes = sqlElem.getElementsByTagName("field");
+            if(fieldNodes != null && fieldNodes.getLength() > 0) {
+                if (selectSQLDef.getSort() == null)
+                    selectSQLDef.setSort(new ArrayList<>());
+                for (int i = 0; i < fieldNodes.getLength(); i++) {
+                    Element paramElem = (Element) fieldNodes.item(i);
+                    String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
+                    Sort.Direction sortDirection = Converter.toType(Doms.getAttribute(paramElem, "direction", "ASC", String.class), Sort.Direction.class);
+                    Sort sort = new Sort();
+                    sort.setFieldName(fieldName);
+                    sort.setDirection(sortDirection);
+                    selectSQLDef.getSort().add(sort);
+                }
+            }
+        }
+    }
+
     private static String PATTERN_EXTRACT_FILE_NAME = "(?<=\\{text-file:)(\\w|-)+\\.sql(?=\\})";
     private static String tryLoadSQL(final BundleContext context, final String bioCode, String sqlText) throws Exception {
         Matcher m = Regexs.match(sqlText, PATTERN_EXTRACT_FILE_NAME, Pattern.CASE_INSENSITIVE);
@@ -307,9 +329,10 @@ public class CursorParser {
             BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
             String sql = tryLoadSQL(context, bioCode, sqlElem.getTextContent().trim());
             BioCursor.SQLDef sqlDef;
-            if(curType == BioCursor.Type.SELECT)
+            if(curType == BioCursor.Type.SELECT) {
                 sqlDef = new BioCursor.SelectSQLDef(sql);
-            else
+                addDefaultSortFromXml((BioCursor.SelectSQLDef)sqlDef, document);
+            } else
                 sqlDef = new BioCursor.UpdelexSQLDef(sql);
             cursor.setSqlDef(curType, sqlDef);
 
