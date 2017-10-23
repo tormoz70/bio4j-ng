@@ -31,12 +31,12 @@ public class BioLoginProcessor {
         return securityProvider.login(request.getLogin(), qprms.remoteIP);
     }
 
-    public Boolean loggedin(SrvcUtils.BioQueryParams qprms) throws Exception {
-        if(securityProvider == null)
-            throw new IllegalArgumentException("SecurityHandler not defined!");
-
-        return securityProvider.loggedin(qprms.stoken, qprms.remoteIP);
-    }
+//    public Boolean loggedin(SrvcUtils.BioQueryParams qprms) throws Exception {
+//        if(securityProvider == null)
+//            throw new IllegalArgumentException("SecurityHandler not defined!");
+//
+//        return securityProvider.loggedin(qprms.stoken, qprms.remoteIP);
+//    }
 
     public void logoff(SrvcUtils.BioQueryParams qprms) throws Exception {
         if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias()))
