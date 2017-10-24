@@ -72,6 +72,17 @@ public class ConverterTest {
 		}
 	}
 
+    @Test
+    public void ConvertNull2Long() {
+        try {
+            Object actual = Converter.toType(null, Long.class);
+            Long expected = null;
+            Assert.assertEquals(actual, expected);
+        } catch (ConvertValueException ex) {
+            Assert.fail(ex.getMessage());
+        }
+    }
+
 //    public static <T> T number2Number(Number inValue, Class<T> targetType) throws ParseException {
 //    	try {
 //    		T rslt = (T)inValue; // Как мне сделать, что бы тут возбуждалось исключение?

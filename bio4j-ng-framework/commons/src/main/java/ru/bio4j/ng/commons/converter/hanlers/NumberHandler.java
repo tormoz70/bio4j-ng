@@ -15,8 +15,12 @@ public class NumberHandler extends TypeHandlerBase implements TypeHandler<Number
 
     @Override
     public Number read(Object value, Class<?> targetType) throws ConvertValueException {
-        if (value == null)
-            value = 0;
+        if (value == null) {
+            if(targetType.isPrimitive())
+                value = 0;
+            else
+                return null;
+        }
         Class<? extends Number> targetTypeWrapped = (Class<? extends Number>)Types.wrapPrimitiveType(targetType);
         value = Types.wrapPrimitive(value);
         Class<?> valType = (value == null) ? null : value.getClass();

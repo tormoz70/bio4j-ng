@@ -33,13 +33,13 @@ public class MetaTypeConverter {
         if (type == MetaType.STRING)
             return String.class;
         if (type == MetaType.INTEGER)
-            return long.class;
+            return Long.class;
         if (type == MetaType.DECIMAL)
-            return double.class;
+            return Double.class;
         if (type == MetaType.DATE)
             return Date.class;
         if (type == MetaType.BOOLEAN)
-            return boolean.class;
+            return Boolean.class;
         if (type == MetaType.BLOB)
             return byte[].class;
         if (type == MetaType.CURSOR)
