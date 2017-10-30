@@ -111,16 +111,18 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
 
     private static void setOffset(BioRequestPagination request, SrvcUtils.BioQueryParams qprms){
-        if(request.getOffset() == null && qprms.offset != null) {
-            if(qprms.offset == 0 && qprms.page > 1 && qprms.pageSize > 0)
-                request.setOffset((qprms.page - 1) * qprms.pageSize);
-            else
-                request.setOffset(qprms.offset);
-            if(request.getPageSize() != null)
-                request.setPage((int)Math.floor(request.getOffset()/request.getPageSize())+1);
-            else
-                request.setPage(1);
+        int pageSize = (qprms.pageSize != null && qprms.pageSize > 0) ? qprms.pageSize : -1;
+        int page = (qprms.page != null && qprms.page > 0) ? qprms.page : 0;
+        int offset = (qprms.offset != null && qprms.offset >= 0) ? qprms.offset : 0;
+        if(pageSize > 0) {
+            if (page > 0)
+                offset = (page - 1) * pageSize;
+            else if (offset >= 0)
+                page = (int) Math.floor(offset / pageSize) + 1;
         }
+        request.setPageSize(pageSize);
+        request.setOffset(offset);
+        request.setPage(page);
     }
 
     public static class GetDataSet extends BioRequestFactory<BioRequestJStoreGetDataSet> {
@@ -130,8 +132,6 @@ public abstract class BioRequestFactory<T extends BioRequest> {
                 final User usr) throws Exception {
             BioRequestJStoreGetDataSet rslt = super.restore(qprms, clazz, usr);
             setOffset(rslt, qprms);
-            if(rslt.getPageSize() == null && qprms.pageSize != null)
-                rslt.setPageSize(qprms.pageSize);
             if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
                 rslt.setLocation(Integer.getInteger(qprms.location));
             if(rslt.getSort() == null && qprms.sort != null)

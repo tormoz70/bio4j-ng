@@ -25,6 +25,11 @@ public class StoreData {
     private int pageSize;
 
     /**
+     * Номер страницы
+     */
+    private int page;
+
+    /**
      * Всего записей
      */
     private int results;
@@ -105,5 +110,13 @@ public class StoreData {
 
     public void setStoreId(String storeId) {
         this.storeId = storeId;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 }

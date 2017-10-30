@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 public class Sqls {
 
+    public static final int UNKNOWN_RECS_TOTAL = 999999999;
+
     public static String deleteNonSQLSubstringsInSQL(String sql) {
         //sql = Regexs.replace(sql, "(')(.*?)\\1", "", Pattern.MULTILINE); // replace string consts by placeholders
         //sql = Regexs.replace(sql, "(\")(.*?)\\1", "", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE); // replace double quoted string by placeholders

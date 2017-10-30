@@ -2,10 +2,7 @@ package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Prop;
-import ru.bio4j.ng.commons.utils.Httpc;
-import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
@@ -146,9 +143,15 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrg))
             result.filter = Jsons.decode(result.filterOrg, Filter.class);
 
-        result.page = Converter.toType(result.pageOrig, Integer.class);
-        result.offset = Converter.toType(result.offsetOrig, Integer.class);
-        result.pageSize = Converter.toType(result.pageSizeOrig, Integer.class);
+
+        result.page = Converter.toType(result.pageOrig, Integer.class, true);
+        result.offset = Converter.toType(result.offsetOrig, Integer.class, true);
+        result.pageSize = Converter.toType(result.pageSizeOrig, Integer.class, true);
+        if(result.pageSize == null && result.pageSizeOrig == null) result.pageSize = 50;
+        if((result.page == null && result.pageOrig != null && result.pageOrig.equalsIgnoreCase("last")) ||
+                (result.offset == null && result.offsetOrig != null && result.offsetOrig.equalsIgnoreCase("last"))) {
+            result.offset = Sqls.UNKNOWN_RECS_TOTAL + 1 - result.pageSize;
+        }
 
         extractBioParamsFromQuery(result);
 

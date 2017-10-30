@@ -3,8 +3,10 @@ package ru.bio4j.ng.crudhandlers.impl;
 import org.slf4j.Logger;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
+import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.Param;
@@ -26,8 +28,6 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         return (pg - 1) * pageSize;
     }
 
-    private static final int UNKNOWN_RECS_TOTAL = 999999999;
-
     private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
         final BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
@@ -38,8 +38,8 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 result.bioCode(cur.getBioCode());
                 boolean requestCached = false; //requestCached(request, LOG);
 
-                int totalCount = requestCached ? request.getTotalCount() : UNKNOWN_RECS_TOTAL;
-                if(request.getOffset() == (UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
+                int totalCount = requestCached ? request.getTotalCount() : Sqls.UNKNOWN_RECS_TOTAL;
+                if(request.getOffset() == (Sqls.UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
 //                if(totalCount == 0) {
                     LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
                     try (SQLCursor c = context.createCursor()
@@ -89,6 +89,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 data.setStoreId(request.getStoreId());
                 data.setOffset(cur.getSelectSqlDef().getOffset());
                 data.setPageSize(cur.getSelectSqlDef().getPageSize());
+                data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
                 data.setResults(totalCount);
 
                 readStoreData(data, context, conn, cur, LOG);
