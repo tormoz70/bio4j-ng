@@ -442,18 +442,32 @@ public class Paramus implements Closeable {
 	    return rslt;
     }
 
-    public <T> T getParamValue(String paramName, Class<T> type) throws ConvertValueException {
+    public <T> T getParamValue(String paramName, Class<T> type, boolean silent) throws ConvertValueException {
         Param param = this.getParam(paramName, true);
         if (param != null)
             return paramValue(param, type);
-        throw new IllegalArgumentException(String.format("Param \"%s\" not found in collection \"params\"!", paramName));
+        if(!silent)
+            throw new IllegalArgumentException(String.format("Param \"%s\" not found in collection \"params\"!", paramName));
+        else
+            return null;
     }
 
-    public Object getParamValue(String paramName) throws ConvertValueException {
+    public <T> T getParamValue(String paramName, Class<T> type) throws ConvertValueException {
+	    return getParamValue(paramName, type, false);
+    }
+
+    public Object getParamValue(String paramName, boolean silent) throws ConvertValueException {
         Param param = this.getParam(paramName, true);
         if (param != null)
             return param.getValue();
-        throw new IllegalArgumentException(String.format("Param \"%s\" not found in collection \"params\"!", paramName));
+        if(!silent)
+            throw new IllegalArgumentException(String.format("Param \"%s\" not found in collection \"params\"!", paramName));
+        else
+            return null;
+    }
+
+    public Object getParamValue(String paramName) throws ConvertValueException {
+	    return getParamValue(paramName, false);
     }
 
     public static <T> T paramValue(Param param, Class<T> type) throws ConvertValueException {
@@ -471,7 +485,7 @@ public class Paramus implements Closeable {
     public static <T> T paramValue(List<Param> params, String paramName, Class<T> type, T defaultValue) throws Exception {
         T rslt = null;
         try (Paramus paramus = Paramus.set(params)) {
-            rslt = Utl.nvl(paramus.getParamValue(paramName, type), defaultValue);
+            rslt = Utl.nvl(paramus.getParamValue(paramName, type, true), defaultValue);
         }
         return rslt;
     }
@@ -485,7 +499,7 @@ public class Paramus implements Closeable {
     public static String paramValueAsString(List<Param> params, String paramName, String defaultValue) throws Exception {
         String rslt = null;
         try (Paramus paramus = Paramus.set(params)) {
-            rslt = Utl.nvl(paramus.getParamValue(paramName, String.class), defaultValue);
+            rslt = Utl.nvl(paramus.getParamValue(paramName, String.class, true), defaultValue);
         }
         return rslt;
     }
