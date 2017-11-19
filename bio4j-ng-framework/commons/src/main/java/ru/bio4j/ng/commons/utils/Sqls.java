@@ -22,10 +22,16 @@ public class Sqls {
     public static List<String> extractParamNamesFromSQL(String sql) {
         List<String> rslt = new ArrayList();
 
-        sql = deleteNonSQLSubstringsInSQL(sql);
+        final String doubleDotsPlaceholder = "/$doubleDotsPlaceholder$/";
+        final String assignsPlaceholder = "/$assignsPlaceholder$/";
+        String preparedQuery = Strings.replace(sql, "::", doubleDotsPlaceholder);
+        preparedQuery = Strings.replace(preparedQuery, ":=", assignsPlaceholder);
+        String clearSql = Sqls.deleteNonSQLSubstringsInSQL(preparedQuery);
+
+//        sql = deleteNonSQLSubstringsInSQL(sql);
 
 //        LOG.debug("Находим все параметры вида :qwe_ad");
-        Matcher m = Regexs.match(sql, "(?<=:)\\b[\\w\\#\\$]+", Pattern.CASE_INSENSITIVE);
+        Matcher m = Regexs.match(clearSql, "(?<=:)\\b[\\w\\#\\$]+", Pattern.CASE_INSENSITIVE);
         while(m.find()) {
             String parName = m.group();
 //            LOG.debug(" - parName["+m.start()+"]: " + parName);

@@ -26,13 +26,16 @@ public class SQLFactoryTest {
 //    private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@stat4-ora-dev:1521:MICEXDB";
     private static final String testDBDriverName = "org.postgresql.Driver";
-    private static final String testDBUrl = "jdbc:postgresql://192.168.50.59:5432/stat121";
+//    private static final String testDBUrl = "jdbc:postgresql://192.168.50.47:5432/postgres";
+    private static final String testDBUrl = "jdbc:postgresql://localhost:5432/postgres";
 
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
     //private static final String testDBUrl = "jdbc:oracle:thin:@https://databasetrial0901-rugivcmkrftrial07058.db.em1.oraclecloudapps.com/apex:1521:databasetrial0901";
-    private static final String testDBUsr = "master";
-    private static final String testDBPwd = "sysdba";
+//    private static final String testDBUsr = "master";
+//    private static final String testDBPwd = "sysdba";
+    private static final String testDBUsr = "postgres";
+    private static final String testDBPwd = "root";
 
     private static SQLContext context;
 
@@ -383,7 +386,8 @@ public class SQLFactoryTest {
             }, "AnContext", null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
-            Assert.assertEquals(ex.getCause().getMessage(), "ERROR: FTW");
+            Boolean errMsgOk = ex.getCause().getMessage().indexOf(": FTW") >= 0;
+            Assert.assertTrue(errMsgOk);
         }
     }
     
@@ -484,7 +488,7 @@ public class SQLFactoryTest {
                         if(resultSet.next()) {
                             String userName = resultSet.getString("ROLNAME");
                             LOG.debug("userName: " + userName);
-                            Assert.assertEquals(userName.toUpperCase(), "POSTGRES");
+                            Assert.assertEquals(userName.toUpperCase(), "PG_SIGNAL_BACKEND");
                         }
                     }
                     return 0;
@@ -531,4 +535,27 @@ public class SQLFactoryTest {
         String msg = r.getMessage();
         LOG.debug(msg);
     }
+
+    @Test(enabled = false)
+    public void testSQLCommandOpenCursorNewSbkItem() throws Exception {
+        final String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("new-sbkitem.sql"));
+        try {
+            Integer dummy = context.execBatch(new SQLActionScalar<Integer>() {
+                @Override
+                public Integer exec(SQLContext context, Connection conn) throws Exception {
+                    try(SQLCursor c = context.createCursor()
+                            .init(conn, sql, null).open();){
+                    }
+                    return 0;
+                }
+            }, null);
+            LOG.debug("dummy: " + dummy);
+            Assert.assertEquals(dummy, new Integer(0));
+        } catch (Exception ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+
+    }
+
 }

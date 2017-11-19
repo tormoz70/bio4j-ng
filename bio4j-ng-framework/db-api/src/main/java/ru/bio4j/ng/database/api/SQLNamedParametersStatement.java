@@ -37,4 +37,5 @@ public interface SQLNamedParametersStatement extends Statement {
     int executeUpdate(String sql) throws SQLException;
     int executeUpdate() throws SQLException;
 
+    List<String> getParamNames();
 }

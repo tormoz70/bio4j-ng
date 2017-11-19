@@ -172,10 +172,10 @@ public class Strings {
     }
     public static String replace(String str, String what, String replacement) {
         if(!isNullOrEmpty(str) && !isNullOrEmpty(what)) {
-            int pos = str.indexOf(what);
-            if (pos >= 0) {
+            while (str.indexOf(what) >= 0) {
+                int pos = str.indexOf(what);
                 int posto = pos + what.length() - 1;
-                return replace(str, pos, posto, replacement);
+                str = replace(str, pos, posto, replacement);
             }
         }
         return str;

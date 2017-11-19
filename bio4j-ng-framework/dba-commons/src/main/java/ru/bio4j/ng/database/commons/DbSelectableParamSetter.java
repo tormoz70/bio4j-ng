@@ -23,7 +23,8 @@ public class DbSelectableParamSetter implements SQLParamSetter {
     public void setParamsToStatement(SQLCommand command, List<Param> params) throws Exception {
         SQLNamedParametersStatement selectable = command.getStatement();
         final String sql = command.getPreparedSQL();
-        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
+//        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
+        final List<String> paramsNames = selectable.getParamNames();
         for (int i = 0; i < paramsNames.size(); i++) {
             String paramName = paramsNames.get(i);
             Param param = Paramus.set(params).getParam(paramName);
@@ -48,4 +49,6 @@ public class DbSelectableParamSetter implements SQLParamSetter {
                 selectable.setNullAtName(paramName);
         }
     }
+
+
 }

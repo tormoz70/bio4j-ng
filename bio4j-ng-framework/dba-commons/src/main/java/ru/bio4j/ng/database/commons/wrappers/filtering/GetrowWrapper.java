@@ -20,7 +20,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.GETROW;
 public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
 
     private String template;
-    public static final String PKVAL = "GETROW$PKVALUE";
+    public static final String PKVAL = "getrow$pkvalue";
 
     public GetrowWrapper(String template) {
         super(template);

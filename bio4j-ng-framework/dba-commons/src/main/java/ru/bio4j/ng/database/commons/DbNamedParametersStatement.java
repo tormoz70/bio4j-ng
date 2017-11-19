@@ -513,4 +513,8 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         return statement.isWrapperFor(iface);
     }
 
+    public List<String> getParamNames() {
+        return paramNames;
+    }
+
 }

@@ -138,4 +138,12 @@ public class StringUtlTest {
         Assert.assertEquals(Strings.findIgnoreCase(src, "QWE"), "1");
         Assert.assertEquals(Strings.findIgnoreCase(src, "ftW"), "2");
     }
+
+
+    @Test(enabled = true)
+    public void replace7() throws Exception {
+        String src = "asd ''::text, 0::numeric";
+        String pstr = Strings.replace(src, "::", "ddd");
+        Assert.assertEquals(pstr, "asd ''dddtext, 0dddnumeric");
+    }
 }
