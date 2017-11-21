@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BooleanHandler extends TypeHandlerBase implements TypeHandler<Boolean> {
 
-    private static final List<String> trueStrings = Arrays.asList("true", "t", "yes", "y", "1");
+    private static final List<String> trueStrings = Arrays.asList("true", "t", "yes", "y", "1", "on");
     private static final List<Character> trueChars = Arrays.asList('t','T','y','Y','1');
     private static Boolean pars(String value) {
         return trueStrings.contains(value.toLowerCase());
@@ -57,7 +57,7 @@ public class BooleanHandler extends TypeHandlerBase implements TypeHandler<Boole
         else if (Types.typeIsNumber(targetTypeWrapped))
             return (T) Types.number2Number((value ? 1 : 0), targetTypeWrapped);
         else if (targetTypeWrapped == String.class)
-            return (T) (value ? "true" : "false");
+            return (T) (value ? "1" : "0");
         else if (targetTypeWrapped == Character.class)
             return (T) (value ? "1" : "0");
         else if (targetTypeWrapped == byte[].class)
