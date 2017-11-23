@@ -69,15 +69,18 @@ public class UtlTest {
         System.out.println(fnd);
     }
 
+    @Test(enabled = true)
     public void normalizePathTest() {
         String path = Utl.normalizePath("asd/sdf\\sdf", '\\');
+        Assert.assertEquals("asd\\sdf\\sdf\\", path);
+        path = Utl.normalizePath("asd/sdf/sdf", '\\');
         Assert.assertEquals("asd\\sdf\\sdf\\", path);
         path = Utl.normalizePath("asd/sdf\\sdf");
         Assert.assertEquals("asd\\sdf\\sdf\\", path);
         path = Utl.normalizePath("asd/sdf\\sdf", '/');
         Assert.assertEquals("asd/sdf/sdf/", path);
-        path = Utl.normalizePath("asd/sdf\\sdf/", '/');
-        Assert.assertEquals("asd/sdf/sdf/", path);
+        path = Utl.normalizePath("asd/sdf/sdf/", '\\');
+        Assert.assertEquals("asd\\sdf\\sdf\\", path);
         path = Utl.normalizePath("asd\\sdf/sdf");
         Assert.assertEquals("asd\\sdf\\sdf\\", path);
         path = Utl.normalizePath("D:\\jdev\\workspace\\bio4j-ng\\as-distribution\\target\\as-distribution-2.0-SNAPSHOT\\as-distribution-2.0-SNAPSHOT/content");

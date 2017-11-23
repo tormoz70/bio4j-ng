@@ -87,6 +87,11 @@ public class DbUtils {
             public List<Param> exec(SQLContext context, Connection conn) throws Exception {
                 cmd.init(conn, sqlDef.getPreparedSql(), params);
                 cmd.execSQL();
+                for (Param p : cmd.getParams()) {
+                    Param foundPrm = Paramus.getParam(params, p.getName());
+                    if(foundPrm != null)
+                        foundPrm.setValue(p.getValue());
+                }
                 return cmd.getParams();
             }
         }, user);
@@ -109,7 +114,7 @@ public class DbUtils {
         }, user);
     }
 
-    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
+    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user, Class<T> clazz) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
@@ -117,7 +122,7 @@ public class DbUtils {
                 try(SQLCursor c = context.createCursor()
                         .init(conn, sqlDef.getPreparedSql(), params).open();){
                     if(c.reader().next()){
-                        return (T)c.reader().getValue(1);
+                        return Converter.toType(c.reader().getValue(1), clazz);
                     }
                 }
                 return null;

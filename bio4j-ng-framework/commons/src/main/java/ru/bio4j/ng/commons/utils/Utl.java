@@ -419,7 +419,7 @@ public class Utl {
         return null;
     }
 
-    public static String normalizePath(String path, char pathSeparator) {
+    public static String preparePath(String path, char pathSeparator) {
         if(isNullOrEmpty(path))
             return null;
         String rslt = path;
@@ -427,6 +427,15 @@ public class Utl {
             pathSeparator =  File.separatorChar;
         rslt = rslt.replace('\\', pathSeparator);
         rslt = rslt.replace('/', pathSeparator);
+        return rslt;
+    }
+
+    public static String normalizePath(String path, char pathSeparator) {
+        if(isNullOrEmpty(path))
+            return null;
+        if(pathSeparator == (char)0)
+            pathSeparator =  File.separatorChar;
+        String rslt = preparePath(path, pathSeparator);
         rslt = rslt.endsWith(""+pathSeparator) ? rslt : rslt + pathSeparator;
         return rslt;
     }
