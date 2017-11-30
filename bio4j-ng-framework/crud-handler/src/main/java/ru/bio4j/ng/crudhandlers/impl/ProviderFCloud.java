@@ -54,9 +54,10 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
             //LOG.debug("Parts recived: {}", parts.size());
             List<FileSpec> files = new ArrayList<>();
             for (Part p : parts) {
+                String fileName = Httpc.extractFileNameFromPart(p);
                 FileSpec file = fcloudProvider.getApi().regFile(
                         request.getUploadUid(),
-                        Httpc.extractFileNameFromPart(p),
+                        fileName,
                         p.getInputStream(),
                         p.getSize(),
                         p.getContentType(),
