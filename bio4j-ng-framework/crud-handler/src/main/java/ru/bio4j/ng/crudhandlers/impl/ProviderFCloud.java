@@ -3,6 +3,7 @@ package ru.bio4j.ng.crudhandlers.impl;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.FCloudProvider;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,6 +76,17 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
             writeResponse("[]", response);
     }
 
+    private void processDownload(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
+        try(InputStream ios = fcloudProvider.getApi().getFile(request.getFileUid(), request.getUser())){
+            Utl.writeInputToOutput(ios, response.getOutputStream());
+        }
+    }
+
+    private void processRemove(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
+        fcloudProvider.getApi().removeFile(request.getFileUid(), request.getUser());
+        writeResponse("{\"success\": true}", response);
+    }
+
     @Override
     public void process(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process postDataSet for \"{}\" request...", request.getBioCode());
@@ -83,6 +96,10 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
         if(fcmd != null) {
             if(fcmd == FCloudCommand.UPLOAD)
                 processUpload(request, response);
+            if(fcmd == FCloudCommand.DOWNLOAD)
+                processDownload(request, response);
+            if(fcmd == FCloudCommand.REMOVE)
+                processRemove(request, response);
             if(fcmd == FCloudCommand.RUNIMPORT)
                 runImport(request, response);
         }

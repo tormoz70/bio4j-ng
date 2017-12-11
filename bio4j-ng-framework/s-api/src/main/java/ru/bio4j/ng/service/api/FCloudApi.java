@@ -19,5 +19,7 @@ public interface FCloudApi {
 
     InputStream getFile(final String fileUUID, final User usr) throws Exception;
 
+    void removeFile(final String fileUUID, final User usr) throws Exception;
+
     void runImport(final User usr) throws Exception;
 }

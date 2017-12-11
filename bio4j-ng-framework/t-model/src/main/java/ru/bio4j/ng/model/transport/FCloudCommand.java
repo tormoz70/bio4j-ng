@@ -4,7 +4,7 @@ package ru.bio4j.ng.model.transport;
  * Команды для управления процессом на сервере
  */
 public enum FCloudCommand {
-	UPLOAD, DOWNLOAD, FILESPEC, RUNIMPORT;
+	REMOVE, UPLOAD, DOWNLOAD, FILESPEC, RUNIMPORT;
 
 	public int getCode() {
 		return this.ordinal();

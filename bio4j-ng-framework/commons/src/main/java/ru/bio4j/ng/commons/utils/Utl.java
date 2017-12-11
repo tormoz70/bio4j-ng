@@ -12,6 +12,7 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -650,6 +651,39 @@ public class Utl {
         DocumentBuilder builder = f.newDocumentBuilder();
         InputStream inputStream = openFile(fileName);
         return builder.parse(inputStream);
+    }
+
+    public static void writeInputToOutput(InputStream input, OutputStream output) throws Exception {
+        BufferedInputStream buf = null;
+        try {
+            buf = new BufferedInputStream(input);
+            int readBytes = 0;
+            while ((readBytes = buf.read()) != -1)
+                output.write(readBytes);
+        } finally {
+            if (output != null)
+                output.flush();
+            output.close();
+            if (buf != null)
+                buf.close();
+        }
+    }
+
+    public static void writeFileToOutput(File file, OutputStream output) throws Exception {
+        writeInputToOutput(new FileInputStream(file), output);
+    }
+
+    public static void deleteFile(Path filePath, Boolean silent) throws Exception {
+        try {
+            Files.delete(filePath);
+        } catch(Exception e){
+            if(!silent)
+                throw e;
+        }
+    }
+
+    public static void deleteFile(String filePath, Boolean silent) throws Exception {
+        deleteFile(Paths.get(filePath), silent);
     }
 
 }
