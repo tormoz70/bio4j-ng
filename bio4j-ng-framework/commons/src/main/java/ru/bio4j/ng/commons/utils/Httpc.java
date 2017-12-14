@@ -232,8 +232,13 @@ public class Httpc {
     }
     public static String extractRealRemoteClient(HttpServletRequest request) {
         if(request != null) {
-            String realRemoteClient = request.getHeader("X-Real-Client");
-            return Strings.isNullOrEmpty(realRemoteClient) ? request.getRemoteUser() : realRemoteClient;
+            String userAgent = request.getHeader("User-Agent");
+            String realRemoteClient = request.getParameter("clitp");
+            if(Strings.isNullOrEmpty(realRemoteClient))
+                realRemoteClient = request.getHeader("X-Real-Client");
+            if(Strings.isNullOrEmpty(realRemoteClient))
+                realRemoteClient = "Unknown";
+            return String.format("X-Client: %s; User-Agent: %s", realRemoteClient, userAgent);
         }
         return null;
     }

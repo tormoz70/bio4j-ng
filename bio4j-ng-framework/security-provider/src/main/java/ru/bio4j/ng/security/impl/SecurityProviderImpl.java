@@ -41,22 +41,22 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
 
 
     @Override
-    public User getUser(final String stoken, final String remoteIP) throws Exception {
+    public User getUser(final String stoken, final String remoteIP, final String remoteClient) throws Exception {
         if(isNullOrEmpty(stoken))
             throw new BioError.Login.BadLogin();
 
-        User newUsr = getSecurityModule().getUser(stoken, remoteIP);
+        User newUsr = getSecurityModule().getUser(stoken, remoteIP, remoteClient);
         if(newUsr == null)
             throw new BioError.Login.LoginExpired();
         return newUsr;
     }
 
     @Override
-    public User login(final String login, final String remoteIP) throws Exception {
+    public User login(final String login, final String remoteIP, final String remoteClient) throws Exception {
         if(isNullOrEmpty(login))
             throw new BioError.Login.BadLogin();
 
-        User newUsr = getSecurityModule().login(login, remoteIP);
+        User newUsr = getSecurityModule().login(login, remoteIP, remoteClient);
         if(newUsr == null)
             throw new BioError.Login.BadLogin();
         return newUsr;
@@ -68,8 +68,8 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
     }
 
     @Override
-    public Boolean loggedin(final String stoken, final String remoteIP) throws Exception {
-        return getSecurityModule().loggedin(stoken, remoteIP);
+    public Boolean loggedin(final String stoken, final String remoteIP, final String remoteClient) throws Exception {
+        return getSecurityModule().loggedin(stoken, remoteIP, remoteClient);
     }
 
     @Validate
