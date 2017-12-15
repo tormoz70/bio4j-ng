@@ -22,6 +22,7 @@ public class User implements Principal {
     private String grants;
 
     private String remoteIP;
+    private String remoteClient;
 
     private Boolean anonymous;
 
@@ -133,5 +134,13 @@ public class User implements Principal {
     @Override
     public String getName() {
         return login;
+    }
+
+    public String getRemoteClient() {
+        return remoteClient;
+    }
+
+    public void setRemoteClient(String remoteClient) {
+        this.remoteClient = remoteClient;
     }
 }

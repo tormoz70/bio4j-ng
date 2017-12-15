@@ -39,6 +39,7 @@ public class SrvcUtils {
     public static final String PARAM_CURUSR_ROLES      = "p_sys_curusr_roles";
     public static final String PARAM_CURUSR_GRANTS     = "p_sys_curusr_grants";
     public static final String PARAM_CURUSR_IP         = "p_sys_curusr_ip";
+    public static final String PARAM_CURUSR_CLIENT     = "p_sys_curusr_client";
 
     public static class BioQueryParams {
         public HttpServletRequest request;
