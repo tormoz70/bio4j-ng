@@ -99,6 +99,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
     public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
         SrvcUtils.BioQueryParams result = Httpc.createBeanFromHttpRequest(request, SrvcUtils.BioQueryParams.class);
+        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
         result.request = request;
         result.method = request.getMethod();
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
