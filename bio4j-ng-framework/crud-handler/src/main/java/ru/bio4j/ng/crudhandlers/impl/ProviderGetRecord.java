@@ -45,6 +45,9 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
             final BioCursor cursor = module.getCursor(request);
+            if(cursor.getSelectSqlDef() == null)
+                throw new Exception(String.format("For bio \"%s\" must be defined \"select\" sql!", cursor.getBioCode()));
+
             context.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef());
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());

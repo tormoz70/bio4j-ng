@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CursorParser {
+    public class CursorParser {
     private static final Logger LOG = LoggerFactory.getLogger(CursorParser.class);
 
 
@@ -297,6 +297,10 @@ public class CursorParser {
         return sqlText;
     }
 
+    private static Document loadXmlDocumentFromInputStream(final InputStream inputStream) throws Exception {
+        return Utl.loadXmlDocument(inputStream);
+    }
+
     private static Document loadXmlDocumentFromRes(final BundleContext context, final String bioCode) throws Exception {
         String path = Utl.extractBioPath(bioCode);
         URL url = context.getBundle().getResource(path + ".xml");
@@ -310,10 +314,7 @@ public class CursorParser {
         return null;
     }
 
-    public static BioCursor pars(final BundleContext context, final String bioCode) throws Exception {
-        Document document = loadXmlDocumentFromRes(context, bioCode);
-        if(document == null)
-            throw new Exception(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
+    public static BioCursor pars(final BundleContext context, final Document document, final String bioCode) throws Exception {
         BioCursor cursor = new BioCursor(bioCode);
         Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
         Boolean readOnly = Doms.getAttribute(document.getDocumentElement(), "readOnly", true, Boolean.class);
@@ -327,7 +328,9 @@ public class CursorParser {
         List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
         for (Element sqlElem : sqlTextElems) {
             BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
-            String sql = tryLoadSQL(context, bioCode, sqlElem.getTextContent().trim());
+            String sql = sqlElem.getTextContent().trim();
+            if(context != null)
+                sql = tryLoadSQL(context, bioCode, sql);
             BioCursor.SQLDef sqlDef;
             if(curType == BioCursor.Type.SELECT) {
                 sqlDef = new BioCursor.SelectSQLDef(sql);
@@ -339,8 +342,15 @@ public class CursorParser {
             addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
             addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
         }
-        LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
+        //LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;
+    }
+
+    public static BioCursor pars(final BundleContext context, final String bioCode) throws Exception {
+        Document document = loadXmlDocumentFromRes(context, bioCode);
+        if(document == null)
+            throw new Exception(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
+        return pars(context, document, bioCode);
     }
 
     private static String buildPath(String path, String bioCode, String extension) {
@@ -351,7 +361,6 @@ public class CursorParser {
         String path = buildPath(contentRootPath, bioCode, ".xml");
         return Utl.loadXmlDocument(path);
     }
-
 
     public static BioCursor pars(final String contentRootPath, final String bioCode) throws Exception {
         Document document = loadXmlDocumentFromPath(contentRootPath, bioCode);
@@ -374,7 +383,7 @@ public class CursorParser {
             addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
             addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
         }
-        LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
+        //LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
         return cursor;
     }
 }

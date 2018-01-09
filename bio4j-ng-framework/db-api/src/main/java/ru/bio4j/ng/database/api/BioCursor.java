@@ -73,6 +73,11 @@ public class BioCursor implements Serializable {
             this.preparedSql = this.sql;
         }
 
+        @Override
+        public String toString() {
+            return Utl.buildBeanStateInfo(this, this.getClass().getSimpleName(), "  ", "owner");
+        }
+
         public List<Field> getFields() {
             return owner.getFields();
         }
@@ -313,14 +318,14 @@ public class BioCursor implements Serializable {
         out.append(String.format(attrFmt, "bioCode", bioCode));
         out.append("\tfields: [");
         for (Field fld : fields){
-            out.append(Utl.buildBeanStateInfo(fld, fld.getName(), "\t\t"));
+            out.append("\n"+Utl.buildBeanStateInfo(fld, fld.getName()+":", "\t\t"));
         }
-        out.append("\t],");
-        out.append(String.format("\tsql-select: %s,", getSelectSqlDef()));
-        out.append(String.format("\tsql-update: %s,", getUpdateSqlDef()));
-        out.append(String.format("\tsql-delete: %s,", getDeleteSqlDef()));
-        out.append(String.format("\tsql-exec: %s,", getExecSqlDef()));
-        out.append("}");
+        out.append("\n\t],");
+        out.append(String.format("\n%s,", Utl.buildBeanStateInfo(getSelectSqlDef(), "sql-select:", "\t", "owner")));
+        out.append(String.format("\n%s,", Utl.buildBeanStateInfo(getUpdateSqlDef(), "sql-update:", "\t", "owner")));
+        out.append(String.format("\n%s,", Utl.buildBeanStateInfo(getDeleteSqlDef(), "sql-delete:", "\t", "owner")));
+        out.append(String.format("\n%s", Utl.buildBeanStateInfo(getExecSqlDef(), "sql-exec:", "\t", "owner")));
+        out.append("\n}");
         return out.toString();
     }
 

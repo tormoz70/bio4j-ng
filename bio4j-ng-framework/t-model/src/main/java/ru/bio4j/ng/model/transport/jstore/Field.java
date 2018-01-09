@@ -93,6 +93,11 @@ public class Field {
     private String expFormat;
     private String expWidth;
 
+    @Override
+    public String toString() {
+        return String.format("{name: \"%s\", metaType: \"%s\", pk: \"%s\"}", name, metaType, pk);
+    }
+
     public String getName() {
         return name;
     }

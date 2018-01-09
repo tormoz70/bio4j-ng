@@ -275,18 +275,35 @@ public class Utl {
         return val;
     }
 
-    public static String buildBeanStateInfo(Object bean, String beanName, String tab) {
+
+    private static Boolean checkFilter(String fieldName, String excludeFields) {
+        String[] fields2exclude = Strings.split(excludeFields, ";");
+        for(String field2exclude : fields2exclude){
+            if(field2exclude.equalsIgnoreCase(fieldName))
+                return false;
+        }
+        return true;
+    }
+
+    public static String buildBeanStateInfo(Object bean, String beanName, String tab, String excludeFields) {
         if(tab == null) tab = "";
+        if(bean == null)
+            return tab + (Strings.isNullOrEmpty(beanName) ? "null" : beanName+" null");
         final String attrFmt = tab + " - %s : %s;\n";
         StringBuilder out = new StringBuilder();
         Class<?> type = bean.getClass();
         String bnName = isNullOrEmpty(beanName) ? type.getName() : beanName;
         out.append(String.format(tab + "%s {\n", bnName));
         for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
-            out.append(String.format(attrFmt, fld.getName(), fieldValueAsString(bean, fld)));
+            if(checkFilter(fld.getName(), excludeFields))
+                out.append(String.format(attrFmt, fld.getName(), fieldValueAsString(bean, fld)));
         }
         out.append(tab + "}");
         return out.toString();
+    }
+
+    public static String buildBeanStateInfo(Object bean, String beanName, String tab) {
+        return buildBeanStateInfo(bean, beanName, tab, null);
     }
 
     public static String dictionaryInfo(Dictionary dict, String beanName, String tab) {

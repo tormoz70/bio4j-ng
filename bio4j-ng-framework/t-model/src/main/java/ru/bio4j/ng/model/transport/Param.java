@@ -246,4 +246,8 @@ public class Param {
         this.format = format;
     }
 
+    @Override
+    public String toString() {
+        return String.format("{ name: \"%s\", value: \"%s\" }", this.name, this.getValue());
+    }
 }
