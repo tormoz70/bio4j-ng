@@ -13,6 +13,9 @@ public class BioConfig {
     @Prop(name = "content.resolver.path")
     private String contentResolverPath = "./bio-content";
 
+    @Prop(name = "tmp.path")
+    private String tmpPath = "./bio-tmp";
+
     @Prop(name = "global.pool.name")
     private String poolName;
     @Prop(name = "global.driver.name")
@@ -143,5 +146,13 @@ public class BioConfig {
 
     public void setContentResolverPath(String contentResolverPath) {
         this.contentResolverPath = contentResolverPath;
+    }
+
+    public String getTmpPath() {
+        return tmpPath;
+    }
+
+    public void setTmpPath(String tmpPath) {
+        this.tmpPath = tmpPath;
     }
 }

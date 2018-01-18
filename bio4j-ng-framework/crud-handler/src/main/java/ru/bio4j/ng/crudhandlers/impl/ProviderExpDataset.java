@@ -32,7 +32,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
         final BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
             @Override
             public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
+//                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
                 final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
                 result.bioCode(cur.getBioCode());
                 boolean requestCached = false; //requestCached(request, LOG);
@@ -101,7 +101,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
         BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
             @Override
             public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
+//                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
                 final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
                 result.bioCode(cur.getBioCode());
 

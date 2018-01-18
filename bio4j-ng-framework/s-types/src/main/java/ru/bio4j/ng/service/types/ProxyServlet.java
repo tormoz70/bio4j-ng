@@ -263,7 +263,7 @@ public class ProxyServlet extends HttpServlet {
                     builder.addTextBody(p.getName(), Utl.readStream(p.getInputStream()), TEXT_PLAIN_UTF8);
                 } else {
                     String fileName = Httpc.extractFileNameFromPart(p);
-                    //String tmpFileName = java.util.UUID.randomUUID().toString() + "." + Utl.fileExt(fileName);
+                    //String tmpFileName = java.util.UUID.randomUUID().toString() + "." + Utl.fileNameExt(fileName);
                     //String fileStorage = savePath + File.separator + tmpFileName;
                     //p.write(fileStorage);
 

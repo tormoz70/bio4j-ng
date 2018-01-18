@@ -181,7 +181,7 @@ public class UtlTest {
     @Test(enabled = true)
     public void fileExtTest() throws Exception {
         final String fileName = "d:\\downloads\\ibexpert.rar";
-        Assert.assertEquals(Utl.fileExt(fileName), "rar");
+        Assert.assertEquals(Utl.fileNameExt(fileName), "rar");
     }
 
     @Test(enabled = true)
@@ -209,7 +209,19 @@ public class UtlTest {
 
     @Test(enabled = true)
     public void fileWithoutExtTest() throws Exception {
-        Assert.assertEquals(Utl.fileWithoutExt("d:/qwe.asd/fgh.fgh.txt"), "d:/qwe.asd/fgh.fgh");
+        Assert.assertEquals(Utl.fileNameWithoutExt("d:/qwe.asd/fgh.fgh.txt"), "d:/qwe.asd/fgh.fgh");
+    }
+
+    @Test(enabled = true)
+    public void tmpFileNameTest() throws Exception {
+        String tmpPath = "./bio-tmp";
+        String fileName = "asd-qwe_345.xls";
+        String rslt = Utl.generateTmpFileName(tmpPath, fileName);
+
+        String randomPart = Regexs.find(rslt, "\\$\\((\\w|\\d)+\\)", 0);
+        String expected = Utl.normalizePath(tmpPath) + Utl.fileNameWithoutExt(fileName) + "-" + randomPart + "." + Utl.fileNameExt(fileName);
+
+        Assert.assertEquals(rslt, expected);
     }
 
     @Test(enabled = true)

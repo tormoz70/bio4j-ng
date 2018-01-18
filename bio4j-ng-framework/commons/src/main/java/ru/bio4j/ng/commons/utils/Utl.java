@@ -53,7 +53,7 @@ public class Utl {
      * @param fileName
      * @return
      */
-    public static String fileExt(String fileName) {
+    public static String fileNameExt(String fileName) {
         String extension = "";
 
         int i = fileName.lastIndexOf('.');
@@ -65,7 +65,7 @@ public class Utl {
         return extension;
     }
 
-    public static String fileWithoutExt(String fileName) {
+    public static String fileNameWithoutExt(String fileName) {
         if(Strings.isNullOrEmpty(fileName))
             return fileName;
         return fileName.replaceFirst("[.][^.]+$", "");
@@ -461,6 +461,11 @@ public class Utl {
         return normalizePath(path, (char)0);
     }
 
+    public static String generateTmpFileName(final String tmpPath, final String fileName) {
+        String randomUUIDString = UUID.randomUUID().toString().replaceAll("-", "");
+        return String.format("%s%s-$(%s).%s", Utl.normalizePath(tmpPath), Utl.fileNameWithoutExt(fileName), randomUUIDString, Utl.fileNameExt(fileName));
+    }
+
     // хз пока не получилось...
 //    public static Class<?> getTypeParams(Object obj) {
 //        if(obj == null)
@@ -586,9 +591,22 @@ public class Utl {
         return path;
     }
 
+    public static Path storeBlob(byte[] blob, Path path) throws IOException {
+        Files.createDirectories(path.getParent());
+        try(OutputStream out = new FileOutputStream(new File(path.toString()))) {
+                out.write(blob);
+        }
+        return path;
+    }
+
+    public static Path storeBlob(byte[] blob, String path) throws IOException {
+        return storeBlob(blob, Paths.get(path));
+    }
+
     public static String storeInputStream(InputStream inputStream, String path) throws IOException {
         return storeInputStream(inputStream, Paths.get(path)).toString();
     }
+
 
     public static void storeString(String text, String path, String encoding) throws IOException {
         try (PrintStream out = new PrintStream(new FileOutputStream(path), true, encoding)) {
@@ -685,6 +703,7 @@ public class Utl {
                 buf.close();
         }
     }
+
 
     public static void writeFileToOutput(File file, OutputStream output) throws Exception {
         writeInputToOutput(new FileInputStream(file), output);

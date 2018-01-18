@@ -13,6 +13,7 @@ import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioAppModule;
+import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.ContentResolver;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,38 +35,17 @@ public abstract class ProviderAn<T extends BioRequest> {
     protected BioAppModule module;
     protected ContentResolver contentResolver;
     protected SQLContext context;
+    protected ConfigProvider configProvider;
 
     public ProviderAn(){
         LOG = LoggerFactory.getLogger(this.getClass());
     }
 
-    public void init(BioAppModule module, ContentResolver contentResolver, SQLContext context){
+    public void init(ConfigProvider configProvider, BioAppModule module, ContentResolver contentResolver, SQLContext context){
         this.module = module;
         this.contentResolver = contentResolver;
         this.context = context;
-    }
-
-//    protected static void applyCurrentUserParams(final User usr, BioCursor.SQLDef ... sqlDefs) {
-//        for(BioCursor.SQLDef sqlDef : sqlDefs) {
-//            if(sqlDef != null)
-//                try (Paramus p = Paramus.set(sqlDef.getParams())) {
-//                    p.setValue(PARAM_CURUSR_UID, usr.getUid(), true);
-//                    p.setValue(PARAM_CURUSR_ROLES, usr.getRoles(), true);
-//                    p.setValue(PARAM_CURUSR_GRANTS, usr.getGrants(), true);
-//                }
-//        }
-//    }
-
-    protected static void tryPrepareSessionContext(final String usrUID, final Connection conn) throws Exception {
-//        LOG.debug("Try setting session context...");
-//        try {
-//            NamedParametersStatement cs = NamedParametersStatement.prepareStatement(conn, "{call biocontext.set_current_user(:usr_uid)}");
-//            cs.setStringAtName("usr_uid", usrUID);
-//            cs.execute();
-//            LOG.debug("Session context - OK.");
-//        } catch (Exception e) {
-//            LOG.debug("Session context - ERROR. Message: {}", e.getMessage());
-//        }
+        this.configProvider = configProvider;
     }
 
     protected static String buildRequestKey(final BioRequestJStoreGetDataSet request) {

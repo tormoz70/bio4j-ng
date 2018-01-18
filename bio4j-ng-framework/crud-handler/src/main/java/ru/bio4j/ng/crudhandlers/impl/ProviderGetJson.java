@@ -16,7 +16,7 @@ public class ProviderGetJson extends ProviderAn<BioRequestGetJson> {
         BioRespBuilder.JsonBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.JsonBuilder>() {
             @Override
             public BioRespBuilder.JsonBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
-                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
+//                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
                 final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder();
 
                 try(SQLCursor c = context.createCursor()
