@@ -1,6 +1,8 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Sqls;
@@ -9,6 +11,7 @@ import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
@@ -56,8 +59,8 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
 
                 if(cur.getSelectSqlDef().getLocation() != null) {
                     LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
-                    List<Param> locateParams = Paramus.clone(cur.getSelectSqlDef().getParams());
-                    try(Paramus p = Paramus.set(locateParams)){
+                    //List<Param> locateParams = Paramus.clone(cur.getSelectSqlDef().getParams());
+                    //try(Paramus p = Paramus.set(locateParams)){
                         Object location = cur.getSelectSqlDef().getLocation();
                         if(location != null && location instanceof String){
                             if(((String) location).startsWith("1||"))
@@ -66,11 +69,14 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                                 location = Regexs.find((String) location, "(?<=0\\|\\|)(\\w|\\d|-|\\+)+", Pattern.CASE_INSENSITIVE);
                             }
                         }
-                        p.setValue(LocateWrapper.PKVAL, location);
-                        p.setValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
-                    }
+//                        p.setValue(LocateWrapper.PKVAL, location);
+//                        p.setValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
+                        Class<?> pkType = MetaTypeConverter.write(cur.findPk().getMetaType());
+                        cur.getSelectSqlDef().setParamValue(LocateWrapper.PKVAL, Converter.toType(location, pkType));
+                        cur.getSelectSqlDef().setParamValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
+                    //}
                     try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getLocateSql(), locateParams).open();) {
+                            .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParams()).open();) {
                         if (c.reader().next()) {
                             int locatedPos = c.reader().getValue(1, int.class);
                             int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
