@@ -4,6 +4,7 @@ import flexjson.JSONException;
 import flexjson.ObjectBinder;
 import flexjson.ObjectFactory;
 import flexjson.transformer.AbstractTransformer;
+import ru.bio4j.ng.commons.converter.DateTimeParser;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -22,9 +23,12 @@ public class DateTimeBioTransformer extends AbstractTransformer implements Objec
 
     public static Date parse(String value) {
         try {
-            return simpleDateFormatter.parse( value.toString().substring(0, 19) );
-        } catch (ParseException e) {
-            throw new JSONException(String.format( "Failed to parse %s with %s pattern.", value, simpleDateFormatter.toPattern() ), e );
+            //String v = value.toString();
+            //v = v.length() > 19 ? v.substring(0, 19) : v;
+            //return simpleDateFormatter.parse( v );
+            return DateTimeParser.getInstance().pars(value);
+        } catch (Exception e){
+            throw new JSONException(String.format("Failed to parse %s with %s pattern.", value, simpleDateFormatter.toPattern()), e);
         }
     }
 

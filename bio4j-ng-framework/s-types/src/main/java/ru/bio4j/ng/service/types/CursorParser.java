@@ -161,7 +161,7 @@ import java.util.regex.Pattern;
                             .name(paramName)
                             .type(paramType)
                             .direction(paramDir)
-                            .fixed(fixed)
+                            .override(fixed)
                             .format(format)
                             .build();
                     p.add(param);

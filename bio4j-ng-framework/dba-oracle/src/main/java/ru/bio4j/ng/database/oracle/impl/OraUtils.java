@@ -99,7 +99,7 @@ public class OraUtils implements RDBMSUtils {
             " and a.object_name = upper(:method_name)" +
             " order by position";
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws SQLException {
         StringBuilder args = new StringBuilder();
         OraUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
@@ -110,11 +110,11 @@ public class OraUtils implements RDBMSUtils {
                 try(Paramus p = Paramus.set(params)) {
                     int i = 0;
                     while (rs.next()) {
-                        Param fixedParam = null;
-                        if(fixedParamsOverride != null && fixedParamsOverride.size() > i)
-                            fixedParam = fixedParamsOverride.get(i).getFixed() ? fixedParamsOverride.get(i) : null;
+                        Param overrideParam = null;
+                        if(paramsOverride != null && paramsOverride.size() > i)
+                            overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
 
-                        String parName = fixedParam != null ? fixedParam.getName() : rs.getString("argument_name");
+                        String parName = overrideParam != null ? overrideParam.getName() : rs.getString("argument_name");
                         String parType = rs.getString("data_type");
                         String parDir = rs.getString("in_out");
                         if (!(parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[0]) || parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[1])))
@@ -123,8 +123,8 @@ public class OraUtils implements RDBMSUtils {
                         args.append(((args.length() == 0) ? ":" : ",:") + parName.toLowerCase());
                         p.add(Param.builder()
                                 .name(parName.toLowerCase())
-                                .type(fixedParam != null ? fixedParam.getType() : decodeType(parType))
-                                .direction(fixedParam != null ? fixedParam.getDirection() : decodeDirection(parDir))
+                                .type(overrideParam != null ? overrideParam.getType() : decodeType(parType))
+                                .direction(overrideParam != null ? overrideParam.getDirection() : decodeDirection(parDir))
                                 .build());
                         i++;
                     }

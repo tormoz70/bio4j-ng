@@ -571,7 +571,7 @@ public class Paramus implements Closeable {
         Object val = param.getValue();
         String valStr = String.format((val instanceof String) ? "[\"%s\"]" : "[%s]", val);
         valStr = valStr + (!Strings.isNullOrEmpty(objStr) ? "(" + objsStr.toString() + ")" : null);
-        return String.format("(%s=%s; tp:%s; sz:%d; dr:%s; fx:%s; fm:%s)", param.getName(), valStr, param.getType(), param.getSize(), param.getDirection(), param.getFixed(), param.getFormat());
+        return String.format("(%s=%s; tp:%s; sz:%d; dr:%s; fx:%s; fm:%s)", param.getName(), valStr, param.getType(), param.getSize(), param.getDirection(), param.getOverride(), param.getFormat());
     }
 
 

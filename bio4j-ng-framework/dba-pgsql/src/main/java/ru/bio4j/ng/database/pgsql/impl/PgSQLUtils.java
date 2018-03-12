@@ -180,14 +180,14 @@ public class PgSQLUtils implements RDBMSUtils {
     }
 
     //"p_param1 character varying, OUT p_param2 integer"
-    public static void parsParams(String paramsList, Paramus p, StringBuilder args, List<Param> fixedParamsOverride) {
+    public static void parsParams(String paramsList, Paramus p, StringBuilder args, List<Param> paramsOverride) {
         String[] substrs = Strings.split(paramsList, ",");
         int i = 0;
         for (String prmDesc : substrs) {
-            Param fixedParam = null;
-            if(fixedParamsOverride != null && fixedParamsOverride.size() > i)
-                fixedParam = fixedParamsOverride.get(i).getFixed() ? fixedParamsOverride.get(i) : null;
-            parsParam(prmDesc.trim(), p, args, fixedParam);
+            Param overrideParam = null;
+            if(paramsOverride != null && paramsOverride.size() > i)
+                overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
+            parsParam(prmDesc.trim(), p, args, overrideParam);
             i++;
         }
     }
@@ -195,7 +195,7 @@ public class PgSQLUtils implements RDBMSUtils {
     private static final String SQL_GET_PARAMS_FROM_DBMS = "SELECT pg_get_function_identity_arguments(:method_name::regproc) as rslt";
 
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws SQLException {
         StringBuilder args = new StringBuilder();
         PgSQLUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
@@ -205,7 +205,7 @@ public class PgSQLUtils implements RDBMSUtils {
                 try(Paramus p = Paramus.set(params)) {
                     if (rs.next()) {
                         String pars = rs.getString("rslt");
-                        parsParams(pars, p, args, fixedParamsOverride);
+                        parsParams(pars, p, args, paramsOverride);
                     }
                 }
             }

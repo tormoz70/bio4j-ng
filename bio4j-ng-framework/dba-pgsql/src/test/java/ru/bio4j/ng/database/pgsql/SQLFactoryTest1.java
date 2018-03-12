@@ -105,8 +105,8 @@ public class SQLFactoryTest1 {
         StringBuilder args = new StringBuilder();
         String paramsList = "p_param1 character varying, OUT p_param2 integer";
         List<Param> pps = new ArrayList<>();
-        pps.add(Param.builder().name("param1").value("").type(MetaType.STRING).direction(Param.Direction.INOUT).fixed(true).build());
-        pps.add(Param.builder().name("param2").value(0).type(MetaType.INTEGER).fixed(true).build());
+        pps.add(Param.builder().name("param1").value("").type(MetaType.STRING).direction(Param.Direction.INOUT).override(true).build());
+        pps.add(Param.builder().name("param2").value(0).type(MetaType.INTEGER).override(true).build());
         List<Param> params = new ArrayList<>();
         try (Paramus p = Paramus.set(params)) {
             PgSQLUtils.parsParams(paramsList, p, args, pps);

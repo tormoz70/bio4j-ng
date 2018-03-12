@@ -82,9 +82,9 @@
                                             </xs:restriction>
                                         </xs:simpleType>
                                     </xs:attribute>
-                                    <xs:attribute name="fixed" type="xs:boolean" use="optional">
+                                    <xs:attribute name="override" type="xs:boolean" use="optional">
                                         <xs:annotation>
-                                            <xs:documentation>Если true, то имя параметра перегружает имя объявленное в процедуре, иначе имя параметра должно совпадать с именем параметра в тпроцедуре</xs:documentation>
+                                            <xs:documentation>Если true, то имя параметра перегружает имя объявленное в процедуре, иначе имя параметра должно совпадать с именем параметра в процедуре</xs:documentation>
                                         </xs:annotation>
                                     </xs:attribute>
                                     <xs:attribute name="format" type="xs:string" use="optional">

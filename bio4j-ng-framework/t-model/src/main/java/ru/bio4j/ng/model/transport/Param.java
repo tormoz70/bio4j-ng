@@ -34,7 +34,7 @@ public class Param {
         private MetaType type = MetaType.UNDEFINED;
         private int size = 0;
         private Direction direction = Direction.UNDEFINED;
-        private Boolean fixed = false;
+        private Boolean override = false;
         private String format;
 
         public static Param copy(Param copyFrom) {
@@ -45,7 +45,7 @@ public class Param {
                     .type(copyFrom.getType())
                     .size(copyFrom.getSize())
                     .direction(copyFrom.getDirection())
-                    .fixed(copyFrom.getFixed())
+                    .override(copyFrom.getOverride())
                     .format(copyFrom.getFormat())
                     .build();
         }
@@ -58,7 +58,7 @@ public class Param {
                     .type(param.getType())
                     .size(param.getSize())
                     .direction(param.getDirection())
-                    .fixed(param.getFixed())
+                    .override(param.getOverride())
                     .format(param.getFormat());
         }
 
@@ -117,12 +117,12 @@ public class Param {
             return this;
         }
 
-        public Boolean getFixed() {
-            return this.fixed;
+        public Boolean getOverride() {
+            return this.override;
         }
 
-        public Builder fixed(Boolean fixed) {
-            this.fixed = fixed;
+        public Builder override(Boolean override) {
+            this.override = override;
             return this;
         }
 
@@ -159,7 +159,7 @@ public class Param {
     @XStreamAsAttribute
 	private Direction direction;
     @XStreamAsAttribute
-    private Boolean fixed;
+    private Boolean override;
     @XStreamAsAttribute
     private String format;
 
@@ -175,7 +175,7 @@ public class Param {
 		this.type = builder.getType();
 		this.size = builder.getSize();
 		this.direction = builder.getDirection();
-        this.fixed = builder.getFixed();
+        this.override = builder.getOverride();
         this.format = builder.getFormat();
 	}
 
@@ -232,11 +232,11 @@ public class Param {
         this.id = id;
     }
 
-    public Boolean getFixed() {
-        return fixed;
+    public Boolean getOverride() {
+        return override;
     }
-    public void setFixed(Boolean fixed) {
-        this.fixed = fixed;
+    public void setOverride(Boolean fixed) {
+        this.override = fixed;
     }
 
     public String getFormat() {

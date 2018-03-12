@@ -77,7 +77,7 @@ public class JsonUtlTest {
                 "\"bioParams\":[{\"name\":\"param1\",\"value\":\"123\"},"+
                                "{\"name\":\"param2\",\"value\":null},"+
                                "{\"name\":\"param3\",\"value\":123},"+
-                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.000+0400\"}"+
+                               "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.000+0300\"}"+
                 "],"+
                 "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-registry\",\"offset\":0,\"pageSize\":26}";
         BioRequestJStoreGetDataSet request = Jsons.decode(requestBody, BioRequestJStoreGetDataSet.class);
