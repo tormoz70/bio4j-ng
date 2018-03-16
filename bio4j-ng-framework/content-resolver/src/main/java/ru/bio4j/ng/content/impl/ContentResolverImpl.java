@@ -33,7 +33,6 @@ import static ru.bio4j.ng.content.io.FileLoader.buildCode;
 @Instantiate
 @Provides(specifications = ContentResolver.class)
 public class ContentResolverImpl extends BioServiceBase implements ContentResolver, FileListener {
-
     private static final Logger LOG = LoggerFactory.getLogger(ContentResolverImpl.class);
 
     private volatile FileWatcher fileWatcher;

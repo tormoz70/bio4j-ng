@@ -311,4 +311,11 @@ public class UtlTest {
         double b1 = Utl.round(b, 2);
         Assert.assertTrue(b1 == 123.46);
     }
+
+    @Test
+    public void parsLoginTest() throws Exception {
+        LoginRec loginRec = Utl.parsLogin("qwe/asd");
+        Assert.assertEquals(loginRec.getUsername(), "qwe");
+        Assert.assertEquals(loginRec.getPassword(), "asd");
+    }
 }

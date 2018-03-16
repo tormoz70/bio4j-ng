@@ -23,10 +23,9 @@ public class DateTimeBioTransformer extends AbstractTransformer implements Objec
 
     public static Date parse(String value) {
         try {
-            //String v = value.toString();
-            //v = v.length() > 19 ? v.substring(0, 19) : v;
-            //return simpleDateFormatter.parse( v );
-            return DateTimeParser.getInstance().pars(value);
+            String v = value.toString();
+            v = v.length() > 19 ? v.substring(0, 19) : v;
+            return DateTimeParser.getInstance().pars(v);
         } catch (Exception e){
             throw new JSONException(String.format("Failed to parse %s with %s pattern.", value, simpleDateFormatter.toPattern()), e);
         }

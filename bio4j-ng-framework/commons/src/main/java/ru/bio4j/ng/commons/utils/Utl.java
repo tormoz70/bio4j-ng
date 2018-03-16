@@ -722,5 +722,16 @@ public class Utl {
         deleteFile(Paths.get(filePath), silent);
     }
 
+    public static LoginRec parsLogin(String login) {
+        LoginRec rslt = new LoginRec();
+        String[] loginParts = Strings.split(login, "/");
+        if(loginParts.length > 0)
+            rslt.setUsername(loginParts[0]);
+        if(loginParts.length > 1)
+            rslt.setPassword(loginParts[1]);
+        return rslt;
+    }
+
+
 }
 

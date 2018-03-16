@@ -25,7 +25,7 @@ public class JsonUtlTest {
 
 	@BeforeClass
 	private void setUp() {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+04:00"));
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+03:00"));
         this.testBox.setType(MetaType.INTEGER);
 		this.testBox.setName("Test-Box");
 		this.testBox.setCreated(Types.parse("2012.12.20-15:11:24", "yyyy.MM.dd-HH:mm:ss"));
