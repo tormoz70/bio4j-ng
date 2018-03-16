@@ -25,7 +25,7 @@ public class JsonUtlTest {
 
 	@BeforeClass
 	private void setUp() {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+03:00"));
+//        TimeZone.setDefault(TimeZone.getTimeZone("GMT+03:00"));
         this.testBox.setType(MetaType.INTEGER);
 		this.testBox.setName("Test-Box");
 		this.testBox.setCreated(Types.parse("2012.12.20-15:11:24", "yyyy.MM.dd-HH:mm:ss"));
@@ -98,12 +98,12 @@ public class JsonUtlTest {
         }
     }
 
-    // -Duser.timezone=GMT+4
+    // -Duser.timezone=GMT+3
     @Test(enabled = true)
     public void bdecode2() throws Exception {
         LOG.debug("test:");
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy.MM.dd'T'HH:mm:ss.SSS");
-        format1.setTimeZone(TimeZone.getTimeZone("GMT+04:00"));
+//        format1.setTimeZone(TimeZone.getTimeZone("GMT+03:00"));
         Date d = format1.parse("1970.03.02T18:43:56.555");
         LOG.debug("d:{}", d);
         Calendar c1 = Calendar.getInstance();
