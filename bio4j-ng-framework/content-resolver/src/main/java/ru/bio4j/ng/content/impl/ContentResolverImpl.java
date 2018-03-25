@@ -16,7 +16,6 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
-import ru.bio4j.ng.service.types.CursorParser;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -63,18 +63,13 @@
             <artifactId>postgresql</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-stypes</artifactId>
-            <scope>test</scope>
-        </dependency>
 
-    	<dependency>
+    	  <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dbapi</artifactId>
             <scope>provided</scope>
         </dependency>
-    	<dependency>
+    	  <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-commons</artifactId>
             <scope>provided</scope>

@@ -5,7 +5,6 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.BioCursor;
-import ru.bio4j.ng.service.types.CursorParser;
 
 import java.io.InputStream;
 import java.util.HashMap;

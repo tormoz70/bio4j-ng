@@ -69,6 +69,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
             }
         }
 
+        SrvcUtils.applyCurrentUserParams(usr, bioRequest.getBioParams());
         return bioRequest;
     }
 

@@ -17,13 +17,10 @@ public class ProviderExec extends ProviderAn<BioRequestStoredProg> {
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
 
-        List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
-            @Override
-            public List<Param> exec(SQLContext context, Connection conn) throws Exception {
-                cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParams());
-                cmd.execSQL();
-                return cmd.getParams();
-            }
+        List<Param> r = ctx.execBatch((context, conn) -> {
+            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParams());
+            cmd.execSQL(request.getBioParams());
+            return cmd.getParams();
         }, request.getUser());
         result.bioParams(r);
         return result.exception(null);

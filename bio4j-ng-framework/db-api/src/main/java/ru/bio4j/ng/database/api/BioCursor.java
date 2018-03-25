@@ -235,8 +235,17 @@ public class BioCursor implements Serializable {
     }
 
     public static class UpdelexSQLDef extends SQLDef {
+        private String signature;
         public UpdelexSQLDef(String sql) {
             super(sql);
+        }
+
+        public String getSignature() {
+            return signature;
+        }
+
+        public void setSignature(String signature) {
+            this.signature = signature;
         }
     }
 
@@ -284,16 +293,16 @@ public class BioCursor implements Serializable {
         sqlDef.owner = this;
     }
 
-    public SQLDef getUpdateSqlDef() {
-        return sqlDefs.get(Type.UPDATE);
+    public UpdelexSQLDef getUpdateSqlDef() {
+        return (UpdelexSQLDef)sqlDefs.get(Type.UPDATE);
     }
 
-    public SQLDef getDeleteSqlDef() {
-        return sqlDefs.get(Type.DELETE);
+    public UpdelexSQLDef getDeleteSqlDef() {
+        return (UpdelexSQLDef)sqlDefs.get(Type.DELETE);
     }
 
-    public SQLDef getExecSqlDef() {
-        return sqlDefs.get(Type.EXECUTE);
+    public UpdelexSQLDef getExecSqlDef() {
+        return (UpdelexSQLDef)sqlDefs.get(Type.EXECUTE);
     }
 
     public SelectSQLDef getSelectSqlDef() {

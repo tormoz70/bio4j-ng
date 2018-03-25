@@ -7,6 +7,7 @@ import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.RDBMSUtils;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -99,7 +100,7 @@ public class OraUtils implements RDBMSUtils {
             " and a.object_name = upper(:method_name)" +
             " order by position";
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
         StringBuilder args = new StringBuilder();
         OraUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
@@ -131,7 +132,7 @@ public class OraUtils implements RDBMSUtils {
                 }
             }
         }
-        String newExec = storedProcName + "(" + args + ")";
+        String newExec = DbUtils.generateSignature(storedProcName, params);
         return new StoredProgMetadata(newExec, params);
     }
 

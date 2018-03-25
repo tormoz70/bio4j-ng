@@ -27,6 +27,8 @@ public interface SQLCursor extends SQLCommand, AutoCloseable {
      */
     SQLCursor init(Connection conn, String sql, List<Param> prms) throws Exception;
 
+    SQLCursor init(Connection conn, String sql) throws Exception;
+
     String getSQL();
 
     SQLCursor open(List<Param> params) throws Exception;

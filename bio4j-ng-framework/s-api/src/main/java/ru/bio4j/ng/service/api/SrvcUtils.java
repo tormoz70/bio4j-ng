@@ -1,8 +1,10 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.model.transport.FCloudCommand;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.RmtCommand;
@@ -13,6 +15,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
@@ -109,5 +112,17 @@ public class SrvcUtils {
         public List<Param> bioParams;
     }
 
+    protected static void applyCurrentUserParams(final User usr, final List<Param> params) {
+        if (usr != null) {
+            try (Paramus p = Paramus.set(params)) {
+                p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
+                p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
+                p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
+                p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
+                p.setValue(SrvcUtils.PARAM_CURUSR_IP, usr.getRemoteIP(), Param.Direction.IN, true);
+                p.setValue(SrvcUtils.PARAM_CURUSR_CLIENT, usr.getRemoteClient(), Param.Direction.IN, true);
+            }
+        }
+    }
 
 }

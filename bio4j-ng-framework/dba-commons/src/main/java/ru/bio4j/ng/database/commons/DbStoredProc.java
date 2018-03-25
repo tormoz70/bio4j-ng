@@ -35,16 +35,23 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     public SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception {
         return this.init(conn, storedProcName, params, 60);
     }
+    @Override
+    public SQLStoredProc init(Connection conn, String storedProcName) throws Exception {
+        return this.init(conn, storedProcName, null, 60);
+    }
 
     @Override
-	protected void prepareStatement() throws SQLException {
-        StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
-
-        try(Paramus p = Paramus.set(sp.getParams())){
-            p.apply(params, true);
-            params = p.get();
+	protected void prepareStatement() throws Exception {
+        if (this.params == null) {
+            StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
+            try (Paramus p = Paramus.set(sp.getParams())) {
+                p.apply(params, true);
+                params = p.get();
+            }
         }
-        preparedSQL = String.format("{call %s}", sp.getSignature());
+
+        String signature = DbUtils.generateSignature(storedProcName, params);
+        preparedSQL = String.format("{call %s}", signature);
         preparedStatement = DbNamedParametersStatement.prepareCall(this.connection, this.preparedSQL);
         preparedStatement.setQueryTimeout(this.timeout);
 	}

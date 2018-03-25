@@ -78,18 +78,18 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         this.paramGetter = paramGetter;
     }
 
-	public T init(Connection conn, List<Param> params, int timeout) throws SQLException {
+	public T init(Connection conn, List<Param> params, int timeout) throws Exception {
 		this.connection = conn;
 		this.timeout = timeout;
 		this.params = params;
         this.prepareStatement();
 		return (T)this;
 	}
-    public T init(Connection conn, List<Param> params) throws SQLException {
+    public T init(Connection conn, List<Param> params) throws Exception {
         return this.init(conn, params, 60);
     }
 
-	protected abstract void prepareStatement() throws SQLException;
+	protected abstract void prepareStatement() throws Exception;
 
     protected boolean doBeforeStatement(List<Param> params) throws SQLException {
         boolean locCancel = false;

@@ -12,6 +12,8 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 //import ru.bio4j.ng.database.oracle.SQLContextFactory;
 //import ru.bio4j.ng.database.pgsql.SQLContextFactory;
+import ru.bio4j.ng.database.commons.CursorParser;
+import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
@@ -34,49 +36,74 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     protected abstract BundleContext bundleContext();
 
-    protected static void applyCurrentUserParams(final User usr, final Collection<BioCursor.SQLDef> sqlDefs) {
-        if (usr != null && sqlDefs != null) {
-            for (BioCursor.SQLDef sqlDef : sqlDefs) {
-                if (sqlDef != null)
-                    try (Paramus p = Paramus.set(sqlDef.getParams())) {
-                        p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
-                        p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
-                        p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
-                        p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
-                        p.setValue(SrvcUtils.PARAM_CURUSR_IP, usr.getRemoteIP(), Param.Direction.IN, true);
-                        p.setValue(SrvcUtils.PARAM_CURUSR_CLIENT, usr.getRemoteClient(), Param.Direction.IN, true);
-                    }
+//    protected static void applyCurrentUserParams(final User usr, final Collection<BioCursor.SQLDef> sqlDefs) {
+//        if (usr != null && sqlDefs != null) {
+//            for (BioCursor.SQLDef sqlDef : sqlDefs) {
+//                if (sqlDef != null)
+//                    try (Paramus p = Paramus.set(sqlDef.getParams())) {
+//                        p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
+//                        p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
+//                        p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
+//                        p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
+//                        p.setValue(SrvcUtils.PARAM_CURUSR_IP, usr.getRemoteIP(), Param.Direction.IN, true);
+//                        p.setValue(SrvcUtils.PARAM_CURUSR_CLIENT, usr.getRemoteClient(), Param.Direction.IN, true);
+//                    }
+//            }
+//        }
+//    }
+
+//    protected static void applyBioParams(final List<Param> bioParams, Collection<BioCursor.SQLDef> sqlDefs) throws Exception {
+//        for(BioCursor.SQLDef sqlDef : sqlDefs) {
+//            if(sqlDef != null)
+//                sqlDef.setParams(bioParams);
+//        }
+//    }
+
+    private void prepareCursor(BioCursor cursor) throws Exception {
+        SQLContext context = this.getSQLContext();
+        context.execBatch((context1, conn) -> {
+            BioCursor.UpdelexSQLDef def = cursor.getUpdateSqlDef();
+            if (def != null) {
+                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParams());
+                def.setSignature(sp.getSignature());
+                def.setParams(sp.getParams());
             }
-        }
-    }
-
-    protected static void applyBioParams(final List<Param> bioParams, Collection<BioCursor.SQLDef> sqlDefs) throws Exception {
-        for(BioCursor.SQLDef sqlDef : sqlDefs) {
-            if(sqlDef != null)
-                sqlDef.setParams(bioParams);
-        }
-    }
-
-    public BioCursor getCursor(String bioCode, User usr) throws Exception {
-        BioCursor cursor = CursorParser.pars(bundleContext(), bioCode);
-        if(cursor == null)
-            throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
-        applyCurrentUserParams(usr, cursor.sqlDefs());
-        return cursor;
+            def = cursor.getDeleteSqlDef();
+            if (def != null) {
+                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParams());
+                def.setSignature(sp.getSignature());
+                def.setParams(sp.getParams());
+            }
+            def = cursor.getExecSqlDef();
+            if (def != null) {
+                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParams());
+                def.setSignature(sp.getSignature());
+                def.setParams(sp.getParams());
+            }
+        }, null);
     }
 
     public BioCursor getCursor(String bioCode) throws Exception {
-        return getCursor(bioCode, null);
-    }
-
-    public BioCursor getCursor(BioRequest bioRequest) throws Exception {
-        String bioCode = bioRequest.getBioCode();
-        BioCursor cursor = getCursor(bioCode, bioRequest.getUser());
-
-        applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
-
+        BioCursor cursor = CursorParser.pars(bundleContext(), bioCode);
+        if(cursor == null)
+            throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
+        prepareCursor(cursor);
+//        applyCurrentUserParams(usr, cursor.sqlDefs());
         return cursor;
     }
+
+//    public BioCursor getCursor(String bioCode) throws Exception {
+//        return getCursor(bioCode, null);
+//    }
+
+//    public BioCursor getCursor(BioRequest bioRequest) throws Exception {
+//        String bioCode = bioRequest.getBioCode();
+//        BioCursor cursor = getCursor(bioCode, bioRequest.getUser());
+//
+//        //applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
+//
+//        return cursor;
+//    }
 
     private SQLContext sqlContext = null;
     private boolean localSQLContextIsInited = false;

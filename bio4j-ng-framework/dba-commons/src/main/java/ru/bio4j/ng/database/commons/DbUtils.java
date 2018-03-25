@@ -14,11 +14,10 @@ import ru.bio4j.ng.model.transport.User;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Утилиты для работы с метаданными СУБД
@@ -71,7 +70,7 @@ public class DbUtils {
         return converter.read(param.getType(), stringSize, isCallable);
     }
 
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws SQLException {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws Exception {
         if(rdbmsUtils == null)
             throw new IllegalArgumentException(String.format(INIT_ERRORS_TEMPL, RDBMSUtils.class.getSimpleName()));
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
@@ -169,6 +168,16 @@ public class DbUtils {
                 rslt = Utl.beanToParams(params);
         }
         return rslt;
+    }
+
+    public static String generateSignature(String procName, List<Param> params) throws Exception {
+        StringBuilder args = new StringBuilder();
+        try(Paramus pp = Paramus.set(params)) {
+            for(Param p : pp.get()){
+                args.append(((args.length() == 0) ? ":" : ",:") + p.getName().toLowerCase());
+            }
+        }
+        return procName + "(" + args + ")";
     }
 
 }

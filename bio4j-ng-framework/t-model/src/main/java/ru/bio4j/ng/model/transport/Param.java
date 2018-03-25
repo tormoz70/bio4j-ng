@@ -34,7 +34,7 @@ public class Param {
         private MetaType type = MetaType.UNDEFINED;
         private int size = 0;
         private Direction direction = Direction.UNDEFINED;
-        private Boolean override = false;
+        private boolean override = false;
         private String format;
 
         public static Param copy(Param copyFrom) {
@@ -117,11 +117,11 @@ public class Param {
             return this;
         }
 
-        public Boolean getOverride() {
+        public boolean getOverride() {
             return this.override;
         }
 
-        public Builder override(Boolean override) {
+        public Builder override(boolean override) {
             this.override = override;
             return this;
         }
@@ -159,7 +159,7 @@ public class Param {
     @XStreamAsAttribute
 	private Direction direction;
     @XStreamAsAttribute
-    private Boolean override;
+    private boolean override;
     @XStreamAsAttribute
     private String format;
 
@@ -232,10 +232,10 @@ public class Param {
         this.id = id;
     }
 
-    public Boolean getOverride() {
+    public boolean getOverride() {
         return override;
     }
-    public void setOverride(Boolean fixed) {
+    public void setOverride(boolean fixed) {
         this.override = fixed;
     }
 

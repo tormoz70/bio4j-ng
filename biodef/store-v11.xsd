@@ -94,6 +94,11 @@
 Задавать в виде: "to_date('yyyy.MM.dd HH:mm:ss');to_number('0.00')". Форматирование для Java.</xs:documentation>
                                         </xs:annotation>
                                     </xs:attribute>
+                                    <xs:attribute name="defaultValue" type="xs:string" use="optional">
+                                        <xs:annotation>
+                                            <xs:documentation>Значение по умолчанию, присваивается параметру при инициализации</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>

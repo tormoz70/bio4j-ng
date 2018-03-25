@@ -372,15 +372,10 @@ public class SQLFactoryTest {
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
-                                .add(Param.builder()
-                                        .name("p_param2")
-                                        .type(MetaType.INTEGER)
-                                        .direction(Param.Direction.OUT)
-                                        .build())
                                 .add("p_param3", "ext");
-                        cmd.init(conn, storedProgName, paramus.get());
+                        cmd.init(conn, storedProgName);
+                        cmd.execSQL(paramus.get());
                     }
-                    cmd.execSQL();
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
@@ -406,15 +401,15 @@ public class SQLFactoryTest {
 
                     SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_error";
-                    try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
-                        paramus.add("p_param1", "FTW")
-                                .add(Param.builder()
-                                        .name("p_param2")
-                                        .type(MetaType.INTEGER)
-                                        .direction(Param.Direction.OUT)
-                                        .build());
-                        cmd.init(conn, storedProgName, paramus.get());
-                    }
+                    List<Param> prms = new ArrayList<Param>();
+                    prms.add(Param.builder().name("p_param1").value("FTW").build());
+                    prms.add(Param.builder()
+                        .name("p_param2")
+                        .type(MetaType.INTEGER)
+                        .direction(Param.Direction.OUT)
+                        .build());
+                    cmd.init(conn, storedProgName);
+
                     cmd.execSQL();
                     return null;
                 }

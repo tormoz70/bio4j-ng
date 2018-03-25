@@ -28,7 +28,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
     }
 
 	@Override
-	public SQLCursor init(Connection conn, String sql, List<Param> params, int timeout) throws SQLException {
+	public SQLCursor init(Connection conn, String sql, List<Param> params, int timeout) throws Exception {
         if(Strings.isNullOrEmpty(sql))
             throw new IllegalArgumentException("Parameter \"sql\" cannon be empty!!!");
         this.sql = sql;
@@ -36,8 +36,13 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
 	}
 
     @Override
-    public SQLCursor init(Connection conn, String sql, List<Param> params) throws SQLException {
+    public SQLCursor init(Connection conn, String sql, List<Param> params) throws Exception {
         return this.init(conn, sql, params, 60);
+    }
+
+    @Override
+    public SQLCursor init(Connection conn, String sql) throws Exception {
+        return this.init(conn, sql, null, 60);
     }
 
     @Override
