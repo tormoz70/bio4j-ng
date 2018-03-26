@@ -1,8 +1,10 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
 import java.sql.*;
+import java.util.List;
 
 public interface SQLContext {
     //Connection getConnection() throws SQLException;
@@ -20,9 +22,9 @@ public interface SQLContext {
     <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch) throws Exception;
     void execSQL(final Connection conn, final SQLActionVoid action) throws Exception;
 
-    <R> R execSQL(final Connection conn, final BioCursor cursor) throws Exception;
-    <R> R execSQL(final BioCursor cursor, final User user) throws Exception;
-    <R> R execSQL(final BioCursor cursor) throws Exception;
+    <R> R execSQL(final Connection conn, final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params) throws Exception;
+    <R> R execSQL(final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User user) throws Exception;
+    <R> R execSQL(final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params) throws Exception;
 
 //    SQLConnectionPoolStat getStat();
     void addAfterEvent(SQLConnectionConnectedEvent e);

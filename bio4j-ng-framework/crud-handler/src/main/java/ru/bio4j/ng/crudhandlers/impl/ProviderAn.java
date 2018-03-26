@@ -68,12 +68,12 @@ public abstract class ProviderAn<T extends BioRequest> {
         return check > 0;
     }
 
-    protected static int readStoreData(final StoreData data, final SQLContext context, final Connection conn, final BioCursor cursorDef, final Logger LOG) throws Exception {
+    protected static int readStoreData(final BioRequest request, final StoreData data, final SQLContext context, final Connection conn, final BioCursor cursorDef, final Logger LOG) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         int totalCount = 0;
         long startTime = System.currentTimeMillis();
         try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParams()).open();) {
+                .init(conn, cursorDef.getSelectSqlDef()).open(request.getBioParams());) {
             long estimatedTime = System.currentTimeMillis() - startTime;
             LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
             data.setMetadata(new StoreMetadata());

@@ -34,7 +34,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
             }
             List<Param> r = sqlContext.execBatch((ctx, conn) -> {
                 cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParams());
-                cmd.execSQL();
+                cmd.execSQL(request.getBioParams());
                 return cmd.getParams();
             }, request.getUser());
             sqlDef.setParams(r);
@@ -50,8 +50,8 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
     private static StoredBlobAttrs storeBlobToTmp(final String tmpPath, final BioRequestGetFile request, final SQLContext sqlContext, final BioCursor cursor, final Logger LOG) throws Exception {
         final StoredBlobAttrs rslt = new StoredBlobAttrs();
         final User user = request.getUser();
-        final BioCursor.SQLDef sqlSelectDef = cursor.getSelectSqlDef();
-        final BioCursor.SQLDef sqlExecDef = cursor.getExecSqlDef();
+        final BioCursor.SelectSQLDef sqlSelectDef = cursor.getSelectSqlDef();
+        final BioCursor.UpdelexSQLDef sqlExecDef = cursor.getExecSqlDef();
         sqlContext.execBatch((ctx, conn, cur) -> {
 //            tryPrepareSessionContext(user.getInnerUid(), conn);
 
@@ -61,7 +61,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
                 }
                 boolean fileStoredToTmpStorage = false;
                 try (SQLCursor c = ctx.createCursor()
-                        .init(conn, sqlSelectDef.getPreparedSql(), sqlSelectDef.getParams()).open();) {
+                        .init(conn, sqlSelectDef).open(request.getBioParams());) {
                     if (c.reader().next()) {
                         ResultSet r = c.reader().getResultSet();
                         rslt.fileName = r.getString("file_name");
@@ -79,8 +79,8 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
             } else if(sqlExecDef != null) {
                 final SQLStoredProc cmd = ctx.createStoredProc();
                 List<Param> r = ctx.execBatch((context1, conn1) -> {
-                    cmd.init(conn1, sqlExecDef.getPreparedSql(), sqlExecDef.getParams());
-                    cmd.execSQL();
+                    cmd.init(conn1, sqlExecDef);
+                    cmd.execSQL(request.getBioParams());
                     return cmd.getParams();
                 }, request.getUser());
                 try (Paramus p = Paramus.set(r)) {
@@ -126,7 +126,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         String tmpPath = this.configProvider.getConfig().getTmpPath();
         try {
 //            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
-            final BioCursor cursor = module.getCursor(request);
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             processCursorAsFileProvider(tmpPath, request, response, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());

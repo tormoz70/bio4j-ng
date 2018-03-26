@@ -41,6 +41,11 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
     }
 
     @Override
+    public SQLCursor init(Connection conn, BioCursor.SelectSQLDef sqlDef) throws Exception {
+        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParams());
+    }
+
+    @Override
     public SQLCursor init(Connection conn, String sql) throws Exception {
         return this.init(conn, sql, null, 60);
     }

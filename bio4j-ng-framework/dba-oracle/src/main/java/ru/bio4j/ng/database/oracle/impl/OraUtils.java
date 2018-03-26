@@ -2,6 +2,8 @@ package ru.bio4j.ng.database.oracle.impl;
 
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleResultSet;
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
@@ -99,9 +101,7 @@ public class OraUtils implements RDBMSUtils {
             " and (:package_name is null or a.package_name = upper(:package_name))" +
             " and a.object_name = upper(:method_name)" +
             " order by position";
-    private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
     public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
-        StringBuilder args = new StringBuilder();
         OraUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
         try (OraclePreparedStatement st = (OraclePreparedStatement)conn.prepareStatement(SQL_GET_PARAMS_FROM_DBMS, ResultSet.TYPE_FORWARD_ONLY)) {
@@ -111,22 +111,25 @@ public class OraUtils implements RDBMSUtils {
                 try(Paramus p = Paramus.set(params)) {
                     int i = 0;
                     while (rs.next()) {
+                        String parName = rs.getString("argument_name");
+                        String parType = rs.getString("data_type");
+                        String parDir = rs.getString("in_out");
+                        Param newParam  = Param.builder()
+                                .name(parName.toLowerCase())
+                                .type(decodeType(parType))
+                                .direction(decodeDirection(parDir))
+                                .build();
                         Param overrideParam = null;
                         if(paramsOverride != null && paramsOverride.size() > i)
                             overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
-
-                        String parName = overrideParam != null ? overrideParam.getName() : rs.getString("argument_name");
-                        String parType = rs.getString("data_type");
-                        String parDir = rs.getString("in_out");
-                        if (!(parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[0]) || parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[1])))
-                            throw new IllegalArgumentException(String.format("Не верный формат наименования аргументов хранимой процедуры, \"%s\".\n" +
-                                    "Необходимо, чтобы все имена аргументов начинались с префикса \"%s\" или \"%s\" !", parName.toUpperCase(), DEFAULT_PARAM_PREFIX[0], DEFAULT_PARAM_PREFIX[1]));
-                        args.append(((args.length() == 0) ? ":" : ",:") + parName.toLowerCase());
-                        p.add(Param.builder()
-                                .name(parName.toLowerCase())
-                                .type(overrideParam != null ? overrideParam.getType() : decodeType(parType))
-                                .direction(overrideParam != null ? overrideParam.getDirection() : decodeDirection(parDir))
-                                .build());
+                        if(overrideParam != null) {
+                            if(overrideParam.getOverride())
+                                newParam.setName(DbUtils.normalizeParamName(overrideParam.getName()));
+                            if(overrideParam.getValue() != null)
+                                newParam.setValue(Converter.toType(overrideParam.getValue(), MetaTypeConverter.write(newParam.getType())));
+                        }
+                        DbUtils.checkParamName(newParam.getName());
+                        p.add(newParam);
                         i++;
                     }
                 }

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ru.bio4j.ng.database.commons.DbUtils;
+
 /**
  * Утилиты для работы с метаданными СУБД PostgreSQL
  */
@@ -115,7 +117,7 @@ public class PgSQLUtils implements RDBMSUtils {
     }
 
     private static boolean checkDirName(String paramDesc, String dirName){
-        if(!Strings.isNullOrEmpty(paramDesc) && !Strings.isNullOrEmpty(dirName) && paramDesc.toUpperCase().startsWith(dirName+" ")) {
+        if(!Strings.isNullOrEmpty(paramDesc.trim()) && !Strings.isNullOrEmpty(dirName) && paramDesc.trim().toUpperCase().startsWith(dirName+" ")) {
             return true;
         }
         return false;
@@ -152,13 +154,8 @@ public class PgSQLUtils implements RDBMSUtils {
         paramDesc = cutDirNames(paramDesc);
         String paramNameFromDesc = paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
         paramDesc = cutFirstItem(paramDesc, paramNameFromDesc);
-        String paramNameUpper = paramNameFromDesc.toUpperCase();
         String typeName = paramDesc;
-        if (!(paramNameUpper.startsWith(DEFAULT_PARAM_PREFIX[0]) || paramNameUpper.startsWith(DEFAULT_PARAM_PREFIX[1])))
-            throw new IllegalArgumentException("Не верный формат наименования аргументов хранимой процедуры.\n" +
-                    "Необходимо, чтобы все имена аргументов начинались с префикса \"" + DEFAULT_PARAM_PREFIX[0] + "\" или \"" + DEFAULT_PARAM_PREFIX[1] + "\" !");
         MetaType type = decodeType(typeName);
-
         return Param.builder()
                 .name(paramNameFromDesc)
                 .type(type)
@@ -167,33 +164,22 @@ public class PgSQLUtils implements RDBMSUtils {
                 .build();
     }
 
-    private static Param findParamIgnorePrefix(String paramName, List<Param> params) {
-        for (Param param : params) {
-            if(param.getName().equalsIgnoreCase(paramName.toLowerCase()) ||
-                    param.getName().equalsIgnoreCase(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramName.toLowerCase()) ||
-                        param.getName().equalsIgnoreCase(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramName.toLowerCase())) {
-                return param;
-            }
-        }
-        return null;
-    }
-
     //"p_param1 character varying, OUT p_param2 integer"
     public static void parsParams(String paramsList, List<Param> params, List<Param> paramsOverride) throws Exception {
         String[] substrs = Strings.split(paramsList, ",");
         int i = 0;
         for (String prmDesc : substrs) {
+            Param newParam = parsParamDesc(prmDesc);
             Param overrideParam = null;
             if(paramsOverride != null && paramsOverride.size() > i)
                 overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
-            Param newParam = parsParamDesc(prmDesc);
-            Param param2Override = findParamIgnorePrefix(newParam.getName(), paramsOverride);
-            if(param2Override != null) {
-                if(param2Override.getOverride())
-                    newParam.setName(param2Override.getName());
-                if(param2Override.getValue() != null)
-                    newParam.setValue(Converter.toType(param2Override.getValue(), MetaTypeConverter.write(newParam.getType())));
+            if(overrideParam != null) {
+                if(overrideParam.getOverride())
+                    newParam.setName(DbUtils.normalizeParamName(overrideParam.getName()));
+                if(overrideParam.getValue() != null)
+                    newParam.setValue(Converter.toType(overrideParam.getValue(), MetaTypeConverter.write(newParam.getType())));
             }
+            DbUtils.checkParamName(newParam.getName());
             params.add(newParam);
             i++;
         }

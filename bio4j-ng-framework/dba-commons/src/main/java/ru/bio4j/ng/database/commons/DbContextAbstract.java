@@ -137,23 +137,23 @@ public abstract class DbContextAbstract implements SQLContext {
      * Выполняет exexSQL - курсор.
      */
     @Override
-    public <R> R execSQL (final Connection connection, final BioCursor cursor) throws Exception {
+    public <R> R execSQL (final Connection connection, final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params) throws Exception {
         SQLStoredProc sp = this.createStoredProc();
-        sp.init(connection, cursor.getExecSqlDef().getPreparedSql(), cursor.getExecSqlDef().getParams()).execSQL();
-        List<Param> params = cursor.getExecSqlDef().getParams();
-        for (Param p : params)
+        sp.init(connection, sqlDef.getPreparedSql(), sqlDef.getParams()).execSQL(params);
+        List<Param> outparams = sqlDef.getParams();
+        for (Param p : outparams)
             if (p.getDirection() == Param.Direction.INOUT || p.getDirection() == Param.Direction.OUT)
                 return (R) p.getValue();
         return null;
     }
 
     @Override
-    public <R> R execSQL (final BioCursor cursor, final User user) throws Exception {
-        return execBatch((context, conn, param) -> execSQL(conn, cursor), null, user);
+    public <R> R execSQL (final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User user) throws Exception {
+        return execBatch((context, conn, param) -> execSQL(conn, sqlDef, params), null, user);
     }
     @Override
-    public <R> R execSQL (final BioCursor cursor) throws Exception {
-        return execSQL(cursor, null);
+    public <R> R execSQL (final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params) throws Exception {
+        return execSQL(sqlDef, params, null);
     }
 
     /**

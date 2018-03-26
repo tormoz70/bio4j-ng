@@ -28,7 +28,7 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
 
                 StoreData data = new StoreData();
                 data.setStoreId(request.getStoreId());
-                readStoreData(data, context, conn, cursorDef, LOG);
+                readStoreData(request, data, context, conn, cursorDef, LOG);
 
                 result.packet(data);
                 return result.exception(null);
@@ -44,7 +44,7 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
     public void process(final BioRequestJStoreGetRecord request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
-            final BioCursor cursor = module.getCursor(request);
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             if(cursor.getSelectSqlDef() == null)
                 throw new Exception(String.format("For bio \"%s\" must be defined \"select\" sql!", cursor.getBioCode()));
 

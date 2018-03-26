@@ -46,7 +46,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
 //                if(totalCount == 0) {
                     LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
                     try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
+                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
                         if (c.reader().next()) {
                             totalCount = c.reader().getValue(1, int.class);
                             int newOffset = (int)Math.floor(totalCount / request.getPageSize()) * request.getPageSize();
@@ -76,7 +76,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                         cur.getSelectSqlDef().setParamValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
                     //}
                     try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParams()).open();) {
+                            .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
                         if (c.reader().next()) {
                             int locatedPos = c.reader().getValue(1, int.class);
                             int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
@@ -98,7 +98,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
                 data.setResults(totalCount);
 
-                readStoreData(data, context, conn, cur, LOG);
+                readStoreData(request, data, context, conn, cur, LOG);
 
                 result.packet(data);
 
@@ -129,12 +129,12 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
                 data.setStoreId(request.getStoreId());
                 data.setOffset(cur.getSelectSqlDef().getOffset());
                 data.setPageSize(cur.getSelectSqlDef().getPageSize());
-                int totalCount = readStoreData(data, context, conn, cur, LOG);
+                int totalCount = readStoreData(request, data, context, conn, cur, LOG);
 
                 if(totalCount == 0) {
                     LOG.debug("For cursor \"{}\" max records fetched [{}]! Try calc count total records!!!", cur.getBioCode(), MAX_RECORDS_FETCH_LIMIT);
                     try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
+                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
                         if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
                     }
@@ -168,7 +168,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
 //            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
-            final BioCursor cursor = module.getCursor(request);
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
             context.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());

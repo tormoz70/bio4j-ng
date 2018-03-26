@@ -216,9 +216,9 @@ public class SQLFactoryTest {
                                       .type(MetaType.INTEGER)
                                       .direction(Param.Direction.OUT)
                                       .build());
-                        cmd.init(conn, storedProgName, paramus.get());
+                        cmd.init(conn, storedProgName);
+                        cmd.execSQL(paramus.get());
                     }
-                    cmd.execSQL();
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
@@ -252,8 +252,8 @@ public class SQLFactoryTest {
                                 .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value(0).build());
                         prms = paramus.get();
                     }
-                    cmd.init(conn, "test_stored_inout", prms);
-                    cmd.execSQL();
+                    cmd.init(conn, "test_stored_inout");
+                    cmd.execSQL(prms);
                     leng = cmd.getParamValue("p_param1", Integer.class, null);
                     conn.rollback();
                     return leng;
@@ -316,8 +316,8 @@ public class SQLFactoryTest {
                         param4 = null;
                     }};
 
-                    cmd.init(conn, "test_stored_inout", prms);
-                    cmd.execSQL();
+                    cmd.init(conn, "test_stored_inout");
+                    cmd.execSQL(prms);
                     leng = cmd.getParamValue("p_param1", Long.class, null);
                     conn.rollback();
                     return leng;
@@ -350,9 +350,9 @@ public class SQLFactoryTest {
                                         .direction(Param.Direction.OUT)
                                         .build())
                                 .add("p_param3", "ext");
-                        cmd.init(conn, storedProgName, paramus.get());
+                        cmd.init(conn, storedProgName);
+                        cmd.execSQL(paramus.get());
                     }
-                    cmd.execSQL();
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
@@ -403,9 +403,9 @@ public class SQLFactoryTest {
                                         .type(MetaType.INTEGER)
                                         .direction(Param.Direction.OUT)
                                         .build());
-                        cmd.init(conn, storedProgName, paramus.get());
+                        cmd.init(conn, storedProgName);
+                        cmd.execSQL(paramus.get());
                     }
-                    cmd.execSQL();
                     return null;
                 }
             }, "AnContext", null);
@@ -434,7 +434,7 @@ public class SQLFactoryTest {
                                     .type(MetaType.INTEGER)
                                     .direction(Param.Direction.OUT)
                                     .build());
-                        cmd.init(conn, storedProgName, paramus.get()).execSQL();
+                        cmd.init(conn, storedProgName).execSQL(paramus.get());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
@@ -506,7 +506,7 @@ public class SQLFactoryTest {
                                         .type(MetaType.CURSOR)
                                         .direction(Param.Direction.OUT)
                                         .build());
-                        cmd.init(conn, storedProgName, paramus.get()).execSQL();
+                        cmd.init(conn, storedProgName).execSQL(paramus.get());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         resultSet = paramus.getParamValue("p_param2", ResultSet.class);

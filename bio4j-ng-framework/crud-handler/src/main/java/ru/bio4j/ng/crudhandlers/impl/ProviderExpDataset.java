@@ -82,7 +82,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
                 data.setPageSize(cur.getSelectSqlDef().getPageSize());
                 data.setResults(totalCount);
 
-                readStoreData(data, context, conn, cur, LOG);
+                readStoreData(request, data, context, conn, cur, LOG);
 
                 result.packet(data);
 
@@ -109,12 +109,12 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
                 data.setStoreId(request.getStoreId());
                 data.setOffset(cur.getSelectSqlDef().getOffset());
                 data.setPageSize(cur.getSelectSqlDef().getPageSize());
-                int totalCount = readStoreData(data, context, conn, cur, LOG);
+                int totalCount = readStoreData(request, data, context, conn, cur, LOG);
 
                 if(totalCount == 0) {
                     LOG.debug("For cursor \"{}\" max records fetched [{}]! Try calc count total records!!!", cur.getBioCode(), MAX_RECORDS_FETCH_LIMIT);
                     try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open();) {
+                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
                         if (c.reader().next())
                             totalCount = c.reader().getValue(1, int.class);
                     }
@@ -144,7 +144,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
 //            final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
-            final BioCursor cursor = module.getCursor(request);
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             initSelectSqlDef(cursor.getSelectSqlDef(), request);
 
             context.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef());

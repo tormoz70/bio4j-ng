@@ -11,6 +11,7 @@ import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
 import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.commons.CursorParser;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;

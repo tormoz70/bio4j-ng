@@ -2,6 +2,7 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
@@ -21,10 +22,10 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
     private static final String STD_PARAM_PREFIX = "p_";
 
-    private static void processUpDelRow(final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
+    private static void processUpDelRow(final BioRequest request, final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
         SQLStoredProc cmd = ctx.createStoredProc();
         RowChangeType changeType = row.getChangeType();
-        BioCursor.SQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
+        BioCursor.UpdelexSQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
         if(sqlDef == null && Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType))
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         if(sqlDef == null && Arrays.asList(RowChangeType.delete).contains(changeType))
@@ -51,9 +52,9 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
                             .build(), true);
                 }
             }
-            cmd.init(conn, sqlDef.getPreparedSql(), paramus.get());
+            cmd.init(conn, sqlDef);
         }
-        cmd.execSQL();
+        cmd.execSQL(request.getBioParams());
         try(Paramus paramus = Paramus.set(cmd.getParams())) {
             for(Param p : paramus.get()) {
                 if(Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())){
@@ -99,7 +100,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
     private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
 //        final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
-        final BioCursor cursor = module.getCursor(request);
+        final BioCursor cursor = module.getCursor(request.getBioCode());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());
@@ -109,7 +110,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         for(StoreRow row : request.getModified()) {
             applyParentRowToChildren(parentCursorDef, parentRow, cursor, row);
             applyParentRowToChildrenParams(parentCursorDef, parentRow, cursor, row);
-            processUpDelRow(row, ctx, conn, cursor);
+            processUpDelRow(request, row, ctx, conn, cursor);
             if(firstRow == null)
                 firstRow = row;
         }

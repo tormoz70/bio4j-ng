@@ -180,4 +180,32 @@ public class DbUtils {
         return procName + "(" + args + ")";
     }
 
+    private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
+
+    public static void checkParamName(String parName) {
+        if (!(parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[0]) || parName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[1])))
+            throw new IllegalArgumentException(String.format("Не верный формат наименования аргументов хранимой процедуры, \"%s\".\n" +
+                    "Необходимо, чтобы все имена аргументов начинались с префикса \"%s\" или \"%s\" !", parName.toUpperCase(), DEFAULT_PARAM_PREFIX[0], DEFAULT_PARAM_PREFIX[1]));
+    }
+
+    public static String normalizeParamName(String paramName) {
+        if(!Strings.isNullOrEmpty(paramName)) {
+            paramName = paramName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[0])||
+                    paramName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[1]) ? paramName :
+                    DEFAULT_PARAM_PREFIX[0] + paramName;
+        }
+        return paramName.toLowerCase();
+    }
+
+    public static Param findParamIgnorePrefix(String paramName, List<Param> params) {
+        for (Param param : params) {
+            if(param.getName().equalsIgnoreCase(paramName.toLowerCase()) ||
+                    param.getName().equalsIgnoreCase(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramName.toLowerCase()) ||
+                    param.getName().equalsIgnoreCase(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramName.toLowerCase())) {
+                return param;
+            }
+        }
+        return null;
+    }
+
 }

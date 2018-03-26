@@ -192,9 +192,9 @@ public class SQLFactoryTest {
                                       .type(MetaType.INTEGER)
                                       .direction(Param.Direction.OUT)
                                       .build());
-                        cmd.init(conn, storedProgName, paramus.get());
+                        cmd.init(conn, storedProgName);
+                        cmd.execSQL(paramus.get());
                     }
-                    cmd.execSQL();
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
@@ -224,7 +224,7 @@ public class SQLFactoryTest {
                     List<Param> prms = new ArrayList<Param>();
                     prms.add(Param.builder().name("p_param1").value("FTW").build());
                     prms.add(Param.builder().name("p_param2").type(MetaType.INTEGER).direction(Param.Direction.OUT).build());
-                    cmd.init(conn, storedProgName, prms);
+                    cmd.init(conn, storedProgName);
                     Paramus.setParamValue(prms, "p_param1", "QWE");
                     Paramus.setParamValue(prms, "p_param3", "ASD");
                     cmd.execSQL(prms);
@@ -258,9 +258,9 @@ public class SQLFactoryTest {
                                 .add("p_param2", "QWE")
                                 .add(Param.builder().name("p_param3").type(MetaType.BOOLEAN).value(true).build())
                                 .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value("").build());
-                        cmd.init(conn, "test_stored_inout", paramus.get());
+                        cmd.init(conn, "test_stored_inout");
+                        cmd.execSQL(paramus.get());
                     }
-                    cmd.execSQL();
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param1", Integer.class), 0);
                     }
@@ -326,8 +326,8 @@ public class SQLFactoryTest {
                         Paramus.setParam(prms, Param.builder().name("p_param1").type(MetaType.STRING).value("ASD").build(), true);
                         Paramus.setParam(prms, Param.builder().name("p_param2").type(MetaType.INTEGER).value(1).build(), true);
                         Paramus.setParam(prms, Param.builder().name("p_param3").type(MetaType.CLOB).value(xml).build(), true);
-                cmd.init(conn, "test_store_clob", prms);
-                cmd.execSQL();
+                cmd.init(conn, "test_store_clob");
+                cmd.execSQL(prms);
 
             }, null);
         } catch (SQLException ex) {
@@ -349,8 +349,8 @@ public class SQLFactoryTest {
                 Paramus.setParam(prms, Param.builder().name("p_param1").type(MetaType.STRING).value("ASD").build(), true);
                 Paramus.setParam(prms, Param.builder().name("p_param2").type(MetaType.INTEGER).value(1).build(), true);
                 Paramus.setParam(prms, Param.builder().name("p_param3").type(MetaType.CLOB).value(xml).build(), true);
-                cmd.init(conn, "test_store_clob", prms);
-                cmd.execSQL();
+                cmd.init(conn, "test_store_clob");
+                cmd.execSQL(prms);
 
             }, null);
         } catch (SQLException ex) {
@@ -410,7 +410,7 @@ public class SQLFactoryTest {
                         .build());
                     cmd.init(conn, storedProgName);
 
-                    cmd.execSQL();
+                    cmd.execSQL(prms);
                     return null;
                 }
             }, "AnContext", null);
@@ -438,7 +438,7 @@ public class SQLFactoryTest {
                                     .type(MetaType.INTEGER)
                                     .direction(Param.Direction.OUT)
                                     .build());
-                        cmd.init(conn, storedProgName, paramus.get()).execSQL();
+                        cmd.init(conn, storedProgName).execSQL(paramus.get());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
@@ -476,7 +476,7 @@ public class SQLFactoryTest {
                 @Override
                 public String exec(SQLContext context, Connection conn, List<Param> param) throws Exception {
                     SQLStoredProc prc = context.createStoredProc();
-                    prc.init(conn, "bio_login2.check_login", param).execSQL();
+                    prc.init(conn, "bio_login2.check_login").execSQL(param);
                     try(Paramus paramus = Paramus.set(prc.getParams())) {
                         return paramus.getValueAsStringByName("v_uid", true);
                     }
@@ -509,7 +509,7 @@ public class SQLFactoryTest {
                                         .type(MetaType.CURSOR)
                                         .direction(Param.Direction.OUT)
                                         .build());
-                        cmd.init(conn, storedProgName, paramus.get()).execSQL();
+                        cmd.init(conn, storedProgName).execSQL(paramus.get());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         resultSet = paramus.getParamValue("p_param2", ResultSet.class);
