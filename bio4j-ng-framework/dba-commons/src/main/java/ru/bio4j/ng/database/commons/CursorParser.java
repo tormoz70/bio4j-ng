@@ -154,7 +154,7 @@ private static void addParamsFromXml(final BioCursor.SQLDef sqlDef, final Elemen
             String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
             MetaType paramType = Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class);
             Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);
-            Boolean fixed = Doms.getAttribute(paramElem, "fixed", true, Boolean.class);
+            Boolean override = Doms.getAttribute(paramElem, "override", false, Boolean.class);
             String format = Doms.getAttribute(paramElem, "format", null, String.class);
             Object defaultValue = Doms.getAttribute(paramElem, "defaultValue", null, MetaTypeConverter.write(paramType));
             Param param = p.getParam(paramName, true);
@@ -163,7 +163,7 @@ private static void addParamsFromXml(final BioCursor.SQLDef sqlDef, final Elemen
                         .name(paramName)
                         .type(paramType)
                         .direction(paramDir)
-                        .override(fixed)
+                        .override(override)
                         .format(format)
                         .value(defaultValue)
                         .build();

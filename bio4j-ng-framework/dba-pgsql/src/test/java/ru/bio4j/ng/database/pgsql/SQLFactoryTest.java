@@ -343,19 +343,17 @@ public class SQLFactoryTest {
                     SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
-                        paramus.add("p_param1", "FTW")
+                        paramus.add("param1", "FTW")
                                 .add(Param.builder()
-                                        .name("p_param2")
+                                        .name("param2")
                                         .type(MetaType.INTEGER)
                                         .direction(Param.Direction.OUT)
                                         .build())
-                                .add("p_param3", "ext");
+                                .add("param3", "ext");
                         cmd.init(conn, storedProgName);
                         cmd.execSQL(paramus.get());
                     }
-                    try(Paramus paramus = Paramus.set(cmd.getParams())) {
-                        leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
-                    }
+                    leng = Paramus.paramValue(cmd.getParams(), "param2", Integer.class, 0);
                     conn.rollback();
                     return leng;
                 }
@@ -428,16 +426,16 @@ public class SQLFactoryTest {
                     SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
-                        paramus.add("p_param1", "FTW")
+                        paramus.add("param1", "FTW")
                             .add(Param.builder()
-                                    .name("p_param2")
+                                    .name("param2")
                                     .type(MetaType.INTEGER)
                                     .direction(Param.Direction.OUT)
                                     .build());
                         cmd.init(conn, storedProgName).execSQL(paramus.get());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
-                        leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
+                        leng = Utl.nvl(paramus.getParamValue("param2", Integer.class), 0);
                     }
                     return leng;
                 }

@@ -2,8 +2,12 @@ package ru.bio4j.ng.database.commons;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
+import ru.bio4j.ng.commons.converter.hanlers.MetaTypeHandler;
 import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,27 +132,33 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
+    private static void applyParamToParams(List<Param> src, List<Param> dst) throws Exception {
+        if(src != null && dst != null) {
+            for(Param p : src){
+                Param exists = Paramus.getParam(dst, DbUtils.normalizeParamName(p.getName()));
+                if(exists != null && exists != p) {
+                    if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType()) {
+                        exists.setValue(Converter.toType(p.getValue(), MetaTypeConverter.write(p.getType())));
+                        exists.setType(p.getType());
+                    } else
+                        exists.setValue(p.getValue());
+                } else {
+                    Paramus.setParam(dst, p, false, false);
+                }
+            }
+        }
+    }
+
     protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
         Exception lastError = null;
         try {
             try {
                 this.resetCommand(); // Сбрасываем состояние
 
-                // Объединяем параметры
                 if(this.params == null)
                     this.params = new ArrayList<>();
-                if(params != null) {
-                    for(Param p : params){
-                        Param exists = Paramus.getParam(this.params, p.getName());
-                        if(exists != null && exists != p) {
-                            exists.setValue(p.getValue());
-                            if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType())
-                                exists.setType(p.getType());
-                        } else {
-                            Paramus.setParam(this.params, p, false, false);
-                        }
-                    }
-                }
+
+                applyParamToParams(params, this.params);
 
                 if(!this.doBeforeStatement(this.params)) // Обрабатываем события
                     return (T)this;
@@ -162,6 +172,15 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
                 this.getBackOutParams(); // Вытаскиваем OUT-параметры
 
+                //params = applyParamToParams(this.params, params);
+                //this.params = params;
+                if(params != null) {
+                    for (Param p : params) {
+                        Param exists = Paramus.getParam(this.params, DbUtils.normalizeParamName(p.getName()));
+                        if (exists != null && !exists.getName().equalsIgnoreCase(p.getName()))
+                            exists.setName(p.getName());
+                    }
+                }
             } catch (SQLException e) {
                 lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
                 throw lastError;

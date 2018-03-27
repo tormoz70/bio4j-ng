@@ -65,7 +65,7 @@ public class BioCursor implements Serializable {
         private final String sql;
         private String preparedSql;
 
-        private final List<Param> params = new ArrayList<>();
+        private List<Param> params = new ArrayList<>();
 
         public SQLDef(String sql) {
 
@@ -105,32 +105,36 @@ public class BioCursor implements Serializable {
             return setParamValue(name, value, true);
         }
 
-        public SQLDef setParams(List<Param> params) throws Exception {
-            try(Paramus paramus = Paramus.set(this.params)) {
-               for (Param pa : params) {
-                   Param existsParam = paramus.getParam(pa.getName());
-                   Object val = pa.getValue();
-                   if(existsParam != null) {
-                       if(existsParam.getType() == MetaType.UNDEFINED) {
-                           MetaType inType = pa.getType();
-                           if(inType == MetaType.UNDEFINED && val != null)
-                               inType = MetaTypeConverter.read(val.getClass());
-                           existsParam.setType(inType);
-                       }
-                       if(existsParam.getDirection() == Param.Direction.UNDEFINED)
-                           existsParam.setDirection(pa.getDirection());
-
-                       if(existsParam.getType() != MetaType.UNDEFINED){
-                           Class<?> toType = MetaTypeConverter.write(existsParam.getType());
-                           val = Converter.toType(val, toType, true);
-                       }
-                       existsParam.setValue(val);
-                   } else
-                       paramus.add((Param) Utl.cloneBean(pa));
-                }
-            }
-            return this;
+        public void setParams(List<Param> params) {
+            this.params = params;
         }
+
+//        public SQLDef setParams(List<Param> params) throws Exception {
+//            try(Paramus paramus = Paramus.set(this.params)) {
+//               for (Param pa : params) {
+//                   Param existsParam = paramus.getParam(pa.getName());
+//                   Object val = pa.getValue();
+//                   if(existsParam != null) {
+//                       if(existsParam.getType() == MetaType.UNDEFINED) {
+//                           MetaType inType = pa.getType();
+//                           if(inType == MetaType.UNDEFINED && val != null)
+//                               inType = MetaTypeConverter.read(val.getClass());
+//                           existsParam.setType(inType);
+//                       }
+//                       if(existsParam.getDirection() == Param.Direction.UNDEFINED)
+//                           existsParam.setDirection(pa.getDirection());
+//
+//                       if(existsParam.getType() != MetaType.UNDEFINED){
+//                           Class<?> toType = MetaTypeConverter.write(existsParam.getType());
+//                           val = Converter.toType(val, toType, true);
+//                       }
+//                       existsParam.setValue(val);
+//                   } else
+//                       paramus.add((Param) Utl.cloneBean(pa));
+//                }
+//            }
+//            return this;
+//        }
         public List<Param> getParams() {
             return params;
         }
