@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.api;
 
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ public interface SQLStoredProc extends SQLCommand {
     SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception;
     SQLStoredProc init(Connection conn, String storedProcName) throws Exception;
     SQLStoredProc init(Connection conn, BioCursor.UpdelexSQLDef sqlDef) throws Exception;
-    void execSQL(Object params, boolean stayOpened) throws Exception;
-    void execSQL(Object params) throws Exception;
-    void execSQL() throws Exception;
+    void execSQL(Object params, User usr, boolean stayOpened) throws Exception;
+    void execSQL(Object params, User usr) throws Exception;
+    void execSQL(User usr) throws Exception;
 }

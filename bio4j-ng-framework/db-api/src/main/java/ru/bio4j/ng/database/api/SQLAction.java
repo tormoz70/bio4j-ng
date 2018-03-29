@@ -1,5 +1,7 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.model.transport.User;
+
 import java.sql.Connection;
 
 /**
@@ -8,5 +10,5 @@ import java.sql.Connection;
  * @param <R> - тип возвращаемого параметра
  */
 public interface SQLAction<P, R> {
-    R exec(SQLContext context, Connection conn, P param) throws Exception;
+    R exec(SQLContext context, Connection conn, P param, User usr) throws Exception;
 }

@@ -6,8 +6,11 @@ import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.SrvcUtils;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,8 +25,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
 	private String sql = null;
     private SQLReader reader;
 
-    public DbCursor(SQLContext context) {
-        super(context);
+    public DbCursor() {
         this.setParamSetter(new DbSelectableParamSetter());
     }
 
@@ -68,21 +70,28 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
         }
     }
 
+    @Override
+    public SQLReader createReader(ResultSet resultSet) {
+        return new DbReader(resultSet);
+    }
+
 	@Override
-	public SQLCursor open(List<Param> params) throws Exception {
+	public SQLCursor open(List<Param> params, User usr) throws Exception {
+        List<Param> prms = params != null ? params : new ArrayList<>();
+        SrvcUtils.applyCurrentUserParams(usr, prms);
         return this.processStatement(params, new DelegateSQLAction() {
             @Override
             public void execute() throws SQLException {
                 final DbCursor self = DbCursor.this;
-                self.reader = context.createReader(self.preparedStatement.executeQuery());
+                self.reader = createReader(self.preparedStatement.executeQuery());
                 self.isActive = true;
             }
         });
 	}
 
     @Override
-    public SQLCursor open() throws Exception {
-        return this.open(null);
+    public SQLCursor open(User usr) throws Exception {
+        return this.open(null, usr);
     }
 
 	@Override

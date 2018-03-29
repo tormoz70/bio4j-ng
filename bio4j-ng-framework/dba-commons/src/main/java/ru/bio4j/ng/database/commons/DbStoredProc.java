@@ -9,9 +9,12 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.SrvcUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,10 +24,6 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     private static final Logger LOG = LoggerFactory.getLogger(DbStoredProc.class);
 
     private String storedProcName;
-
-    public DbStoredProc(SQLContext context) {
-        super(context);
-    }
 
 	@Override
 	public SQLStoredProc init(Connection conn, String storedProcName, Object params, int timeout) throws Exception {
@@ -62,27 +61,25 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 	
     @Override
-	public void execSQL(Object params, boolean stayOpened) throws Exception {
-        List<Param> prms = DbUtils.decodeParams(params);
-        this.processStatement(prms, new DelegateSQLAction() {
-            @Override
-            public void execute() throws SQLException {
-                final DbStoredProc self = DbStoredProc.this;
-                self.preparedStatement.execute();
-            }
+	public void execSQL(Object params, User usr, boolean stayOpened) throws Exception {
+        List<Param> prms = params != null ? DbUtils.decodeParams(params) : new ArrayList<>();
+        SrvcUtils.applyCurrentUserParams(usr, prms);
+        this.processStatement(prms, () -> {
+            final DbStoredProc self = DbStoredProc.this;
+            self.preparedStatement.execute();
         });
         if(this.preparedStatement != null && !stayOpened)
             try{ this.preparedStatement.close(); } catch (Exception e) {};
 	}
 
     @Override
-    public void execSQL(Object params) throws Exception {
-        this.execSQL(params, false);
+    public void execSQL(Object params, User usr) throws Exception {
+        this.execSQL(params, usr, false);
     }
 
     @Override
-    public void execSQL() throws Exception {
-        this.execSQL(null);
+    public void execSQL(User usr) throws Exception {
+        this.execSQL(null, usr);
     }
 
 

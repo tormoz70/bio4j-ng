@@ -54,7 +54,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
             }
             cmd.init(conn, sqlDef);
         }
-        cmd.execSQL(request.getBioParams());
+        cmd.execSQL(request.getBioParams(), null);
         try(Paramus paramus = Paramus.set(cmd.getParams())) {
             for(Param p : paramus.get()) {
                 if(Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())){
@@ -144,7 +144,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
             final User usr = request.getUser();
             BioRespBuilder.DataBuilder responseBuilder = context.execBatch(new SQLAction<Object, BioRespBuilder.DataBuilder>() {
                 @Override
-                public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj) throws Exception {
+                public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj, User usr) throws Exception {
 //                    tryPrepareSessionContext(usr.getInnerUid(), conn);
                     return processRequestPost(request, context, conn, null, null, null);
                 }

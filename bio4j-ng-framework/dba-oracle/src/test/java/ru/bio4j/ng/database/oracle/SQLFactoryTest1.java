@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
+import ru.bio4j.ng.model.transport.User;
 
 import java.sql.Connection;
 
@@ -46,7 +47,7 @@ public class SQLFactoryTest1 {
     public void testCreateSQLConnectionPool() throws Exception {
         context.execBatch(new SQLActionScalar<Object>() {
             @Override
-            public Object exec(SQLContext context, Connection conn) throws Exception {
+            public Object exec(SQLContext context, Connection conn, User usr) throws Exception {
                 Assert.assertNotNull(conn);
                 return null;
             }

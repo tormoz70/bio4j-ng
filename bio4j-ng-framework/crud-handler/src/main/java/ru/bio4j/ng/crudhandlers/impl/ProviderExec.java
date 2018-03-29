@@ -17,9 +17,9 @@ public class ProviderExec extends ProviderAn<BioRequestStoredProg> {
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
 
-        List<Param> r = ctx.execBatch((context, conn) -> {
+        List<Param> r = ctx.execBatch((context, conn, use) -> {
             cmd.init(conn, sqlDef);
-            cmd.execSQL(request.getBioParams());
+            cmd.execSQL(request.getBioParams(), null);
             return cmd.getParams();
         }, request.getUser());
         result.bioParams(r);

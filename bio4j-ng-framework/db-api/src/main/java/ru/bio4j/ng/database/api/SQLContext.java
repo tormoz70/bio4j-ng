@@ -10,21 +10,20 @@ public interface SQLContext {
     //Connection getConnection() throws SQLException;
     //Connection getConnection(String userName, String password) throws SQLException;
 
-    void execBatch (final SQLActionVoid batch, final User user) throws Exception;
-    <R> R execBatch (final SQLActionScalar<R> batch, final User user) throws Exception;
-    <P, R> R execBatch (final SQLAction<P, R> batch, P param, final User user) throws Exception;
+    void execBatch (final SQLActionVoid batch, final User usr) throws Exception;
+    <R> R execBatch (final SQLActionScalar<R> batch, final User usr) throws Exception;
+    <P, R> R execBatch (final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
 
-    <P, R> R execSQLAtomic(final Connection conn, final SQLAction<P, R> batch, final P param) throws Exception;
-    <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> batch) throws Exception;
-    void execSQLAtomic(final Connection conn, final SQLActionVoid action) throws Exception;
+    <P, R> R execSQLAtomic(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
+    <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception;
+    void execSQLAtomic(final Connection conn, final SQLActionVoid action, final User usr) throws Exception;
 
-    <P, R> R execSQL(final Connection conn, final SQLAction<P, R> batch, final P param) throws Exception;
-    <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch) throws Exception;
-    void execSQL(final Connection conn, final SQLActionVoid action) throws Exception;
+    <P, R> R execSQL(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
+    <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception;
+    void execSQL(final Connection conn, final SQLActionVoid action, final User usr) throws Exception;
 
-    <R> R execSQL(final Connection conn, final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params) throws Exception;
-    <R> R execSQL(final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User user) throws Exception;
-    <R> R execSQL(final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params) throws Exception;
+    <R> R execSQL(final Connection conn, final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
+    <R> R execSQL(final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
 
 //    SQLConnectionPoolStat getStat();
     void addAfterEvent(SQLConnectionConnectedEvent e);
@@ -32,7 +31,7 @@ public interface SQLContext {
 
     SQLCursor createCursor();
     SQLStoredProc createStoredProc();
-    SQLReader createReader(ResultSet resultSet);
+    //SQLReader createReader(ResultSet resultSet);
 
     String getDBMSName();
 

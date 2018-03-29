@@ -32,9 +32,9 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
             try(Paramus p = Paramus.set(sqlDef.getParams())){
                 p.setValue("p_hash_code", request.getFileHashCode());
             }
-            List<Param> r = sqlContext.execBatch((ctx, conn) -> {
+            List<Param> r = sqlContext.execBatch((ctx, conn, usr) -> {
                 cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParams());
-                cmd.execSQL(request.getBioParams());
+                cmd.execSQL(request.getBioParams(), usr);
                 return cmd.getParams();
             }, request.getUser());
             sqlDef.setParams(r);
@@ -52,7 +52,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         final User user = request.getUser();
         final BioCursor.SelectSQLDef sqlSelectDef = cursor.getSelectSqlDef();
         final BioCursor.UpdelexSQLDef sqlExecDef = cursor.getExecSqlDef();
-        sqlContext.execBatch((ctx, conn, cur) -> {
+        sqlContext.execBatch((ctx, conn, cur, usr) -> {
 //            tryPrepareSessionContext(user.getInnerUid(), conn);
 
             if(sqlSelectDef != null) {
@@ -61,7 +61,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
                 }
                 boolean fileStoredToTmpStorage = false;
                 try (SQLCursor c = ctx.createCursor()
-                        .init(conn, sqlSelectDef).open(request.getBioParams());) {
+                        .init(conn, sqlSelectDef).open(request.getBioParams(), usr);) {
                     if (c.reader().next()) {
                         ResultSet r = c.reader().getResultSet();
                         rslt.fileName = r.getString("file_name");
@@ -78,9 +78,9 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
                     processExec(request, ctx, cursor);
             } else if(sqlExecDef != null) {
                 final SQLStoredProc cmd = ctx.createStoredProc();
-                List<Param> r = ctx.execBatch((context1, conn1) -> {
+                List<Param> r = ctx.execBatch((context1, conn1, usr1) -> {
                     cmd.init(conn1, sqlExecDef);
-                    cmd.execSQL(request.getBioParams());
+                    cmd.execSQL(request.getBioParams(), usr1);
                     return cmd.getParams();
                 }, request.getUser());
                 try (Paramus p = Paramus.set(r)) {

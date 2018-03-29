@@ -13,6 +13,7 @@ import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 
@@ -33,81 +34,78 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
 
     private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
-        final BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
-            @Override
-            public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+        final BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
 //                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
-                final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
-                result.bioCode(cur.getBioCode());
-                boolean requestCached = false; //requestCached(request, LOG);
+            final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
+            result.bioCode(cur.getBioCode());
+            boolean requestCached = false; //requestCached(request, LOG);
 
-                int totalCount = requestCached ? request.getTotalCount() : Sqls.UNKNOWN_RECS_TOTAL;
-                if(request.getOffset() == (Sqls.UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
+            int totalCount = requestCached ? request.getTotalCount() : Sqls.UNKNOWN_RECS_TOTAL;
+            if(request.getOffset() == (Sqls.UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
 //                if(totalCount == 0) {
-                    LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
-                    try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
-                        if (c.reader().next()) {
-                            totalCount = c.reader().getValue(1, int.class);
-                            int newOffset = (int)Math.floor(totalCount / request.getPageSize()) * request.getPageSize();
-                            request.setOffset(newOffset);
+                LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
+                try (SQLCursor c = context.createCursor()
+                        .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams(), null);) {
+                    if (c.reader().next()) {
+                        totalCount = c.reader().getValue(1, int.class);
+                        int newOffset = (int)Math.floor(totalCount / request.getPageSize()) * request.getPageSize();
+                        request.setOffset(newOffset);
+                    }
+                }
+                LOG.debug("Count records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
+            }
+            cur.getSelectSqlDef().setOffset(request.getOffset());
+
+            if(cur.getSelectSqlDef().getLocation() != null) {
+                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
+                //List<Param> locateParams = Paramus.clone(cur.getSelectSqlDef().getParams());
+                //try(Paramus p = Paramus.set(locateParams)){
+                    Object location = cur.getSelectSqlDef().getLocation();
+                    if(location != null && location instanceof String){
+                        if(((String) location).startsWith("1||"))
+                            location = null;
+                        if(((String) location).startsWith("0||")) {
+                            location = Regexs.find((String) location, "(?<=0\\|\\|)(\\w|\\d|-|\\+)+", Pattern.CASE_INSENSITIVE);
                         }
                     }
-                    LOG.debug("Count records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
-                }
-                cur.getSelectSqlDef().setOffset(request.getOffset());
-
-                if(cur.getSelectSqlDef().getLocation() != null) {
-                    LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
-                    //List<Param> locateParams = Paramus.clone(cur.getSelectSqlDef().getParams());
-                    //try(Paramus p = Paramus.set(locateParams)){
-                        Object location = cur.getSelectSqlDef().getLocation();
-                        if(location != null && location instanceof String){
-                            if(((String) location).startsWith("1||"))
-                                location = null;
-                            if(((String) location).startsWith("0||")) {
-                                location = Regexs.find((String) location, "(?<=0\\|\\|)(\\w|\\d|-|\\+)+", Pattern.CASE_INSENSITIVE);
-                            }
-                        }
 //                        p.setValue(LocateWrapper.PKVAL, location);
 //                        p.setValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
-                        Class<?> pkType = MetaTypeConverter.write(cur.findPk().getMetaType());
-                        cur.getSelectSqlDef().setParamValue(LocateWrapper.PKVAL, Converter.toType(location, pkType));
-                        cur.getSelectSqlDef().setParamValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
-                    //}
-                    try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
-                        if (c.reader().next()) {
-                            int locatedPos = c.reader().getValue(1, int.class);
-                            int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
-                            LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), cur.getSelectSqlDef().getLocation(), locatedPos, offset);
-                            cur.getSelectSqlDef().setOffset(offset);
+                    Class<?> pkType = MetaTypeConverter.write(cur.findPk().getMetaType());
+                    cur.getSelectSqlDef().setParamValue(LocateWrapper.PKVAL, Converter.toType(location, pkType));
+                    cur.getSelectSqlDef().setParamValue(LocateWrapper.STARTFROM, cur.getSelectSqlDef().getOffset());
+                //}
+                try (SQLCursor c = context.createCursor()
+                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams(), null);) {
+                    if (c.reader().next()) {
+                        int locatedPos = c.reader().getValue(1, int.class);
+                        int offset = calcOffset(locatedPos, cur.getSelectSqlDef().getPageSize());
+                        LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), cur.getSelectSqlDef().getLocation(), locatedPos, offset);
+                        cur.getSelectSqlDef().setOffset(offset);
 //                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset());
 //                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
-                        } else {
-                            LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
-                            result.exception(new BioError.LocationFail(cur.getSelectSqlDef().getLocation()));
-                        }
+                    } else {
+                        LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), cur.getSelectSqlDef().getLocation());
+                        result.exception(new BioError.LocationFail(cur.getSelectSqlDef().getLocation()));
                     }
                 }
-
-                StoreData data = new StoreData();
-                data.setStoreId(request.getStoreId());
-                data.setOffset(cur.getSelectSqlDef().getOffset());
-                data.setPageSize(cur.getSelectSqlDef().getPageSize());
-                data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
-                data.setResults(totalCount);
-
-                readStoreData(request, data, context, conn, cur, LOG);
-
-                result.packet(data);
-
-                if((data.getOffset() == 0) && (data.getRows().size() < data.getPageSize())){
-                    data.setResults(data.getRows().size());
-                }
-
-                return result.exception(null);
             }
+
+            StoreData data = new StoreData();
+            data.setStoreId(request.getStoreId());
+            data.setOffset(cur.getSelectSqlDef().getOffset());
+            data.setPageSize(cur.getSelectSqlDef().getPageSize());
+            data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
+            data.setResults(totalCount);
+
+            readStoreData(request, data, context, conn, cur, LOG);
+
+            result.packet(data);
+
+            if((data.getOffset() == 0) && (data.getRows().size() < data.getPageSize())){
+                data.setResults(data.getRows().size());
+            }
+
+            return result.exception(null);
         }, cursor, request.getUser());
         response.bioParams(request.getBioParams());
         response.sort(request.getSort());
@@ -118,32 +116,29 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
 
     private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
-        BioRespBuilder.DataBuilder response = ctx.execBatch(new SQLAction<BioCursor, BioRespBuilder.DataBuilder>() {
-            @Override
-            public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, BioCursor cur) throws Exception {
+        BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
 //                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
-                final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
-                result.bioCode(cur.getBioCode());
+            final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
+            result.bioCode(cur.getBioCode());
 
-                StoreData data = new StoreData();
-                data.setStoreId(request.getStoreId());
-                data.setOffset(cur.getSelectSqlDef().getOffset());
-                data.setPageSize(cur.getSelectSqlDef().getPageSize());
-                int totalCount = readStoreData(request, data, context, conn, cur, LOG);
+            StoreData data = new StoreData();
+            data.setStoreId(request.getStoreId());
+            data.setOffset(cur.getSelectSqlDef().getOffset());
+            data.setPageSize(cur.getSelectSqlDef().getPageSize());
+            int totalCount = readStoreData(request, data, context, conn, cur, LOG);
 
-                if(totalCount == 0) {
-                    LOG.debug("For cursor \"{}\" max records fetched [{}]! Try calc count total records!!!", cur.getBioCode(), MAX_RECORDS_FETCH_LIMIT);
-                    try (SQLCursor c = context.createCursor()
-                            .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams());) {
-                        if (c.reader().next())
-                            totalCount = c.reader().getValue(1, int.class);
-                    }
-                    LOG.debug("Total records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
+            if(totalCount == 0) {
+                LOG.debug("For cursor \"{}\" max records fetched [{}]! Try calc count total records!!!", cur.getBioCode(), MAX_RECORDS_FETCH_LIMIT);
+                try (SQLCursor c = context.createCursor()
+                        .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParams()).open(request.getBioParams(), null);) {
+                    if (c.reader().next())
+                        totalCount = c.reader().getValue(1, int.class);
                 }
-                data.setResults(totalCount);
-                result.packet(data);
-                return result.exception(null);
+                LOG.debug("Total records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
             }
+            data.setResults(totalCount);
+            result.packet(data);
+            return result.exception(null);
         }, cursor, request.getUser());
         response.bioParams(request.getBioParams());
         response.sort(request.getSort());

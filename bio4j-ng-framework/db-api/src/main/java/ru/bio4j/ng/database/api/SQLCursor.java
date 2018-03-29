@@ -1,8 +1,10 @@
 package ru.bio4j.ng.database.api;
 
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.User;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -33,8 +35,10 @@ public interface SQLCursor extends SQLCommand, AutoCloseable {
 
     String getSQL();
 
-    SQLCursor open(List<Param> params) throws Exception;
-    SQLCursor open() throws Exception;
+    SQLReader createReader(ResultSet resultSet);
+
+    SQLCursor open(List<Param> params, User usr) throws Exception;
+    SQLCursor open(User usr) throws Exception;
     boolean isActive();
 
     SQLReader reader();

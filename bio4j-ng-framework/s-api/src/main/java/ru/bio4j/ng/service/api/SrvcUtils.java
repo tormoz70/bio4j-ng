@@ -112,7 +112,7 @@ public class SrvcUtils {
         public List<Param> bioParams;
     }
 
-    protected static void applyCurrentUserParams(final User usr, final List<Param> params) {
+    public static void applyCurrentUserParams(final User usr, final List<Param> params) {
         if (usr != null) {
             try (Paramus p = Paramus.set(params)) {
                 p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);

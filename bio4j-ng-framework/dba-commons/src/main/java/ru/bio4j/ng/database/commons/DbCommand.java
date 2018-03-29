@@ -22,7 +22,7 @@ import ru.bio4j.ng.model.transport.Param;
 public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     private static final Logger LOG = LoggerFactory.getLogger(DbCommand.class);
 
-    protected final SQLContext context;
+    //protected final SQLContext context;
 	protected List<Param> params = null;
     protected int timeout = 60;
     protected Connection connection = null;
@@ -56,10 +56,6 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     public void clearAfterEvents() {
         this.afterEvents.clear();
     }
-
-    public DbCommand(SQLContext context) {
-        this.context = context;
-	}
 
     /**
      * Присваивает значения входящим параметрам

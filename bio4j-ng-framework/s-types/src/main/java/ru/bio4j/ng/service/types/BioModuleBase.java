@@ -61,7 +61,7 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     private void prepareCursor(BioCursor cursor) throws Exception {
         SQLContext context = this.getSQLContext();
-        context.execBatch((context1, conn) -> {
+        context.execBatch((context1, conn, usr) -> {
             BioCursor.UpdelexSQLDef def = cursor.getUpdateSqlDef();
             if (def != null) {
                 StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParams());

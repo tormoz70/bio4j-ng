@@ -76,16 +76,16 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
+    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final BioCursor.SQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new IllegalArgumentException("Cursor definition has no Exec Sql definition!");
         List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
             @Override
-            public List<Param> exec(SQLContext context, Connection conn) throws Exception {
-                cmd.init(conn, sqlDef.getPreparedSql(), params);
-                cmd.execSQL();
+            public List<Param> exec(SQLContext context, Connection conn, User u) throws Exception {
+                cmd.init(conn, sqlDef.getPreparedSql());
+                cmd.execSQL(params, u);
                 for (Param p : cmd.getParams()) {
                     Param foundPrm = Paramus.getParam(params, p.getName());
                     if(foundPrm != null)
@@ -93,40 +93,40 @@ public class DbUtils {
                 }
                 return cmd.getParams();
             }
-        }, user);
+        }, usr);
         return r;
     }
 
-    public static void processSelect(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
+    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
-            public Integer exec(SQLContext context, Connection conn) throws Exception {
+            public Integer exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql(), params).open();){
+                        .init(conn, sqlDef.getPreparedSql()).open(params, u);){
                     while(c.reader().next()){
                         delegateAction.callback(c.reader());
                     }
                 }
                 return 0;
             }
-        }, user);
+        }, usr);
     }
 
-    public static <T> T processSelectScalar(final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user, Class<T> clazz) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user, Class<T> clazz) throws Exception {
         final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
-            public T exec(SQLContext context, Connection conn) throws Exception {
+            public T exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql(), params).open();){
+                        .init(conn, sqlDef.getPreparedSql()).open(params, u);){
                     if(c.reader().next()){
                         return Converter.toType(c.reader().getValue(1), clazz);
                     }
                 }
                 return null;
             }
-        }, user);
+        }, usr);
         return r;
     }
 
