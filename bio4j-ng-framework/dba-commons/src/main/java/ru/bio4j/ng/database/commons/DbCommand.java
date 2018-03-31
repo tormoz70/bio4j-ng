@@ -2,18 +2,13 @@ package ru.bio4j.ng.database.commons;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.converter.MetaTypeConverter;
-import ru.bio4j.ng.commons.converter.hanlers.MetaTypeHandler;
 import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 /**
@@ -65,7 +60,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
             this.paramSetter.setParamsToStatement(this, this.params);
     }
 
-    protected void getBackOutParams() throws SQLException {
+    protected void getParamsFromStatement() throws SQLException {
         if(this.paramGetter != null)
             this.paramGetter.getParamsFromStatement(this, this.params);
     }
@@ -128,21 +123,8 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
-    private static void applyParamToParams(List<Param> src, List<Param> dst) throws Exception {
-        if(src != null && dst != null) {
-            for(Param p : src){
-                Param exists = Paramus.getParam(dst, DbUtils.normalizeParamName(p.getName()));
-                if(exists != null && exists != p) {
-                    if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType()) {
-                        exists.setValue(Converter.toType(p.getValue(), MetaTypeConverter.write(p.getType())));
-                        exists.setType(p.getType());
-                    } else
-                        exists.setValue(p.getValue());
-                } else {
-                    Paramus.setParam(dst, p, false, false);
-                }
-            }
-        }
+    protected void applyInParamsToStatmentParams(List<Param> params) throws Exception {
+        DbUtils.applyParamsToParams(params, this.params, false);
     }
 
     protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
@@ -154,21 +136,21 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
                 if(this.params == null)
                     this.params = new ArrayList<>();
 
-                applyParamToParams(params, this.params);
+                applyInParamsToStatmentParams(params);
 
-                if(!this.doBeforeStatement(this.params)) // Обрабатываем события
+                if(!doBeforeStatement(this.params)) // Обрабатываем события
                     return (T)this;
 
-                this.setParamsToStatement(); // Применяем параметры
+                setParamsToStatement(); // Применяем параметры
 
                 if (action != null) {
                     LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
                     action.execute(); // Выполняем команду
                 }
 
-                this.getBackOutParams(); // Вытаскиваем OUT-параметры
+                getParamsFromStatement(); // Вытаскиваем OUT-параметры
 
-                //params = applyParamToParams(this.params, params);
+                DbUtils.applyParamsToParams(this.params, params, false);
                 //this.params = params;
                 if(params != null) {
                     for (Param p : params) {

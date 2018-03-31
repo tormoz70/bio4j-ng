@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.commons;
 
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
@@ -11,6 +12,7 @@ import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.model.transport.jstore.StoreRow;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -197,6 +199,17 @@ public class DbUtils {
         return paramName.toLowerCase();
     }
 
+    public static String trimParamNam(String paramName) {
+        if(!Strings.isNullOrEmpty(paramName)) {
+            for (String prfx : DEFAULT_PARAM_PREFIX) {
+                if(paramName.toUpperCase().startsWith(prfx))
+                    return paramName.substring(prfx.length());
+            }
+            return paramName;
+        }
+        return paramName.toLowerCase();
+    }
+
     public static Param findParamIgnorePrefix(String paramName, List<Param> params) {
         for (Param param : params) {
             if(param.getName().equalsIgnoreCase(paramName.toLowerCase()) ||
@@ -206,6 +219,54 @@ public class DbUtils {
             }
         }
         return null;
+    }
+
+    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists) throws Exception {
+        if(src != null && dst != null) {
+            for(Param p : src){
+                Param exists = findParamIgnorePrefix(p.getName(), dst);
+                if(exists != null && exists != p) {
+                    if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType()) {
+                        exists.setValue(Converter.toType(p.getValue(), MetaTypeConverter.write(p.getType())));
+                        exists.setType(p.getType());
+                    } else
+                        exists.setValue(p.getValue());
+                    if(normalizeName)
+                        exists.setName(normalizeParamName(exists.getName()));
+                } else {
+                    if(addIfNotExists) {
+                        Paramus.setParam(dst, p, false, false);
+                        if (normalizeName) {
+                            Param newParam = findParamIgnorePrefix(p.getName(), dst);
+                            newParam.setName(normalizeParamName(newParam.getName()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName) throws Exception {
+        applyParamsToParams(src, dst, normalizeName, true);
+    }
+
+    public static void applayRowToParams(StoreRow row, List<Param> params){
+        try(Paramus paramus = Paramus.set(params)) {
+            for(String key : row.getData().keySet()) {
+                String paramName = DbUtils.normalizeParamName(key).toLowerCase();
+                Object paramValue = row.getData().get(key);
+                Param p = paramus.getParam(paramName, true);
+                if(p != null){
+                    paramus.setValue(paramName, paramValue);
+                } else {
+                    paramus.add(Param.builder()
+                            .name(paramName)
+                            .value(paramValue)
+                            .build(), true);
+                }
+            }
+        }
+
     }
 
 }

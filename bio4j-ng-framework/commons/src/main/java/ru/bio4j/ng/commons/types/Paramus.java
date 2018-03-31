@@ -215,7 +215,7 @@ public class Paramus implements Closeable {
         return this;
     }
 
-    public Paramus apply(List<Param> params, boolean applyOnliExists, boolean replaceIfExists) {
+    public Paramus apply(List<Param> params, boolean applyOnlyExists, boolean replaceIfExists) {
         if ((params != null) && (params != this.get())) {
             List<Param> toKill = new ArrayList<>();
             for (Param pp : params) {
@@ -234,7 +234,7 @@ public class Paramus implements Closeable {
                             local.setDirection(ppDirection);
                     }
                 } else {
-                    if(!applyOnliExists)
+                    if(!applyOnlyExists)
                         this.add(pp.export(), false);
                 }
             }
@@ -242,8 +242,8 @@ public class Paramus implements Closeable {
         return this;
     }
 
-    public Paramus apply(List<Param> params, boolean applyOnliExists) {
-        return apply(params, applyOnliExists, false);
+    public Paramus apply(List<Param> params, boolean applyOnlyExists) {
+        return apply(params, applyOnlyExists, false);
     }
 
     public Paramus apply(List<Param> params) {
@@ -526,9 +526,9 @@ public class Paramus implements Closeable {
         }
     }
 
-    public static void setParam(List<Param> params, Param param, boolean applyOnliExists, boolean replaceIfExists) throws Exception {
+    public static void setParam(List<Param> params, Param param, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
         try (Paramus paramus = Paramus.set(params)) {
-            paramus.apply(Arrays.asList(param), applyOnliExists, replaceIfExists);
+            paramus.apply(Arrays.asList(param), applyOnlyExists, replaceIfExists);
         }
     }
 
@@ -545,7 +545,14 @@ public class Paramus implements Closeable {
         }
     }
 
-//	@Override
+    public static void applyParams(List<Param> params, List<Param> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.apply(paramsFrom, applyOnlyExists, replaceIfExists);
+        }
+    }
+
+
+    //	@Override
 //    public Param clone() throws CloneNotSupportedException {
 //		Param.Builder builder = Param.builder().override(this, this.getOwner());
 //		try {

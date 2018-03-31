@@ -2,6 +2,7 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioResponse;
 import ru.bio4j.ng.model.transport.Param;
@@ -20,7 +21,6 @@ import java.util.List;
  */
 public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
-    private static final String STD_PARAM_PREFIX = "p_";
 
     private static void processUpDelRow(final BioRequest request, final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
         SQLStoredProc cmd = ctx.createStoredProc();
@@ -30,74 +30,49 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         if(sqlDef == null && Arrays.asList(RowChangeType.delete).contains(changeType))
             throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
-        try(Paramus paramus = Paramus.set(sqlDef.getParams())) {
-//            for(Field field : cursor.getFields()) {
-//                paramus.add(Param.builder()
-//                        .name(STD_PARAM_PREFIX + field.getName().toLowerCase())
-//                        .value(row.getValue(field.getName()))
-//                        .type(field.getType())
-//                        .build(), true);
-//            }
-
-            for(String key : row.getData().keySet()) {
-                String paramName = (STD_PARAM_PREFIX + key).toLowerCase();
-                Object paramValue = row.getData().get(key);
-                Param p = paramus.getParam(paramName, true);
-                if(p != null){
-                    paramus.setValue(paramName, paramValue);
-                } else {
-                    paramus.add(Param.builder()
-                            .name(paramName)
-                            .value(paramValue)
-                            .build(), true);
-                }
-            }
-            cmd.init(conn, sqlDef);
-        }
+        cmd.init(conn, sqlDef);
+        DbUtils.applayRowToParams(row, request.getBioParams());
         cmd.execSQL(request.getBioParams(), null);
         try(Paramus paramus = Paramus.set(cmd.getParams())) {
             for(Param p : paramus.get()) {
                 if(Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())){
-                    String fieldName = p.getName().substring(STD_PARAM_PREFIX.length());
-                    Field fld = cursor.findField(fieldName);
+                    Field fld = cursor.findField(DbUtils.trimParamNam(p.getName()));
                     row.setValue(fld.getName().toLowerCase(), p.getValue());
                 }
             }
         }
     }
 
-    private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
-        if(parentCursorDef != null && parentRow != null)
-            for(Field field : cursorDef.getFields()) {
-                Field parentField = parentCursorDef.findField(field.getName());
-                //if(row.getValue(field.getName()) == null) {
-                if(parentField != null) {
-                    Object parentValue = parentRow.getValue(parentField.getName());
-                    if (parentValue != null)
-                        row.setValue(field.getName().toLowerCase(), parentValue);
-                }
-                //}
-            }
-    }
+//    private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
+//        if(parentCursorDef != null && parentRow != null)
+//            for(Field field : cursorDef.getFields()) {
+//                Field parentField = parentCursorDef.findField(field.getName());
+//                if(parentField != null) {
+//                    Object parentValue = parentRow.getValue(parentField.getName());
+//                    if (parentValue != null)
+//                        row.setValue(field.getName().toLowerCase(), parentValue);
+//                }
+//            }
+//    }
 
-    private void applyParentRowToChildrenParams(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
-        if(parentCursorDef != null && parentRow != null)
-            for(BioCursor.SQLDef sqlDef : cursorDef.sqlDefs()) {
-                for(Param p : sqlDef.getParams()) {
-                    String paramName = p.getName();
-                    if(paramName.toLowerCase().startsWith("p_"))
-                        paramName = paramName.toLowerCase().substring(2);
-                    Field parentField = parentCursorDef.findField(paramName);
-                    if (parentField != null) {
-                        Object parentValue = parentRow.getValue(parentField.getName());
-                        if (parentValue != null)
-                            p.setValue(parentValue);
-                    }
-                }
-            }
-    }
+//    private static void applyParentRowToChildrenParams(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
+//        if(parentCursorDef != null && parentRow != null)
+//            for(BioCursor.SQLDef sqlDef : cursorDef.sqlDefs()) {
+//                for(Param p : sqlDef.getParams()) {
+//                    String paramName = p.getName();
+//                    if(paramName.toLowerCase().startsWith("p_"))
+//                        paramName = paramName.toLowerCase().substring(2);
+//                    Field parentField = parentCursorDef.findField(paramName);
+//                    if (parentField != null) {
+//                        Object parentValue = parentRow.getValue(parentField.getName());
+//                        if (parentValue != null)
+//                            p.setValue(parentValue);
+//                    }
+//                }
+//            }
+//    }
 
-    private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final BioCursor parentCursorDef, final StoreRow parentRow, final User rootUsr) throws Exception {
+    private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
 //        final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
         final BioCursor cursor = module.getCursor(request.getBioCode());
@@ -108,8 +83,8 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
         StoreRow firstRow = null;
         for(StoreRow row : request.getModified()) {
-            applyParentRowToChildren(parentCursorDef, parentRow, cursor, row);
-            applyParentRowToChildrenParams(parentCursorDef, parentRow, cursor, row);
+            //applyParentRowToChildren(parentCursorDef, parentRow, cursor, row);
+            //applyParentRowToChildrenParams(parentCursorDef, parentRow, cursor, row);
             processUpDelRow(request, row, ctx, conn, cursor);
             if(firstRow == null)
                 firstRow = row;
@@ -119,7 +94,8 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         List<BioResponse> slaveResponses = new ArrayList<>();
         for(BioRequestJStorePost post : request.getSlavePostData()) {
             post.setModuleKey(request.getModuleKey()); // forward moduleKey
-            BioResponse rsp = processRequestPost(post, ctx, conn, cursor, firstRow, usr).build();
+            Paramus.applyParams(post.getBioParams(), request.getBioParams(), false, false);
+            BioResponse rsp = processRequestPost(post, ctx, conn, rootUsr).build();
             slaveResponses.add(rsp);
         }
         if(slaveResponses.size() > 0)
@@ -146,7 +122,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
                 @Override
                 public BioRespBuilder.DataBuilder exec(SQLContext context, Connection conn, Object obj, User usr) throws Exception {
 //                    tryPrepareSessionContext(usr.getInnerUid(), conn);
-                    return processRequestPost(request, context, conn, null, null, null);
+                    return processRequestPost(request, context, conn, request.getUser());
                 }
             }, null, request.getUser());
             response.getWriter().append(responseBuilder.json());

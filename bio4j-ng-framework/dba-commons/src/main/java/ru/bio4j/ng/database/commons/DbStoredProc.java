@@ -82,5 +82,9 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
         this.execSQL(null, usr);
     }
 
+    @Override
+    protected void applyInParamsToStatmentParams(List<Param> params) throws Exception {
+        DbUtils.applyParamsToParams(params, this.params, false, false);
+    }
 
 }

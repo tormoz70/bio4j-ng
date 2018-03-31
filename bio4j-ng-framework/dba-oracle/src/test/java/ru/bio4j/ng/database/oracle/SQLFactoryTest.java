@@ -372,12 +372,13 @@ public class SQLFactoryTest {
 
                     SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
-                    try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
+                    List<Param> prms = new ArrayList<>();
+                    try(Paramus paramus = Paramus.set(prms)) {
                         paramus.add("param1", "FTW")
                                 .add("param3", "ext");
-                        cmd.init(conn, storedProgName);
-                        cmd.execSQL(paramus.get(), usr);
                     }
+                    cmd.init(conn, storedProgName);
+                    cmd.execSQL(prms, usr);
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
