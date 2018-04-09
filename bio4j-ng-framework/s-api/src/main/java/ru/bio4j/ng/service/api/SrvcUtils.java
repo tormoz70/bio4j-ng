@@ -49,6 +49,7 @@ public class SrvcUtils {
         public String method;
         public String remoteIP;
         public String remoteClient;
+        public String remoteClientVersion;
 
         @Prop(name = "rqt")
         public String requestType;

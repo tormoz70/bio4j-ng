@@ -8,6 +8,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
+import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.*;
 
@@ -97,21 +98,87 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
     }
 
+    private static class BasicAutenticationLogin {
+        public String username;
+        public String password;
+    }
+
+    private static BasicAutenticationLogin detectBasicAutentication(HttpServletRequest request) {
+        BasicAutenticationLogin rslt = new BasicAutenticationLogin();
+
+        final String authorization = request.getHeader("Authorization");
+        if (authorization != null && authorization.startsWith("Basic")) {
+            // Authorization: Basic base64credentials
+            String base64Credentials = authorization.substring("Basic".length()).trim();
+            String credentials = new String(Base64.getDecoder().decode(base64Credentials),
+                    Charset.forName("UTF-8"));
+            // credentials = username:password
+            final String[] values = credentials.split(":", 2);
+            rslt.username = values[0];
+            rslt.password = values[1];
+        }
+        return rslt;
+    }
+
     public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
         SrvcUtils.BioQueryParams result = Httpc.createBeanFromHttpRequest(request, SrvcUtils.BioQueryParams.class);
+
         if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
         result.request = request;
         result.method = request.getMethod();
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
         result.remoteClient = Httpc.extractRealRemoteClient(request);
 
-        if(result.method == "POST"){
-            String usrname = request.getParameter("usrname");
-            String passwd = request.getParameter("passwd");
-            if(!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
-                result.login = usrname+"/"+passwd;
-            }
+        if(Strings.isNullOrEmpty(result.moduleKey)) {
+            final String bioHeaderModuleKey = request.getHeader("X-Bio4j-Module");
+            if (!Strings.isNullOrEmpty(bioHeaderModuleKey))
+                result.moduleKey = bioHeaderModuleKey;
         }
+        if(Strings.isNullOrEmpty(result.remoteClient)) {
+            final String bioHeaderClientName = request.getHeader("X-Bio4j-Client-Name");
+            if (!Strings.isNullOrEmpty(bioHeaderClientName))
+                result.remoteClient = bioHeaderClientName;
+        }
+        if(Strings.isNullOrEmpty(result.remoteClientVersion)) {
+            final String bioHeaderClientVersion = request.getHeader("X-Bio4j-Client-Version");
+            if (!Strings.isNullOrEmpty(bioHeaderClientVersion))
+                result.remoteClientVersion = bioHeaderClientVersion;
+        }
+        if(Strings.isNullOrEmpty(result.stoken)) {
+            final String bioHeaderSToken = request.getHeader("X-Bio4j-SToken");
+            if (!Strings.isNullOrEmpty(bioHeaderSToken))
+                result.stoken = bioHeaderSToken;
+        }
+
+        if(Strings.isNullOrEmpty(result.pageOrig)) {
+            final String bioHeaderPage = request.getHeader("X-Pagging-Page");
+            if (!Strings.isNullOrEmpty(bioHeaderPage))
+                result.pageOrig = bioHeaderPage;
+        }
+        if(Strings.isNullOrEmpty(result.offsetOrig)) {
+            final String bioHeaderOffset = request.getHeader("X-Pagging-Offset");
+            if (!Strings.isNullOrEmpty(bioHeaderOffset))
+                result.offsetOrig = bioHeaderOffset;
+        }
+        if(Strings.isNullOrEmpty(result.pageSizeOrig)) {
+            final String bioHeaderPageSize = request.getHeader("X-Pagging-Page-Size");
+            if (!Strings.isNullOrEmpty(bioHeaderPageSize))
+                result.pageSizeOrig = bioHeaderPageSize;
+        }
+
+        BasicAutenticationLogin bal = detectBasicAutentication(request);
+
+        if(Strings.isNullOrEmpty(bal.username)) {
+            if (result.method == "POST") {
+                String usrname = request.getParameter("usrname");
+                String passwd = request.getParameter("passwd");
+                if (!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
+                    result.login = usrname + "/" + passwd;
+                }
+            }
+        } else
+            result.login = bal.username + "/" + bal.password;
+
 
         if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(result.jsonData)) {
             LoginParamObj obj = null;
@@ -153,6 +220,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 (result.offset == null && result.offsetOrig != null && result.offsetOrig.equalsIgnoreCase("last"))) {
             result.offset = Sqls.UNKNOWN_RECS_TOTAL + 1 - result.pageSize;
         }
+
 
         extractBioParamsFromQuery(result);
 

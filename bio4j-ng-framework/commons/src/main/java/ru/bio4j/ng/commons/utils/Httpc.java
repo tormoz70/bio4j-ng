@@ -46,6 +46,7 @@ public class Httpc {
             throw new IllegalArgumentException("Argument \"request\" cannot be null!");
         if(clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+
         T result = (T)clazz.newInstance();
         for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
             String fldName = fld.getName();
