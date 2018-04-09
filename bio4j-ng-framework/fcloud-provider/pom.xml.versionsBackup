@@ -4,10 +4,10 @@
     <parent>
         <artifactId>bio4j-ng-framework</artifactId>
         <groupId>ru.bio4j.ng</groupId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-router</artifactId>
+    <artifactId>bio4j-ng-fcloud-provider</artifactId>
     <packaging>bundle</packaging>
 
     <build>
@@ -15,11 +15,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>*,ru.bio4j.ng.model.transport.jstore,ru.bio4j.ng.model.transport.jstore.filter</Import-Package>
-                    </instructions>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -27,30 +22,27 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo</artifactId>
-            <scope>provided</scope>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.apache.geronimo.specs</groupId>-->
-            <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.toolchain</groupId>
             <artifactId>jetty-osgi-servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
-
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>flexjson</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-stypes</artifactId>
@@ -67,16 +59,26 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>ru.bio4j.ng</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-ng-crudhandler</artifactId>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-dbapi</artifactId>
             <scope>provided</scope>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-dba-commons</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ru.bio4j.ng</groupId>
+            <artifactId>bio4j-ng-dba-pgsql</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
+    </dependencies>
 
 </project>
