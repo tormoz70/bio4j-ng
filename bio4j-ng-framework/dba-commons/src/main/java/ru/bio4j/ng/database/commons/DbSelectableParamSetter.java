@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
+import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamSetter;
+import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.util.List;
@@ -35,7 +36,12 @@ public class DbSelectableParamSetter implements SQLParamSetter {
                 Object value = origValue == null ? null : Converter.toType(origValue, MetaTypeConverter.write(param.getType()));
                 int targetType = DbUtils.getInstance().paramSqlType(param);
                 if(value != null) {
-                    if(targetType == 0)
+                    //if(targetType == java.sql.Types.CHAR && param.getType() == MetaType.BOOLEAN && (value.getClass() == boolean.class || value.getClass() == Boolean.class))
+                    //    selectable.setObjectAtName(paramName, ((boolean)value) ? "1" : "0", java.sql.Types.CHAR);
+                    if(targetType == java.sql.Types.CHAR && param.getType() == MetaType.BOOLEAN) {
+                        boolean boolVal = Converter.toType(value, Boolean.class);
+                        selectable.setObjectAtName(paramName, boolVal ? "1" : "0", java.sql.Types.CHAR);
+                    } else if(targetType == 0)
                         selectable.setObjectAtName(paramName, value);
                     else
                         selectable.setObjectAtName(paramName, value, targetType);
