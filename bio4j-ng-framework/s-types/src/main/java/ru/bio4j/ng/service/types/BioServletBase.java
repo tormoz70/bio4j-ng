@@ -18,11 +18,7 @@ import java.io.*;
 public class BioServletBase extends HttpServlet {
 
     public final static String SCFG_PARAM_NAME_BIODEBUG = "bioDebug";
-    public final static String SCFG_PARAM_NAME_FORWARD_URL = "forwardURL";
     public final static String SCFG_PARAM_NAME_PUBLIC_AREAS = "publicAreas";
-//    public final static String QRY_PARAM_NAME_MODULE = "bm";
-//    public final static String QRY_PARAM_NAME_BIOCODE = "biocd";
-//    public final static String QRY_PARAM_NAME_UID = "uid";
 
     protected Logger LOG;
 
@@ -62,17 +58,12 @@ public class BioServletBase extends HttpServlet {
         writer.append(brespJson);
     }
 
-    public static void writeSuccess(BioRespBuilder.SuccessBuilder bresp, HttpServletResponse response) throws IOException {
-        //String brespJson = Jsons.encode(bresp);
-        writeResponse(bresp.json(), response);
-    }
     public static void writeError(BioRespBuilder.AnErrorBuilder bresp, HttpServletResponse response, boolean debugMode) throws IOException {
         if(!debugMode) {
             BioError e = bresp.getException();
             if ((e != null) && !(e instanceof BioError.Login))
                 bresp.exception(new BioError("На сервере произошла непредвиденная ошибка!"));
         }
-//        String brespJson = Jsons.encode(bresp);
         writeResponse(bresp.json(), response);
     }
 

@@ -119,7 +119,7 @@ public class WarSecurityFilterBase {
 
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);
-                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(BioError.wrap(e)), resp, bioDebug);
+                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(e), resp, bioDebug);
             } catch (Exception e) {
                 BioError err = BioError.wrap(e);
                 log_error("Unexpected error while filtering (Level-1)!", err);
