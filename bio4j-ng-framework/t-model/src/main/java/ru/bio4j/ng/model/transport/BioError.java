@@ -85,6 +85,12 @@ public class BioError extends Exception {
         }
     }
 
+    public static class MethodNotAllowed extends BioError {
+        public MethodNotAllowed() {
+            super(6405);
+        }
+    }
+
     public static class LocationFail extends SysError {
         public LocationFail() {
             super();
@@ -103,34 +109,41 @@ public class BioError extends Exception {
             super(code, message);
         }
 
-        public static class BadLogin extends BioError.Login {
-            public BadLogin() {
+        public static class Unauthorized extends BioError.Login {
+            public Unauthorized() {
                 super(6401, "Не верное имя или пароль пользователя!");
             }
         }
-        public static class LoginExpired extends BioError.Login {
-            public LoginExpired() {
-                super(6402, "Сеанс связи не существует!");
+
+        public static class Forbidden extends BioError.Login {
+            public Forbidden() {
+                super(6403, "Доступ запрещен!");
             }
         }
 
-        public static class UserBlocked extends BioError.Login {
-            public UserBlocked() {
-                super(6403, "Пользователь заблокирован!");
-            }
-        }
+//        public static class LoginExpired extends BioError.Login {
+//            public LoginExpired() {
+//                super(6402, "Сеанс связи не существует!");
+//            }
+//        }
 
-        public static class UserNotConfirmed extends BioError.Login {
-            public UserNotConfirmed() {
-                super(6404, "Пользователь не подтвержден!");
-            }
-        }
-
-        public static class UserDeleted extends BioError.Login {
-            public UserDeleted() {
-                super(6405, "Пользователь удален!");
-            }
-        }
+//        public static class UserBlocked extends BioError.Login {
+//            public UserBlocked() {
+//                super(6403, "Пользователь заблокирован!");
+//            }
+//        }
+//
+//        public static class UserNotConfirmed extends BioError.Login {
+//            public UserNotConfirmed() {
+//                super(6404, "Пользователь не подтвержден!");
+//            }
+//        }
+//
+//        public static class UserDeleted extends BioError.Login {
+//            public UserDeleted() {
+//                super(6405, "Пользователь удален!");
+//            }
+//        }
 
     }
 

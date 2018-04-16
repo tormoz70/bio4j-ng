@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
+import ru.bio4j.ng.service.types.ErrorHandler;
 
 import java.util.Dictionary;
 
@@ -26,6 +27,7 @@ public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements Con
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
         doOnUpdated(conf, "bio-config-updated");
+        ErrorHandler.getInstance().init(this.getConfig().getErrorHandler(), this.getConfig().isBioDebug());
     }
 
     @Validate

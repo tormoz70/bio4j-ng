@@ -10,9 +10,6 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 @Component
@@ -43,22 +40,22 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
     @Override
     public User getUser(final String stoken, final String remoteIP, final String remoteClient) throws Exception {
         if(isNullOrEmpty(stoken))
-            throw new BioError.Login.BadLogin();
+            throw new BioError.Login.Unauthorized();
 
         User newUsr = getSecurityModule().getUser(stoken, remoteIP, remoteClient);
         if(newUsr == null)
-            throw new BioError.Login.LoginExpired();
+            throw new BioError.Login.Unauthorized();
         return newUsr;
     }
 
     @Override
     public User login(final String login, final String remoteIP, final String remoteClient) throws Exception {
         if(isNullOrEmpty(login))
-            throw new BioError.Login.BadLogin();
+            throw new BioError.Login.Unauthorized();
 
         User newUsr = getSecurityModule().login(login, remoteIP, remoteClient);
         if(newUsr == null)
-            throw new BioError.Login.BadLogin();
+            throw new BioError.Login.Unauthorized();
         return newUsr;
     }
 

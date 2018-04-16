@@ -12,7 +12,6 @@ import ru.bio4j.ng.service.api.SecurityProvider;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -108,7 +107,7 @@ public class WarSecurityFilterBase {
                         req.setUser(user);
                         if (user.isAnonymous() && !weAreInPublicAreas) {
                             debug("Anonymous not in public area for bioCode \"{}\"!", qprms.bioCode);
-                            throw new BioError.Login.BadLogin();
+                            throw new BioError.Login.Unauthorized();
                         } else {
                             chn.doFilter(req, resp);
                         }
@@ -119,11 +118,13 @@ public class WarSecurityFilterBase {
 
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);
-                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(e), resp, bioDebug);
+//                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(e), resp, bioDebug);
+                ErrorHandler.getInstance().writeError(e, resp);
             } catch (Exception e) {
-                BioError err = BioError.wrap(e);
-                log_error("Unexpected error while filtering (Level-1)!", err);
-                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(err), resp, bioDebug);
+//                BioError err = BioError.wrap(e);
+                log_error("Unexpected error while filtering (Level-1)!", e);
+//                BioServletBase.writeError(BioRespBuilder.anErrorBuilder().exception(err), resp, bioDebug);
+                ErrorHandler.getInstance().writeError(e, resp);
             }
         }
     }

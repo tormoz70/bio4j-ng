@@ -7,6 +7,9 @@ public class BioConfig {
     @Prop(name = "bio.debug")
     private boolean bioDebug = false;
 
+    @Prop(name = "bio.error.handler")
+    private String errorHandler = "std";
+
     @Prop(name = "ehcache.persistent.path")
     private String cachePersistentPath = "./ehcache-persistent";
 
@@ -154,5 +157,13 @@ public class BioConfig {
 
     public void setTmpPath(String tmpPath) {
         this.tmpPath = tmpPath;
+    }
+
+    public String getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(String errorHandler) {
+        this.errorHandler = errorHandler;
     }
 }

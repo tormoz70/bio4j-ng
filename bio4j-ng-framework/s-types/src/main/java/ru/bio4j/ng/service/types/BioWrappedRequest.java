@@ -123,32 +123,31 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
         SrvcUtils.BioQueryParams result = Httpc.createBeanFromHttpRequest(request, SrvcUtils.BioQueryParams.class);
 
-        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
         result.request = request;
         result.method = request.getMethod();
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
         result.remoteClient = Httpc.extractRealRemoteClient(request);
 
         if(Strings.isNullOrEmpty(result.moduleKey)) {
-            final String bioHeaderModuleKey = request.getHeader("X-Bio4j-Module");
+            final String bioHeaderModuleKey = request.getHeader("X-Module");
             if (!Strings.isNullOrEmpty(bioHeaderModuleKey))
                 result.moduleKey = bioHeaderModuleKey;
         }
-        if(Strings.isNullOrEmpty(result.remoteClient)) {
-            final String bioHeaderClientName = request.getHeader("X-Bio4j-Client-Name");
-            if (!Strings.isNullOrEmpty(bioHeaderClientName))
-                result.remoteClient = bioHeaderClientName;
+        final String bioHeaderClientName = request.getHeader("X-Client");
+        if(!Strings.isNullOrEmpty(bioHeaderClientName)) {
+            result.remoteClient = bioHeaderClientName;
         }
         if(Strings.isNullOrEmpty(result.remoteClientVersion)) {
-            final String bioHeaderClientVersion = request.getHeader("X-Bio4j-Client-Version");
+            final String bioHeaderClientVersion = request.getHeader("X-Client-Ver");
             if (!Strings.isNullOrEmpty(bioHeaderClientVersion))
                 result.remoteClientVersion = bioHeaderClientVersion;
         }
         if(Strings.isNullOrEmpty(result.stoken)) {
-            final String bioHeaderSToken = request.getHeader("X-Bio4j-SToken");
+            final String bioHeaderSToken = request.getHeader("X-SToken");
             if (!Strings.isNullOrEmpty(bioHeaderSToken))
                 result.stoken = bioHeaderSToken;
         }
+        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
 
         if(Strings.isNullOrEmpty(result.pageOrig)) {
             final String bioHeaderPage = request.getHeader("X-Pagging-Page");

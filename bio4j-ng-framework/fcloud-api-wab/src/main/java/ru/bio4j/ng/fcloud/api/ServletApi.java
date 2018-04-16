@@ -9,6 +9,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServletApiBase;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
+import ru.bio4j.ng.service.types.ErrorHandler;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -109,10 +110,10 @@ public class ServletApi extends BioServletApiBase {
             else
                 LOG.error("Expected server error (Level-0)!", e);
 
-            responseError(e, response);
+            ErrorHandler.getInstance().writeError(e, response);
         } catch (Exception e) {
             LOG.error("Unexpected server error (Level-0)!", e);
-            responseError(BioError.wrap(e), response);
+            ErrorHandler.getInstance().writeError(BioError.wrap(e), response);
         }
     }
 
