@@ -22,10 +22,10 @@ import java.util.List;
 public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
 
-    private static void processUpDelRow(final BioRequest request, final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
+    private static void processUpDelRow(final BioRequest request, final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursorDeclaration cursor) throws Exception {
         SQLStoredProc cmd = ctx.createStoredProc();
         RowChangeType changeType = row.getChangeType();
-        BioCursor.UpdelexSQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
+        BioCursorDeclaration.UpdelexSQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
         if(sqlDef == null && Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType))
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         if(sqlDef == null && Arrays.asList(RowChangeType.delete).contains(changeType))
@@ -43,7 +43,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
         }
     }
 
-//    private void applyParentRowToChildren(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
+//    private void applyParentRowToChildren(final BioCursorDeclaration parentCursorDef, final StoreRow parentRow, final BioCursorDeclaration cursorDef, final StoreRow row) throws Exception {
 //        if(parentCursorDef != null && parentRow != null)
 //            for(Field field : cursorDef.getFields()) {
 //                Field parentField = parentCursorDef.findField(field.getName());
@@ -55,10 +55,10 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 //            }
 //    }
 
-//    private static void applyParentRowToChildrenParams(final BioCursor parentCursorDef, final StoreRow parentRow, final BioCursor cursorDef, final StoreRow row) throws Exception {
+//    private static void applyParentRowToChildrenParams(final BioCursorDeclaration parentCursorDef, final StoreRow parentRow, final BioCursorDeclaration cursorDef, final StoreRow row) throws Exception {
 //        if(parentCursorDef != null && parentRow != null)
-//            for(BioCursor.SQLDef sqlDef : cursorDef.sqlDefs()) {
-//                for(Param p : sqlDef.getParams()) {
+//            for(BioCursorDeclaration.SQLDef sqlDef : cursorDef.sqlDefs()) {
+//                for(Param p : sqlDef.getParamDeclaration()) {
 //                    String paramName = p.getName();
 //                    if(paramName.toLowerCase().startsWith("p_"))
 //                        paramName = paramName.toLowerCase().substring(2);
@@ -74,8 +74,8 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
     private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
-//        final BioCursor cursor = contentResolver.getCursor(module.getKey(), request);
-        final BioCursor cursor = module.getCursor(request.getBioCode());
+//        final BioCursorDeclaration cursor = contentResolver.getCursor(module.getKey(), request);
+        final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());

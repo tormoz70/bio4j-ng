@@ -1,9 +1,11 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.model.transport.Param;
+
 import java.sql.SQLException;
+import java.util.List;
 
 public interface Wrappers {
 
-    //BioCursor wrapCursor(final BioCursor cursor) throws Exception;
     Wrapper getWrapper(WrapQueryType wrapQueryType) throws SQLException;
 }

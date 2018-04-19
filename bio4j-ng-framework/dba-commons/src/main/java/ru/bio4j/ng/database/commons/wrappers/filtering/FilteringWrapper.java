@@ -1,10 +1,15 @@
 package ru.bio4j.ng.database.commons.wrappers.filtering;
 
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
-import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
+import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+
+import java.util.List;
 
 import static ru.bio4j.ng.database.api.WrapQueryType.FILTERING;
 
@@ -13,8 +18,9 @@ import static ru.bio4j.ng.database.api.WrapQueryType.FILTERING;
  * @author rad
  */
 @WrapperType(FILTERING)
-public class FilteringWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
+public class FilteringWrapper extends AbstractWrapper implements Wrapper<BioCursorDeclaration.SelectSQLDef> {
 
+    public static final String EXPRESSION = "filtering$expression";
     private String queryPrefix;
     private String querySuffix;
 
@@ -47,10 +53,11 @@ public class FilteringWrapper extends AbstractWrapper implements Wrapper<BioCurs
      * @return "Обернутый" запрос
      */
     @Override
-    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
-        if ((sqlDef.getWrapMode() & BioCursor.WrapMode.FILTER.code()) == BioCursor.WrapMode.FILTER.code()) {
-            if(sqlDef.getFilter() != null) {
-                String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", sqlDef.getFilter());
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Param> params) throws Exception {
+        Filter filter = (Filter)Paramus.paramValue(params, EXPRESSION);
+        if ((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.FILTER.code()) == BioCursorDeclaration.WrapMode.FILTER.code()) {
+            if(filter != null) {
+                String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
                 sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
             }
         }

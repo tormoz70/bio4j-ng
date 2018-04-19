@@ -1,10 +1,12 @@
 package ru.bio4j.ng.database.commons.wrappers.sorting;
 
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
-import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.util.List;
@@ -16,8 +18,9 @@ import static ru.bio4j.ng.database.api.WrapQueryType.SORTING;
  * @author rad
  */
 @WrapperType(SORTING)
-public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
+public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursorDeclaration.SelectSQLDef> {
 
+    public static final String EXPRESSION = "sorting$expression";
     public static final String ORDER_BY_CLAUSE = "${ORDERBYCLAUSE_PLACEHOLDER}";
 
     private String queryPrefix;
@@ -53,9 +56,9 @@ public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursor
      * @return "Обернутый" запрос
      */
     @Override
-    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
-        if((sqlDef.getWrapMode() & BioCursor.WrapMode.SORT.code()) == BioCursor.WrapMode.SORT.code()) {
-            List<Sort> sort = sqlDef.getSort();
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Param> params) throws Exception {
+        List<Sort> sort = (List<Sort>) Paramus.paramValue(params, EXPRESSION);
+        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.SORT.code()) == BioCursorDeclaration.WrapMode.SORT.code()) {
             if(sort != null && sort.size() > 0) {
                 String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sqlDef);
                 sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));

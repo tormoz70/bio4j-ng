@@ -3,10 +3,8 @@ package ru.bio4j.ng.database.oracle.impl;
 
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.BioCursor;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.WrapperInterpreter;
-import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.*;
@@ -93,9 +91,9 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String sortToSQL(String alias, BioCursor.SelectSQLDef sqlDef) throws Exception {
-        List<Sort> sort = sqlDef.getSort();
-        List<Field> fields = sqlDef.getFields();
+    public String sortToSQL(String alias, List<Sort> sort) throws Exception {
+//        List<Sort> sort = sqlDef.getDefaultSort();
+//        List<Field> fields = sqlDef.getFields();
         if(sort != null) {
             StringBuilder result = new StringBuilder();
             char comma; String fieldName; Sort.Direction direction;
@@ -104,9 +102,10 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
                 fieldName = s.getFieldName();
                 direction = s.getDirection();
                 if(!Strings.isNullOrEmpty(fieldName)) {
-                    Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
-                    if(fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
-                        fieldName = fldDef.getSorter();
+                    //TODO перенести подстановку поля выше
+//                    Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
+//                    if(fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
+//                        fieldName = fldDef.getSorter();
                     result.append(String.format("%s %s.%s %s NULLS LAST", comma, alias, fieldName.toUpperCase(), direction.toString()));
                 }
             }

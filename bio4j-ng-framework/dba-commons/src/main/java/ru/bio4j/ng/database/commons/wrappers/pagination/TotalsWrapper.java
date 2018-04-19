@@ -2,8 +2,11 @@ package ru.bio4j.ng.database.commons.wrappers.pagination;
 
 import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
-import ru.bio4j.ng.database.api.BioCursor;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
+import ru.bio4j.ng.model.transport.Param;
+
+import java.util.List;
 
 import static ru.bio4j.ng.database.api.WrapQueryType.TOTALS;
 
@@ -11,7 +14,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.TOTALS;
  * Wrapper для реализации постраничной выборки данных
  */
 @WrapperType(TOTALS)
-public class TotalsWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
+public class TotalsWrapper extends AbstractWrapper implements Wrapper<BioCursorDeclaration.SelectSQLDef> {
 
     private String template;
 
@@ -32,7 +35,7 @@ public class TotalsWrapper extends AbstractWrapper implements Wrapper<BioCursor.
      * Собирает запрос для вычисления общего кол-ва записей
      */
     @Override
-    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Param> params) throws Exception {
         String sql = template.replace(QUERY, sqlDef.getPreparedSql());
         sqlDef.setTotalsSql(sql);
         return sqlDef;

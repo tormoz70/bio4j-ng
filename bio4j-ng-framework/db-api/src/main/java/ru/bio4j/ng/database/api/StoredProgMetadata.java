@@ -9,17 +9,17 @@ import java.util.List;
  */
 public class StoredProgMetadata {
     private final String signature;
-    private final List<Param> params;
-    public StoredProgMetadata(String signature, List<Param> params) {
+    private final List<Param> paramDeclaration;
+    public StoredProgMetadata(String signature, List<Param> paramDeclaration) {
         this.signature = signature;
-        this.params = params;
+        this.paramDeclaration = paramDeclaration;
     }
 
     public String getSignature() {
         return signature;
     }
 
-    public List<Param> getParams() {
-        return params;
+    public List<Param> getParamDeclaration() {
+        return paramDeclaration;
     }
 }

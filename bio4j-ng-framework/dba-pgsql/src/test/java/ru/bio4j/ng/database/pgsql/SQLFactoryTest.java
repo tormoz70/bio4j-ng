@@ -257,7 +257,7 @@ public class SQLFactoryTest {
                 PgSQLUtils utl = new PgSQLUtils();
                 StoredProgMetadata md = utl.detectStoredProcParamsAuto("test_stored_inout", conn, null);
                 LOG.debug("md: " + md);
-                leng1 = md.getParams().size();
+                leng1 = md.getParamDeclaration().size();
                 return leng1;
             }, null);
             LOG.debug("leng: " + leng);

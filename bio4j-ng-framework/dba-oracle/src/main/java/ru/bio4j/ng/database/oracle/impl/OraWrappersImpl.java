@@ -24,24 +24,24 @@ public class OraWrappersImpl implements Wrappers {
     private Map<WrapQueryType, String> templates = null;
     private Map<WrapQueryType, Wrapper> wrappers = null;
 
-    /**
-     * @param sqlDef        исходный запрос
-     * @param wrapQueryType тип врапера
-     * @return "Обернутый" запрос
-     * @throws java.sql.SQLException
-     * @title "Оборачивает" SQL запрос для возможности фильтрации
-     */
-    private BioCursor.SQLDef wrapCursor(final BioCursor.SQLDef sqlDef, final WrapQueryType wrapQueryType) throws Exception {
-        Wrapper w = getWrapper(wrapQueryType);
-        return w.wrap(sqlDef);
-    }
+//    /**
+//     * @param sqlDef        исходный запрос
+//     * @param wrapQueryType тип врапера
+//     * @return "Обернутый" запрос
+//     * @throws java.sql.SQLException
+//     * @title "Оборачивает" SQL запрос для возможности фильтрации
+//     */
+//    private BioCursorDeclaration.SQLDef wrapCursor(final BioCursorDeclaration.SQLDef sqlDef, final WrapQueryType wrapQueryType) throws Exception {
+//        Wrapper w = getWrapper(wrapQueryType);
+//        return w.wrap(sqlDef);
+//    }
 
-//    public BioCursor wrapCursor(final BioCursor cursor) throws Exception {
+//    public BioCursorDeclaration wrapCursor(final BioCursorDeclaration cursor) throws Exception {
 //        wrapCursor(cursor, WrapQueryType.FILTERING);
 //        wrapCursor(cursor, WrapQueryType.TOTALS);
 //        wrapCursor(cursor, WrapQueryType.SORTING);
 //        wrapCursor(cursor, WrapQueryType.LOCATE);
-//        wrapCursor(cursor, WrapQueryType.PAGING);
+//        wrapCursor(cursor, WrapQueryType.PAGINATION);
 //        wrapCursor(cursor, WrapQueryType.GETROW);
 //        return cursor;
 //    }

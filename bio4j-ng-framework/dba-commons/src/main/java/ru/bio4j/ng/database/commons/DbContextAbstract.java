@@ -137,10 +137,10 @@ public abstract class DbContextAbstract implements SQLContext {
      * Выполняет execSQL - курсор.
      */
     @Override
-    public <R> R execSQL (final Connection connection, final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
+    public <R> R execSQL (final Connection connection, final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
         SQLStoredProc sp = this.createStoredProc();
-        sp.init(connection, sqlDef.getPreparedSql(), sqlDef.getParams()).execSQL(params, usr);
-        List<Param> outparams = sqlDef.getParams();
+        sp.init(connection, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).execSQL(params, usr);
+        List<Param> outparams = sqlDef.getParamDeclaration();
         for (Param p : outparams)
             if (p.getDirection() == Param.Direction.INOUT || p.getDirection() == Param.Direction.OUT)
                 return (R) p.getValue();
@@ -148,7 +148,7 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
-    public <R> R execSQL (final BioCursor.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
+    public <R> R execSQL (final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
         return execBatch((context, conn, param, u) -> execSQL(conn, sqlDef, params, u), null, usr);
     }
 

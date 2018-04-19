@@ -1,14 +1,13 @@
 package ru.bio4j.ng.database.commons.wrappers.filtering;
 
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Field;
-import ru.bio4j.ng.database.api.BioCursor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.bio4j.ng.database.api.WrapQueryType.GETROW;
@@ -17,7 +16,7 @@ import static ru.bio4j.ng.database.api.WrapQueryType.GETROW;
  * Wrapper для реализации постраничной выборки данных
  */
 @WrapperType(GETROW)
-public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
+public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursorDeclaration.SelectSQLDef> {
 
     private String template;
     public static final String PKVAL = "getrow$pkvalue";
@@ -39,7 +38,7 @@ public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursor.
      * Собирает запрос для вычисления страницы в которой находится искомая запись
      */
     @Override
-    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Param> params) throws Exception {
         Field pkCol = sqlDef.findPk();
         if(pkCol == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", sqlDef.getBioCode()));
@@ -47,9 +46,9 @@ public class GetrowWrapper extends AbstractWrapper implements Wrapper<BioCursor.
         String sql = template.replace(QUERY, sqlDef.getSql());
         sql = sql.replace(WHERE_CLAUSE, whereclause);
         sqlDef.setPreparedSql(sql);
-        List<Param> prms = new ArrayList<>();
-        prms.add(Param.builder().name(PKVAL).type(pkCol.getMetaType()).build());
-        sqlDef.setParams(prms);
+//        List<Param> prms = new ArrayList<>();
+//        prms.add(Param.builder().name(PKVAL).type(pkCol.getMetaType()).build());
+//        sqlDef.setParams(prms);
         return sqlDef;
     }
 }

@@ -1,26 +1,17 @@
 package ru.bio4j.ng.database.api;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateCheck;
-import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
-import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 
-import javax.management.Query;
 import java.io.Serializable;
 import java.util.*;
 
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
-
-public class BioCursor implements Serializable {
+public class BioCursorDeclaration implements Serializable {
 
     public String getExportTitle() {
         return exportTitle;
@@ -50,7 +41,7 @@ public class BioCursor implements Serializable {
         SELECT, UPDATE, DELETE, EXECUTE, AFTERSELECT
     }
     public static enum WrapMode {
-        NONE((byte)0), FILTER((byte)1), SORT((byte)2), PAGING((byte)4), ALL((byte)7);
+        NONE((byte)0), FILTER((byte)1), SORT((byte)2), PAGINATION((byte)4), ALL((byte)7);
         private byte code;
         private WrapMode(byte code) {
             this.code = code;
@@ -61,11 +52,11 @@ public class BioCursor implements Serializable {
     }
 
     public static class SQLDef {
-        private BioCursor owner;
+        private BioCursorDeclaration owner;
         private final String sql;
         private String preparedSql;
 
-        private List<Param> params = new ArrayList<>();
+        private List<Param> paramDeclaration = new ArrayList<>();
 
         public SQLDef(String sql) {
 
@@ -90,23 +81,23 @@ public class BioCursor implements Serializable {
             return owner.getBioCode();
         }
 
-        public SQLDef setParamValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
-            try(Paramus paramus = Paramus.set(params)) {
-                paramus.setValue(name, value, direction, addIfNotExists);
-            }
-            return this;
-        }
+//        public SQLDef setParamValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
+//            try(Paramus paramus = Paramus.set(params)) {
+//                paramus.setValue(name, value, direction, addIfNotExists);
+//            }
+//            return this;
+//        }
 
-        public SQLDef setParamValue(String name, Object value, boolean addIfNotExists) {
-            return setParamValue(name, value, Param.Direction.IN, true);
-        }
+//        public SQLDef setParamValue(String name, Object value, boolean addIfNotExists) {
+//            return setParamValue(name, value, Param.Direction.IN, true);
+//        }
 
-        public SQLDef setParamValue(String name, Object value) {
-            return setParamValue(name, value, true);
-        }
+//        public SQLDef setParamValue(String name, Object value) {
+//            return setParamValue(name, value, true);
+//        }
 
-        public void setParams(List<Param> params) {
-            this.params = params;
+        public void setParamDeclaration(List<Param> paramDeclaration) {
+            this.paramDeclaration = paramDeclaration;
         }
 
 //        public SQLDef setParams(List<Param> params) throws Exception {
@@ -135,8 +126,8 @@ public class BioCursor implements Serializable {
 //            }
 //            return this;
 //        }
-        public List<Param> getParams() {
-            return params;
+        public List<Param> getParamDeclaration() {
+            return paramDeclaration;
         }
 
         public String getSql() {
@@ -155,17 +146,17 @@ public class BioCursor implements Serializable {
 
     public static class SelectSQLDef extends SQLDef {
 
-        public static final String PAGING_PARAM_OFFSET = "paging$offset";
-        public static final String PAGING_PARAM_LAST = "paging$last";
+        public static final String PAGINATION_PARAM_OFFSET = "pagination$offset";
+        public static final String PAGINATION_PARAM_LAST = "pagination$last";
 
         private byte wrapMode = WrapMode.ALL.code();
         private String totalsSql;
         private String locateSql;
-        private Filter filter;
-        private List<Sort> sort;
-        private int offset;
-        private int pageSize;
-        private Object location;
+//        private Filter filter;
+        private List<Sort> defaultSort;
+//        private int offset;
+//        private int pageSize;
+//        private Object location;
         private boolean readonly;
         private boolean multySelection;
 
@@ -181,28 +172,28 @@ public class BioCursor implements Serializable {
             return wrapMode;
         }
 
-        public Filter getFilter() { return filter; }
+//        public Filter getFilter() { return filter; }
 
-        public void setFilter(Filter filter) { this.filter = filter; }
+//        public void setFilter(Filter filter) { this.filter = filter; }
 
-        public List<Sort> getSort() { return sort; }
+        public List<Sort> getDefaultSort() { return defaultSort; }
 
-        public void setSort(List<Sort> sort) { this.sort = sort; }
+        public void setDefaultSort(List<Sort> defaultSort) { this.defaultSort = defaultSort; }
 
-        public int getOffset() { return offset; }
+//        public int getOffset() { return offset; }
 
-        public void setOffset(Integer offset) {
-            this.offset = offset == null ? 0 : offset;
-            this.setParamValue(PAGING_PARAM_OFFSET, this.offset);
-            this.setParamValue(PAGING_PARAM_LAST, this.offset + this.pageSize);
-        }
+//        public void setOffset(Integer offset) {
+//            this.offset = offset == null ? 0 : offset;
+//            this.setParamValue(PAGINATION_PARAM_OFFSET, this.offset);
+//            this.setParamValue(PAGINATION_PARAM_LAST, this.offset + this.pageSize);
+//        }
 
-        public int getPageSize() { return pageSize; }
+//        public int getPageSize() { return pageSize; }
 
-        public void setPageSize(Integer pageSize) {
-            this.pageSize = pageSize == null || pageSize.intValue() == 0 ? 30 : pageSize;
-            this.setParamValue(PAGING_PARAM_LAST, this.offset + this.pageSize);
-        }
+//        public void setPageSize(Integer pageSize) {
+//            this.pageSize = pageSize == null || pageSize.intValue() == 0 ? 30 : pageSize;
+//            this.setParamValue(PAGINATION_PARAM_LAST, this.offset + this.pageSize);
+//        }
 
         public boolean isReadonly() { return readonly; }
 
@@ -228,13 +219,13 @@ public class BioCursor implements Serializable {
             this.locateSql = locateSql;
         }
 
-        public Object getLocation() {
-            return location;
-        }
+//        public Object getLocation() {
+//            return location;
+//        }
 
-        public void setLocation(Object location) {
-            this.location = location;
-        }
+//        public void setLocation(Object location) {
+//            this.location = location;
+//        }
 
     }
 
@@ -264,7 +255,7 @@ public class BioCursor implements Serializable {
 
     private final Map<Type, SQLDef> sqlDefs = new HashMap<>();
 
-    public BioCursor(String bioCode) {
+    public BioCursorDeclaration(String bioCode) {
         this.bioCode = bioCode;
     }
 

@@ -11,7 +11,7 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.*;
-import ru.bio4j.ng.database.api.BioCursor;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
@@ -146,9 +146,9 @@ private static void parseCol(List<Field> cols, String colDef) {
     }
 }
 
-private static void addParamsFromXml(final BioCursor.SQLDef sqlDef, final Element sqlElem) throws Exception {
+private static void addParamsFromXml(final BioCursorDeclaration.SQLDef sqlDef, final Element sqlElem) throws Exception {
     NodeList paramNodes = sqlElem.getElementsByTagName("param");
-    try(Paramus p = Paramus.set(sqlDef.getParams());) {
+    try(Paramus p = Paramus.set(sqlDef.getParamDeclaration());) {
         for(int i=0; i<paramNodes.getLength(); i++) {
             Element paramElem = (Element)paramNodes.item(i);
             String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
@@ -176,11 +176,11 @@ private static void addParamsFromXml(final BioCursor.SQLDef sqlDef, final Elemen
     }
 }
 
-private static void addParamsFromSQLBody(final BioCursor.SQLDef sqlDef) throws Exception {
+private static void addParamsFromSQLBody(final BioCursorDeclaration.SQLDef sqlDef) throws Exception {
     final String sql = sqlDef.getSql();
     final StringBuffer out = new StringBuffer(sql.length());
     final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
-    try(Paramus p = Paramus.set(sqlDef.getParams());) {
+    try(Paramus p = Paramus.set(sqlDef.getParamDeclaration());) {
         for (String paramActual : paramsNames) {
             Param param = Param.builder()
                     .name(paramActual)
@@ -206,7 +206,7 @@ private static Field findCol(final String name, final List<Field> cols) {
     }
 }
 
-private static void addColsFromXml(final BioCursor cursor, final Document document) throws Exception {
+private static void addColsFromXml(final BioCursorDeclaration cursor, final Document document) throws Exception {
     Element sqlElem = Doms.findElem(document, "/cursor/fields");
     NodeList fieldNodes = sqlElem.getElementsByTagName("field");
     List<Field> fields = cursor.getFields();
@@ -249,13 +249,13 @@ private static void addColsFromXml(final BioCursor cursor, final Document docume
 
 }
 
-private static void addDefaultSortFromXml(final BioCursor.SelectSQLDef selectSQLDef, final Document document) throws Exception {
+private static void addDefaultSortFromXml(final BioCursorDeclaration.SelectSQLDef selectSQLDef, final Document document) throws Exception {
     Element sqlElem = Doms.findElem(document, "/cursor/defaultSort");
     if(sqlElem != null) {
         NodeList fieldNodes = sqlElem.getElementsByTagName("field");
         if(fieldNodes != null && fieldNodes.getLength() > 0) {
-            if (selectSQLDef.getSort() == null)
-                selectSQLDef.setSort(new ArrayList<>());
+            if (selectSQLDef.getDefaultSort() == null)
+                selectSQLDef.setDefaultSort(new ArrayList<>());
             for (int i = 0; i < fieldNodes.getLength(); i++) {
                 Element paramElem = (Element) fieldNodes.item(i);
                 String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
@@ -263,7 +263,7 @@ private static void addDefaultSortFromXml(final BioCursor.SelectSQLDef selectSQL
                 Sort sort = new Sort();
                 sort.setFieldName(fieldName);
                 sort.setDirection(sortDirection);
-                selectSQLDef.getSort().add(sort);
+                selectSQLDef.getDefaultSort().add(sort);
             }
         }
     }
@@ -317,8 +317,8 @@ private static Document loadXmlDocumentFromRes(final BundleContext context, fina
     return null;
 }
 
-public static BioCursor pars(final BundleContext context, final Document document, final String bioCode) throws Exception {
-    BioCursor cursor = new BioCursor(bioCode);
+public static BioCursorDeclaration pars(final BundleContext context, final Document document, final String bioCode) throws Exception {
+    BioCursorDeclaration cursor = new BioCursorDeclaration(bioCode);
     Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
     Boolean readOnly = Doms.getAttribute(document.getDocumentElement(), "readOnly", true, Boolean.class);
     cursor.setReadOnly(readOnly);
@@ -330,26 +330,26 @@ public static BioCursor pars(final BundleContext context, final Document documen
     addColsFromXml(cursor, document); // добавляем колонки из XML
     List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
     for (Element sqlElem : sqlTextElems) {
-        BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
+        BioCursorDeclaration.Type curType = Doms.getAttribute(sqlElem, "action", BioCursorDeclaration.Type.SELECT, BioCursorDeclaration.Type.class);
         String sql = sqlElem.getTextContent().trim();
         if(context != null)
             sql = tryLoadSQL(context, bioCode, sql);
-        BioCursor.SQLDef sqlDef;
-        if(curType == BioCursor.Type.SELECT) {
-            sqlDef = new BioCursor.SelectSQLDef(sql);
-            addDefaultSortFromXml((BioCursor.SelectSQLDef)sqlDef, document);
+        BioCursorDeclaration.SQLDef sqlDef;
+        if(curType == BioCursorDeclaration.Type.SELECT) {
+            sqlDef = new BioCursorDeclaration.SelectSQLDef(sql);
+            addDefaultSortFromXml((BioCursorDeclaration.SelectSQLDef)sqlDef, document);
         } else
-            sqlDef = new BioCursor.UpdelexSQLDef(sql);
+            sqlDef = new BioCursorDeclaration.UpdelexSQLDef(sql);
         cursor.setSqlDef(curType, sqlDef);
 
         addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
         addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
     }
-    //LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
+    //LOG.debug("BioCursorDeclaration parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
     return cursor;
 }
 
-public static BioCursor pars(final BundleContext context, final String bioCode) throws Exception {
+public static BioCursorDeclaration pars(final BundleContext context, final String bioCode) throws Exception {
     Document document = loadXmlDocumentFromRes(context, bioCode);
     if(document == null)
         throw new Exception(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
@@ -365,28 +365,28 @@ private static Document loadXmlDocumentFromPath(final String contentRootPath, fi
     return Utl.loadXmlDocument(path);
 }
 
-public static BioCursor pars(final String contentRootPath, final String bioCode) throws Exception {
+public static BioCursorDeclaration pars(final String contentRootPath, final String bioCode) throws Exception {
     Document document = loadXmlDocumentFromPath(contentRootPath, bioCode);
-    BioCursor cursor = new BioCursor(bioCode);
+    BioCursorDeclaration cursor = new BioCursorDeclaration(bioCode);
     Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
     if(exportTitleElem != null)
         cursor.setExportTitle(exportTitleElem.getTextContent());
     addColsFromXml(cursor, document); // добавляем колонки из XML
     List<Element> sqlTextElems = Doms.findElems(document.getDocumentElement(), "/cursor/SQL");
     for (Element sqlElem : sqlTextElems) {
-        BioCursor.Type curType = Doms.getAttribute(sqlElem, "action", BioCursor.Type.SELECT, BioCursor.Type.class);
+        BioCursorDeclaration.Type curType = Doms.getAttribute(sqlElem, "action", BioCursorDeclaration.Type.SELECT, BioCursorDeclaration.Type.class);
         String sql = tryLoadSQL(contentRootPath, bioCode, sqlElem.getTextContent().trim());
-        BioCursor.SQLDef sqlDef;
-        if(curType == BioCursor.Type.SELECT)
-            sqlDef = new BioCursor.SelectSQLDef(sql);
+        BioCursorDeclaration.SQLDef sqlDef;
+        if(curType == BioCursorDeclaration.Type.SELECT)
+            sqlDef = new BioCursorDeclaration.SelectSQLDef(sql);
         else
-            sqlDef = new BioCursor.UpdelexSQLDef(sql);
+            sqlDef = new BioCursorDeclaration.UpdelexSQLDef(sql);
         cursor.setSqlDef(curType, sqlDef);
 
         addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
         addParamsFromXml(sqlDef, sqlElem); // добавляем переменные из XML
     }
-    //LOG.debug("BioCursor parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
+    //LOG.debug("BioCursorDeclaration parsed: \n{}", Utl.buildBeanStateInfo(cursor, "Cursor", "  "));
     return cursor;
 }
 }

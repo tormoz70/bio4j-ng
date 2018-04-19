@@ -811,7 +811,7 @@ public class SQLFactoryTest {
                 OraContext.class);
 
 
-        String rslt = ctx.execBatch((SQLAction<BioCursor, String>) (context, conn, cur, usr) -> {
+        String rslt = ctx.execBatch((SQLAction<BioCursorDeclaration, String>) (context, conn, cur, usr) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
 
@@ -912,7 +912,7 @@ public class SQLFactoryTest {
                 OraContext.class);
 
 
-        String rslt = ctx.execBatch((SQLAction<BioCursor, String>) (context, conn, cur, usr) -> {
+        String rslt = ctx.execBatch((SQLAction<BioCursorDeclaration, String>) (context, conn, cur, usr) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("222.sql"));
 

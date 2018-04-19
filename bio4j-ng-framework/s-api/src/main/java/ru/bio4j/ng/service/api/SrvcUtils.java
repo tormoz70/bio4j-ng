@@ -2,9 +2,6 @@ package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
-import ru.bio4j.ng.commons.utils.Httpc;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.BioCursor;
 import ru.bio4j.ng.model.transport.FCloudCommand;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.RmtCommand;
@@ -14,11 +11,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 /**
  * Created by ayrat on 13.03.2016.

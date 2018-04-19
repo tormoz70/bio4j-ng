@@ -16,8 +16,6 @@ import ru.bio4j.ng.model.transport.jstore.StoreRow;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 
@@ -78,9 +76,9 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
+    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final User user) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
-        final BioCursor.SQLDef sqlDef = cursor.getExecSqlDef();
+        final BioCursorDeclaration.SQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new IllegalArgumentException("Cursor definition has no Exec Sql definition!");
         List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
@@ -99,8 +97,8 @@ public class DbUtils {
         return r;
     }
 
-    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
-        final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
+    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
+        final BioCursorDeclaration.SQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
             public Integer exec(SQLContext context, Connection conn, User u) throws Exception {
@@ -115,8 +113,8 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user, Class<T> clazz) throws Exception {
-        final BioCursor.SQLDef sqlDef = cursor.getSelectSqlDef();
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final User user, Class<T> clazz) throws Exception {
+        final BioCursorDeclaration.SQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
             public T exec(SQLContext context, Connection conn, User u) throws Exception {

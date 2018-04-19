@@ -1,16 +1,18 @@
 package ru.bio4j.ng.database.api;
 
-import ru.bio4j.ng.database.api.BioCursor;
+import ru.bio4j.ng.model.transport.Param;
+
+import java.util.List;
 
 /**
  * @title Интерфейс обертки запросов
  */
-public interface Wrapper<T extends BioCursor.SQLDef> {
+public interface Wrapper<T extends BioCursorDeclaration.SQLDef> {
 
     /**
      * @title "Оборачивание" запроса
      * @param sqlDef
      * @return Обернутый запрос
      */
-    T wrap(T sqlDef) throws Exception;
+    T wrap(T sqlDef, List<Param> params) throws Exception;
 }

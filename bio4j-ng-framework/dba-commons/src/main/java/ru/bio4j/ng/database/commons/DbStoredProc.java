@@ -2,10 +2,8 @@ package ru.bio4j.ng.database.commons;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.database.api.BioCursor;
-import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.Param;
@@ -13,7 +11,6 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,15 +37,15 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
         return this.init(conn, storedProcName, null, 60);
     }
     @Override
-    public SQLStoredProc init(Connection conn, BioCursor.UpdelexSQLDef sqlDef) throws Exception {
-        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParams());
+    public SQLStoredProc init(Connection conn, BioCursorDeclaration.UpdelexSQLDef sqlDef) throws Exception {
+        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
     }
 
     @Override
 	protected void prepareStatement() throws Exception {
         if (this.params == null) {
             StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
-            try (Paramus p = Paramus.set(sp.getParams())) {
+            try (Paramus p = Paramus.set(sp.getParamDeclaration())) {
                 p.apply(params, true);
                 params = p.get();
             }

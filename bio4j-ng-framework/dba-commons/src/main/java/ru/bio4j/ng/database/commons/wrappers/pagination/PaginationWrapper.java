@@ -1,17 +1,24 @@
 package ru.bio4j.ng.database.commons.wrappers.pagination;
 
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperType;
-import ru.bio4j.ng.database.api.BioCursor;
+import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
+import ru.bio4j.ng.model.transport.Param;
 
-import static ru.bio4j.ng.database.api.WrapQueryType.PAGING;
+import java.util.List;
+
+import static ru.bio4j.ng.database.api.WrapQueryType.PAGINATION;
 
 /**
  * Wrapper для реализации построничной выборки
  */
-@WrapperType(PAGING)
-public class PaginationWrapper extends AbstractWrapper implements Wrapper<BioCursor.SelectSQLDef> {
+@WrapperType(PAGINATION)
+public class PaginationWrapper extends AbstractWrapper implements Wrapper<BioCursorDeclaration.SelectSQLDef> {
+
+    public static final String PAGINATION_OFFSET = "pagination$offset";
+    public static final String PAGINATION_PAGE_SIZE = "pagination$pagesize";
 
     private String template;
 
@@ -32,10 +39,10 @@ public class PaginationWrapper extends AbstractWrapper implements Wrapper<BioCur
      * Создает запрос для постраничнеой выборки данных
      */
     @Override
-    public BioCursor.SelectSQLDef wrap(BioCursor.SelectSQLDef sqlDef) throws Exception {
-        int pageSize = sqlDef.getPageSize();
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Param> params) throws Exception {
+        int pageSize = (int)Paramus.paramValue(params, PAGINATION_PAGE_SIZE);
         if(pageSize > 0) {
-            if((sqlDef.getWrapMode() & BioCursor.WrapMode.PAGING.code()) == BioCursor.WrapMode.PAGING.code()) {
+            if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.PAGINATION.code()) == BioCursorDeclaration.WrapMode.PAGINATION.code()) {
                 String sql = template.replace(QUERY, sqlDef.getPreparedSql());
                 sqlDef.setPreparedSql(sql);
             }
