@@ -46,29 +46,6 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     @Requires
     private ModuleProvider moduleProvider;
 
-    //TODO перенести эти параметры во входящие параметры
-//    protected static void applyCurrentUserParams(final ru.bio4j.ng.model.transport.User usr, final Collection<BioCursorDeclaration.SQLDef> sqlDefs) {
-//        if (usr != null && sqlDefs != null) {
-//            for (BioCursorDeclaration.SQLDef sqlDef : sqlDefs) {
-//                if (sqlDef != null)
-//                    try (Paramus p = Paramus.set(sqlDef.getParamDeclaration())) {
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_IP, usr.getRemoteIP(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_CLIENT, usr.getRemoteClient(), Param.Direction.IN, true);
-//                    }
-//            }
-//        }
-//    }
-
-//    protected static void applyBioParams(final List<Param> bioParams, Collection<BioCursorDeclaration.SQLDef> sqlDefs) throws Exception {
-//        for(BioCursorDeclaration.SQLDef sqlDef : sqlDefs) {
-//            if(sqlDef != null)
-//                sqlDef.setParams(bioParams);
-//        }
-//    }
 
     private BioCursorDeclaration getCursorFromFileSystem(String bioCode, User usr) throws Exception {
         BioCursorDeclaration cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
@@ -76,8 +53,6 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
             cursor = CursorParser.pars(configProvider.getConfig().getContentResolverPath(), bioCode);
             cacheService.put(CacheName.CURSOR, bioCode.toLowerCase(), cursor);
         }
-//        if (cursor != null)
-//            applyCurrentUserParams(usr, cursor.sqlDefs());
         return cursor;
     }
 
@@ -87,8 +62,6 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
             throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
 
         BioCursorDeclaration cursor = module.getCursor(bioCode);
-//        if(cursor != null)
-//            applyCurrentUserParams(usr, cursor.sqlDefs());
         return cursor;
     }
 

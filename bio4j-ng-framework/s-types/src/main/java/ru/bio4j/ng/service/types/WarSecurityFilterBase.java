@@ -6,10 +6,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.BioRespBuilder;
-import ru.bio4j.ng.service.api.BioRoute;
-import ru.bio4j.ng.service.api.SecurityProvider;
-import ru.bio4j.ng.service.api.SrvcUtils;
+import ru.bio4j.ng.service.api.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +88,7 @@ public class WarSecurityFilterBase {
                 debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
                 initSecurityHandler(req.getServletContext());
-                final SrvcUtils.BioQueryParams qprms = req.getBioQueryParams();
+                final BioQueryParams qprms = req.getBioQueryParams();
                 final boolean weAreInPublicAreas = detectWeAreInPublicAreas(qprms.bioCode);
                 if (securityProvider != null) {
                     if (!Strings.isNullOrEmpty(qprms.login)) {

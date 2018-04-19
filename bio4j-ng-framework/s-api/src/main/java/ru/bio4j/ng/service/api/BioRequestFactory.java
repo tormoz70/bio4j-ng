@@ -36,7 +36,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
     }
 
     public T restore(
-            final SrvcUtils.BioQueryParams qprms,
+            final BioQueryParams qprms,
             final Class<T> clazz,
             final User usr) throws Exception {
         T bioRequest;
@@ -84,7 +84,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class GetJson extends BioRequestFactory<BioRequestGetJson> {
         public BioRequestGetJson restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestGetJson> clazz,
                 final User usr) throws Exception {
             BioRequestGetJson rslt = super.restore(qprms, clazz, usr);
@@ -101,7 +101,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class GetFile extends BioRequestFactory<BioRequestGetFile> {
         public BioRequestGetFile restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestGetFile> clazz,
                 final User usr) throws Exception {
             BioRequestGetFile rslt = super.restore(qprms, clazz, usr);
@@ -111,7 +111,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
     }
 
 
-    private static void setOffset(BioRequestPagination request, SrvcUtils.BioQueryParams qprms){
+    private static void setOffset(BioRequestPagination request, BioQueryParams qprms){
         int pageSize = (qprms.pageSize != null && qprms.pageSize > 0) ? qprms.pageSize : -1;
         int page = (qprms.page != null && qprms.page > 0) ? qprms.page : 0;
         int offset = (qprms.offset != null && qprms.offset >= 0) ? qprms.offset : 0;
@@ -128,7 +128,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class GetDataSet extends BioRequestFactory<BioRequestJStoreGetDataSet> {
         public BioRequestJStoreGetDataSet restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestJStoreGetDataSet> clazz,
                 final User usr) throws Exception {
             BioRequestJStoreGetDataSet rslt = super.restore(qprms, clazz, usr);
@@ -145,7 +145,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class ExpDataSet extends BioRequestFactory<BioRequestJStoreExpDataSet> {
         public BioRequestJStoreExpDataSet restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestJStoreExpDataSet> clazz,
                 final User usr) throws Exception {
             BioRequestJStoreExpDataSet rslt = super.restore(qprms, clazz, usr);
@@ -166,7 +166,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class GetRecord extends BioRequestFactory<BioRequestJStoreGetRecord> {
         public BioRequestJStoreGetRecord restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestJStoreGetRecord> clazz,
                 final User usr) throws Exception {
             BioRequestJStoreGetRecord rslt = super.restore(qprms, clazz, usr);
@@ -180,7 +180,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class StoredProg extends BioRequestFactory<BioRequestStoredProg> {
         public BioRequestStoredProg restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestStoredProg> clazz,
                 final User usr) throws Exception {
             BioRequestStoredProg rslt = super.restore(qprms, clazz, usr);
@@ -192,7 +192,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
 
     public static class FCloud extends BioRequestFactory<BioRequestFCloud> {
         public BioRequestFCloud restore(
-                final SrvcUtils.BioQueryParams qprms,
+                final BioQueryParams qprms,
                 final Class<BioRequestFCloud> clazz,
                 final User usr) throws Exception {
             BioRequestFCloud rslt = super.restore(qprms, clazz, usr);

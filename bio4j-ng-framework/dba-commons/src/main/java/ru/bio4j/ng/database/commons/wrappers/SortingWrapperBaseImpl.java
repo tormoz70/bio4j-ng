@@ -1,24 +1,17 @@
-package ru.bio4j.ng.database.commons.wrappers.sorting;
+package ru.bio4j.ng.database.commons.wrappers;
 
-import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.BioCursorDeclaration;
-import ru.bio4j.ng.database.api.Wrapper;
+import ru.bio4j.ng.database.api.SortingWrapper;
 import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
-import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.util.List;
 
-import static ru.bio4j.ng.database.api.WrapQueryType.SORTING;
-
-/**
- * @title Реализация обработчика запроса для наиболее простого случая, когда обертку можно записать без модификации запроса
- * @author rad
- */
-@WrapperType(SORTING)
-public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursorDeclaration.SelectSQLDef> {
+public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWrapper {
 
     public static final String EXPRESSION = "sorting$expression";
     public static final String ORDER_BY_CLAUSE = "${ORDERBYCLAUSE_PLACEHOLDER}";
@@ -26,14 +19,10 @@ public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursor
     private String queryPrefix;
     private String querySuffix;
 
-    public SortingWrapper(String template) {
+    public SortingWrapperBaseImpl(String template) {
         super(template);
     }
 
-    /**
-     * @title Разбор запроса
-     * @param template
-     */
     @Override
     protected void parseTemplate(String template){
         //ищем место куда встявляется запрос
@@ -49,18 +38,18 @@ public class SortingWrapper extends AbstractWrapper implements Wrapper<BioCursor
         querySuffix = template.substring(queryEnd, orderbyStart - 1);
     }
 
-    /**
-     * @title "Оборачивание" запроса в предварительно загруженный запрос
-     * @title "О"
-     * @param sqlDef
-     * @return "Обернутый" запрос
-     */
-    @Override
-    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Param> params) throws Exception {
-        List<Sort> sort = (List<Sort>) Paramus.paramValue(params, EXPRESSION);
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Sort> sort) throws Exception {
         if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.SORT.code()) == BioCursorDeclaration.WrapMode.SORT.code()) {
             if(sort != null && sort.size() > 0) {
-                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sqlDef);
+
+                List<Field> fields = sqlDef.getFields();
+                for (Sort s : sort) {
+                    Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
+                    if(fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
+                        s.setFieldName(fldDef.getSorter());
+                }
+
+                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
                 sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
             }
         }

@@ -36,75 +36,13 @@ public class SrvcUtils {
     public static final String PARAM_CURUSR_GRANTS     = "p_sys_curusr_grants";
     public static final String PARAM_CURUSR_IP         = "p_sys_curusr_ip";
     public static final String PARAM_CURUSR_CLIENT     = "p_sys_curusr_client";
-
-    public static class BioQueryParams {
-        public HttpServletRequest request;
-        public String method;
-        public String remoteIP;
-        public String remoteClient;
-        public String remoteClientVersion;
-
-        @Prop(name = "rqt")
-        public String requestType;
-        @Prop(name = "bm")
-        public String moduleKey;
-        @Prop(name = "biocd")
-        public String bioCode;
-        @Prop(name = "stoken")
-        public String stoken;
-        @Prop(name = "jsonData")
-        public String jsonData;
-        @Prop(name = "hf")
-        public String fileHashCode;
-        @Prop(name = "login")
-        public String login;
-        @Prop(name = "fcmd")
-        public String fcloudCmdOrig;
-        public FCloudCommand fcloudCmd;
-        @Prop(name = "fluid")
-        public String fcloudFileUid;
-        @Prop(name = "uplduid")
-        public String fcloudUploadUid;
-        @Prop(name = "uplddsc")
-        public String fcloudUploadDesc;
-        @Prop(name = "upldprm")
-        public String fcloudExtParam;
-
-        @Prop(name = "page")
-        public String pageOrig;
-        public Integer page;
-        @Prop(name = "offset")
-        public String offsetOrig;
-        public Integer offset;
-        @Prop(name = "pageSize")
-        public String pageSizeOrig;
-        public Integer pageSize;
-
-        @Prop(name = "locate")
-        public String location;
-
-        @Prop(name = "id")
-        public String id;
-
-        @Prop(name = "rmtcmd")
-        public String rmtCommandOrig;
-        public RmtCommand rmtCommand;
-        @Prop(name = "rmtsessionuid")
-        public String rmtSessionUid;
-
-        @Prop(name = "sort")
-        public String sortOrg;
-        public List<Sort> sort;
-
-        @Prop(name = "filter")
-        public String filterOrg;
-        public Filter filter;
-
-        @Prop(name = "selection")
-        public String selection;
-
-        public List<Param> bioParams;
-    }
+//    public static final String QUERYPARAM_NAME_ID      = "p_queryparam_id";
+//    public static final String QUERYPARAM_NAME_FILTER  = "p_queryparam_filter";
+//    public static final String QUERYPARAM_NAME_SORT    = "p_queryparam_sort";
+//    public static final String QUERYPARAM_NAME_ID      = "p_queryparam_id";
+//    public static final String PAGINPARAM_NAME_PAGE    = "p_paginparam_page";
+//    public static final String PAGINPARAM_NAME_OFFSET  = "p_paginparam_offset";
+//    public static final String PAGINPARAM_NAME_PAGESIZE  = "p_paginparam_pagesize";
 
     public static void applyCurrentUserParams(final User usr, final List<Param> params) {
         if (usr != null) {

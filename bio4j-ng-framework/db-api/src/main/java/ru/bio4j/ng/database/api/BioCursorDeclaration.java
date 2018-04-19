@@ -146,9 +146,6 @@ public class BioCursorDeclaration implements Serializable {
 
     public static class SelectSQLDef extends SQLDef {
 
-        public static final String PAGINATION_PARAM_OFFSET = "pagination$offset";
-        public static final String PAGINATION_PARAM_LAST = "pagination$last";
-
         private byte wrapMode = WrapMode.ALL.code();
         private String totalsSql;
         private String locateSql;

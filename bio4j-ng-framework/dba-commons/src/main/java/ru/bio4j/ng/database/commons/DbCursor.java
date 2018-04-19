@@ -42,19 +42,12 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
         return this.init(conn, sql, params, 60);
     }
 
-
-    @Override
-    public SQLCursor init(Connection conn, String sql) throws Exception {
-        return this.init(conn, sql, null, 60);
-    }
-
     @Override
 	protected void prepareStatement() throws SQLException {
         this.preparedSQL = this.sql;
         this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
         this.preparedStatement.setQueryTimeout(this.timeout);
 	}
-
 
     @Override
     protected void resetCommand() throws SQLException {

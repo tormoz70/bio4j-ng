@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.BioQueryParams;
 import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
@@ -26,7 +27,7 @@ public class BioServletLoginBase extends BioServletBase {
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
         loginProcessor.setSecurityProvider(securityProvider);
-        SrvcUtils.BioQueryParams prms = ((BioWrappedRequest)request).getBioQueryParams();
+        BioQueryParams prms = ((BioWrappedRequest)request).getBioQueryParams();
 
         brsp.user(loginProcessor.login(prms));
         return brsp;

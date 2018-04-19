@@ -7,12 +7,7 @@ import java.util.List;
 /**
  * @title Интерфейс обертки запросов
  */
-public interface Wrapper<T extends BioCursorDeclaration.SQLDef> {
-
-    /**
-     * @title "Оборачивание" запроса
-     * @param sqlDef
-     * @return Обернутый запрос
-     */
-    T wrap(T sqlDef, List<Param> params) throws Exception;
-}
+//public interface Wrapper<T extends BioCursorDeclaration.SQLDef> {
+//
+//    T wrap(T sqlDef, List<Param> params) throws Exception;
+//}

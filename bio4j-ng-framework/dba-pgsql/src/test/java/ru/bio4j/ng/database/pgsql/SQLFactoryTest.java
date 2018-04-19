@@ -112,7 +112,7 @@ public class SQLFactoryTest {
                 String sql = "select user as curuser, :dummy as dm, :dummy1 as dm1";
                 List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sql).open(prms, usr);){
+                        .init(conn, sql, null).open(prms, usr);){
                     while(c.reader().next()){
                         dummysum1 += c.reader().getValue("DM", Double.class);
                     }
@@ -142,7 +142,7 @@ public class SQLFactoryTest {
                                 .build()
                 ).pop();
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sql).open(prms, usr);){
+                        .init(conn, sql, null).open(prms, usr);){
                     while(c.reader().next()){
                         dummysum1 += c.reader().getValue("fld1", String.class).length();
                     }

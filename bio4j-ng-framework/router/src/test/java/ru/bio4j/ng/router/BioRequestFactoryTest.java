@@ -5,6 +5,7 @@ import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioRequestGetJson;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
+import ru.bio4j.ng.service.api.BioQueryParams;
 import ru.bio4j.ng.service.api.BioRequestFactory;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
@@ -17,7 +18,7 @@ public class BioRequestFactoryTest {
     @Test(enabled = true)
     public void testRestore0() throws Exception {
         BioRequestFactory<BioRequestGetJson> factory = new BioRequestFactory.GetJson();
-        SrvcUtils.BioQueryParams qprms = new SrvcUtils.BioQueryParams();
+        BioQueryParams qprms = new BioQueryParams();
         qprms.jsonData = "{ 'bioParams': [{'name': 'nam', 'value': 'tessa'}], 'sort': [ {'fieldName': 'aname', 'direction': 'DESC'} ] }";
         BioRequest request = factory.restore(qprms, BioRequestGetJson.class, null);
         List<Param> prms = request.getBioParams();
@@ -26,7 +27,7 @@ public class BioRequestFactoryTest {
     @Test(enabled = true)
     public void testRestore1() throws Exception {
         BioRequestFactory<BioRequestGetJson> factory = new BioRequestFactory.GetJson();
-        SrvcUtils.BioQueryParams qprms = new SrvcUtils.BioQueryParams();
+        BioQueryParams qprms = new BioQueryParams();
         qprms.jsonData = "{ 'bioParams': {'nam1':'tessa1', 'nam2':'tessa2'}, 'sort': [ {'fieldName': 'aname', 'direction': 'DESC'} ] }";
         BioRequest request = factory.restore(qprms, BioRequestGetJson.class, null);
         List<Param> prms = request.getBioParams();

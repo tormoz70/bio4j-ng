@@ -7,5 +7,15 @@ import java.util.List;
 
 public interface Wrappers {
 
-    Wrapper getWrapper(WrapQueryType wrapQueryType) throws SQLException;
+    FilteringWrapper getFilteringWrapper();
+
+    SortingWrapper getSortingWrapper();
+
+    PaginationWrapper getPaginationWrapper();
+
+    TotalsWrapper getTotalsWrapper();
+
+    LocateWrapper getLocateWrapper();
+
+    GetrowWrapper getGetrowWrapper();
 }

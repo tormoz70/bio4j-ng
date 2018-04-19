@@ -103,7 +103,7 @@ public class DbUtils {
             @Override
             public Integer exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql()).open(params, u);){
+                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
                     while(c.reader().next()){
                         delegateAction.callback(c.reader());
                     }
@@ -119,7 +119,7 @@ public class DbUtils {
             @Override
             public T exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql()).open(params, u);){
+                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
                     if(c.reader().next()){
                         return Converter.toType(c.reader().getValue(1), clazz);
                     }

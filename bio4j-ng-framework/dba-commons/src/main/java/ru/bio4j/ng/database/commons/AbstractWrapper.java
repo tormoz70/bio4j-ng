@@ -1,7 +1,6 @@
 package ru.bio4j.ng.database.commons;
 
 
-import ru.bio4j.ng.database.api.Wrapper;
 import ru.bio4j.ng.database.api.WrapperInterpreter;
 
 /**

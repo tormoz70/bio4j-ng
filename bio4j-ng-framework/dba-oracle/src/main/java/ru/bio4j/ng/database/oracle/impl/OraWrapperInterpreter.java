@@ -92,8 +92,6 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
 
     @Override
     public String sortToSQL(String alias, List<Sort> sort) throws Exception {
-//        List<Sort> sort = sqlDef.getDefaultSort();
-//        List<Field> fields = sqlDef.getFields();
         if(sort != null) {
             StringBuilder result = new StringBuilder();
             char comma; String fieldName; Sort.Direction direction;
@@ -101,13 +99,8 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
                 comma = (result.length() == 0) ? ' ' : ',';
                 fieldName = s.getFieldName();
                 direction = s.getDirection();
-                if(!Strings.isNullOrEmpty(fieldName)) {
-                    //TODO перенести подстановку поля выше
-//                    Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
-//                    if(fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
-//                        fieldName = fldDef.getSorter();
+                if(!Strings.isNullOrEmpty(fieldName))
                     result.append(String.format("%s %s.%s %s NULLS LAST", comma, alias, fieldName.toUpperCase(), direction.toString()));
-                }
             }
             return result.toString();
         }

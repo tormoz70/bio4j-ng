@@ -3,7 +3,6 @@ package ru.bio4j.ng.crudhandlers.impl;
 import org.slf4j.Logger;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.database.commons.wrappers.pagination.LocateWrapper;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
@@ -48,26 +47,15 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
                 }
                 LOG.debug("Count records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);
             }
-            //TODO засунуть во входящие параметры
-//            cur.getSelectSqlDef().setOffset(request.getOffset());
 
             if(request.getLocation() != null) {
                 LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), request.getLocation());
-                List<Param> locateParams = Paramus.clone(request.getBioParams());
-                try(Paramus p = Paramus.set(locateParams)){
-                    p.setValue(LocateWrapper.PKVAL, request.getLocation());
-                    p.setValue(LocateWrapper.STARTFROM, request.getOffset());
-                }
                 try (SQLCursor c = context.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getLocateSql(), locateParams).open(null);) {
+                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), request.getUser());) {
                     if (c.reader().next()) {
                         int locatedPos = c.reader().getValue(1, int.class);
                         int offset = calcOffset(locatedPos, request.getPageSize());
                         LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), request.getLocation(), locatedPos, offset);
-                        //TODO это перенести во входящие параметры
-//                        cur.getSelectSqlDef().setOffset(offset);
-//                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.OFFSET, cur.getSelectSqlDef().getOffset());
-//                            cur.getSelectSqlDef().setParamValue(PaginationWrapper.LAST, cur.getSelectSqlDef().getOffset() + cur.getSelectSqlDef().getPageSize());
                     } else {
                         LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), request.getLocation());
                         result.exception(new BioError.LocationFail(request.getLocation()));
@@ -125,28 +113,13 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
 
     }
 
-    private static void initSelectSqlDef(final BioCursorDeclaration.SelectSQLDef sqlDef, final BioRequestJStoreExpDataSet request) {
-//        sqlDef.setParams(request.getBioParams());
-        //sqlDef.setOffset(request.getOffset());
-        //sqlDef.setPageSize(request.getPageSize());
-        //sqlDef.setLocation(request.getLocation());
-//        sqlDef.setFilter(request.getFilter());
-//        sqlDef.setSort(request.getSort());
-        //TODO Это все надо засунуть во входящие параметры
-    }
-
     @Override
     public void process(final BioRequestJStoreExpDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-//            final BioCursorDeclaration cursor = contentResolver.getCursor(module.getKey(), request);
             final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
-            initSelectSqlDef(cursor.getSelectSqlDef(), request);
-
-            context.getWrappers().getWrapper(WrapQueryType.FILTERING).wrap(cursor.getSelectSqlDef(), request.getBioParams());
-            //context.getWrappers().getWrapper(WrapQueryType.TOTALS).wrap(cursor.getSelectSqlDef());
-            context.getWrappers().getWrapper(WrapQueryType.SORTING).wrap(cursor.getSelectSqlDef(), request.getBioParams());
-            //context.getWrappers().getWrapper(WrapQueryType.LOCATE).wrap(cursor.getSelectSqlDef());
+            context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef(), request.getFilter());
+            context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef(), request.getSort());
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {

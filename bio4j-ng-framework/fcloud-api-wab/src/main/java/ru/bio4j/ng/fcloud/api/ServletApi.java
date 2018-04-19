@@ -95,7 +95,7 @@ public class ServletApi extends BioServletApiBase {
             initServices(this.getServletContext());
             initFCloudProvider(this.getServletContext());
 
-            SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
+            BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
             User usr = this.securityProvider.getUser(qprms.stoken, qprms.remoteIP, qprms.remoteClient);
             String fcmd = request.getParameter("fcmd");
             if(!Strings.isNullOrEmpty(fcmd)) {

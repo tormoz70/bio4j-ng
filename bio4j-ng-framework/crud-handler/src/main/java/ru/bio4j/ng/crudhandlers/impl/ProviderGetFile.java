@@ -26,14 +26,11 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         final SQLStoredProc cmd = sqlContext.createStoredProc();
         final BioCursorDeclaration.SQLDef sqlDef = cursor.getAfterselectSqlDef();
         if(sqlDef != null) {
-            //TODO это надо сделать выше, сразу после восстановления BioRequest
-            Paramus.setParamValue(request.getBioParams(), "p_hash_code", request.getFileHashCode());
             List<Param> r = sqlContext.execBatch((ctx, conn, usr) -> {
                 cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
                         .execSQL(request.getBioParams(), usr);
                 return cmd.getParams();
             }, request.getUser());
-//            request.setParams(r);
         }
     }
 
@@ -49,14 +46,8 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         final BioCursorDeclaration.SelectSQLDef sqlSelectDef = cursor.getSelectSqlDef();
         final BioCursorDeclaration.UpdelexSQLDef sqlExecDef = cursor.getExecSqlDef();
         sqlContext.execBatch((ctx, conn, cur, usr) -> {
-//            tryPrepareSessionContext(user.getInnerUid(), conn);
 
             if(sqlSelectDef != null) {
-//                try(Paramus p = Paramus.set(sqlSelectDef.getParams())){
-//                    p.setValue("p_hash_code", request.getFileHashCode());
-//                }
-                //TODO это надо сделать выше, сразу после восстановления BioRequest
-                Paramus.setParamValue(request.getBioParams(), "p_hash_code", request.getFileHashCode());
                 boolean fileStoredToTmpStorage = false;
                 try (SQLCursor c = ctx.createCursor()
                         .init(conn, sqlSelectDef.getSql(), sqlSelectDef.getParamDeclaration()).open(request.getBioParams(), usr);) {

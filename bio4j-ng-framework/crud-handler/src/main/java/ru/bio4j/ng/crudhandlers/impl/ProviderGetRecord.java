@@ -5,7 +5,6 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.WrapQueryType;
-import ru.bio4j.ng.database.commons.wrappers.filtering.GetrowWrapper;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
@@ -21,10 +20,6 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
         BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cursorDef, usr) -> {
             final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
             result.bioCode(cursorDef.getBioCode());
-
-//            cursorDef.getSelectSqlDef().setParamValue(GetrowWrapper.PKVAL, request.getId());
-            List<Param> prms = request.getBioParams();
-            Paramus.setParamValue(prms, GetrowWrapper.PKVAL, request.getId());
 
             StoreData data = new StoreData();
             data.setStoreId(request.getStoreId());
@@ -47,7 +42,7 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
             if(cursor.getSelectSqlDef() == null)
                 throw new Exception(String.format("For bio \"%s\" must be defined \"select\" sql!", cursor.getBioCode()));
 
-            context.getWrappers().getWrapper(WrapQueryType.GETROW).wrap(cursor.getSelectSqlDef(), request.getBioParams());
+            context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef());
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {

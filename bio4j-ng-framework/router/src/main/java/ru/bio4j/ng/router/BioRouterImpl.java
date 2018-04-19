@@ -181,7 +181,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     @Override
     public void route(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        final SrvcUtils.BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
+        final BioQueryParams qprms = ((BioWrappedRequest) request).getBioQueryParams();
 
 //        final User usr = securityProvider.getUser(qprms.stoken, qprms.remoteIP);
         final User usr = ((BioWrappedRequest) request).getUser();

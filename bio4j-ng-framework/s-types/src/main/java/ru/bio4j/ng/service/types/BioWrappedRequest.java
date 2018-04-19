@@ -1,16 +1,20 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+import ru.bio4j.ng.service.api.BioQueryParams;
+import ru.bio4j.ng.service.api.RestParamNames;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -20,9 +24,9 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     private final Map<String, String[]> modParameters;
     private final HashMap<String, String> modHeaders;
 
-    private SrvcUtils.BioQueryParams bioQueryParams;
+    private BioQueryParams bioQueryParams;
 
-    public SrvcUtils.BioQueryParams getBioQueryParams() {
+    public BioQueryParams getBioQueryParams() {
         return bioQueryParams;
     }
 
@@ -62,7 +66,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     private static final String[] ACS_SYS_PAR_NAMES = {"_dc"};
     private static List<String> extractSysParamNames() {
         List<String> rslt = new ArrayList<>();
-        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(SrvcUtils.BioQueryParams.class)) {
+        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(BioQueryParams.class)) {
             String fldName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);
             if(p != null) {
@@ -75,7 +79,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return rslt;
     }
 
-    private static void extractBioParamsFromQuery(SrvcUtils.BioQueryParams qparams) {
+    private static void extractBioParamsFromQuery(BioQueryParams qparams) {
         List<String> sysParamNames = extractSysParamNames();
         qparams.bioParams = new ArrayList<>();
         Enumeration<String> paramNames = qparams.request.getParameterNames();
@@ -119,9 +123,30 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
         return rslt;
     }
+    private static void setQueryParamsToBioParams(BioQueryParams qprms) throws Exception {
+        if(qprms.bioParams == null)
+            qprms.bioParams = new ArrayList<>();
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGE, qprms.page);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGESIZE, qprms.pageSize);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_OFFSET, qprms.offset);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_LAST, qprms.offset+qprms.pageSize);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.GETROW_PARAM_PKVAL, qprms.id);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.RAPI_PARAM_FILEHASHCODE, qprms.fileHashCode);
+        Object location = qprms.location;
+        if (location != null && location instanceof String) {
+            if (((String) location).startsWith("1||"))
+                location = null;
+            if (((String) location).startsWith("0||")) {
+                location = Regexs.find((String) location, "(?<=0\\|\\|)(\\w|\\d|-|\\+)+", Pattern.CASE_INSENSITIVE);
+            }
+            Paramus.setParamValue(qprms.bioParams, RestParamNames.LOCATE_PARAM_PKVAL, location);
+        }
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.LOCATE_PARAM_STARTFROM, qprms.offset);
+    }
 
-    public static SrvcUtils.BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
-        SrvcUtils.BioQueryParams result = Httpc.createBeanFromHttpRequest(request, SrvcUtils.BioQueryParams.class);
+
+    public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
+        BioQueryParams result = Httpc.createBeanFromHttpRequest(request, BioQueryParams.class);
 
         result.request = request;
         result.method = request.getMethod();
@@ -150,17 +175,17 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
 
         if(Strings.isNullOrEmpty(result.pageOrig)) {
-            final String bioHeaderPage = request.getHeader("X-Pagging-Page");
+            final String bioHeaderPage = request.getHeader("X-Pagination-Page");
             if (!Strings.isNullOrEmpty(bioHeaderPage))
                 result.pageOrig = bioHeaderPage;
         }
         if(Strings.isNullOrEmpty(result.offsetOrig)) {
-            final String bioHeaderOffset = request.getHeader("X-Pagging-Offset");
+            final String bioHeaderOffset = request.getHeader("X-Pagination-Offset");
             if (!Strings.isNullOrEmpty(bioHeaderOffset))
                 result.offsetOrig = bioHeaderOffset;
         }
         if(Strings.isNullOrEmpty(result.pageSizeOrig)) {
-            final String bioHeaderPageSize = request.getHeader("X-Pagging-Page-Size");
+            final String bioHeaderPageSize = request.getHeader("X-Pagination-Pagesize");
             if (!Strings.isNullOrEmpty(bioHeaderPageSize))
                 result.pageSizeOrig = bioHeaderPageSize;
         }
@@ -220,8 +245,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             result.offset = Sqls.UNKNOWN_RECS_TOTAL + 1 - result.pageSize;
         }
 
-
         extractBioParamsFromQuery(result);
+        setQueryParamsToBioParams(result);
 
         return result;
     }
