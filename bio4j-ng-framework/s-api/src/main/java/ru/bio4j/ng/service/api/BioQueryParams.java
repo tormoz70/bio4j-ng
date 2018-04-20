@@ -52,6 +52,7 @@ public class BioQueryParams {
     @Prop(name = "pageSize")
     public String pageSizeOrig;
     public Integer pageSize;
+    public Integer totalCount;
 
     @Prop(name = "locate")
     public String location;
