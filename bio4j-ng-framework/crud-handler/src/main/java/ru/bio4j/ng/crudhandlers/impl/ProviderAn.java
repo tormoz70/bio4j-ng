@@ -9,6 +9,8 @@ import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.model.transport.ABean;
+import ru.bio4j.ng.model.transport.ABeanPage;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.*;
@@ -85,7 +87,7 @@ public abstract class ProviderAn<T extends BioRequest> {
             List<StoreRow> rows = new ArrayList<>();
             while(c.reader().next()) {
                 StoreRow r = new StoreRow();
-                Map<String, Object> vals = new HashMap<>();
+                ABean vals = new ABean();
                 for (Field field : fields) {
                     DBField f = c.reader().getField(field.getName());
                     if (f != null) {
@@ -108,6 +110,17 @@ public abstract class ProviderAn<T extends BioRequest> {
             data.setRows(rows);
         }
         return totalCount;
+    }
+
+    protected static void fillData(final ABeanPage beanPage, final StoreData data, final Logger LOG) throws Exception {
+        data.getMetadata().setFields(beanPage.getMetadata());
+        List<StoreRow> rows = new ArrayList<>();
+        for (ABean bean : beanPage.getRows()) {
+            StoreRow r = new StoreRow();
+            r.setData(bean);
+            rows.add(r);
+        }
+        data.setRows(rows);
     }
 
     public abstract void process(final T request, final HttpServletResponse response) throws Exception;

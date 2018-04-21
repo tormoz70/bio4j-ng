@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.commons;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
@@ -20,12 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CrudReaderApi {
+    protected final static Logger LOG = LoggerFactory.getLogger(CrudReaderApi.class);
 
-    protected static final int MAX_RECORDS_FETCH_LIMIT = 2500;
+    private static final int MAX_RECORDS_FETCH_LIMIT = 2500;
 
-    protected static ABeanPage readStoreData(final List<Param> params, final SQLContext context, final Connection conn, final BioCursorDeclaration cursorDef, final Logger LOG) throws Exception {
+    private static ABeanPage readStoreData(final List<Param> params, final SQLContext context, final Connection conn, final BioCursorDeclaration cursorDef) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
+        result.setTotalCount(Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, 0));
         result.setPaginationOffset(Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0));
         result.setRows(new ArrayList<>());
 
@@ -61,36 +64,32 @@ public class CrudReaderApi {
         return result;
     }
 
-    protected static int calcOffset(int locatedPos, int pageSize){
+    private static int calcOffset(int locatedPos, int pageSize){
         int pg = ((int)((double)(locatedPos-1) / (double)pageSize) + 1);
         return (pg - 1) * pageSize;
     }
 
-    private static ABeanPage loadPage(
+    public static ABeanPage loadPage(
             final List<Param> params,
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
             final BioCursorDeclaration cursor,
-            final User user,
-            final Logger LOG) throws Exception {
-        LOG.debug("Try load page of \"{}\" cursor!!!", cursor.getBioCode());
+            final User user) throws Exception {
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, Object.class, 0);
         final int paginationOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0);
         final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        final int paginationTotalcount = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, 0);
+        final int paginationTotalcount = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, Sqls.UNKNOWN_RECS_TOTAL);
 
         context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef(), filter);
         context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef());
         context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef(), sort);
-        context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef(), location);
-        context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef(), paginationPagesize);
+        context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef());
+        context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef());
 
         final ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
-            boolean requestCached = false; //requestCached(request, LOG);
-
             int factOffset = paginationOffset;
-            int totalCount = requestCached ? paginationTotalcount : Sqls.UNKNOWN_RECS_TOTAL;
+            int totalCount = paginationTotalcount;
             if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
                 LOG.debug("Try calc count of records of cursor \"{}\"!!!", cur.getBioCode());
                 try (SQLCursor c = ctx.createCursor()
@@ -117,47 +116,27 @@ public class CrudReaderApi {
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
-            ABeanPage beanPage = readStoreData(params, ctx, conn, cur, LOG);
-            beanPage.setPaginationOffset(factOffset);
-            return beanPage;
+            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
+            return readStoreData(params, ctx, conn, cur);
         }, cursor, user);
         return result;
     }
 
-    private static ABeanPage loadAll(final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, User user, final Logger LOG) throws Exception {
-        LOG.debug("Try load all records of \"{}\" cursor!!!", cursor.getBioCode());
-        ABeanPage result = ctx.execBatch((context, conn, cur, usr) -> {
-            return readStoreData(params, context, conn, cur, LOG);
-        }, cursor, user);
-        return result;
-
-    }
-
-    public ABeanPage process(
-            final List<Param> params,
-            final Filter filter,
-            final List<Sort> sort,
-            final SQLContext context,
-            final BioCursorDeclaration cursor,
-            User user,
-            final Logger LOG) throws Exception {
-        LOG.debug("Process for \"{}\" cursor...", cursor.getBioCode());
-        final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, Object.class, 0);
-        final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-
+    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final BioCursorDeclaration cursor, User user) throws Exception {
         context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef(), filter);
-        context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef());
         context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef(), sort);
-        context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef(), location);
-        ABeanPage beanPage;
-        if(paginationPagesize > 0) {
-            context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef(), paginationPagesize);
-            beanPage = loadPage(params, context, cursor, user, LOG);
-        }else {
-            beanPage = loadAll(params, context, cursor, user, LOG);
-        }
-        LOG.debug("Processed getDataSet for \"{}\" - returning response...", cursor.getBioCode());
-        return beanPage;
+        ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
+            return readStoreData(params, ctx, conn, cur);
+        }, cursor, user);
+        return result;
+    }
+
+    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioCursorDeclaration cursor, User user) throws Exception {
+        context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef());
+        ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
+            return readStoreData(params, ctx, conn, cur);
+        }, cursor, user);
+        return result;
     }
 
 }

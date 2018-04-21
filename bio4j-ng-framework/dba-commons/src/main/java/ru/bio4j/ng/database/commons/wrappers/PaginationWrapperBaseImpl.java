@@ -17,12 +17,10 @@ public class PaginationWrapperBaseImpl extends AbstractWrapper implements Pagina
         this.template = template;
     }
 
-    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, int pageSize) throws Exception {
-        if(pageSize > 0) {
-            if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.PAGINATION.code()) == BioCursorDeclaration.WrapMode.PAGINATION.code()) {
-                String sql = template.replace(QUERY, sqlDef.getPreparedSql());
-                sqlDef.setPreparedSql(sql);
-            }
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception {
+        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.PAGINATION.code()) == BioCursorDeclaration.WrapMode.PAGINATION.code()) {
+            String sql = template.replace(QUERY, sqlDef.getPreparedSql());
+            sqlDef.setPreparedSql(sql);
         }
         return sqlDef;
     }

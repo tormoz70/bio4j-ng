@@ -133,6 +133,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_LAST, qprms.offset+qprms.pageSize);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.GETROW_PARAM_PKVAL, qprms.id);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.RAPI_PARAM_FILEHASHCODE, qprms.fileHashCode);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.QUERY_PARAM_VALUE, qprms.query);
         Object location = qprms.location;
         if (location != null && location instanceof String) {
             if (((String) location).startsWith("1||"))

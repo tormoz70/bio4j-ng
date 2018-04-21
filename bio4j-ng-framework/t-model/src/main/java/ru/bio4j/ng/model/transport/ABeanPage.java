@@ -9,6 +9,7 @@ public class ABeanPage {
     private int paginationPage;
     private int paginationOffset;
     private int paginationCount;
+    private int totalCount;
     private List<Field> metadata;
 
     public List<ABean> getRows() {
@@ -49,5 +50,13 @@ public class ABeanPage {
 
     public void setPaginationPage(int paginationPage) {
         this.paginationPage = paginationPage;
+    }
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
     }
 }

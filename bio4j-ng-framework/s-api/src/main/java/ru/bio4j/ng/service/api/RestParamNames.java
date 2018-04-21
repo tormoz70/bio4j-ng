@@ -9,6 +9,7 @@ public class RestParamNames {
     public static final String GETROW_PARAM_PKVAL = "getrow$pkvalue";
     public static final String LOCATE_PARAM_PKVAL = "locate$pkvalue";
     public static final String LOCATE_PARAM_STARTFROM = "locate$startfrom";
+    public static final String QUERY_PARAM_VALUE = "query$value";
 
     public static final String RAPI_PARAM_FILEHASHCODE = "file$hashcode"; //p_hash_code
 }

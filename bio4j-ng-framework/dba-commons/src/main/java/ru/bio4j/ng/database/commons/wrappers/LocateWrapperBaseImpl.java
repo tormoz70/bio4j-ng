@@ -23,9 +23,7 @@ public class LocateWrapperBaseImpl extends AbstractWrapper implements LocateWrap
         this.template = template;
     }
 
-    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, Object location) throws Exception {
-        if(location == null)
-            return sqlDef;
+    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception {
         Field pkCol = sqlDef.findPk();
         if(pkCol == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", sqlDef.getBioCode()));

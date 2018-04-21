@@ -77,5 +77,8 @@ public class BioQueryParams {
     @Prop(name = "selection")
     public String selection;
 
+    @Prop(name = "query")
+    public String query;
+
     public List<Param> bioParams;
 }
