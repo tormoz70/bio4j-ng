@@ -1,5 +1,7 @@
 package ru.bio4j.ng.model.transport.jstore;
 
+import ru.bio4j.ng.model.transport.ABean;
+
 import java.util.Map;
 
 /**
@@ -20,7 +22,7 @@ public class StoreRow {
     /**
      * Значения в строках
      */
-    private Map<String, Object> data;
+    private ABean data;
 
     public String getInternalId() {
         return internalId;
@@ -38,11 +40,11 @@ public class StoreRow {
         this.changeType = changeType;
     }
 
-    public Map<String, Object> getData() {
+    public ABean getData() {
         return data;
     }
 
-    public void setData(Map<String, Object> data) {
+    public void setData(ABean data) {
         this.data = data;
     }
 

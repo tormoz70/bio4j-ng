@@ -98,12 +98,12 @@ public class DbUtils {
     }
 
     public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
-        final BioCursorDeclaration.SQLDef sqlDef = cursor.getSelectSqlDef();
+        final BioCursorDeclaration.SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
             public Integer exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
+                        .init(conn, sqlDef).open(params, u);){
                     while(c.reader().next()){
                         delegateAction.callback(c.reader());
                     }
@@ -114,12 +114,12 @@ public class DbUtils {
     }
 
     public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final User user, Class<T> clazz) throws Exception {
-        final BioCursorDeclaration.SQLDef sqlDef = cursor.getSelectSqlDef();
+        final BioCursorDeclaration.SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
             public T exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
+                        .init(conn, sqlDef).open(params, u);){
                     if(c.reader().next()){
                         return Converter.toType(c.reader().getValue(1), clazz);
                     }

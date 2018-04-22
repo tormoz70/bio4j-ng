@@ -35,7 +35,7 @@ public class CrudReaderApi {
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
         try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, null);) {
+                .init(conn, cursorDef.getSelectSqlDef()).open(prms, null);) {
             long estimatedTime = System.currentTimeMillis() - startTime;
             LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
             result.setMetadata(cursorDef.getFields());
@@ -76,7 +76,7 @@ public class CrudReaderApi {
             final SQLContext context,
             final BioCursorDeclaration cursor,
             final User user) throws Exception {
-        final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, Object.class, 0);
+        final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
         final int paginationOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0);
         final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         final int paginationTotalcount = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, Sqls.UNKNOWN_RECS_TOTAL);
@@ -84,8 +84,10 @@ public class CrudReaderApi {
         context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef(), filter);
         context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef());
         context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef(), sort);
-        context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef());
-        context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef());
+        if(location != null)
+            context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef());
+        if(paginationPagesize > 0)
+            context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef());
 
         final ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
             int factOffset = paginationOffset;
@@ -117,6 +119,7 @@ public class CrudReaderApi {
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
+            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LAST, factOffset+paginationPagesize);
             return readStoreData(params, ctx, conn, cur);
         }, cursor, user);
         return result;

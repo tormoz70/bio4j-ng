@@ -11,7 +11,9 @@ import java.util.List;
 public interface SQLCursor extends SQLCommand, AutoCloseable {
     SQLCursor init(Connection conn, String sql, List<Param> prms, int timeout) throws Exception;
     SQLCursor init(Connection conn, String sql, List<Param> prms) throws Exception;
-    //SQLCursor init(Connection conn, String sql) throws Exception;
+    SQLCursor init(Connection conn, String sql) throws Exception;
+    SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef, int timeout) throws Exception;
+    SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception;
 
     String getSQL();
 

@@ -126,11 +126,10 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     private static void setQueryParamsToBioParams(BioQueryParams qprms) throws Exception {
         if(qprms.bioParams == null)
             qprms.bioParams = new ArrayList<>();
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGE, qprms.page);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGESIZE, qprms.pageSize);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_OFFSET, qprms.offset);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGE, qprms.page, MetaType.INTEGER);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGESIZE, qprms.pageSize, MetaType.INTEGER);
+        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_OFFSET, qprms.offset, MetaType.INTEGER);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, qprms.totalCount);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_LAST, qprms.offset+qprms.pageSize);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.GETROW_PARAM_PKVAL, qprms.id);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.RAPI_PARAM_FILEHASHCODE, qprms.fileHashCode);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.QUERY_PARAM_VALUE, qprms.query);
@@ -241,11 +240,13 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         result.page = Converter.toType(result.pageOrig, Integer.class, true);
         result.offset = Converter.toType(result.offsetOrig, Integer.class, true);
         result.pageSize = Converter.toType(result.pageSizeOrig, Integer.class, true);
-        if(result.pageSize == null && result.pageSizeOrig == null) result.pageSize = 50;
         if((result.page == null && result.pageOrig != null && result.pageOrig.equalsIgnoreCase("last")) ||
                 (result.offset == null && result.offsetOrig != null && result.offsetOrig.equalsIgnoreCase("last"))) {
             result.offset = Sqls.UNKNOWN_RECS_TOTAL + 1 - result.pageSize;
         }
+        if(result.pageSize == null && result.pageSizeOrig == null) result.pageSize = 50;
+        if(result.page == null && result.pageOrig == null) result.page = 1;
+        if(result.offset == null && result.offsetOrig == null) result.offset = 0;
 
         extractBioParamsFromQuery(result);
         setQueryParamsToBioParams(result);

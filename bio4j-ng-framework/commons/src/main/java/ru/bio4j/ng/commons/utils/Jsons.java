@@ -8,13 +8,13 @@ import flexjson.*;
 import flexjson.transformer.AbstractTransformer;
 import flexjson.transformer.DateTransformer;
 import ru.bio4j.ng.commons.converter.Types;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.MetaType;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 public class Jsons {
 
@@ -93,6 +93,15 @@ public class Jsons {
                         BioError object = (BioError)ctor.newInstance(new Object[]{message});
                         return object;
                     }
+                }).use(ABean.class, new ObjectFactory() {
+                    @Override
+                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
+                        HashMap<String, ?> vals = (HashMap<String, ?>) value;
+                        ABean rslt = new ABean();
+                        for(String key : vals.keySet())
+                            rslt.put(key, vals.get(key));
+                        return rslt;
+                    }
                 });
 
     }
@@ -115,6 +124,26 @@ public class Jsons {
     public static <T> T decode(String json, ObjectFactory factory) throws Exception {
         JSONDeserializer<T> d = createDeserializer();
         return d.deserialize(json, factory);
+    }
+
+    public static class ABeanWrapper{
+        public ABean abean;
+    }
+    public static class ABeansWrapper{
+        public List<ABean> abeans;
+    }
+    public static List<ABean> decodeABeans(String json) throws Exception {
+        if(json.trim().startsWith("[")) {
+            json = String.format("{\"abeans\":%s}", json);
+            ABeansWrapper dummy1 = decode(json, ABeansWrapper.class);
+            if (dummy1.abeans != null)
+                return dummy1.abeans;
+        }
+        json = String.format("{\"abean\":%s}", json);
+        ABeanWrapper dummy2 = decode(json, ABeanWrapper.class);
+        if(dummy2.abean != null)
+            return Arrays.asList(dummy2.abean);
+        return new ArrayList<>();
     }
 
 }

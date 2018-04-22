@@ -50,7 +50,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
             if(sqlSelectDef != null) {
                 boolean fileStoredToTmpStorage = false;
                 try (SQLCursor c = ctx.createCursor()
-                        .init(conn, sqlSelectDef.getSql(), sqlSelectDef.getParamDeclaration()).open(request.getBioParams(), usr);) {
+                        .init(conn, sqlSelectDef).open(request.getBioParams(), usr);) {
                     if (c.reader().next()) {
                         ResultSet r = c.reader().getResultSet();
                         rslt.fileName = r.getString("file_name");

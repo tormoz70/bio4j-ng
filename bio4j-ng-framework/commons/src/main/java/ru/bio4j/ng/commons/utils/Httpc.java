@@ -22,7 +22,7 @@ public class Httpc {
     }
 
     public static void readDataFromRequest(HttpServletRequest request, StringBuilder jd) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));) {
             String line;
             while ((line = reader.readLine()) != null)
                 jd.append(line);

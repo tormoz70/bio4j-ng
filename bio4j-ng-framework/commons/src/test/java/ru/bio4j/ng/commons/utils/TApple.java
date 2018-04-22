@@ -1,8 +1,11 @@
 package ru.bio4j.ng.commons.utils;
 
+import ru.bio4j.ng.model.transport.ABean;
+
 public class TApple {
 	private String name;
 	private Double wheight;
+	private ABean bean;
 
 	public TApple() {
 	}
@@ -21,5 +24,13 @@ public class TApple {
 
 	public synchronized void setWheight(Double wheight) {
 		this.wheight = wheight;
+	}
+
+	public ABean getBean() {
+		return bean;
+	}
+
+	public void setBean(ABean bean) {
+		this.bean = bean;
 	}
 }

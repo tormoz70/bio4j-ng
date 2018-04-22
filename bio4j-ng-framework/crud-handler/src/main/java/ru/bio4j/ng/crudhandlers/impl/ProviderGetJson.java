@@ -17,7 +17,7 @@ public class ProviderGetJson extends ProviderAn<BioRequestGetJson> {
             final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder();
 
             try(SQLCursor c = context.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), null);) {
+                    .init(conn, cur.getSelectSqlDef()).open(request.getBioParams(), null);) {
                 while(c.reader().next()) {
                     List<Object> values = c.reader().getValues();
                     for(Object val : values)

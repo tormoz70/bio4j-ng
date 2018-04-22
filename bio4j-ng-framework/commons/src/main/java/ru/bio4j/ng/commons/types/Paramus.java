@@ -377,10 +377,12 @@ public class Paramus implements Closeable {
 		return Strings.isNullOrEmpty(rslt) ? cs_default_number_format : rslt;
 	}
 
-    public Paramus setValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
+    public Paramus setValue(String name, Object value, MetaType forceType, Param.Direction direction, boolean addIfNotExists) {
         Param param = this.getParam(name);
         if(param != null) {
 			Class inClass = value != null ? value.getClass() : String.class;
+			if(forceType != MetaType.UNDEFINED)
+                param.setType(forceType);
             MetaType paramType = param.getType();
             MetaType valueType = (paramType == MetaType.UNDEFINED ? MetaTypeConverter.read(inClass) : paramType);
             param.setType(valueType);
@@ -415,6 +417,15 @@ public class Paramus implements Closeable {
             }
         }
         return this;
+    }
+    public Paramus setValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
+	    return setValue(name, value, MetaType.UNDEFINED, direction, addIfNotExists);
+    }
+    public Paramus setValue(String name, Object value, MetaType forceType, boolean addIfNotExists) {
+        return setValue(name, value, forceType, Param.Direction.UNDEFINED, addIfNotExists);
+    }
+    public Paramus setValue(String name, Object value, MetaType forceType) {
+        return setValue(name, value, forceType, Param.Direction.UNDEFINED, true);
     }
     public Paramus setValue(String name, Object value, boolean addIfNotExists) {
         return setValue(name, value, Param.Direction.UNDEFINED, addIfNotExists);
@@ -506,6 +517,12 @@ public class Paramus implements Closeable {
 
     public static String paramValueAsString(List<Param> params, String paramName) throws Exception {
         return paramValueAsString(params, paramName, null);
+    }
+
+    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.setValue(paramName, value, forceType);
+        }
     }
 
     public static void setParamValue(List<Param> params, String paramName, Object value) throws Exception {

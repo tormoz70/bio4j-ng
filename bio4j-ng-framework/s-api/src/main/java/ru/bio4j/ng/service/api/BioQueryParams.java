@@ -49,7 +49,7 @@ public class BioQueryParams {
     @Prop(name = "offset")
     public String offsetOrig;
     public Integer offset;
-    @Prop(name = "pageSize")
+    @Prop(name = "limit")
     public String pageSizeOrig;
     public Integer pageSize;
     public Integer totalCount;

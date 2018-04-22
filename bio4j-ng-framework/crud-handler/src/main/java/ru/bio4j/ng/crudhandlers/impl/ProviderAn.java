@@ -76,7 +76,7 @@ public abstract class ProviderAn<T extends BioRequest> {
         long startTime = System.currentTimeMillis();
         List<Param> prms = request.getBioParams();
         try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, null);) {
+                .init(conn, cursorDef.getSelectSqlDef()).open(prms, null);) {
             long estimatedTime = System.currentTimeMillis() - startTime;
             LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
             data.setMetadata(new StoreMetadata());

@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -148,12 +149,12 @@ public class JsonUtlTest {
         StoreData data = new StoreData();
         List<StoreRow> rows = new ArrayList<>();
         StoreRow row = new StoreRow();
-        row.setData(new HashMap<String, Object>());
+        row.setData(new ABean());
         row.setValue("field1", "qwe");
         row.setValue("field2", 123);
         rows.add(row);
         row = new StoreRow();
-        row.setData(new HashMap<String, Object>());
+        row.setData(new ABean());
         row.setValue("field1", "asd");
         row.setValue("field2", 321);
         rows.add(row);
@@ -164,5 +165,43 @@ public class JsonUtlTest {
         StoreData dataRe = Jsons.decode(json, StoreData.class);
 
         Assert.assertNotNull(dataRe);
+
     }
+
+    private static final String tstPost7 = "{\n" +
+            "        \"loocaption\": \"item-finance-type - Вид финансирования\",\n" +
+            "        \"aname\": \"Вид финансирования1\",\n" +
+            "        \"adesc\": null,\n" +
+            "        \"acode\": \"item-finance-type\",\n" +
+            "        \"tdictId\": 7\n" +
+            "}";
+    @Test(enabled = true)
+    public void bdecode7() throws Exception {
+        List<ABean> dummy = Jsons.decodeABeans(tstPost7);
+        Assert.assertEquals(dummy.size(), 1);
+        Assert.assertEquals(dummy.get(0).get("tdictId"), 7);
+    }
+
+    private static final String tstPost8 = "[\n" +
+            "    {\n" +
+            "        \"loocaption\": \"item-finance-type - Вид финансирования\",\n" +
+            "        \"aname\": \"Вид финансирования\",\n" +
+            "        \"adesc\": null,\n" +
+            "        \"acode\": \"item-finance-type\",\n" +
+            "        \"tdict_id\": 7\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"loocaption\": \"geoframe - Географические рамки\",\n" +
+            "        \"aname\": \"Географические рамки\",\n" +
+            "        \"adesc\": null,\n" +
+            "        \"acode\": \"geoframe\",\n" +
+            "        \"tdict_id\": 27\n" +
+            "    }]\n";
+    @Test(enabled = true)
+    public void bdecode8() throws Exception {
+        List<ABean> dummy = Jsons.decodeABeans(tstPost8);
+        Assert.assertEquals(dummy.size(), 2);
+        Assert.assertEquals(dummy.get(1).get("tdict_id"), 27);
+    }
+
 }
