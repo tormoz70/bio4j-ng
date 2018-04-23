@@ -134,7 +134,7 @@ public class CrudReaderApi {
         return result;
     }
 
-    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioCursorDeclaration cursor, User user) throws Exception {
+    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioCursorDeclaration cursor, final User user) throws Exception {
         context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef());
         ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
             return readStoreData(params, ctx, conn, cur);

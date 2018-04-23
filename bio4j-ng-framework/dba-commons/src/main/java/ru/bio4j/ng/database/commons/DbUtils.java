@@ -9,6 +9,7 @@ import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
@@ -267,4 +268,22 @@ public class DbUtils {
 
     }
 
+    public static void applayRowToParams(ABean row, List<Param> params){
+        try(Paramus paramus = Paramus.set(params)) {
+            for(String key : row.keySet()) {
+                String paramName = DbUtils.normalizeParamName(key).toLowerCase();
+                Object paramValue = row.get(key);
+                Param p = paramus.getParam(paramName, true);
+                if(p != null){
+                    paramus.setValue(paramName, paramValue);
+                } else {
+                    paramus.add(Param.builder()
+                            .name(paramName)
+                            .value(paramValue)
+                            .build(), true);
+                }
+            }
+        }
+
+    }
 }
