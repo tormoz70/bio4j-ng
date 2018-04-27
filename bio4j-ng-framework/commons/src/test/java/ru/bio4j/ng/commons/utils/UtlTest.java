@@ -8,6 +8,7 @@ import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -317,5 +318,22 @@ public class UtlTest {
         LoginRec loginRec = Utl.parsLogin("qwe/asd");
         Assert.assertEquals(loginRec.getUsername(), "qwe");
         Assert.assertEquals(loginRec.getPassword(), "asd");
+    }
+    @Test
+    public void restoreSimpleSortTest() throws Exception {
+        List<Sort> sort = Utl.restoreSimpleSort("+rentName,-rentDate");
+        Assert.assertEquals(sort.get(0).getFieldName(), "rentName");
+        Assert.assertEquals(sort.get(0).getDirection(), Sort.Direction.ASC);
+        Assert.assertEquals(sort.get(1).getFieldName(), "rentDate");
+        Assert.assertEquals(sort.get(1).getDirection(), Sort.Direction.DESC);
+    }
+    @Test
+    public void restoreSimpleFilterTest() throws Exception {
+        Filter filter = Utl.restoreSimpleFilter("{rentName:\"something1\"|\"something2\",rentDate:\"val3\"}");
+        Assert.assertEquals(filter.getChildren().size(), 1);
+        Assert.assertEquals(filter.getChildren().get(0).getName(), "and");
+        Assert.assertEquals(filter.getChildren().get(0).getChildren().size(), 2);
+        Assert.assertEquals(filter.getChildren().get(0).getChildren().get(0).getName(), "or");
+        Assert.assertEquals(filter.getChildren().get(0).getChildren().get(1).getName(), "contains");
     }
 }

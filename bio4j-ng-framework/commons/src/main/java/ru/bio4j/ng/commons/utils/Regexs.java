@@ -1,5 +1,7 @@
 package ru.bio4j.ng.commons.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +15,15 @@ public class Regexs {
     public static String find(String line, String regex, int flags) {
         Matcher m = match(line, regex, flags);
         return (m != null && m.find()) ? m.group() : null;
+    }
+
+    public static List<String> findAll(String line, String regex, int flags) {
+        List<String> rslt = new ArrayList<>();
+        final Pattern pattern = Pattern.compile(regex, flags);
+        final Matcher matcher = pattern.matcher(line);
+        while (matcher.find())
+            rslt.add(matcher.group());
+        return rslt;
     }
 
     public static int pos(String line, String regex, int flags) {

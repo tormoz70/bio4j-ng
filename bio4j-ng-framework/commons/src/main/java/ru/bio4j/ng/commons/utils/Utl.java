@@ -10,6 +10,9 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.model.transport.jstore.filter.Expression;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -26,8 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
+import static ru.bio4j.ng.model.transport.jstore.filter.FilterBuilder.*;
 
 public class Utl {
     private static final Logger LOG = LoggerFactory.getLogger(Utl.class);
@@ -746,5 +751,64 @@ public class Utl {
                 name, enumeration.getName()
         ));
     }
+
+    public static Filter restoreSimpleFilter(String simpleFilter){
+        try {
+            if (simpleFilter.length() == 0 || !simpleFilter.startsWith("{") || !simpleFilter.endsWith("}"))
+                throw new Exception(String.format("Error in structure of filter \"%s\"!", simpleFilter));
+            simpleFilter = simpleFilter.substring(1, simpleFilter.length()-1);
+            Filter rslt = new Filter();
+            String[] items = Strings.split(simpleFilter, ",");
+
+            Expression rootAnd = and();
+            for (String item : items) {
+                String[] fildvalItems = Strings.split(item, ":");
+                if (fildvalItems.length != 2)
+                    throw new Exception(String.format("Error in structure of item \"%s\"!", item));
+                String checkedFieldName = Regexs.find(fildvalItems[0], "\\w+", Pattern.CASE_INSENSITIVE);
+                if (!fildvalItems[0].equals(checkedFieldName))
+                    throw new Exception(String.format("Error in fieldName of item \"%s\"!", item));
+                String[] fieldValues = Strings.split(fildvalItems[1], "\"|\"");
+                if (fieldValues.length == 0 || !fildvalItems[1].startsWith("\"") || !fildvalItems[1].endsWith("\""))
+                    throw new Exception(String.format("Error in fieldValue of item \"%s\"!", item));
+                fieldValues[0] = fieldValues[0].substring(1);
+                fieldValues[fieldValues.length-1] = fieldValues[fieldValues.length-1].substring(0, fieldValues[fieldValues.length-1].length()-1);
+                if(fieldValues.length > 1) {
+                    Expression itemOr = or();
+                    for (String fieldValue : fieldValues)
+                        itemOr.add(contains(checkedFieldName, fieldValue, true));
+                    rootAnd.add(itemOr);
+                } else
+                    rootAnd.add(contains(checkedFieldName, fieldValues[0], true));
+            }
+            rslt.add(rootAnd);
+            return rslt;
+        } catch (Exception e) {
+            LOG.error("Error parsing simple filter \"{}\". Msg: {}", simpleFilter, e.getMessage());
+            return null;
+        }
+    }
+    public static List<Sort> restoreSimpleSort(String simpleSort){
+        List<Sort> rslt = new ArrayList<>();
+        try {
+            Sort sort;
+            String[] items = Strings.split(simpleSort, ",", ";", "|");
+            for (String item : items) {
+                String checkedItem = Regexs.find(item, "(\\+|\\-)\\w+", Pattern.CASE_INSENSITIVE);
+                if (item.equals(checkedItem)) {
+                    sort = new Sort();
+                    sort.setFieldName(item.substring(1));
+                    sort.setDirection(item.substring(0, 1).equals("+") ? Sort.Direction.ASC : Sort.Direction.DESC);
+                    rslt.add(sort);
+                } else
+                    return null;
+            }
+        } catch (Exception e) {
+            LOG.error("Error parsing simple sort \"{}\". Msg: {}", simpleSort, e.getMessage());
+        }
+        return rslt;
+    }
+
+
 }
 

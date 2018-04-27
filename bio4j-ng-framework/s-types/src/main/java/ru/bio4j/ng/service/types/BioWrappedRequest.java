@@ -9,7 +9,6 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.service.api.BioQueryParams;
 import ru.bio4j.ng.service.api.RestParamNames;
-import ru.bio4j.ng.service.api.SrvcUtils;
 
 import java.nio.charset.Charset;
 import java.security.Principal;
@@ -145,7 +144,6 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         Paramus.setParamValue(qprms.bioParams, RestParamNames.LOCATE_PARAM_STARTFROM, qprms.offset);
     }
 
-
     public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
         BioQueryParams result = Httpc.createBeanFromHttpRequest(request, BioQueryParams.class);
 
@@ -229,12 +227,19 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             if (obj != null && result.filter == null)
                 result.filter = obj.getFilter();
         }
-        if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrg)) {
-            SortAndFilterObj obj = Jsons.decode("{ \"sort\":" + result.sortOrg + " }", SortAndFilterObj.class);
+        if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrig)) {
+            result.sort = Utl.restoreSimpleSort(result.sortOrig);
+        }
+        if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrig)) {
+            result.filter = Utl.restoreSimpleFilter(result.filterOrig);
+        }
+        if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrig)) {
+            SortAndFilterObj obj = Jsons.decode("{ \"sort\":" + result.sortOrig + " }", SortAndFilterObj.class);
             result.sort = obj.sort;
         }
-        if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrg))
-            result.filter = Jsons.decode(result.filterOrg, Filter.class);
+        if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrig)) {
+            result.filter = Jsons.decode(result.filterOrig, Filter.class);
+        }
 
 
         result.page = Converter.toType(result.pageOrig, Integer.class, true);

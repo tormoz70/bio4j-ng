@@ -3,6 +3,7 @@ package ru.bio4j.ng.commons.utils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,6 +130,16 @@ public class RegexUtlTest {
             Assert.assertEquals("film.sql", fn);
         } else
             Assert.fail();
+    }
+
+    @Test
+    public void testFindAll() throws Exception {
+        List<String> m = Regexs.findAll("select :w1, :w2, :w3 from dual", "(?<=:)\\b[\\w\\#\\$]+", Pattern.CASE_INSENSITIVE);
+        StringBuilder paramsList = new StringBuilder();
+        for(String s : m)
+            paramsList.append(s+";");
+        Assert.assertEquals(paramsList.toString(), "w1;w2;w3;");
+
     }
 
 }

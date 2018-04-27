@@ -130,7 +130,9 @@ public class FilterFactoryTest {
                 )
                 .add(
                         not(isNull("nnfld"))
-                ));
+                )
+                .add(contains("field4", "some", true))
+        );
         String json = Jsons.encode(filter);
         System.out.println("json: "+json);
         Assert.assertTrue(true);
