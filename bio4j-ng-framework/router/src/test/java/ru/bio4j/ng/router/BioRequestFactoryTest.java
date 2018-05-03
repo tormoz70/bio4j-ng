@@ -4,14 +4,10 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioRequestGetJson;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
-import ru.bio4j.ng.service.api.BioQueryParams;
-import ru.bio4j.ng.service.api.BioRequestFactory;
-import ru.bio4j.ng.service.api.SrvcUtils;
+import ru.bio4j.ng.service.types.BioQueryParams;
+import ru.bio4j.ng.service.types.BioRequestFactory;
 
 import java.util.List;
-
-import static org.testng.Assert.*;
 
 public class BioRequestFactoryTest {
 

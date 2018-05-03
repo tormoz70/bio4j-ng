@@ -5,21 +5,15 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioSecurityModule;
 import ru.bio4j.ng.service.api.SecurityProvider;
 import ru.bio4j.ng.service.types.BioModuleBase;
+import ru.bio4j.ng.service.types.SQLContextConfig;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.sql.Connection;
 import java.util.Dictionary;
-
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 @Component(managedservice="security.config")
 @Instantiate

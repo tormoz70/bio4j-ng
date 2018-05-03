@@ -9,6 +9,7 @@ import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.ABeanPage;
 import ru.bio4j.ng.model.transport.BioRequest;
@@ -21,9 +22,7 @@ import ru.bio4j.ng.service.api.ContentResolver;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by ayrat on 07.03.2016.

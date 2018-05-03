@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
 import javax.sql.DataSource;
 
@@ -136,21 +137,21 @@ public abstract class DbContextAbstract implements SQLContext {
     /**
      * Выполняет execSQL - курсор.
      */
-    @Override
-    public <R> R execSQL (final Connection connection, final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
-        SQLStoredProc sp = this.createStoredProc();
-        sp.init(connection, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).execSQL(params, usr);
-        List<Param> outparams = sqlDef.getParamDeclaration();
-        for (Param p : outparams)
-            if (p.getDirection() == Param.Direction.INOUT || p.getDirection() == Param.Direction.OUT)
-                return (R) p.getValue();
-        return null;
-    }
+//    @Override
+//    public <R> R execSQL (final Connection connection, final UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
+//        SQLStoredProc sp = this.createStoredProc();
+//        sp.init(connection, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).execSQL(params, usr);
+//        List<Param> outparams = sqlDef.getParamDeclaration();
+//        for (Param p : outparams)
+//            if (p.getDirection() == Param.Direction.INOUT || p.getDirection() == Param.Direction.OUT)
+//                return (R) p.getValue();
+//        return null;
+//    }
 
-    @Override
-    public <R> R execSQL (final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
-        return execBatch((context, conn, param, u) -> execSQL(conn, sqlDef, params, u), null, usr);
-    }
+//    @Override
+//    public <R> R execSQL (final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
+//        return execBatch((context, conn, param, u) -> execSQL(conn, sqlDef, params, u), null, usr);
+//    }
 
     /**
      * Выполняет action внутри соединения.

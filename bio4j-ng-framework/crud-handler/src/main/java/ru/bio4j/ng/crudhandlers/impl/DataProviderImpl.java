@@ -11,7 +11,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.api.BioRoute;
+import ru.bio4j.ng.service.types.BioRoute;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
 import javax.servlet.http.HttpServletResponse;

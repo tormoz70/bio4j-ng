@@ -4,7 +4,6 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.service.api.BioService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
-import ru.bio4j.ng.service.api.Configurator;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Dictionary;

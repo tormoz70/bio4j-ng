@@ -1,20 +1,14 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
-import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.converter.MetaTypeConverter;
-import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Regexs;
-import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.model.transport.ABeanPage;
-import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.types.BioRespBuilder;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.regex.Pattern;
 
 /**
  * Created by ayrat on 07.03.2016.

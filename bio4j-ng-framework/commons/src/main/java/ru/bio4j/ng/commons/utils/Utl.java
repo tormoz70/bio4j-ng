@@ -7,15 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
-import ru.bio4j.ng.commons.types.Prop;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+import ru.bio4j.ng.service.api.Prop;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;

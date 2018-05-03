@@ -1,6 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
-import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.util.Date;

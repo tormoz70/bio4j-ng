@@ -7,9 +7,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.types.BioServletApiBase;
-import ru.bio4j.ng.service.types.BioWrappedRequest;
-import ru.bio4j.ng.service.types.ErrorHandler;
+import ru.bio4j.ng.service.types.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

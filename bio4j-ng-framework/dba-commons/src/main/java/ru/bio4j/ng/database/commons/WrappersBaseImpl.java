@@ -1,9 +1,11 @@
 package ru.bio4j.ng.database.commons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.wrappers.*;
+import ru.bio4j.ng.database.api.FilteringWrapper;
+import ru.bio4j.ng.database.api.GetrowWrapper;
+import ru.bio4j.ng.database.api.LocateWrapper;
+import ru.bio4j.ng.database.api.PaginationWrapper;
 
 import java.io.InputStream;
 import java.util.Map;

@@ -4,7 +4,8 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -14,6 +15,8 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.StoreRow;
+import ru.bio4j.ng.service.api.SelectSQLDef;
+import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -77,9 +80,9 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final User user) throws Exception {
+    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
-        final BioCursorDeclaration.SQLDef sqlDef = cursor.getExecSqlDef();
+        final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new IllegalArgumentException("Cursor definition has no Exec Sql definition!");
         List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
@@ -98,13 +101,13 @@ public class DbUtils {
         return r;
     }
 
-    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
-        final BioCursorDeclaration.SelectSQLDef sqlDef = cursor.getSelectSqlDef();
+    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
+        final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
             public Integer exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef).open(params, u);){
+                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
                     while(c.reader().next()){
                         delegateAction.callback(c.reader());
                     }
@@ -114,13 +117,13 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursorDeclaration cursor, final User user, Class<T> clazz) throws Exception {
-        final BioCursorDeclaration.SelectSQLDef sqlDef = cursor.getSelectSqlDef();
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user, Class<T> clazz) throws Exception {
+        final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
             public T exec(SQLContext context, Connection conn, User u) throws Exception {
                 try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef).open(params, u);){
+                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
                     if(c.reader().next()){
                         return Converter.toType(c.reader().getValue(1), clazz);
                     }

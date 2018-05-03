@@ -2,7 +2,6 @@ package ru.bio4j.ng.database.oracle;
 
 import ru.bio4j.ng.database.api.SQLConnectionPoolConfig;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLContextConfig;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 

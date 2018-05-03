@@ -2,9 +2,7 @@ package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SortingWrapper;
-import ru.bio4j.ng.database.api.WrapperType;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -38,11 +36,11 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
         querySuffix = template.substring(queryEnd, orderbyStart - 1);
     }
 
-    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, List<Sort> sort) throws Exception {
-        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.SORT.code()) == BioCursorDeclaration.WrapMode.SORT.code()) {
+    public String wrap(String sql, List<Sort> sort, List<Field> fields) throws Exception {
+//        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.SORT.code()) == BioCursorDeclaration.WrapMode.SORT.code()) {
             if(sort != null && sort.size() > 0) {
 
-                List<Field> fields = sqlDef.getFields();
+//                List<Field> fields = sqlDef.getFields();
                 for (Sort s : sort) {
                     Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
                     if(fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
@@ -50,9 +48,10 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
                 }
 
                 String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
-                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
+//                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
+                return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql);
             }
-        }
-        return sqlDef;
+//        }
+        return sql;
     }
 }

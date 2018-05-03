@@ -2,10 +2,7 @@ package ru.bio4j.ng.commons.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.converter.Converter;
-import ru.bio4j.ng.commons.types.Prop;
-import ru.bio4j.ng.model.transport.FilterAndSorter;
-import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+import ru.bio4j.ng.service.api.Prop;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +10,6 @@ import javax.servlet.http.Part;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Enumeration;
 
 public class Httpc {

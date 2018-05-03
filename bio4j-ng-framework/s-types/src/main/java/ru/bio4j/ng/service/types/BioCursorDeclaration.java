@@ -1,4 +1,4 @@
-package ru.bio4j.ng.database.api;
+package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.utils.Lists;
@@ -7,11 +7,12 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.service.api.*;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class BioCursorDeclaration implements Serializable {
+public class BioCursorDeclaration implements BioCursor {
 
     public String getExportTitle() {
         return exportTitle;
@@ -37,28 +38,15 @@ public class BioCursorDeclaration implements Serializable {
         this.readOnly = readOnly;
     }
 
-    public static enum Type {
-        SELECT, UPDATE, DELETE, EXECUTE, AFTERSELECT
-    }
-    public static enum WrapMode {
-        NONE((byte)0), FILTER((byte)1), SORT((byte)2), PAGINATION((byte)4), ALL((byte)7);
-        private byte code;
-        private WrapMode(byte code) {
-            this.code = code;
-        }
-        public byte code() {
-            return code;
-        }
-    }
 
-    public static class SQLDef {
-        private BioCursorDeclaration owner;
+    public static class SQLDefImpl implements SQLDef {
+        private BioCursor owner;
         private final String sql;
         private String preparedSql;
 
         private List<Param> paramDeclaration = new ArrayList<>();
 
-        public SQLDef(String sql) {
+        public SQLDefImpl(String sql) {
 
             this.sql = sql;
             this.preparedSql = this.sql;
@@ -69,6 +57,9 @@ public class BioCursorDeclaration implements Serializable {
             return Utl.buildBeanStateInfo(this, this.getClass().getSimpleName(), "  ", "owner");
         }
 
+        public void setOwner(BioCursor bioCursor){
+            owner = bioCursor;
+        }
         public List<Field> getFields() {
             return owner.getFields();
         }
@@ -81,51 +72,10 @@ public class BioCursorDeclaration implements Serializable {
             return owner.getBioCode();
         }
 
-//        public SQLDef setParamValue(String name, Object value, Param.Direction direction, boolean addIfNotExists) {
-//            try(Paramus paramus = Paramus.set(params)) {
-//                paramus.setValue(name, value, direction, addIfNotExists);
-//            }
-//            return this;
-//        }
-
-//        public SQLDef setParamValue(String name, Object value, boolean addIfNotExists) {
-//            return setParamValue(name, value, Param.Direction.IN, true);
-//        }
-
-//        public SQLDef setParamValue(String name, Object value) {
-//            return setParamValue(name, value, true);
-//        }
-
         public void setParamDeclaration(List<Param> paramDeclaration) {
             this.paramDeclaration = paramDeclaration;
         }
 
-//        public SQLDef setParams(List<Param> params) throws Exception {
-//            try(Paramus paramus = Paramus.set(this.params)) {
-//               for (Param pa : params) {
-//                   Param existsParam = paramus.getParam(pa.getName());
-//                   Object val = pa.getValue();
-//                   if(existsParam != null) {
-//                       if(existsParam.getType() == MetaType.UNDEFINED) {
-//                           MetaType inType = pa.getType();
-//                           if(inType == MetaType.UNDEFINED && val != null)
-//                               inType = MetaTypeConverter.read(val.getClass());
-//                           existsParam.setType(inType);
-//                       }
-//                       if(existsParam.getDirection() == Param.Direction.UNDEFINED)
-//                           existsParam.setDirection(pa.getDirection());
-//
-//                       if(existsParam.getType() != MetaType.UNDEFINED){
-//                           Class<?> toType = MetaTypeConverter.write(existsParam.getType());
-//                           val = Converter.toType(val, toType, true);
-//                       }
-//                       existsParam.setValue(val);
-//                   } else
-//                       paramus.add((Param) Utl.cloneBean(pa));
-//                }
-//            }
-//            return this;
-//        }
         public List<Param> getParamDeclaration() {
             return paramDeclaration;
         }
@@ -144,7 +94,7 @@ public class BioCursorDeclaration implements Serializable {
 
     }
 
-    public static class SelectSQLDef extends SQLDef {
+    public static class SelectSQLDefImpl extends SQLDefImpl implements SelectSQLDef {
 
         private byte wrapMode = WrapMode.ALL.code();
         private String totalsSql;
@@ -157,7 +107,7 @@ public class BioCursorDeclaration implements Serializable {
         private boolean readonly;
         private boolean multySelection;
 
-        public SelectSQLDef(String sql) {
+        public SelectSQLDefImpl(String sql) {
             super(sql);
         }
 
@@ -169,28 +119,9 @@ public class BioCursorDeclaration implements Serializable {
             return wrapMode;
         }
 
-//        public Filter getFilter() { return filter; }
-
-//        public void setFilter(Filter filter) { this.filter = filter; }
-
         public List<Sort> getDefaultSort() { return defaultSort; }
 
         public void setDefaultSort(List<Sort> defaultSort) { this.defaultSort = defaultSort; }
-
-//        public int getOffset() { return offset; }
-
-//        public void setOffset(Integer offset) {
-//            this.offset = offset == null ? 0 : offset;
-//            this.setParamValue(PAGINATION_PARAM_OFFSET, this.offset);
-//            this.setParamValue(PAGINATION_PARAM_LAST, this.offset + this.pageSize);
-//        }
-
-//        public int getPageSize() { return pageSize; }
-
-//        public void setPageSize(Integer pageSize) {
-//            this.pageSize = pageSize == null || pageSize.intValue() == 0 ? 30 : pageSize;
-//            this.setParamValue(PAGINATION_PARAM_LAST, this.offset + this.pageSize);
-//        }
 
         public boolean isReadonly() { return readonly; }
 
@@ -216,19 +147,11 @@ public class BioCursorDeclaration implements Serializable {
             this.locateSql = locateSql;
         }
 
-//        public Object getLocation() {
-//            return location;
-//        }
-
-//        public void setLocation(Object location) {
-//            this.location = location;
-//        }
-
     }
 
-    public static class UpdelexSQLDef extends SQLDef {
+    public static class UpdelexSQLDefImpl extends SQLDefImpl implements UpdelexSQLDef {
         private String signature;
-        public UpdelexSQLDef(String sql) {
+        public UpdelexSQLDefImpl(String sql) {
             super(sql);
         }
 
@@ -250,7 +173,7 @@ public class BioCursorDeclaration implements Serializable {
 
     private final List<Field> fields = new ArrayList<>();
 
-    private final Map<Type, SQLDef> sqlDefs = new HashMap<>();
+    private final Map<SQLType, SQLDef> sqlDefs = new HashMap<>();
 
     public BioCursorDeclaration(String bioCode) {
         this.bioCode = bioCode;
@@ -280,29 +203,29 @@ public class BioCursorDeclaration implements Serializable {
         return fields;
     }
 
-    public void setSqlDef(Type sqlType, SQLDef sqlDef) {
+    public void setSqlDef(SQLType sqlType, SQLDef sqlDef) {
         sqlDefs.put(sqlType, sqlDef);
-        sqlDef.owner = this;
+        sqlDef.setOwner(this);
     }
 
     public UpdelexSQLDef getUpdateSqlDef() {
-        return (UpdelexSQLDef)sqlDefs.get(Type.UPDATE);
+        return (UpdelexSQLDef)sqlDefs.get(SQLType.UPDATE);
     }
 
     public UpdelexSQLDef getDeleteSqlDef() {
-        return (UpdelexSQLDef)sqlDefs.get(Type.DELETE);
+        return (UpdelexSQLDef)sqlDefs.get(SQLType.DELETE);
     }
 
     public UpdelexSQLDef getExecSqlDef() {
-        return (UpdelexSQLDef)sqlDefs.get(Type.EXECUTE);
+        return (UpdelexSQLDef)sqlDefs.get(SQLType.EXECUTE);
     }
 
     public SelectSQLDef getSelectSqlDef() {
-        return (SelectSQLDef)sqlDefs.get(Type.SELECT);
+        return (SelectSQLDef)sqlDefs.get(SQLType.SELECT);
     }
 
     public SQLDef getAfterselectSqlDef() {
-        return sqlDefs.get(Type.AFTERSELECT);
+        return sqlDefs.get(SQLType.AFTERSELECT);
     }
 
     public Collection<SQLDef> sqlDefs(){

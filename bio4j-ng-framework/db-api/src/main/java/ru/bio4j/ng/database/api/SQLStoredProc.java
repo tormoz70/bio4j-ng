@@ -15,7 +15,7 @@ public interface SQLStoredProc extends SQLCommand {
     SQLStoredProc init(Connection conn, String storedProcName, Object params, int timeout) throws Exception;
     SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception;
     SQLStoredProc init(Connection conn, String storedProcName) throws Exception;
-    SQLStoredProc init(Connection conn, BioCursorDeclaration.UpdelexSQLDef sqlDef) throws Exception;
+//    SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef) throws Exception;
     void execSQL(Object params, User usr, boolean stayOpened) throws Exception;
     void execSQL(Object params, User usr) throws Exception;
     void execSQL(User usr) throws Exception;

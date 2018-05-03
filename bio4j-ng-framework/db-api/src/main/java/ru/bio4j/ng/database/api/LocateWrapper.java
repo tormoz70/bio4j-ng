@@ -1,9 +1,6 @@
 package ru.bio4j.ng.database.api;
 
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.jstore.Field;
-
 public interface LocateWrapper {
 
-    BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception;
+    String wrap(String sql, String pkFieldName) throws Exception;
 }

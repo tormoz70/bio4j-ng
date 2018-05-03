@@ -1,6 +1,5 @@
 package ru.bio4j.ng.database.commons;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;

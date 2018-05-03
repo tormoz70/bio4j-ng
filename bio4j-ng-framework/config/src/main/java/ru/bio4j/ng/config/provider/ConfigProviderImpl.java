@@ -5,6 +5,7 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.*;
+import ru.bio4j.ng.service.api.BioConfig;
 import ru.bio4j.ng.service.types.BioServiceBase;
 import ru.bio4j.ng.service.types.ErrorHandler;
 

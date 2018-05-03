@@ -4,19 +4,12 @@ import com.thoughtworks.xstream.exts.XStreamUtility;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
-import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.XLRCfg;
-import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.service.api.XLRCfg;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class XStreamUtilityTest {
 

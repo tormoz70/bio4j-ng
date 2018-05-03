@@ -1,6 +1,6 @@
 package ru.bio4j.ng.ehcache.impl;
 
-import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.service.api.Prop;
 
 public class CacheConfig {
     @Prop(name = "bio.debug")

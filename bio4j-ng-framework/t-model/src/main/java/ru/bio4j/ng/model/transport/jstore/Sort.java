@@ -1,12 +1,12 @@
 package ru.bio4j.ng.model.transport.jstore;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+//import com.thoughtworks.xstream.annotations.XStreamAlias;
+//import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Сортировка
  */
-@XStreamAlias("sort")
+//@XStreamAlias("sort")
 public class Sort {
 
     public enum Direction {
@@ -17,9 +17,9 @@ public class Sort {
         }
     }
 
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
     private String fieldName;
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
     private Direction direction;
 
     public String getFieldName() {

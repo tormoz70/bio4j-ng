@@ -2,10 +2,6 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.BioQueryParams;
-import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.servlet.ServletConfig;

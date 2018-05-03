@@ -5,11 +5,8 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.AnConfig;
-import ru.bio4j.ng.database.api.*;
-//import ru.bio4j.ng.database.oracle.SQLContextFactory;
-//import ru.bio4j.ng.database.pgsql.SQLContextFactory;
-import ru.bio4j.ng.database.commons.CursorParser;
+import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.service.api.*;
 
@@ -50,7 +47,7 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
     private void prepareCursor(BioCursorDeclaration cursor) throws Exception {
         SQLContext context = this.getSQLContext();
         context.execBatch((context1, conn, usr) -> {
-            BioCursorDeclaration.UpdelexSQLDef def = cursor.getUpdateSqlDef();
+            UpdelexSQLDef def = cursor.getUpdateSqlDef();
             if (def != null) {
                 StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParamDeclaration());
                 def.setSignature(sp.getSignature());

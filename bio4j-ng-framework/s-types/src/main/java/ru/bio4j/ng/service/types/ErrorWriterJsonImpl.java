@@ -1,7 +1,6 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.service.api.BioRespBuilder;
 import ru.bio4j.ng.service.api.ErrorWriter;
 
 import javax.servlet.http.HttpServletResponse;

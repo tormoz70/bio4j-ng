@@ -1,17 +1,13 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
-import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
+import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.WrapQueryType;
-import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
-import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.types.BioRespBuilder;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
 

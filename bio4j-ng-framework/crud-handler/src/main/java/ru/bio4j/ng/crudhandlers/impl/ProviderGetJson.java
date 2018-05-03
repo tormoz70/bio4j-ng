@@ -2,8 +2,9 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.BioRequestGetJson;
-import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.types.BioRespBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;

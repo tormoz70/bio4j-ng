@@ -2,17 +2,14 @@ package ru.bio4j.ng.database.commons;
 
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
-import ru.bio4j.ng.database.api.SQLAction;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.RestParamNames;
+import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,14 +20,14 @@ public class CrudWriterApi {
             final List<Param> params,
             final List<ABean> rows,
             final SQLContext context,
-            final BioCursorDeclaration cursor,
+            final BioCursor cursor,
             final User user) throws Exception {
-        BioCursorDeclaration.UpdelexSQLDef sqlDef = cursor.getUpdateSqlDef();
+        UpdelexSQLDef sqlDef = cursor.getUpdateSqlDef();
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         int affected = context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
-            cmd.init(conn, sqlDef);
+            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
             for (ABean row : rows) {
                 DbUtils.applayRowToParams(row, params);
                 cmd.execSQL(params, null);
@@ -52,14 +49,14 @@ public class CrudWriterApi {
             final List<Param> params,
             final List<Object> ids,
             final SQLContext context,
-            final BioCursorDeclaration cursor,
+            final BioCursor cursor,
             final User user) throws Exception {
-        BioCursorDeclaration.UpdelexSQLDef sqlDef = cursor.getDeleteSqlDef();
+        UpdelexSQLDef sqlDef = cursor.getDeleteSqlDef();
         if (sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
         int affected = context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
-            cmd.init(conn, sqlDef);
+            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
             for (Object id : ids) {
                 Paramus.setParamValue(params, RestParamNames.DELETE_PARAM_PKVAL, id, MetaTypeConverter.read(id.getClass()));
                 cmd.execSQL(params, null);

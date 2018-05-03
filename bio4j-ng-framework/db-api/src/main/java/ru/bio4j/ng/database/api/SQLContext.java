@@ -22,8 +22,8 @@ public interface SQLContext {
     <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception;
     void execSQL(final Connection conn, final SQLActionVoid action, final User usr) throws Exception;
 
-    <R> R execSQL(final Connection conn, final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
-    <R> R execSQL(final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
+//    <R> R execSQL(final Connection conn, final UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
+//    <R> R execSQL(final UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
 
 //    SQLConnectionPoolStat getStat();
     void addAfterEvent(SQLConnectionConnectedEvent e);

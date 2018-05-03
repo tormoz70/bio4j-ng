@@ -1,11 +1,11 @@
 package ru.bio4j.ng.model.transport;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
-import com.thoughtworks.xstream.exts.XStreamCDATA;
+//import com.thoughtworks.xstream.annotations.XStreamAlias;
+//import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+//import com.thoughtworks.xstream.annotations.XStreamOmitField;
+//import com.thoughtworks.xstream.exts.XStreamCDATA;
 
-@XStreamAlias("param")
+//@XStreamAlias("param")
 public class Param {
 
     public static enum Direction {
@@ -145,25 +145,25 @@ public class Param {
         return new Builder();
     }
 
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
 	private String name;
 
-    @XStreamCDATA
+//    @XStreamCDATA
     private Object value;
-    @XStreamOmitField
+//    @XStreamOmitField
 	private Object innerObject;
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
 	private MetaType type;
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
 	private int size;
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
 	private Direction direction;
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
     private boolean override;
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
     private String format;
 
-    @XStreamAsAttribute
+//    @XStreamAsAttribute
     private int id;
 
     public Param() { }

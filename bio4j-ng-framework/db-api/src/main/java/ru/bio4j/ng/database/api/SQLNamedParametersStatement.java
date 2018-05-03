@@ -1,16 +1,8 @@
 package ru.bio4j.ng.database.api;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
-import ru.bio4j.ng.commons.utils.Regexs;
-import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.commons.utils.Strings;
 
-import java.io.InputStream;
 import java.sql.*;
-import java.util.*;
-import java.sql.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 
 public interface SQLNamedParametersStatement extends Statement {

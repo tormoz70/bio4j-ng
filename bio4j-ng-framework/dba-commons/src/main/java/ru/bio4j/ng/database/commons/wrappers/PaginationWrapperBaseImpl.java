@@ -1,6 +1,5 @@
 package ru.bio4j.ng.database.commons.wrappers;
 
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.PaginationWrapper;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 
@@ -17,11 +16,11 @@ public class PaginationWrapperBaseImpl extends AbstractWrapper implements Pagina
         this.template = template;
     }
 
-    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception {
-        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.PAGINATION.code()) == BioCursorDeclaration.WrapMode.PAGINATION.code()) {
-            String sql = template.replace(QUERY, sqlDef.getPreparedSql());
-            sqlDef.setPreparedSql(sql);
-        }
-        return sqlDef;
+    public String wrap(String sql) throws Exception {
+//        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.PAGINATION.code()) == BioCursorDeclaration.WrapMode.PAGINATION.code()) {
+            return template.replace(QUERY, sql);
+//            sqlDef.setPreparedSql(sql);
+//        }
+//        return sqlDef;
     }
 }

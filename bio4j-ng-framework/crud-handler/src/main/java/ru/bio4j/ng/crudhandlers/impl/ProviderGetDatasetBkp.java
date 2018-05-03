@@ -2,13 +2,13 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
+import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
-import ru.bio4j.ng.service.api.BioRespBuilder;
+import ru.bio4j.ng.service.types.BioRespBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 

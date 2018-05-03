@@ -2,12 +2,11 @@ package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.BioQueryParams;
 import ru.bio4j.ng.service.api.RestParamNames;
 
 import java.nio.charset.Charset;

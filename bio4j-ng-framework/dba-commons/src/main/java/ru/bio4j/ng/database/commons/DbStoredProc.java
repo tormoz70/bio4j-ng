@@ -3,12 +3,11 @@ package ru.bio4j.ng.database.commons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.SrvcUtils;
+import ru.bio4j.ng.commons.utils.SrvcUtils;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -36,10 +35,10 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     public SQLStoredProc init(Connection conn, String storedProcName) throws Exception {
         return this.init(conn, storedProcName, null, 60);
     }
-    @Override
-    public SQLStoredProc init(Connection conn, BioCursorDeclaration.UpdelexSQLDef sqlDef) throws Exception {
-        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
-    }
+//    @Override
+//    public SQLStoredProc init(Connection conn, BioCursorDeclaration.UpdelexSQLDef sqlDef) throws Exception {
+//        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+//    }
 
     @Override
 	protected void prepareStatement() throws Exception {

@@ -1,7 +1,7 @@
 package ru.bio4j.ng.service.api;
 
-import ru.bio4j.ng.commons.types.Prop;
-import ru.bio4j.ng.commons.utils.Utl;
+
+import ru.bio4j.ng.service.api.Prop;
 
 public class BioConfig {
     @Prop(name = "bio.debug")

@@ -7,7 +7,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.SrvcUtils;
+import ru.bio4j.ng.commons.utils.SrvcUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -48,15 +48,15 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
     }
 
 
-    @Override
-    public SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef, int timeout) throws Exception {
-        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration(), timeout);
-    }
-
-    @Override
-    public SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception {
-        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration(), 60);
-    }
+//    @Override
+//    public SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef, int timeout) throws Exception {
+//        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration(), timeout);
+//    }
+//
+//    @Override
+//    public SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception {
+//        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration(), 60);
+//    }
 
     @Override
 	protected void prepareStatement() throws SQLException {

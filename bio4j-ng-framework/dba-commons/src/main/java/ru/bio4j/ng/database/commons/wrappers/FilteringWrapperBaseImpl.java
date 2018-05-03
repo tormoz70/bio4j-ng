@@ -1,7 +1,6 @@
 package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.FilteringWrapper;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
@@ -30,13 +29,15 @@ public class FilteringWrapperBaseImpl extends AbstractWrapper implements Filteri
         querySuffix = template.substring(queryEnd, whereStart - 1);
     }
 
-    public BioCursorDeclaration.SelectSQLDef wrap(BioCursorDeclaration.SelectSQLDef sqlDef, Filter filter) throws Exception {
-        if ((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.FILTER.code()) == BioCursorDeclaration.WrapMode.FILTER.code()) {
-            if(filter != null) {
-                String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
-                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
-            }
-        }
-        return sqlDef;
+    public String wrap(String sql, Filter filter) throws Exception {
+//        if ((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.FILTER.code()) == BioCursorDeclaration.WrapMode.FILTER.code()) {
+//            if(filter != null) {
+//                String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
+//                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
+//            }
+//        }
+//        return sqlDef;
+        String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
+        return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql);
     }
 }

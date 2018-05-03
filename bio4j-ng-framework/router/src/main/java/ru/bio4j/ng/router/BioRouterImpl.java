@@ -11,9 +11,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.types.BioServiceBase;
-import ru.bio4j.ng.service.api.SrvcUtils;
-import ru.bio4j.ng.service.types.BioWrappedRequest;
+import ru.bio4j.ng.service.types.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

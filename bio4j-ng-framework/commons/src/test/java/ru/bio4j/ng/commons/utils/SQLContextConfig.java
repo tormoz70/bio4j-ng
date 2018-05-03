@@ -1,6 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
-import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.service.api.Prop;
 
 /**
  * Created by ayrat on 22.04.14.

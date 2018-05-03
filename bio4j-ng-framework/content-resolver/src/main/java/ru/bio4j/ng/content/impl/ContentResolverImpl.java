@@ -6,14 +6,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
-import ru.bio4j.ng.database.api.BioCursorDeclaration;
+import ru.bio4j.ng.service.api.BioAppModule;
+import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.commons.CursorParser;
+import ru.bio4j.ng.service.types.CursorParser;
 import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
@@ -24,8 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.List;
 
 import static ru.bio4j.ng.content.io.FileLoader.buildCode;
 
