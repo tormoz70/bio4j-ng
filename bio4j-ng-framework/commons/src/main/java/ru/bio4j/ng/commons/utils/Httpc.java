@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Prop;
+import ru.bio4j.ng.model.transport.FilterAndSorter;
+import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,13 +31,11 @@ public class Httpc {
         }
     }
 
-    private static String readJsonDataFromRequest(HttpServletRequest request, String jsonDataParam) throws IOException {
+    private static String readJsonDataFromRequestParams(HttpServletRequest request, String jsonDataParam) throws IOException {
         final String jsonDataAsQueryParam = request.getParameter(jsonDataParam);
         StringBuilder jd = new StringBuilder();
         if (!Strings.isNullOrEmpty(jsonDataAsQueryParam))
             jd.append(jsonDataAsQueryParam);
-        else
-            Httpc.readDataFromRequest(request, jd);
         if (jd.length() == 0)
             jd.append("{}");
         return jd.toString();
@@ -53,11 +53,7 @@ public class Httpc {
             Prop p = Utl.findAnnotation(Prop.class, fld);
             if(p != null) {
                 fldName = p.name();
-                String val = null;
-                if(fldName.equals("jsonData"))
-                    val = readJsonDataFromRequest(request, fldName);
-                else
-                    val = request.getParameter(fldName);
+                String val = request.getParameter(fldName);
                 fld.setAccessible(true);
                 fld.set(result, val);
             }

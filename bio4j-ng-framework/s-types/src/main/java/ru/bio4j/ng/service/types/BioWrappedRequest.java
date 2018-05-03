@@ -145,7 +145,11 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
     }
 
     public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        Httpc.readDataFromRequest(request, sb);
+        String uploadedJson = sb.toString();
         BioQueryParams result = Httpc.createBeanFromHttpRequest(request, BioQueryParams.class);
+        result.jsonData = uploadedJson;
 
         result.request = request;
         result.method = request.getMethod();
