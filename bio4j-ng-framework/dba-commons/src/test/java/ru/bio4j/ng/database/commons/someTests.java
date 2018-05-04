@@ -2,12 +2,6 @@ package ru.bio4j.ng.database.commons;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
-import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.service.api.BioCursor;
-import ru.bio4j.ng.service.types.CursorParser;
-
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,13 +42,5 @@ public class someTests {
         System.out.println(type.getCanonicalName());
     }
 
-    @Test
-    public void toStringTest() throws Exception {
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("rcard.xml");
-        Document document = Utl.loadXmlDocument(inputStream);
-        BioCursor cursor = CursorParser.pars(null, document, "eve.rcard");
-        String out = cursor.toString();
-        System.out.println(out);
-    }
 
 }

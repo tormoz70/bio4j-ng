@@ -44,8 +44,8 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     private ModuleProvider moduleProvider;
 
 
-    private BioCursorDeclaration getCursorFromFileSystem(String bioCode, User usr) throws Exception {
-        BioCursorDeclaration cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
+    private BioCursor getCursorFromFileSystem(String bioCode, User usr) throws Exception {
+        BioCursor cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
         if (cursor == null) {
             cursor = CursorParser.pars(configProvider.getConfig().getContentResolverPath(), bioCode);
             cacheService.put(CacheName.CURSOR, bioCode.toLowerCase(), cursor);
@@ -53,18 +53,18 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
         return cursor;
     }
 
-    private BioCursorDeclaration getCursorFromModule(String moduleKey, String bioCode, User usr) throws Exception {
+    private BioCursor getCursorFromModule(String moduleKey, String bioCode, User usr) throws Exception {
         BioAppModule module = moduleProvider.getAppModule(moduleKey);
         if(module == null)
             throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
 
-        BioCursorDeclaration cursor = module.getCursor(bioCode);
+        BioCursor cursor = module.getCursor(bioCode);
         return cursor;
     }
 
     @Override
-    public BioCursorDeclaration getCursor(String moduleKey, String bioCode, User usr) throws Exception {
-        BioCursorDeclaration cursor = getCursorFromFileSystem(bioCode, usr);
+    public BioCursor getCursor(String moduleKey, String bioCode, User usr) throws Exception {
+        BioCursor cursor = getCursorFromFileSystem(bioCode, usr);
         if(cursor == null)
             cursor = getCursorFromModule(moduleKey, bioCode, usr);
 
@@ -75,14 +75,14 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     }
 
     @Override
-    public BioCursorDeclaration getCursor(String moduleKey, String bioCode) throws Exception {
+    public BioCursor getCursor(String moduleKey, String bioCode) throws Exception {
         return getCursor(moduleKey, bioCode, null);
     }
 
     @Override
-    public BioCursorDeclaration getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
+    public BioCursor getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
-        BioCursorDeclaration cursor = getCursor(moduleKey, bioCode, bioRequest.getUser());
+        BioCursor cursor = getCursor(moduleKey, bioCode, bioRequest.getUser());
 
 //        if(cursor != null)
 //            applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());

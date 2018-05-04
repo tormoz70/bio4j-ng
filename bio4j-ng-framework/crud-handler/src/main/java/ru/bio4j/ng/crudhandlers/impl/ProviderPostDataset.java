@@ -2,6 +2,8 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.UpdelexSQLDef;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.model.transport.BioRequest;
@@ -23,15 +25,15 @@ import java.util.List;
 public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
 
 
-    private static void processUpDelRow(final BioRequest request, final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursorDeclaration cursor) throws Exception {
+    private static void processUpDelRow(final BioRequest request, final StoreRow row, final SQLContext ctx, final Connection conn, final BioCursor cursor) throws Exception {
         SQLStoredProc cmd = ctx.createStoredProc();
         RowChangeType changeType = row.getChangeType();
-        BioCursorDeclaration.UpdelexSQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
+        UpdelexSQLDef sqlDef = (Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType) ? cursor.getUpdateSqlDef() : cursor.getDeleteSqlDef());
         if(sqlDef == null && Arrays.asList(RowChangeType.create, RowChangeType.update).contains(changeType))
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         if(sqlDef == null && Arrays.asList(RowChangeType.delete).contains(changeType))
             throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
-        cmd.init(conn, sqlDef);
+        cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
         DbUtils.applayRowToParams(row, request.getBioParams());
         cmd.execSQL(request.getBioParams(), null);
         try(Paramus paramus = Paramus.set(cmd.getParams())) {
@@ -76,7 +78,7 @@ public class ProviderPostDataset extends ProviderAn<BioRequestJStorePost> {
     private BioRespBuilder.DataBuilder processRequestPost(final BioRequestJStorePost request, final SQLContext ctx, final Connection conn, final User rootUsr) throws Exception {
         final User usr = (rootUsr != null) ? rootUsr : request.getUser();
 //        final BioCursorDeclaration cursor = contentResolver.getCursor(module.getKey(), request);
-        final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
+        final BioCursor cursor = module.getCursor(request.getBioCode());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(request.getBioCode());

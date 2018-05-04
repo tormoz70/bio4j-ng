@@ -2,11 +2,12 @@ package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.model.transport.jstore.Field;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 
-public interface BioCursor {
+public interface BioCursor extends Serializable {
 
     String getExportTitle();
     void setExportTitle(String exportTitle);

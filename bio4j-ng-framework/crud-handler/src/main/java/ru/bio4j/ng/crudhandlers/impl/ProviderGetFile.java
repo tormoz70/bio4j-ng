@@ -4,6 +4,10 @@ import org.slf4j.Logger;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.SQLDef;
+import ru.bio4j.ng.service.api.SelectSQLDef;
+import ru.bio4j.ng.service.api.UpdelexSQLDef;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.types.BioRespBuilder;
@@ -22,10 +26,10 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static void processExec(final BioRequestGetFile request, final SQLContext sqlContext, final BioCursorDeclaration cursor) throws Exception {
+    private static void processExec(final BioRequestGetFile request, final SQLContext sqlContext, final BioCursor cursor) throws Exception {
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         final SQLStoredProc cmd = sqlContext.createStoredProc();
-        final BioCursorDeclaration.SQLDef sqlDef = cursor.getAfterselectSqlDef();
+        final SQLDef sqlDef = cursor.getAfterselectSqlDef();
         if(sqlDef != null) {
             List<Param> r = sqlContext.execBatch((ctx, conn, usr) -> {
                 cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
@@ -41,17 +45,17 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         public String tmpFileName;
     }
 
-    private static StoredBlobAttrs storeBlobToTmp(final String tmpPath, final BioRequestGetFile request, final SQLContext sqlContext, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static StoredBlobAttrs storeBlobToTmp(final String tmpPath, final BioRequestGetFile request, final SQLContext sqlContext, final BioCursor cursor, final Logger LOG) throws Exception {
         final StoredBlobAttrs rslt = new StoredBlobAttrs();
         final User user = request.getUser();
-        final BioCursorDeclaration.SelectSQLDef sqlSelectDef = cursor.getSelectSqlDef();
-        final BioCursorDeclaration.UpdelexSQLDef sqlExecDef = cursor.getExecSqlDef();
+        final SelectSQLDef sqlSelectDef = cursor.getSelectSqlDef();
+        final UpdelexSQLDef sqlExecDef = cursor.getExecSqlDef();
         sqlContext.execBatch((ctx, conn, cur, usr) -> {
 
             if(sqlSelectDef != null) {
                 boolean fileStoredToTmpStorage = false;
                 try (SQLCursor c = ctx.createCursor()
-                        .init(conn, sqlSelectDef).open(request.getBioParams(), usr);) {
+                        .init(conn, sqlSelectDef.getPreparedSql(), sqlSelectDef.getParamDeclaration()).open(request.getBioParams(), usr);) {
                     if (c.reader().next()) {
                         ResultSet r = c.reader().getResultSet();
                         rslt.fileName = r.getString("file_name");
@@ -69,7 +73,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
             } else if(sqlExecDef != null) {
                 final SQLStoredProc cmd = ctx.createStoredProc();
                 List<Param> r = ctx.execBatch((context1, conn1, usr1) -> {
-                    cmd.init(conn1, sqlExecDef);
+                    cmd.init(conn1, sqlExecDef.getPreparedSql(), sqlExecDef.getParamDeclaration());
                     cmd.execSQL(request.getBioParams(), usr1);
                     return cmd.getParams();
                 }, request.getUser());
@@ -87,7 +91,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         return rslt;
     }
 
-    private static void processCursorAsFileProvider(final String tmpPath, final BioRequestGetFile request, final HttpServletResponse response, final SQLContext sqlContext, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static void processCursorAsFileProvider(final String tmpPath, final BioRequestGetFile request, final HttpServletResponse response, final SQLContext sqlContext, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as JsonProvider!!!", cursor.getBioCode());
 
         StoredBlobAttrs storedBlobAttrs = storeBlobToTmp(tmpPath, request, sqlContext, cursor, LOG);
@@ -116,7 +120,7 @@ public class ProviderGetFile extends ProviderAn<BioRequestGetFile> {
         String tmpPath = this.configProvider.getConfig().getTmpPath();
         try {
 //            final BioCursorDeclaration cursor = contentResolver.getCursor(module.getKey(), request);
-            final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             processCursorAsFileProvider(tmpPath, request, response, context, cursor, LOG);
         } finally {
             LOG.debug("Processed getDataSet for \"{}\" - returning response...", request.getBioCode());

@@ -12,7 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.database.commons.BioCursorDeclaration;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
@@ -20,8 +20,8 @@ import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.model.transport.XLRCfg;
 import ru.bio4j.ng.model.transport.jstore.Sort;
+import ru.bio4j.ng.service.api.XLRCfg;
 
 import java.sql.*;
 import java.util.*;
@@ -812,7 +812,7 @@ public class SQLFactoryTest {
                 OraContext.class);
 
 
-        String rslt = ctx.execBatch((SQLAction<BioCursorDeclaration, String>) (context, conn, cur, usr) -> {
+        String rslt = ctx.execBatch((SQLAction<BioCursor, String>) (context, conn, cur, usr) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
 
@@ -913,7 +913,7 @@ public class SQLFactoryTest {
                 OraContext.class);
 
 
-        String rslt = ctx.execBatch((SQLAction<BioCursorDeclaration, String>) (context, conn, cur, usr) -> {
+        String rslt = ctx.execBatch((SQLAction<BioCursor, String>) (context, conn, cur, usr) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("222.sql"));
 

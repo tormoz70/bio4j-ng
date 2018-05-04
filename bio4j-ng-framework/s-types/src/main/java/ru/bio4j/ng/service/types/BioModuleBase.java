@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
-import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.service.api.*;
 
 import java.util.HashMap;
@@ -46,22 +45,22 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     private void prepareCursor(BioCursorDeclaration cursor) throws Exception {
         SQLContext context = this.getSQLContext();
-        context.execBatch((context1, conn, usr) -> {
+        context.execBatch((ctx, conn, usr) -> {
             UpdelexSQLDef def = cursor.getUpdateSqlDef();
             if (def != null) {
-                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParamDeclaration());
+                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), conn, def.getParamDeclaration());
                 def.setSignature(sp.getSignature());
                 def.setParamDeclaration(sp.getParamDeclaration());
             }
             def = cursor.getDeleteSqlDef();
             if (def != null) {
-                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParamDeclaration());
+                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), conn, def.getParamDeclaration());
                 def.setSignature(sp.getSignature());
                 def.setParamDeclaration(sp.getParamDeclaration());
             }
             def = cursor.getExecSqlDef();
             if (def != null) {
-                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(def.getPreparedSql(), conn, def.getParamDeclaration());
+                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), conn, def.getParamDeclaration());
                 def.setSignature(sp.getSignature());
                 def.setParamDeclaration(sp.getParamDeclaration());
             }

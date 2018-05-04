@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
+import static ru.bio4j.ng.service.api.BioRoute.*;
 
 @Component
 @Instantiate
@@ -27,6 +28,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     private static final Logger LOG = LoggerFactory.getLogger(BioRouterImpl.class);
 
     private Map<String, BioRouteHandler> routeMap;
+    private Map<BioRoute, Class<? extends BioRequestFactory>> factoryMap;
 
     @Requires
     private SecurityProvider securityProvider;
@@ -46,6 +48,20 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
     @Validate
     public void doStart() throws Exception {
         LOG.debug("Starting...");
+        if(factoryMap == null) {
+            factoryMap = new HashMap<>();
+            factoryMap.put(PING, BioRequestFactory.Ping.class);
+            factoryMap.put(LOGIN, BioRequestFactory.Login.class);
+            factoryMap.put(LOGOUT, BioRequestFactory.Logout.class);
+            factoryMap.put(CRUD_JSON_GET, BioRequestFactory.GetJson.class);
+            factoryMap.put(CRUD_FILE_GET, BioRequestFactory.GetFile.class);
+            factoryMap.put(CRUD_DATASET_GET, BioRequestFactory.GetDataSet.class);
+            factoryMap.put(CRUD_DATASET_EXP, BioRequestFactory.ExpDataSet.class);
+            factoryMap.put(CRUD_RECORD_GET, BioRequestFactory.GetRecord.class);
+            factoryMap.put(CRUD_DATASET_POST, BioRequestFactory.DataSetPost.class);
+            factoryMap.put(CRUD_EXEC, BioRequestFactory.StoredProg.class);
+            factoryMap.put(CRUD_FCLOUD, BioRequestFactory.FCloud.class);
+        }
 
         if(routeMap == null) {
             routeMap = new HashMap<>();
@@ -60,7 +76,7 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.PING.getAlias(), new BioRouteHandler<BioRequest>() {
+            routeMap.put(PING.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(request.getUser()).exception(null);
@@ -69,25 +85,25 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
                 }
             });
 
-            routeMap.put(BioRoute.LOGIN.getAlias(), new BioRouteHandler<BioRequest>() {
+            routeMap.put(LOGIN.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
-            routeMap.put(BioRoute.LOGOUT.getAlias(), new BioRouteHandler<BioRequest>() {
+            routeMap.put(LOGOUT.getAlias(), new BioRouteHandler<BioRequest>() {
                 @Override
                 public boolean handle(BioRequest request, HttpServletResponse response) throws Exception {
                     throw new UnsupportedOperationException("This method should not be called here!");
                 }
             });
 
-            routeMap.put(BioRoute.CRUD_JSON_GET.getAlias(), new BioRouteHandler<BioRequestGetJson>() {
+            routeMap.put(CRUD_JSON_GET.getAlias(), new BioRouteHandler<BioRequestGetJson>() {
                 @Override
                 public boolean handle(final BioRequestGetJson request, final HttpServletResponse response) throws Exception {
-                    LOG.debug("Processing {} request...", BioRoute.CRUD_JSON_GET);
-                    dataProvider.processRequest(BioRoute.CRUD_JSON_GET, request, response);
+                    LOG.debug("Processing {} request...", CRUD_JSON_GET);
+                    dataProvider.processRequest(CRUD_JSON_GET, request, response);
                     return true;
                 }
             });
@@ -208,7 +224,8 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
             BioRequest bioRequest;
             try {
-                BioRequestFactory factory = route.getFactory();
+                Class<? extends BioRequestFactory> factoryClazz = factoryMap.get(route);
+                BioRequestFactory factory = factoryClazz.newInstance();
                 bioRequest = factory.restore(qprms, route.getClazz(), usr);
             } catch (Exception e) {
                 LOG.debug("Unexpected error while decoding BioRequest: \n" +

@@ -21,17 +21,16 @@ public interface SQLContext {
     <P, R> R execSQL(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
     <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception;
     void execSQL(final Connection conn, final SQLActionVoid action, final User usr) throws Exception;
+    List<Param> execSQL(final Connection conn, final String sql, List<Param> params, final User usr) throws Exception;
+    List<Param> execSQL(final String sql, List<Param> params, final User usr) throws Exception;
 
-//    <R> R execSQL(final Connection conn, final UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
-//    <R> R execSQL(final UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception;
+    StoredProgMetadata prepareStoredProc(String sql, Connection conn, List<Param> paramsDeclaration) throws Exception;
 
-//    SQLConnectionPoolStat getStat();
     void addAfterEvent(SQLConnectionConnectedEvent e);
     void clearAfterEvents();
 
     SQLCursor createCursor();
     SQLStoredProc createStoredProc();
-    //SQLReader createReader(ResultSet resultSet);
 
     String getDBMSName();
 

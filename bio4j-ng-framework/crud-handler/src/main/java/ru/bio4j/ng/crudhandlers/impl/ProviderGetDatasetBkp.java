@@ -2,6 +2,8 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.commons.utils.Sqls;
+import ru.bio4j.ng.model.transport.jstore.Field;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLCursor;
@@ -22,7 +24,7 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
         return (pg - 1) * pageSize;
     }
 
-    private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
         final BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
             final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
@@ -83,7 +85,7 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
         return response;
     }
 
-    private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
         BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
             final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
@@ -120,19 +122,23 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
     public void process(final BioRequestJStoreGetDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
+            final BioCursor cursor = module.getCursor(request.getBioCode());
 
-            context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef(), request.getFilter());
-            context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef());
-            context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef(), request.getSort());
-            if(request.getLocation() != null)
-                context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef());
+            cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), request.getFilter()));
+            cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
+            cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), request.getSort(), cursor.getSelectSqlDef().getFields()));
+            if(request.getLocation() != null) {
+                Field pkField = cursor.getSelectSqlDef().findPk();
+                if(pkField == null)
+                    throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
+                cursor.getSelectSqlDef().setLocateSql(context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
+            }
             BioRespBuilder.DataBuilder responseBuilder;
             if(request.getPageSize() < 0) {
                 responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
                 if(request.getPageSize() > 0)
-                    context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef());
+                    cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
                 responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
             response.addHeader("X-Pagination-Current-Page", ""+request.getPage());

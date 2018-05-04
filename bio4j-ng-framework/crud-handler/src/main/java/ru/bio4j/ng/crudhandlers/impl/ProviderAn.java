@@ -9,6 +9,7 @@ import ru.bio4j.ng.commons.types.TimedCache;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.ABeanPage;
@@ -69,13 +70,13 @@ public abstract class ProviderAn<T extends BioRequest> {
         return check > 0;
     }
 
-    protected static int readStoreData(final BioRequest request, final StoreData data, final SQLContext context, final Connection conn, final BioCursorDeclaration cursorDef, final Logger LOG) throws Exception {
+    protected static int readStoreData(final BioRequest request, final StoreData data, final SQLContext context, final Connection conn, final BioCursor cursorDef, final Logger LOG) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         int totalCount = 0;
         long startTime = System.currentTimeMillis();
         List<Param> prms = request.getBioParams();
         try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef()).open(prms, null);) {
+                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, null);) {
             long estimatedTime = System.currentTimeMillis() - startTime;
             LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
             data.setMetadata(new StoreMetadata());

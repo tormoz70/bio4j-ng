@@ -2,6 +2,7 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreExpDataSet;
@@ -80,7 +81,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
         return response;
     }
 
-    private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
         BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
 //                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
@@ -115,9 +116,9 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
     public void process(final BioRequestJStoreExpDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
-            context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef(), request.getFilter());
-            context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef(), request.getSort());
+            final BioCursor cursor = module.getCursor(request.getBioCode());
+            cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), request.getFilter()));
+            cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), request.getSort(), cursor.getSelectSqlDef().getFields()));
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {

@@ -177,6 +177,25 @@ public abstract class DbContextAbstract implements SQLContext {
                 action.exec(this, conn, usr);
     }
 
+    @Override
+    public List<Param> execSQL(final Connection conn, final String sql, List<Param> params, final User usr) throws Exception {
+        final SQLStoredProc cmd = this.createStoredProc();
+        cmd.init(conn, sql, params);
+        cmd.execSQL(params, null);
+        return cmd.getParams();
+    }
+
+    @Override
+    public List<Param> execSQL(final String sql, List<Param> params, final User usr) throws Exception {
+        final SQLStoredProc cmd = this.createStoredProc();
+        return execBatch((context, conn, prms, u) -> {
+            cmd.init(conn, sql, prms);
+            cmd.execSQL(prms, null);
+            return cmd.getParams();
+        }, params, usr);
+    }
+
+
     /**
      * Выполняет action внутри batch.
      * Перед началом выполнения создается "точка отката".
@@ -249,6 +268,11 @@ public abstract class DbContextAbstract implements SQLContext {
     @Override
     public SQLConnectionPoolConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public StoredProgMetadata prepareStoredProc(String sql, Connection conn, List<Param> paramsDeclaration) throws Exception {
+        return DbUtils.getInstance().detectStoredProcParamsAuto(sql, conn, paramsDeclaration);
     }
 
     public static <T extends DbContextAbstract> SQLContext create(SQLConnectionPoolConfig config, Class<T> clazz) throws Exception {

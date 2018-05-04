@@ -2,6 +2,7 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.model.transport.ABeanPage;
@@ -20,7 +21,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         return (pg - 1) * pageSize;
     }
 
-    private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
 
         ABeanPage beanPage = CrudReaderApi.loadPage(request.getBioParams(), request.getFilter(), request.getSort(), ctx, cursor, request.getUser());
@@ -50,7 +51,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         return result.exception(null);
     }
 
-    private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    private static BioRespBuilder.DataBuilder processCursorAsSelectableSinglePage(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
 
         ABeanPage beanPage = CrudReaderApi.loadAll(request.getBioParams(), request.getFilter(), request.getSort(), ctx, cursor, request.getUser());
@@ -80,13 +81,13 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
     public void process(final BioRequestJStoreGetDataSet request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getDataSet for \"{}\" request...", request.getBioCode());
         try {
-            final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             BioRespBuilder.DataBuilder responseBuilder;
             if(request.getPageSize() < 0) {
                 responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
                 if(request.getPageSize() > 0)
-                    context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef());
+                    cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
                 responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
             response.addHeader("X-Pagination-Current-Page", ""+request.getPage());

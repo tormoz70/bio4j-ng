@@ -1,6 +1,9 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
+import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.jstore.Field;
+import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetRecord;
@@ -11,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
 
-    protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursorDeclaration cursor, final Logger LOG) throws Exception {
+    protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
         BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cursorDef, usr) -> {
             final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
@@ -34,11 +37,14 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
     public void process(final BioRequestJStoreGetRecord request, final HttpServletResponse response) throws Exception {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
-            final BioCursorDeclaration cursor = module.getCursor(request.getBioCode());
+            final BioCursor cursor = module.getCursor(request.getBioCode());
             if(cursor.getSelectSqlDef() == null)
                 throw new Exception(String.format("For bio \"%s\" must be defined \"select\" sql!", cursor.getBioCode()));
 
-            context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef());
+            Field pkField = cursor.getSelectSqlDef().findPk();
+            if(pkField == null)
+                throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
+            cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {

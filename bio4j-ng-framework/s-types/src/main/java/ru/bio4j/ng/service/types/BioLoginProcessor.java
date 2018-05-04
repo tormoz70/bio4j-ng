@@ -25,7 +25,7 @@ public class BioLoginProcessor {
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 
-        BioRequestFactory factory = BioRoute.LOGIN.getFactory();
+        BioRequestFactory factory = new BioRequestFactory.Login();
         BioRequest request = factory.restore(qprms, BioRoute.LOGIN.getClazz(), null);
         return securityProvider.login(request.getLogin(), qprms.remoteIP, qprms.remoteClient);
     }

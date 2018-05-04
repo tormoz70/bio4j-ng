@@ -9,5 +9,5 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface DataProvider extends BioService {
 
-    void processRequest(final BioRequest request, final HttpServletResponse response) throws Exception;
+    void processRequest(final BioRoute route, final BioRequest request, final HttpServletResponse response) throws Exception;
 }

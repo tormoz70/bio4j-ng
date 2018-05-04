@@ -2,7 +2,6 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.service.api.SrvcUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
