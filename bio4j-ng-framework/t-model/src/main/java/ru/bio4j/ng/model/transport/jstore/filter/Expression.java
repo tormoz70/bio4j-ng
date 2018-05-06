@@ -31,6 +31,8 @@ public interface Expression {
      */
     Expression add(Expression expression);
 
+    Expression addAll(List<Expression> expressions);
+
     /**
      * Не учитывать регистр при сравнении строк (для операции сравнения)
      * @return

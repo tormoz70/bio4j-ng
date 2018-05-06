@@ -1,14 +1,15 @@
 package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.database.api.TotalsWrapper;
+import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 
 public class TotalsWrapperBaseImpl extends AbstractWrapper implements TotalsWrapper {
 
     private String template;
 
-    public TotalsWrapperBaseImpl(String template) {
-        super(template);
+    public TotalsWrapperBaseImpl(String template, WrapperInterpreter wrapperInterpreter) {
+        super(template, wrapperInterpreter);
     }
 
     @Override

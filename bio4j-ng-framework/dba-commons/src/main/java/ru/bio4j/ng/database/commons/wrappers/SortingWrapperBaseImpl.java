@@ -3,6 +3,7 @@ package ru.bio4j.ng.database.commons.wrappers;
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.SortingWrapper;
+import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -17,8 +18,8 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
     private String queryPrefix;
     private String querySuffix;
 
-    public SortingWrapperBaseImpl(String template) {
-        super(template);
+    public SortingWrapperBaseImpl(String template, WrapperInterpreter wrapperInterpreter) {
+        super(template, wrapperInterpreter);
     }
 
     @Override
@@ -37,21 +38,17 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
     }
 
     public String wrap(String sql, List<Sort> sort, List<Field> fields) throws Exception {
-//        if((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.SORT.code()) == BioCursorDeclaration.WrapMode.SORT.code()) {
-            if(sort != null && sort.size() > 0) {
+        if (sort != null && sort.size() > 0) {
 
-//                List<Field> fields = sqlDef.getFields();
-                for (Sort s : sort) {
-                    Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
-                    if(fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
-                        s.setFieldName(fldDef.getSorter());
-                }
-
-                String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
-//                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql));
-                return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql);
+            for (Sort s : sort) {
+                Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
+                if (fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
+                    s.setFieldName(fldDef.getSorter());
             }
-//        }
+
+            String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
+            return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql);
+        }
         return sql;
     }
 }

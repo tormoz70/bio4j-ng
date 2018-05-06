@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.database.api.GetrowWrapper;
+import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.service.api.RestParamNames;
 
@@ -8,8 +9,8 @@ public class GetrowWrapperBaseImpl extends AbstractWrapper implements GetrowWrap
 
     private String template;
 
-    public GetrowWrapperBaseImpl(String template) {
-        super(template);
+    public GetrowWrapperBaseImpl(String template, WrapperInterpreter wrapperInterpreter) {
+        super(template, wrapperInterpreter);
     }
 
     @Override

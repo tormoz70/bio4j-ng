@@ -6,7 +6,7 @@ import ru.bio4j.ng.database.commons.WrappersBaseImpl;
 public class OraWrappersImpl extends WrappersBaseImpl {
     private static final Logger LOG = LoggerFactory.getLogger(OraWrappersImpl.class);
     public OraWrappersImpl(String dbmsName) throws Exception {
-        super(dbmsName);
+        super(dbmsName, new OraWrapperInterpreter());
         LOG.debug("Wrappers for \"{}\" database initialized.", dbmsName);
     }
 }

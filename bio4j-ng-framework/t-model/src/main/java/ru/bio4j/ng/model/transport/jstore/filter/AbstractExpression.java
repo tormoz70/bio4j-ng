@@ -33,6 +33,12 @@ public abstract class AbstractExpression implements Expression {
     }
 
     @Override
+    public Expression addAll(List<Expression> expressions) {
+        this.children.addAll(expressions);
+        return this;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Logical)) return false;

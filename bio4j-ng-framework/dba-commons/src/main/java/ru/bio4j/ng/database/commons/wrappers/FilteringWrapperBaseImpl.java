@@ -2,6 +2,7 @@ package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.FilteringWrapper;
+import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
@@ -10,8 +11,8 @@ public class FilteringWrapperBaseImpl extends AbstractWrapper implements Filteri
     private String queryPrefix;
     private String querySuffix;
 
-    public FilteringWrapperBaseImpl(String template) {
-        super(template);
+    public FilteringWrapperBaseImpl(String template, WrapperInterpreter wrapperInterpreter) {
+        super(template, wrapperInterpreter);
     }
 
     @Override
@@ -30,14 +31,10 @@ public class FilteringWrapperBaseImpl extends AbstractWrapper implements Filteri
     }
 
     public String wrap(String sql, Filter filter) throws Exception {
-//        if ((sqlDef.getWrapMode() & BioCursorDeclaration.WrapMode.FILTER.code()) == BioCursorDeclaration.WrapMode.FILTER.code()) {
-//            if(filter != null) {
-//                String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
-//                sqlDef.setPreparedSql(queryPrefix + sqlDef.getPreparedSql() + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql));
-//            }
-//        }
-//        return sqlDef;
-        String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
-        return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql);
+        if(filter != null) {
+            String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter);
+            return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql);
+        }
+        return sql;
     }
 }

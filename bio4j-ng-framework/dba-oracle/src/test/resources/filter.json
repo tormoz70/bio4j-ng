@@ -1,7 +1,7 @@
 {
   "children": [
     {
-      "class": "ru.bio4j.ng.model.transport.jstore.filter.And",
+      "class": "filter.And",
       "children": [
         {
           "class": "ru.bio4j.ng.model.transport.jstore.filter.And",

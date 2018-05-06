@@ -21,19 +21,19 @@ public class WrappersBaseImpl implements Wrappers {
     private GetrowWrapper getrowWrapper;
 
 
-    public WrappersBaseImpl(String dbmsName) throws Exception {
+    public WrappersBaseImpl(String dbmsName, WrapperInterpreter wrapperInterpreter) throws Exception {
         final String templFileName = "/cursor/wrapper/templates/" + dbmsName + ".xml";
         final InputStream is = this.getClass().getResourceAsStream(templFileName);
         if(is == null)
             throw new IllegalArgumentException(String.format("Resource %s not found!", templFileName));
         templates = WrapperLoader.loadQueries(is, dbmsName);
 
-        filteringWrapper = new FilteringWrapperBaseImpl(templates.get(WrapQueryType.FILTERING));
-        sortingWrapper = new SortingWrapperBaseImpl(templates.get(WrapQueryType.SORTING));
-        paginationWrapper = new PaginationWrapperBaseImpl(templates.get(WrapQueryType.PAGINATION));
-        totalsWrapper = new TotalsWrapperBaseImpl(templates.get(WrapQueryType.TOTALS));
-        locateWrapper = new LocateWrapperBaseImpl(templates.get(WrapQueryType.LOCATE));
-        getrowWrapper = new GetrowWrapperBaseImpl(templates.get(WrapQueryType.GETROW));
+        filteringWrapper = new FilteringWrapperBaseImpl(templates.get(WrapQueryType.FILTERING), wrapperInterpreter);
+        sortingWrapper = new SortingWrapperBaseImpl(templates.get(WrapQueryType.SORTING), wrapperInterpreter);
+        paginationWrapper = new PaginationWrapperBaseImpl(templates.get(WrapQueryType.PAGINATION), wrapperInterpreter);
+        totalsWrapper = new TotalsWrapperBaseImpl(templates.get(WrapQueryType.TOTALS), wrapperInterpreter);
+        locateWrapper = new LocateWrapperBaseImpl(templates.get(WrapQueryType.LOCATE), wrapperInterpreter);
+        getrowWrapper = new GetrowWrapperBaseImpl(templates.get(WrapQueryType.GETROW), wrapperInterpreter);
 
     }
 

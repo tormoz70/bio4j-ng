@@ -12,7 +12,8 @@ public abstract class AbstractWrapper {
     public static final String WHERE_CLAUSE = "${WHERECLAUSE_PLACEHOLDER}";
     protected WrapperInterpreter wrapperInterpreter;
 
-    public AbstractWrapper(String template) {
+    public AbstractWrapper(String template, WrapperInterpreter wrapperInterpreter) {
+        this.wrapperInterpreter = wrapperInterpreter;
         this.parseTemplate(template);
     }
 

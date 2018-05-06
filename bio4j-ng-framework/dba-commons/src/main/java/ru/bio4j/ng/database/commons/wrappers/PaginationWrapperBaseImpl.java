@@ -1,14 +1,15 @@
 package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.database.api.PaginationWrapper;
+import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 
 public class PaginationWrapperBaseImpl extends AbstractWrapper implements PaginationWrapper {
 
     private String template;
 
-    public PaginationWrapperBaseImpl(String template) {
-        super(template);
+    public PaginationWrapperBaseImpl(String template, WrapperInterpreter wrapperInterpreter) {
+        super(template, wrapperInterpreter);
     }
 
     @Override

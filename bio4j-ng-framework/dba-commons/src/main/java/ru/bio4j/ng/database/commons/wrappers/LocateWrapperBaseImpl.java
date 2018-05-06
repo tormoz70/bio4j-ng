@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.commons.wrappers;
 
 import ru.bio4j.ng.database.api.LocateWrapper;
+import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.service.api.RestParamNames;
 
@@ -8,8 +9,8 @@ public class LocateWrapperBaseImpl extends AbstractWrapper implements LocateWrap
 
     private String template;
 
-    public LocateWrapperBaseImpl(String template) {
-        super(template);
+    public LocateWrapperBaseImpl(String template, WrapperInterpreter wrapperInterpreter) {
+        super(template, wrapperInterpreter);
     }
 
     @Override
