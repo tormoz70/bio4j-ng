@@ -10,7 +10,9 @@ import flexjson.transformer.DateTransformer;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.FilterAndSorter;
 import ru.bio4j.ng.model.transport.MetaType;
+import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.And;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
@@ -242,10 +244,37 @@ public class Jsons {
         return expressions;
     }
 
-    public static Filter decodeFilter(String json) throws Exception {
-        HashMap<String, Object> filterJsonObj = (HashMap<String, Object>)new JSONDeserializer<>().deserialize(json);
-        Filter filter = new Filter();
-        filter.add(parsExprationLevel(filterJsonObj).get(0));
-        return filter;
+    private static List<Sort> parsSorter(HashMap<String, Object> map) {
+        List<Sort> sorter = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Sort s = new Sort();
+            s.setFieldName(entry.getKey());
+            s.setDirection(Sort.Direction.valueOf(((String) entry.getValue()).toUpperCase()));
+            sorter.add(s);
+        }
+        return sorter;
+    }
+
+//    public static Filter decodeFilter(String json) throws Exception {
+//        HashMap<String, Object> filterJsonObj = (HashMap<String, Object>)new JSONDeserializer<>().deserialize(json);
+//        Filter filter = new Filter();
+//        filter.add(parsExprationLevel(filterJsonObj).get(0));
+//        return filter;
+//    }
+
+    public static FilterAndSorter decodeFilterAndSorter(String json) throws Exception {
+        HashMap<String, Object> filterAndSorterJsonObj = (HashMap<String, Object>)new JSONDeserializer<>().deserialize(json);
+        FilterAndSorter filterAndSorter = new FilterAndSorter();
+        filterAndSorter.setFilter(new Filter());
+
+        for (Map.Entry<String, Object> entry : filterAndSorterJsonObj.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase("filter")) {
+                filterAndSorter.getFilter().add(parsExprationLevel((HashMap<String, Object>)entry.getValue()).get(0));
+            }
+            if (entry.getKey().equalsIgnoreCase("sorter")) {
+                filterAndSorter.setSorter(parsSorter((HashMap<String, Object>)entry.getValue()));
+            }
+        }
+        return filterAndSorter;
     }
 }
