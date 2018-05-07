@@ -108,12 +108,6 @@ public class Jsons {
                             rslt.put(key, vals.get(key));
                         return rslt;
                     }
-                }).use(".", new ObjectFactory() {
-                    @Override
-                    public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) throws Exception {
-                        And rslt = new And();
-                        return rslt;
-                    }
                 });
 
     }

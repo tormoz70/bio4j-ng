@@ -30,12 +30,15 @@ public abstract class BioRequestFactory<T extends BioRequest> {
             final Class<T> clazz,
             final User usr) throws Exception {
         T bioRequest;
-        try {
-            bioRequest = Jsons.decode(qprms.jsonData, clazz);
-        } catch (Exception e) {
-            throw new Exception(String.format("Unexpected error while decoding BioRequest JSON: %s\n"+
-                    " - Error: %s", qprms.jsonData, e.getMessage()), e);
-        }
+        if(!Strings.isNullOrEmpty(qprms.jsonData)) {
+            try {
+                bioRequest = Jsons.decode(qprms.jsonData, clazz);
+            } catch (Exception e) {
+                throw new Exception(String.format("Unexpected error while decoding BioRequest JSON: %s\n" +
+                        " - Error: %s", qprms.jsonData, e.getMessage()), e);
+            }
+        } else
+            bioRequest = clazz.newInstance();
         bioRequest.setHttpRequest(qprms.request);
         bioRequest.setOrigJson(qprms.jsonData);
         bioRequest.setModuleKey(qprms.moduleKey);
