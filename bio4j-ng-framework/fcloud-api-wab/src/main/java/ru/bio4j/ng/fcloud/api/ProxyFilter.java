@@ -5,6 +5,7 @@ import ru.bio4j.ng.service.types.WarSecurityFilterBase;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ProxyFilter extends WarSecurityFilterBase implements Filter {
@@ -20,6 +21,7 @@ public class ProxyFilter extends WarSecurityFilterBase implements Filter {
         try {
             BioWrappedRequest rereq = new BioWrappedRequest(req);
             rereq.putHeader("Access-Control-Allow-Origin", "*");
+            ((HttpServletResponse)response).setHeader("Access-Control-Allow-Origin", "*");
             super.doFilter(rereq, response, chain);
         } catch (Exception ex) {
             throw new ServletException(ex);
