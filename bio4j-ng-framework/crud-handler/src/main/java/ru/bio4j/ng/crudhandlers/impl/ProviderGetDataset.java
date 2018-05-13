@@ -29,7 +29,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
         result.bioCode(cursor.getBioCode());
 
-        StoreData data = new StoreData();
+        StoreData data = StoreDataFactory.storeData();
         data.setStoreId(request.getStoreId());
         data.setOffset(request.getOffset());
         data.setPageSize(request.getPageSize());
@@ -59,8 +59,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
         result.bioCode(cursor.getBioCode());
 
-        StoreData data = new StoreData();
-        data.setMetadata(new StoreMetadata());
+        StoreData data = StoreDataFactory.storeData();
         data.getMetadata().setReadonly(cursor.getReadOnly());
         data.getMetadata().setMultiSelection(cursor.getMultiSelection());
         data.setStoreId(request.getStoreId());
@@ -86,8 +85,6 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
             if(request.getPageSize() < 0) {
                 responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
-                if(request.getPageSize() > 0)
-                    cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
                 responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
             response.addHeader("X-Pagination-Current-Page", ""+request.getPage());

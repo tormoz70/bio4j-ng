@@ -1,6 +1,8 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
+import ru.bio4j.ng.database.commons.CrudReaderApi;
+import ru.bio4j.ng.model.transport.ABeanPage;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.service.api.BioCursor;
@@ -14,22 +16,23 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
 
-    protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
+    protected static BioRespBuilder.DataBuilder processCursorAsSelectableSingleRecord(final BioRequestJStoreGetRecord request, final SQLContext context, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as SinglePage!!!", cursor.getBioCode());
-        BioRespBuilder.DataBuilder response = ctx.execBatch((context, conn, cursorDef, usr) -> {
-            final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
-            result.bioCode(cursorDef.getBioCode());
 
-            StoreData data = new StoreData();
-            data.setStoreId(request.getStoreId());
-            readStoreData(request, data, context, conn, cursorDef, LOG);
+        ABeanPage beanPage = CrudReaderApi.loadRecord(request.getBioParams(), context, cursor, request.getUser());
 
-            result.packet(data);
-            return result.exception(null);
-        }, cursor, request.getUser());
-        response.bioParams(request.getBioParams());
-        response.id(request.getId());
-        return response;
+        final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
+        result.bioCode(cursor.getBioCode());
+
+        StoreData data = StoreDataFactory.storeData();
+        data.setStoreId(request.getStoreId());
+
+        fillData(beanPage, data, LOG);
+
+        result.packet(data);
+        result.bioParams(request.getBioParams());
+        result.id(request.getId());
+        return result.exception(null);
 
     }
 
@@ -38,13 +41,13 @@ public class ProviderGetRecord extends ProviderAn<BioRequestJStoreGetRecord> {
         LOG.debug("Process getRecord for \"{}\" request...", request.getBioCode());
         try {
             final BioCursor cursor = module.getCursor(request.getBioCode());
-            if(cursor.getSelectSqlDef() == null)
-                throw new Exception(String.format("For bio \"%s\" must be defined \"select\" sql!", cursor.getBioCode()));
+            //if(cursor.getSelectSqlDef() == null)
+            //    throw new Exception(String.format("For bio \"%s\" must be defined \"select\" sql!", cursor.getBioCode()));
 
-            Field pkField = cursor.getSelectSqlDef().findPk();
-            if(pkField == null)
-                throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
-            cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
+            //Field pkField = cursor.getSelectSqlDef().findPk();
+            //if(pkField == null)
+            //    throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
+            //cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
             BioRespBuilder.DataBuilder responseBuilder = processCursorAsSelectableSingleRecord(request, context, cursor, LOG);
             response.getWriter().append(responseBuilder.json());
         } finally {

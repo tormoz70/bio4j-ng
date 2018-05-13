@@ -24,6 +24,28 @@ public class CrudReaderApi {
 
     private static final int MAX_RECORDS_FETCH_LIMIT = 2500;
 
+    private static void preparePkParamValue(final List<Param> params, final Field pkField) throws Exception {
+        Param pkParam = Paramus.getParam(params, RestParamNames.GETROW_PARAM_PKVAL);
+        if(pkParam != null) {
+            Object curValue = pkParam.getValue();
+            Object newValue = Converter.toType(curValue, MetaTypeConverter.write(pkField.getMetaType()));
+            pkParam.setType(pkField.getMetaType());
+            pkParam.setValue(newValue);
+        }
+        pkParam = Paramus.getParam(params, RestParamNames.LOCATE_PARAM_PKVAL);
+        if(pkParam != null) {
+            Object curValue = pkParam.getValue();
+            Object newValue = Converter.toType(curValue, MetaTypeConverter.write(pkField.getMetaType()));
+            pkParam.setValue(newValue);
+        }
+        pkParam = Paramus.getParam(params, RestParamNames.DELETE_PARAM_PKVAL);
+        if(pkParam != null) {
+            Object curValue = pkParam.getValue();
+            Object newValue = Converter.toType(curValue, MetaTypeConverter.write(pkField.getMetaType()));
+            pkParam.setValue(newValue);
+        }
+    }
+
     private static ABeanPage readStoreData(final List<Param> params, final SQLContext context, final Connection conn, final BioCursor cursorDef) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
@@ -88,6 +110,7 @@ public class CrudReaderApi {
             if(pkField == null)
                 throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
             cursor.getSelectSqlDef().setLocateSql(context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
+            preparePkParamValue(params, pkField);
         }
         if(paginationPagesize > 0)
             cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
@@ -142,6 +165,7 @@ public class CrudReaderApi {
         if(pkField == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
+        preparePkParamValue(params, pkField);
         ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
             return readStoreData(params, ctx, conn, cur);
         }, cursor, user);

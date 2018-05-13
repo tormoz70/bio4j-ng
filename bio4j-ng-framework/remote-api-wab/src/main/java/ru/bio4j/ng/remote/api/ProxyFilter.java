@@ -28,7 +28,7 @@ public class ProxyFilter extends WarSecurityFilterBase implements Filter {
             ((HttpServletResponse)response).setHeader("Access-Control-Allow-Origin", "*");
             ((HttpServletResponse)response).setHeader("Access-Control-Allow-Credentials", "true");
             ((HttpServletResponse)response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
-            ((HttpServletResponse)response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, Authorization");
+            ((HttpServletResponse)response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
             super.doFilter(rereq, response, chain);
         } catch (Exception ex) {
             //throw new ServletException(ex);
