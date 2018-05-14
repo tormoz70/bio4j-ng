@@ -59,7 +59,7 @@ public class CrudWriterApi {
             cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
             for (Object id : ids) {
                 Paramus.setParamValue(params, RestParamNames.DELETE_PARAM_PKVAL, id, MetaTypeConverter.read(id.getClass()));
-                cmd.execSQL(params, null);
+                cmd.execSQL(params, user, true);
             }
             return 0;
         }, cursor, user);
