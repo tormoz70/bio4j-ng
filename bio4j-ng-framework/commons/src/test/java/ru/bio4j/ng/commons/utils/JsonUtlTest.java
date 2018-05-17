@@ -7,10 +7,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.model.transport.ABean;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.MetaType;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.BioRequestJStorePost;
 import ru.bio4j.ng.model.transport.jstore.StoreData;
@@ -202,6 +199,12 @@ public class JsonUtlTest {
         List<ABean> dummy = Jsons.decodeABeans(tstPost8);
         Assert.assertEquals(dummy.size(), 2);
         Assert.assertEquals(dummy.get(1).get("tdict_id"), 27);
+    }
+
+    @Test(enabled = true)
+    public void bdecode9() throws Exception {
+        List<ABean> dummy = Jsons.decodeABeans("{seld:[1,2,3]}");
+        Assert.assertEquals(dummy.size(), 1);
     }
 
 }

@@ -132,6 +132,11 @@ public class Jsons {
         return d.deserialize(json, factory);
     }
 
+    public static HashMap<String, Object> decode(String json) throws Exception {
+        HashMap<String, Object> rslt = (HashMap<String, Object>) new JSONDeserializer<>().deserialize(json);
+        return rslt;
+    }
+
     public static class ABeanWrapper{
         public ABean abean;
     }
