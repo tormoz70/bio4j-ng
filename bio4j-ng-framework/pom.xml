@@ -69,10 +69,13 @@
         <org.eclipse.jetty.version>9.3.8.v20160314</org.eclipse.jetty.version>
 
 
-        <tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>
-        <tomcat-juli.version>8.0.3</tomcat-juli.version>
+        <!--<tomcat-jdbc.version>8.0.3</tomcat-jdbc.version>-->
+        <!--<tomcat-juli.version>8.0.3</tomcat-juli.version>-->
 
-        <ojdbc7.version>12.1.0.1</ojdbc7.version>
+        <tomcat-jdbc.version>9.0.8</tomcat-jdbc.version>
+        <tomcat-juli.version>9.0.8</tomcat-juli.version>
+
+        <ojdbc.version>12.2.0.1</ojdbc.version>
 
         <postgresql-jdbc.version>42.1.4</postgresql-jdbc.version>
         <!--<commons-codec.version>1.9</commons-codec.version>-->

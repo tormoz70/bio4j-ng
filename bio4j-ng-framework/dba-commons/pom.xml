@@ -53,8 +53,8 @@
 
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc7</artifactId>
-            <version>${ojdbc7.version}</version>
+            <artifactId>ojdbc8</artifactId>
+            <version>${ojdbc.version}</version>
             <scope>compile</scope>
         </dependency>
 
