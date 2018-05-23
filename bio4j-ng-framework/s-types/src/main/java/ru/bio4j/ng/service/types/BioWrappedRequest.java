@@ -266,7 +266,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         super(request);
         modParameters = new TreeMap<>();
         modHeaders = new HashMap();
-        bioQueryParams = decodeBioQueryParams(request);
+        bioQueryParams = decodeBioQueryParams((HttpServletRequest)this.getRequest());
     }
 
     public void appendParams(final Map<String, String[]> params) {

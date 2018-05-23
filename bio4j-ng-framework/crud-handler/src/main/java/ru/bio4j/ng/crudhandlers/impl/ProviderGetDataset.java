@@ -3,7 +3,6 @@ package ru.bio4j.ng.crudhandlers.impl;
 import org.slf4j.Logger;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.service.api.BioCursor;
-import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.model.transport.ABeanPage;
 import ru.bio4j.ng.model.transport.jstore.*;
@@ -32,10 +31,10 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         StoreData data = StoreDataFactory.storeData();
         data.setStoreId(request.getStoreId());
         data.setOffset(request.getOffset());
-        data.setPageSize(request.getPageSize());
+        data.setPageSize(request.getLimit());
         data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
         data.setStoreId(request.getStoreId());
-        data.setPageSize(request.getPageSize());
+        data.setPageSize(request.getLimit());
 
         data.setOffset(beanPage.getPaginationOffset());
         data.setPage(beanPage.getPaginationPage());
@@ -64,7 +63,7 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         data.getMetadata().setMultiSelection(cursor.getMultiSelection());
         data.setStoreId(request.getStoreId());
         data.setOffset(request.getOffset());
-        data.setPageSize(request.getPageSize());
+        data.setPageSize(request.getLimit());
         data.setResults(beanPage.getPaginationCount());
         fillData(beanPage, data, LOG);
         result.packet(data);
@@ -82,13 +81,13 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         try {
             final BioCursor cursor = module.getCursor(request.getBioCode());
             BioRespBuilder.DataBuilder responseBuilder;
-            if(request.getPageSize() < 0) {
+            if(request.getLimit() <= 0) {
                 responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
                 responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
             response.addHeader("X-Pagination-Current-Page", ""+request.getPage());
-            response.addHeader("X-Pagination-Per-Page", ""+request.getPageSize());
+            response.addHeader("X-Pagination-Per-Page", ""+request.getLimit());
 //            response.addHeader("X-Pagination-Total-Count", ""+orgs.size());
 
             response.getWriter().append(responseBuilder.json());

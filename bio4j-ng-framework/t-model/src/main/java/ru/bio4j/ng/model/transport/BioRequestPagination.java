@@ -22,9 +22,9 @@ public interface BioRequestPagination {
 
     void setOffset(Integer offset);
 
-    Integer getPageSize();
+    Integer getLimit();
 
-    void setPageSize(Integer pageSize);
+    void setLimit(Integer limit);
 
     List<Sort> getSort();
 

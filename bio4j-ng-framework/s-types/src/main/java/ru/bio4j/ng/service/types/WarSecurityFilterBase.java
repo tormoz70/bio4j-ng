@@ -82,9 +82,9 @@ public class WarSecurityFilterBase {
         final String servletPath = req.getServletPath();
         final HttpSession session = req.getSession();
 
-        if(req.getMethod().equals("GET") || req.getMethod().equals("POST")) {
-            try {
 
+        if(Arrays.asList("GET", "POST").contains(req.getMethod())) {
+            try {
                 debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
 
                 initSecurityHandler(req.getServletContext());

@@ -33,14 +33,14 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
             boolean requestCached = false; //requestCached(request, LOG);
 
             int totalCount = requestCached ? request.getTotalCount() : UNKNOWN_RECS_TOTAL;
-            if(request.getOffset() == (UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
+            if(request.getOffset() == (UNKNOWN_RECS_TOTAL - request.getLimit() + 1)) {
 //                if(totalCount == 0) {
                 LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
                 try (SQLCursor c = context.createCursor()
                         .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), null);) {
                     if (c.reader().next()) {
                         totalCount = c.reader().getValue(1, int.class);
-                        int newOffset = (int)Math.floor(totalCount / request.getPageSize()) * request.getPageSize();
+                        int newOffset = (int)Math.floor(totalCount / request.getLimit()) * request.getLimit();
                         request.setOffset(newOffset);
                     }
                 }
@@ -53,7 +53,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
                         .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), request.getUser());) {
                     if (c.reader().next()) {
                         int locatedPos = c.reader().getValue(1, int.class);
-                        int offset = calcOffset(locatedPos, request.getPageSize());
+                        int offset = calcOffset(locatedPos, request.getLimit());
                         LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), request.getLocation(), locatedPos, offset);
                     } else {
                         LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), request.getLocation());
@@ -65,7 +65,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
             StoreData data = new StoreData();
             data.setStoreId(request.getStoreId());
             data.setOffset(request.getOffset());
-            data.setPageSize(request.getPageSize());
+            data.setPageSize(request.getLimit());
             data.setResults(totalCount);
 
             readStoreData(request, data, context, conn, cur, LOG);
@@ -91,7 +91,7 @@ public class ProviderExpDataset extends ProviderAn<BioRequestJStoreExpDataSet> {
             StoreData data = new StoreData();
             data.setStoreId(request.getStoreId());
             data.setOffset(request.getOffset());
-            data.setPageSize(request.getPageSize());
+            data.setPageSize(request.getLimit());
             int totalCount = readStoreData(request, data, context, conn, cur, LOG);
 
             if(totalCount == 0) {

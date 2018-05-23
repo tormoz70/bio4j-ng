@@ -82,8 +82,8 @@ public abstract class BioRequestFactory<T extends BioRequest> {
                 final User usr) throws Exception {
             BioRequestGetJson rslt = super.restore(qprms, clazz, usr);
             setOffset(rslt, qprms);
-            if(rslt.getPageSize() == null && qprms.pageSize != null)
-                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getLimit() == null && qprms.pageSize != null)
+                rslt.setLimit(qprms.pageSize);
             if(rslt.getSort() == null && qprms.sort != null)
                 rslt.setSort(qprms.sort);
             if (rslt.getFilter() == null && qprms.filter != null)
@@ -114,7 +114,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
             else if (offset >= 0)
                 page = (int) Math.floor(offset / pageSize) + 1;
         }
-        request.setPageSize(pageSize);
+        request.setLimit(pageSize);
         request.setOffset(offset);
         request.setPage(page);
     }
@@ -143,8 +143,8 @@ public abstract class BioRequestFactory<T extends BioRequest> {
                 final User usr) throws Exception {
             BioRequestJStoreExpDataSet rslt = super.restore(qprms, clazz, usr);
             setOffset(rslt, qprms);
-            if(rslt.getPageSize() == null && qprms.pageSize != null)
-                rslt.setPageSize(qprms.pageSize);
+            if(rslt.getLimit() == null && qprms.pageSize != null)
+                rslt.setLimit(qprms.pageSize);
             if(rslt.getLocation() == null && !Strings.isNullOrEmpty(qprms.location))
                 rslt.setLocation(Integer.getInteger(qprms.location));
 

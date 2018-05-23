@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.service.api.BioCursor;
-import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.model.transport.BioError;
@@ -32,13 +31,13 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
             boolean requestCached = false; //requestCached(request, LOG);
 
             int totalCount = requestCached ? request.getTotalCount() : Sqls.UNKNOWN_RECS_TOTAL;
-            if(request.getOffset() == (Sqls.UNKNOWN_RECS_TOTAL - request.getPageSize() + 1)) {
+            if(request.getOffset() == (Sqls.UNKNOWN_RECS_TOTAL - request.getLimit() + 1)) {
                 LOG.debug("Try calc count records of cursor \"{}\"!!!", cur.getBioCode());
                 try (SQLCursor c = context.createCursor()
                         .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), null);) {
                     if (c.reader().next()) {
                         totalCount = c.reader().getValue(1, int.class);
-                        int newOffset = (int)Math.floor(totalCount / request.getPageSize()) * request.getPageSize();
+                        int newOffset = (int)Math.floor(totalCount / request.getLimit()) * request.getLimit();
                         request.setOffset(newOffset);
                     }
                 }
@@ -51,7 +50,7 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
                         .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), null);) {
                     if (c.reader().next()) {
                         int locatedPos = c.reader().getValue(1, int.class);
-                        int offset = calcOffset(locatedPos, request.getPageSize());
+                        int offset = calcOffset(locatedPos, request.getLimit());
                         LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), request.getLocation(), locatedPos, offset);
                         request.setOffset(offset);
                     } else {
@@ -64,7 +63,7 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
             StoreData data = new StoreData();
             data.setStoreId(request.getStoreId());
             data.setOffset(request.getOffset());
-            data.setPageSize(request.getPageSize());
+            data.setPageSize(request.getLimit());
             data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
             data.setResults(totalCount);
 
@@ -94,7 +93,7 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
             StoreData data = new StoreData();
             data.setStoreId(request.getStoreId());
             data.setOffset(request.getOffset());
-            data.setPageSize(request.getPageSize());
+            data.setPageSize(request.getLimit());
             int totalCount = readStoreData(request, data, context, conn, cur, LOG);
 
             if(totalCount == 0) {
@@ -134,15 +133,15 @@ public class ProviderGetDatasetBkp extends ProviderAn<BioRequestJStoreGetDataSet
                 cursor.getSelectSqlDef().setLocateSql(context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
             }
             BioRespBuilder.DataBuilder responseBuilder;
-            if(request.getPageSize() < 0) {
+            if(request.getLimit() < 0) {
                 responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
-                if(request.getPageSize() > 0)
+                if(request.getLimit() > 0)
                     cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
                 responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
             }
             response.addHeader("X-Pagination-Current-Page", ""+request.getPage());
-            response.addHeader("X-Pagination-Per-Page", ""+request.getPageSize());
+            response.addHeader("X-Pagination-Per-Page", ""+request.getLimit());
 //            response.addHeader("X-Pagination-Total-Count", ""+orgs.size());
 
             response.getWriter().append(responseBuilder.json());

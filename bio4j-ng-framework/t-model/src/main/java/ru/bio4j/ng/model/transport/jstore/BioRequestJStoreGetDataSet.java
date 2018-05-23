@@ -1,6 +1,5 @@
 package ru.bio4j.ng.model.transport.jstore;
 
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.BioRequestPagination;
 import ru.bio4j.ng.model.transport.BioRequestRunLongOp;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
@@ -30,7 +29,7 @@ public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp implements B
     /**
      * Размер страницы
      */
-    private Integer pageSize;
+    private Integer limit;
 
     /**
      * Параметры сортировки для запросов GET
@@ -56,12 +55,12 @@ public class BioRequestJStoreGetDataSet extends BioRequestRunLongOp implements B
         this.offset = offset;
     }
 
-    public Integer getPageSize() {
-        return pageSize;
+    public Integer getLimit() {
+        return limit;
     }
 
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 
     public List<Sort> getSort() {

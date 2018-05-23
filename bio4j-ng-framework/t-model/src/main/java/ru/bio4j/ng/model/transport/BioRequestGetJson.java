@@ -1,8 +1,6 @@
 package ru.bio4j.ng.model.transport;
 
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.util.List;
@@ -58,12 +56,12 @@ public class BioRequestGetJson extends BioRequest implements BioRequestPaginatio
         this.offset = offset;
     }
 
-    public Integer getPageSize() {
+    public Integer getLimit() {
         return pageSize;
     }
 
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+    public void setLimit(Integer limit) {
+        this.pageSize = limit;
     }
 
     public List<Sort> getSort() {
