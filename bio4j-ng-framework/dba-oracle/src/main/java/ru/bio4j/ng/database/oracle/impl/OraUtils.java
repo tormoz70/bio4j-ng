@@ -8,7 +8,9 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.RDBMSUtils;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
@@ -104,7 +106,7 @@ public class OraUtils implements RDBMSUtils {
     public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
         OraUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
-        try (OraclePreparedStatement st = (OraclePreparedStatement)conn.prepareStatement(SQL_GET_PARAMS_FROM_DBMS, ResultSet.TYPE_FORWARD_ONLY)) {
+        try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
             st.setStringAtName("package_name", pkg.pkgName);
             st.setStringAtName("method_name", pkg.methodName);
             try (OracleResultSet rs = (OracleResultSet)st.executeQuery()) {

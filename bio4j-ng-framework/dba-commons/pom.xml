@@ -24,6 +24,7 @@
                             sun.reflect.generics.*;resolution:="optional",
                             javax.*;resolution:="optional",
                             oracle.*;resolution:="optional",
+                            com.oracle.common.*;resolution:="optional",
                             org.objectweb.*;resolution:="optional",
                             org.postgresql.*;resolution:="optional",
                             waffle.windows.auth.*;resolution:="optional",
@@ -53,8 +54,8 @@
 
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc7</artifactId>
-            <version>${ojdbc7.version}</version>
+            <artifactId>ojdbc8</artifactId>
+            <version>${ojdbc.version}</version>
             <scope>compile</scope>
         </dependency>
 

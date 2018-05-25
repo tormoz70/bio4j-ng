@@ -21,6 +21,7 @@ import ru.bio4j.ng.model.transport.User;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SQLFactoryTest {
@@ -470,7 +471,7 @@ public class SQLFactoryTest {
                     if(resultSet.next()) {
                         String userName = resultSet.getString("ROLNAME");
                         LOG.debug("userName: " + userName);
-                        Assert.assertEquals(userName.toUpperCase(), "PG_MONITOR");
+                        Assert.assertTrue(Arrays.asList("PG_SIGNAL_BACKEND", "PG_MONITOR").contains(userName.toUpperCase()));
                     }
                 }
                 return 0;

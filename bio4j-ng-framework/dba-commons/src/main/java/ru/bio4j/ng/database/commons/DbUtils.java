@@ -80,7 +80,7 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user) throws Exception {
+    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
@@ -101,7 +101,7 @@ public class DbUtils {
         return r;
     }
 
-    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction, final User user) throws Exception {
+    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction) throws Exception {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch(new SQLActionScalar<Integer>() {
             @Override
@@ -117,7 +117,7 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final User user, Class<T> clazz) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, Class<T> clazz) throws Exception {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         T r = ctx.execBatch(new SQLActionScalar<T>() {
             @Override
