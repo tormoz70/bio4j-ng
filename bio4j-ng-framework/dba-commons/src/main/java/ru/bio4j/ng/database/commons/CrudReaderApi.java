@@ -6,6 +6,7 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.DBField;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLCursor;
@@ -100,7 +101,9 @@ public class CrudReaderApi {
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
         final int paginationOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0);
         final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        final int paginationTotalcount = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, Sqls.UNKNOWN_RECS_TOTAL);
+
+        final String paginationTotalcountStr = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, String.class, null);
+        final int paginationTotalcount = Strings.isNullOrEmpty(paginationTotalcountStr) ? Sqls.UNKNOWN_RECS_TOTAL : Converter.toType(paginationTotalcountStr, int.class);
 
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
@@ -124,7 +127,7 @@ public class CrudReaderApi {
                         .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, null);) {
                     if (c.reader().next()) {
                         totalCount = c.reader().getValue(1, int.class);
-                        factOffset = (int)Math.floor(totalCount / paginationOffset) * paginationPagesize;
+                        factOffset = (int)Math.floor(totalCount / paginationPagesize) * paginationPagesize;
                     }
                 }
                 LOG.debug("Count of records of cursor \"{}\" - {}!!!", cur.getBioCode(), totalCount);

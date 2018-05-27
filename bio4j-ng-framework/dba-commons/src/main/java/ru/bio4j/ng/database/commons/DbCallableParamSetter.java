@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,7 +43,9 @@ public class DbCallableParamSetter implements SQLParamSetter {
                 Param param = p.getParam(paramName);
                 if (param != null) {
                     param.setId(i + 1);
-                    if ((param.getDirection() == Param.Direction.IN) || (param.getDirection() == Param.Direction.INOUT)) {
+                    if(param.getDirection() == Param.Direction.UNDEFINED)
+                        param.setDirection(Param.Direction.IN);
+                    if(Arrays.asList(Param.Direction.IN, Param.Direction.INOUT).contains((param.getDirection()))){
                         Object val = param.getValue();
                         Class<?> valType = (val != null ? val.getClass() : null);
                         int sqlType = DbUtils.getInstance().paramSqlType(param);

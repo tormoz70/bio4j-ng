@@ -38,16 +38,15 @@ public class Httpc {
     }
 
     public static <T> T createBeanFromHttpRequest(HttpServletRequest request, Class<T> clazz) throws Exception {
-        if(request == null)
+        if (request == null)
             throw new IllegalArgumentException("Argument \"request\" cannot be null!");
-        if(clazz == null)
+        if (clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
-
-        T result = (T)clazz.newInstance();
-        for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
+        T result = (T) clazz.newInstance();
+        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
             String fldName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);
-            if(p != null) {
+            if (p != null) {
                 fldName = p.name();
                 String val = request.getParameter(fldName);
                 fld.setAccessible(true);

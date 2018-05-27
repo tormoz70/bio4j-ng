@@ -143,10 +143,20 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         Paramus.setParamValue(qprms.bioParams, RestParamNames.LOCATE_PARAM_STARTFROM, qprms.offset);
     }
 
+    private static boolean isMultypartRequest(HttpServletRequest request){
+        String contentType = request.getHeader("Content-Type");
+        return !Strings.isNullOrEmpty(contentType) && contentType.startsWith("multipart/form-data");
+    }
+
     public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
         StringBuilder sb = new StringBuilder();
-        Httpc.readDataFromRequest(request, sb);
-        String uploadedJson = sb.toString();
+
+        String uploadedJson = null;
+        if (!isMultypartRequest(request)) {
+            Httpc.readDataFromRequest(request, sb);
+            uploadedJson = sb.toString();
+        }
+
         BioQueryParams result = Httpc.createBeanFromHttpRequest(request, BioQueryParams.class);
         result.jsonData = uploadedJson;
 

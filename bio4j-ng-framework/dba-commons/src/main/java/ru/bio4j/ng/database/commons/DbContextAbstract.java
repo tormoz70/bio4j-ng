@@ -181,18 +181,18 @@ public abstract class DbContextAbstract implements SQLContext {
     public List<Param> execSQL(final Connection conn, final String sql, List<Param> params, final User usr) throws Exception {
         final SQLStoredProc cmd = this.createStoredProc();
         cmd.init(conn, sql, params);
-        cmd.execSQL(params, null);
+        cmd.execSQL(params, usr);
         return cmd.getParams();
     }
 
     @Override
     public List<Param> execSQL(final String sql, List<Param> params, final User usr) throws Exception {
         final SQLStoredProc cmd = this.createStoredProc();
-        return execBatch((context, conn, prms, u) -> {
-            cmd.init(conn, sql, prms);
-            cmd.execSQL(prms, null);
+        return execBatch((context, conn, u) -> {
+            cmd.init(conn, sql);
+            cmd.execSQL(params, u);
             return cmd.getParams();
-        }, params, usr);
+        }, usr);
     }
 
 
