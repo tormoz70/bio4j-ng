@@ -9,6 +9,7 @@ public interface SQLNamedParametersStatement extends Statement {
 
     String getParamsAsString();
 
+    String getOrigQuery();
     String getParsedQuery();
 
     void setObjectAtName(String name, Object value) throws SQLException;

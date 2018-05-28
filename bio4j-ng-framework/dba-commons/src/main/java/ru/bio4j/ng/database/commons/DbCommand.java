@@ -57,12 +57,12 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
      */
     protected void setParamsToStatement() throws Exception {
         if(this.paramSetter != null)
-            this.paramSetter.setParamsToStatement(this, this.params);
+            this.paramSetter.setParamsToStatement(this.preparedStatement, this.params);
     }
 
     protected void getParamsFromStatement() throws SQLException {
         if(this.paramGetter != null)
-            this.paramGetter.getParamsFromStatement(this, this.params);
+            this.paramGetter.getParamsFromStatement(this.preparedStatement, this.params);
     }
 
     public void setParamSetter(SQLParamSetter paramSetter) {

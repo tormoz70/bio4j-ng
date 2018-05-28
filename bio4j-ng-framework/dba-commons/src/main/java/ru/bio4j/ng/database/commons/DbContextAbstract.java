@@ -252,8 +252,8 @@ public abstract class DbContextAbstract implements SQLContext {
     @Override
     public SQLStoredProc createStoredProc(){
         DbStoredProc cmd = new DbStoredProc();
-        cmd.setParamSetter(new DbCallableParamSetter(cmd));
-        cmd.setParamGetter(new DbCallableParamGetter(cmd));
+        cmd.setParamSetter(new DbCallableParamSetter());
+        cmd.setParamGetter(new DbCallableParamGetter());
         return cmd;
     }
 

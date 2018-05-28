@@ -59,22 +59,22 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ru.bio4j.ng</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-tmodel</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ru.bio4j.ng</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dbapi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ru.bio4j.ng</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dba-commons</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ru.bio4j.ng</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dba-pgsql</artifactId>
             <scope>provided</scope>
         </dependency>

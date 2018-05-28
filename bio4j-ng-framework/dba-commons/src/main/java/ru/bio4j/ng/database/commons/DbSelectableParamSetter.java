@@ -16,15 +16,15 @@ import java.util.List;
 public class DbSelectableParamSetter implements SQLParamSetter {
     private static final Logger LOG = LoggerFactory.getLogger(DbSelectableParamSetter.class);
 
-    public DbSelectableParamSetter() {
-    }
+//    public DbSelectableParamSetter() {
+//    }
 
     @Override
-    public void setParamsToStatement(SQLCommand command, List<Param> params) throws Exception {
-        SQLNamedParametersStatement selectable = command.getStatement();
-        final String sql = command.getPreparedSQL();
+    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) throws Exception {
+//        SQLNamedParametersStatement selectable = command.getStatement();
+        final String sql = statment.getOrigQuery();
 //        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
-        final List<String> paramsNames = selectable.getParamNames();
+        final List<String> paramsNames = statment.getParamNames();
         for (int i = 0; i < paramsNames.size(); i++) {
             String paramName = paramsNames.get(i);
             Param param = Paramus.set(params).getParam(paramName);
@@ -36,17 +36,17 @@ public class DbSelectableParamSetter implements SQLParamSetter {
                 int targetType = DbUtils.getInstance().paramSqlType(param);
                 if(value != null) {
                     if(targetType == 0)
-                        selectable.setObjectAtName(paramName, value);
+                        statment.setObjectAtName(paramName, value);
                     else
-                        selectable.setObjectAtName(paramName, value, targetType);
+                        statment.setObjectAtName(paramName, value, targetType);
                 } else {
                     if(targetType == 0)
-                        selectable.setNullAtName(paramName);
+                        statment.setNullAtName(paramName);
                     else
-                        selectable.setObjectAtName(paramName, null, targetType);
+                        statment.setObjectAtName(paramName, null, targetType);
                 }
             } else
-                selectable.setNullAtName(paramName);
+                statment.setNullAtName(paramName);
         }
     }
 

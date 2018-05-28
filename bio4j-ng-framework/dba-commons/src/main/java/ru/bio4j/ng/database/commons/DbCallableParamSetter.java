@@ -25,16 +25,17 @@ import java.util.List;
 public class DbCallableParamSetter implements SQLParamSetter {
     private static final Logger LOG = LoggerFactory.getLogger(DbCallableParamSetter.class);
 
-    private DbCommand owner;
+//    private DbCommand owner;
     private SqlTypeConverter sqlTypeConverter = new SqlTypeConverterImpl();
-    public DbCallableParamSetter(DbCommand owner) {
-        this.owner = owner;
-    }
+//    public DbCallableParamSetter(DbCommand owner) {
+//        this.owner = owner;
+//    }
 
     @Override
-    public void setParamsToStatement(SQLCommand command, List<Param> params) throws SQLException {
-        SQLNamedParametersStatement callable = command.getStatement();
-        final String sql = this.owner.getPreparedSQL();
+    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) throws SQLException {
+        //SQLNamedParametersStatement callable = command.getStatement();
+//        final String sql = this.owner.getPreparedSQL();
+        final String sql = statment.getOrigQuery();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         final List<Param> outParams = new ArrayList<>();
         try (Paramus p = Paramus.set(params)) {
@@ -66,7 +67,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             }
                         try {
                             sqlType = (sqlType == 0 ? sqlTypeConverter.read(targetValType, charSize, false) : sqlType);
-                            callable.setObjectAtName(paramName, val, sqlType);
+                            statment.setObjectAtName(paramName, val, sqlType);
                         } catch (SQLException e) {
                             throw new SQLException(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s). Message: %s",
                                     paramName, sqlTypeName, val, (valType != null ? valType.getSimpleName() : null), e.getMessage()), e);
@@ -83,7 +84,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
             int sqlType = DbUtils.getInstance().paramSqlType(outParam);
             String sqlTypeName = DbUtils.getInstance().getSqlTypeName(sqlType);
             String paramName = outParam.getName();
-            callable.registerOutParameter(paramName, sqlType);
+            statment.registerOutParameter(paramName, sqlType);
         }
     }
 }

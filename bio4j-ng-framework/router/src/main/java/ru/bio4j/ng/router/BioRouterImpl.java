@@ -204,8 +204,12 @@ public class BioRouterImpl extends BioServiceBase implements BioRouter {
 
         final String requestType = qprms.requestType;
         LOG.debug("Recived-{}: \"{}\" - request...", qprms.method, requestType);
-        if(isNullOrEmpty(requestType))
-            throw new IllegalArgumentException(String.format("Parameter \"requestType\" cannot be null or empty!"));
+        if(isNullOrEmpty(requestType)) {
+//            throw new IllegalArgumentException(String.format("Parameter \"requestType\" cannot be null or empty!"));
+            final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
+            response.getWriter().append(result.user(usr).exception(null).json());
+            return;
+        }
 
         BioAppModule bioModule = moduleProvider.getAppModule(qprms.moduleKey);
         if(bioModule == null)

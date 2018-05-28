@@ -13,20 +13,20 @@ import java.util.List;
  * Вытаскивает OUT параметры из statement и засовывает их в params
  */
 public class DbCallableParamGetter implements SQLParamGetter {
-    private DbCommand owner;
-    public DbCallableParamGetter(DbCommand owner) {
-        this.owner = owner;
-    }
+//    private DbCommand owner;
+//    public DbCallableParamGetter(DbCommand owner) {
+//        this.owner = owner;
+//    }
 
-    public void getParamsFromStatement(SQLCommand command, List<Param> params) throws SQLException {
+    public void getParamsFromStatement(SQLNamedParametersStatement statment, List<Param> params) throws SQLException {
 //        CallableStatement callable = (command.getStatement() instanceof CallableStatement) ? (CallableStatement)command.getStatement() : null;
-        SQLNamedParametersStatement callable = command.getStatement();
-        if(callable == null)
+//        SQLNamedParametersStatement callable = command.getStatement();
+        if(statment == null)
             throw new SQLException("Parameter [statement] mast be instance of CallableStatement!");
         for(Param param : params) {
             if (Utl.arrayContains(new Param.Direction[] {Param.Direction.INOUT, Param.Direction.OUT}, param.getDirection())) {
                 String paramName = param.getName();
-                Object outValue = callable.getObject(paramName);
+                Object outValue = statment.getObject(paramName);
                 param.setValue(outValue);
             }
 

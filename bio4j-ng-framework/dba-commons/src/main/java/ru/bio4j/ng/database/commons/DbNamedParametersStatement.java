@@ -24,6 +24,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
     private final Map<String, String> outParamTypes;
     private final Map<String, Object> paramValues;
     private final Map<String, int[]> indexMap;
+    private final String origQuery;
     private final String parsedQuery;
 
     private DbNamedParametersStatement(String query) throws SQLException {
@@ -32,6 +33,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         outParamTypes = new HashMap();
         paramValues = new HashMap();
         indexMap=new HashMap();
+        origQuery = query;
         parsedQuery=parse(query, paramNames, indexMap);
         for (String pn : indexMap.keySet()){
             paramValues.put(pn, null);
@@ -59,6 +61,9 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         return null;
     }
 
+    public String getOrigQuery(){
+        return origQuery;
+    }
     public String getParsedQuery(){
         return parsedQuery;
     }
