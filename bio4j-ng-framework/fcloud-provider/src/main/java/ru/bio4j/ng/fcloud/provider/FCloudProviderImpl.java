@@ -19,6 +19,9 @@ public class FCloudProviderImpl extends BioServiceBase implements FCloudProvider
     @Requires
     private ModuleProvider moduleProvider;
 
+    @Requires
+    private ConfigProvider configProvider;
+
     @Override
     protected EventAdmin getEventAdmin(){
         return eventAdmin;
@@ -37,6 +40,10 @@ public class FCloudProviderImpl extends BioServiceBase implements FCloudProvider
     @Validate
     public void start() throws Exception {
         LOG.debug("Starting...");
+        if(!configProvider.configIsReady()) {
+            LOG.info("Config is not ready! Waiting...");
+            return;
+        }
         this.ready = true;
         LOG.debug("Started");
     }

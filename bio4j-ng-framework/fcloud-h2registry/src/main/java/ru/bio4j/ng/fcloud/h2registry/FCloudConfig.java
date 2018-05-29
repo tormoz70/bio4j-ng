@@ -1,4 +1,4 @@
-package ru.givc.efond2.fcloud.module.impl;
+package ru.bio4j.ng.fcloud.h2registry;
 
 import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.service.types.SQLContextConfig;

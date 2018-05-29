@@ -10,6 +10,9 @@ public class BioConfig {
     @Prop(name = "bio.error.handler")
     private String errorHandler = "std";
 
+    @Prop(name = "bio.fcloud.api")
+    private String bioFCloudApi = "fcloud-h2registry";
+
     @Prop(name = "ehcache.persistent.path")
     private String cachePersistentPath = "./ehcache-persistent";
 

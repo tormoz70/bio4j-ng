@@ -1,4 +1,4 @@
-package ru.givc.efond2.fcloud.module.impl;
+package ru.bio4j.ng.fcloud.h2registry;
 
 import org.h2.jdbcx.JdbcDataSource;
 import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
@@ -11,11 +11,10 @@ import ru.bio4j.ng.database.commons.DbSelectableParamSetter;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class DbH2Api {
+public class H2Api {
     public static Connection getConnection(final String url, final String usrName, final String passwd) throws Exception {
         JdbcDataSource ds = new JdbcDataSource();
         ds.setURL(url); //("jdbc:h2:˜/test");
@@ -23,7 +22,6 @@ public class DbH2Api {
         ds.setPassword(passwd); //("sa");
         return ds.getConnection();
     }
-
 
     public static ResultSet openSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
         SQLNamedParametersStatement stmnt = DbNamedParametersStatement.prepareStatement(conn, sql);
@@ -41,4 +39,5 @@ public class DbH2Api {
         stmnt.execute();
         paramGetter.getParamsFromStatement(stmnt, params);
     }
+
 }

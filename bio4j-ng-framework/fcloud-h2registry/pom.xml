@@ -9,7 +9,7 @@
         <version>1.5.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bio4j-ng-fcloud-registry</artifactId>
+    <artifactId>bio4j-ng-fcloud-h2registry</artifactId>
     <packaging>bundle</packaging>
 
     <build>

@@ -1,42 +1,36 @@
-package ru.givc.efond2.fcloud.module.impl;
+package ru.bio4j.ng.fcloud.h2registry;
 
 import org.apache.felix.ipojo.annotations.*;
-import org.h2.jdbcx.JdbcDataSource;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioModuleBase;
 import ru.bio4j.ng.service.types.SQLContextConfig;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.List;
-import java.util.UUID;
 
-@Component(managedservice="fcloud-registry.config")
+@Component(managedservice="fcloud-h2registry.config")
 @Instantiate
 @Provides(specifications = BioFCloudApiModule.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
-                value = "fcloud-registry", // key must be always "fcloud-api" for security module
+                value = "fcloud-h2registry", // key must be always "fcloud-api" for security module
                 type = "java.lang.String"
         )})
 public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements BioFCloudApiModule {
@@ -51,7 +45,7 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
 
     @Override
     public String getKey() {
-        return "fcloud-registry";
+        return "fcloud-h2registry";
     }
 
     @Override
@@ -79,7 +73,7 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
 
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
-        doOnUpdated(conf, "fcloud-registry-config-updated");
+        doOnUpdated(conf, "fcloud-h2registry-config-updated");
     }
 
     @Validate
@@ -126,9 +120,8 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
 //        final BioAppModule module = this.moduleProvider.getAppModule("efond2");
 //        final BioCursor cursor = module.getCursor("imports.register");
 
-        Connection conn = DbH2Api.getConnection("jdbc:h2:˜/test", "sa", "sa");
-        PreparedStatement stmnt =  conn.prepareStatement("select ? as rslt", ResultSet.TYPE_FORWARD_ONLY);
-        ResultSet rs = stmnt.executeQuery();
+        Connection conn = H2Api.getConnection("jdbc:h2:˜/test", "sa", "sa");
+        FCloudDBApi.initDB(conn);
 
 
 //
@@ -199,6 +192,7 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             final String fileName,
             final InputStream inputStream,
             final long fileSize,
+            final Date fileDatetime,
             final String contentType,
             final String remoteHost,
             final String uploadDesc,
@@ -237,6 +231,26 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
     }
 
     @Override
+    public List<FileSpec> getFileList(
+            final String fileNameFilter,
+            final String fileDescFilter,
+            final String fileParamFilter,
+            final String fileCTypeFilter,
+            final String fileUpldUIDFilter,
+            final String fileHostFilter,
+            final String fileUserFilter,
+            final String regFrom,
+            final String regTo,
+            final String fileFrom,
+            final String fileTo,
+            final String sizeFrom,
+            final String sizeTo,
+            final User usr
+    ) throws Exception {
+        return null;
+    }
+
+    @Override
     public InputStream getFile(final String fileUUID, final User usr) throws Exception {
         FCloudConfig cfg = this.getConfig();
         String rootPath = this.getCloudRootPath().toString();
@@ -253,10 +267,10 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
         removeFileSpecFromDb(fileUUID, usr);
     }
 
-    @Override
-    public void runImport(User usr) throws Exception {
-
-    }
+//    @Override
+//    public void runImport(User usr) throws Exception {
+//
+//    }
 
 
 }

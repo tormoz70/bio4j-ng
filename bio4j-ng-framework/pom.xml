@@ -81,6 +81,10 @@
         <ehcache.version>2.6.11</ehcache.version>
 
         <xstream.version>1.4.9</xstream.version>
+
+        <org.glassfish.jersey.core.version>2.23</org.glassfish.jersey.core.version>
+        <com.fasterxml.jackson.core.version>2.7.4</com.fasterxml.jackson.core.version>
+
 	</properties>
 
     <build>
@@ -297,6 +301,50 @@
                 <version>${postgresql-jdbc.version}</version>
             </dependency>
 
+            <!--jersey-->
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-common</artifactId>
+                <version>${org.glassfish.jersey.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${org.glassfish.jersey.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
+                <version>${org.glassfish.jersey.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet-core</artifactId>
+                <version>${org.glassfish.jersey.core.version}</version>
+            </dependency>
+
+            <!--jackson-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>${com.fasterxml.jackson.core.version}</version>
+            </dependency>
+
             <!--<dependency>-->
                 <!--<groupId>com.thoughtworks.xstream</groupId>-->
                 <!--<artifactId>xstream</artifactId>-->
@@ -461,7 +509,8 @@
         <module>module-provider</module>
         <module>security-module-x</module>
         <module>fcloud-provider</module>
-        <module>fcloud-registry</module>
+        <module>fcloud-h2registry</module>
+        <module>fcloud-rest-api</module>
 
     </modules>
 

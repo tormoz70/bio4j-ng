@@ -1,10 +1,14 @@
 package ru.bio4j.ng.service.api;
 
+import java.util.Date;
+
 public class FileSpec {
     private String uploadUID;
     private String fileUUID;
+    private Date creDatetime;
     private String fileNameOrig;
     private Long fileSize;
+    private Date fileDatetime;
     private String md5;
     private String contentType;
     private String remoteIpAddress;
@@ -90,5 +94,21 @@ public class FileSpec {
 
     public void setExtParam(String extParam) {
         this.extParam = extParam;
+    }
+
+    public Date getFileDatetime() {
+        return fileDatetime;
+    }
+
+    public void setFileDatetime(Date fileDatetime) {
+        this.fileDatetime = fileDatetime;
+    }
+
+    public Date getCreDatetime() {
+        return creDatetime;
+    }
+
+    public void setCreDatetime(Date creDatetime) {
+        this.creDatetime = creDatetime;
     }
 }
