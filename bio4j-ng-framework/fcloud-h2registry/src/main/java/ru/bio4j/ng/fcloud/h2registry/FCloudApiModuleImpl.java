@@ -120,8 +120,8 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
 //        final BioAppModule module = this.moduleProvider.getAppModule("efond2");
 //        final BioCursor cursor = module.getCursor("imports.register");
 
-        Connection conn = H2Api.getConnection("jdbc:h2:˜/test", "sa", "sa");
-        FCloudDBApi.initDB(conn);
+//        Connection conn = H2Api.getConnection("jdbc:h2:˜/test", "sa", "sa");
+//        FCloudDBApi.initDB(conn);
 
 
 //

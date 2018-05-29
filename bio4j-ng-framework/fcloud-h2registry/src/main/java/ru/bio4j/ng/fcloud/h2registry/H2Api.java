@@ -15,7 +15,14 @@ import java.sql.ResultSet;
 import java.util.List;
 
 public class H2Api {
-    public static Connection getConnection(final String url, final String usrName, final String passwd) throws Exception {
+
+    private static H2Api instance = new H2Api();
+    private H2Api(){
+
+    }
+
+
+    public Connection getConnection(final String url, final String usrName, final String passwd) throws Exception {
         JdbcDataSource ds = new JdbcDataSource();
         ds.setURL(url); //("jdbc:h2:˜/test");
         ds.setUser(usrName); //("sa");
@@ -23,7 +30,7 @@ public class H2Api {
         return ds.getConnection();
     }
 
-    public static ResultSet openSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
+    public ResultSet openSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
         SQLNamedParametersStatement stmnt = DbNamedParametersStatement.prepareStatement(conn, sql);
         SQLParamSetter paramSetter = new DbSelectableParamSetter();
         paramSetter.setParamsToStatement(stmnt, params);
@@ -31,7 +38,7 @@ public class H2Api {
         return rs;
     }
 
-    public static void execSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
+    public void execSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
         SQLNamedParametersStatement stmnt = DbNamedParametersStatement.prepareCall(conn, sql);
         SQLParamSetter paramSetter = new DbCallableParamSetter();
         SQLParamGetter paramGetter = new DbCallableParamGetter();
@@ -40,4 +47,7 @@ public class H2Api {
         paramGetter.getParamsFromStatement(stmnt, params);
     }
 
+    public static H2Api getInstance() {
+        return instance;
+    }
 }

@@ -19,8 +19,8 @@ public class H2ApiTest {
 
     @Test
     public void getConnectionTest() throws Exception {
-        Connection conn = H2Api.getConnection("jdbc:h2:˜/test", "sa", "sa");
-        FCloudDBApi.initDB(conn);
+//        Connection conn = H2Api.getConnection("jdbc:h2:d:/test", "sa", "sa");
+//        FCloudDBApi.initDB(conn);
 
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FCloudDBApi {
     public static void initDB(final Connection conn) throws Exception {
-        H2Api.execSql(conn,"CREATE TABLE IF NOT EXISTS FCLOUD(\n" +
+        H2Api.getInstance().execSql(conn,"CREATE TABLE IF NOT EXISTS FCLOUD(\n" +
                 "   FILESUID             VARCHAR(32)          NOT NULL,\n" +
                 "   PERSON_UID           VARCHAR(32)          NOT NULL,\n" +
                 "   FCLOUD_ID            BIGINT               AUTO_INCREMENT,\n" +
