@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
 import java.io.InputStream;
@@ -16,24 +17,12 @@ public interface FCloudApi {
             final String contentType,
             final String remoteHost,
             final String uploadDesc,
-            final String extParam,
+            final List<Param> params,
             final User usr
     ) throws Exception;
 
     List<FileSpec> getFileList(
-            final String fileNameFilter,
-            final String fileDescFilter,
-            final String fileParamFilter,
-            final String fileCTypeFilter,
-            final String fileUpldUIDFilter,
-            final String fileHostFilter,
-            final String fileUserFilter,
-            final String regFrom,
-            final String regTo,
-            final String fileFrom,
-            final String fileTo,
-            final String sizeFrom,
-            final String sizeTo,
+            final List<Param> params,
             final User usr
     ) throws Exception;
 

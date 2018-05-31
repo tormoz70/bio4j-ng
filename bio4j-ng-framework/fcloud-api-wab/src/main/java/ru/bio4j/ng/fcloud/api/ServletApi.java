@@ -75,7 +75,7 @@ public class ServletApi extends BioServletApiBase {
         addFieldMeta(flds, "creDatetime", MetaType.DATE, "Дата/время регистрации файла в базе данных хранилища");
         addFieldMeta(flds, "fileNameOrig", MetaType.STRING, "Оригинальное имя файла, которое передано клиентом в хранилище");
         addFieldMeta(flds, "fileSize", MetaType.INTEGER, "Размер файла в байтах");
-        addFieldMeta(flds, "fileDatetime", MetaType.DATE, "Дата/время файла, которое передано клиентом в хранилище (если не передано, тогда == creDatetime)");
+        addFieldMeta(flds, "fileDate", MetaType.DATE, "Дата/время файла, которое передано клиентом в хранилище (если не передано, тогда == creDatetime)");
         addFieldMeta(flds, "md5", MetaType.STRING, "Хэш-код MD5 для файла. Вычисляется при сохранении в хранилище");
         addFieldMeta(flds, "contentType", MetaType.STRING, "Сontent type - значение, которое передано клиентом в хранилище");
         addFieldMeta(flds, "remoteIpAddress", MetaType.STRING, "IP-адрес, с которого был загружен файл");
@@ -104,7 +104,7 @@ public class ServletApi extends BioServletApiBase {
                         p.getContentType(),
                         request.getRemoteHost(),
                         req.getBioQueryParams().fcloudUploadDesc,
-                        req.getBioQueryParams().fcloudExtParam,
+                        req.getBioQueryParams().bioParams,
                         usr
                 );
                 if(file != null)
@@ -127,22 +127,21 @@ public class ServletApi extends BioServletApiBase {
         BioWrappedRequest req = (BioWrappedRequest)request;
         List<Param> bioParams = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
 
-        final String fileNameFilter = Paramus.paramValue(bioParams, "qfcname", String.class, null);
-        final String fileDescFilter = Paramus.paramValue(bioParams, "qfcdesc", String.class, null);
-        final String fileParamFilter = Paramus.paramValue(bioParams, "qfcprm", String.class, null);
-        final String fileCTypeFilter = Paramus.paramValue(bioParams, "qfctype", String.class, null);
-        final String fileUpldUIDFilter = Paramus.paramValue(bioParams, "qfcupld", String.class, null);
-        final String fileHostFilter = Paramus.paramValue(bioParams, "qfchost", String.class, null);
-        final String fileUserFilter = Paramus.paramValue(bioParams, "qfcusr", String.class, null);
-        final String regFrom = Paramus.paramValue(bioParams, "qfcregfrm", String.class, null);
-        final String regTo = Paramus.paramValue(bioParams, "qfcregto", String.class, null);
-        final String fileFrom = Paramus.paramValue(bioParams, "qfcflfrom", String.class, null);
-        final String fileTo = Paramus.paramValue(bioParams, "qfcflto", String.class, null);
-        final String sizeFrom = Paramus.paramValue(bioParams, "qfcszfrom", String.class, null);
-        final String sizeTo = Paramus.paramValue(bioParams, "qfcszto", String.class, null);
+//        final String fileNameFilter = Paramus.paramValue(bioParams, "qfcname", String.class, null);
+//        final String fileDescFilter = Paramus.paramValue(bioParams, "qfcdesc", String.class, null);
+//        final String fileParamFilter = Paramus.paramValue(bioParams, "qfcprm", String.class, null);
+//        final String fileCTypeFilter = Paramus.paramValue(bioParams, "qfctype", String.class, null);
+//        final String fileUpldUIDFilter = Paramus.paramValue(bioParams, "qfcupld", String.class, null);
+//        final String fileHostFilter = Paramus.paramValue(bioParams, "qfchost", String.class, null);
+//        final String fileUserFilter = Paramus.paramValue(bioParams, "qfcusr", String.class, null);
+//        final String regFrom = Paramus.paramValue(bioParams, "qfcregfrm", String.class, null);
+//        final String regTo = Paramus.paramValue(bioParams, "qfcregto", String.class, null);
+//        final String fileFrom = Paramus.paramValue(bioParams, "qfcflfrom", String.class, null);
+//        final String fileTo = Paramus.paramValue(bioParams, "qfcflto", String.class, null);
+//        final String sizeFrom = Paramus.paramValue(bioParams, "qfcszfrom", String.class, null);
+//        final String sizeTo = Paramus.paramValue(bioParams, "qfcszto", String.class, null);
 
-        List<FileSpec> files = fcloudProvider.getApi().getFileList(fileNameFilter, fileDescFilter, fileParamFilter, fileCTypeFilter, fileUpldUIDFilter,
-                fileHostFilter, fileUserFilter, regFrom, regTo, fileFrom, fileTo, sizeFrom, sizeTo, usr);
+        List<FileSpec> files = fcloudProvider.getApi().getFileList(bioParams, usr);
         writeResult(files, response);
     }
 

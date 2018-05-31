@@ -45,23 +45,22 @@ public class RestSrvcBase {
 
         List<Param> bioParams = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
 
-        final String fileNameFilter = Paramus.paramValue(bioParams, "qfcname", String.class, null);
-        final String fileDescFilter = Paramus.paramValue(bioParams, "qfcdesc", String.class, null);
-        final String fileParamFilter = Paramus.paramValue(bioParams, "qfcprm", String.class, null);
-        final String fileCTypeFilter = Paramus.paramValue(bioParams, "qfctype", String.class, null);
-        final String fileUpldUIDFilter = Paramus.paramValue(bioParams, "qfcupld", String.class, null);
-        final String fileHostFilter = Paramus.paramValue(bioParams, "qfchost", String.class, null);
-        final String fileUserFilter = Paramus.paramValue(bioParams, "qfcusr", String.class, null);
-        final String regFrom = Paramus.paramValue(bioParams, "qfcregfrm", String.class, null);
-        final String regTo = Paramus.paramValue(bioParams, "qfcregto", String.class, null);
-        final String fileFrom = Paramus.paramValue(bioParams, "qfcflfrom", String.class, null);
-        final String fileTo = Paramus.paramValue(bioParams, "qfcflto", String.class, null);
-        final String sizeFrom = Paramus.paramValue(bioParams, "qfcszfrom", String.class, null);
-        final String sizeTo = Paramus.paramValue(bioParams, "qfcszto", String.class, null);
+//        final String fileNameFilter = Paramus.paramValue(bioParams, "qfcname", String.class, null);
+//        final String fileDescFilter = Paramus.paramValue(bioParams, "qfcdesc", String.class, null);
+//        final String fileParamFilter = Paramus.paramValue(bioParams, "qfcprm", String.class, null);
+//        final String fileCTypeFilter = Paramus.paramValue(bioParams, "qfctype", String.class, null);
+//        final String fileUpldUIDFilter = Paramus.paramValue(bioParams, "qfcupld", String.class, null);
+//        final String fileHostFilter = Paramus.paramValue(bioParams, "qfchost", String.class, null);
+//        final String fileUserFilter = Paramus.paramValue(bioParams, "qfcusr", String.class, null);
+//        final String regFrom = Paramus.paramValue(bioParams, "qfcregfrm", String.class, null);
+//        final String regTo = Paramus.paramValue(bioParams, "qfcregto", String.class, null);
+//        final String fileFrom = Paramus.paramValue(bioParams, "qfcflfrom", String.class, null);
+//        final String fileTo = Paramus.paramValue(bioParams, "qfcflto", String.class, null);
+//        final String sizeFrom = Paramus.paramValue(bioParams, "qfcszfrom", String.class, null);
+//        final String sizeTo = Paramus.paramValue(bioParams, "qfcszto", String.class, null);
         final User usr = ((BioWrappedRequest)request).getUser();
 
-        return module.getFileList(fileNameFilter, fileDescFilter, fileParamFilter, fileCTypeFilter, fileUpldUIDFilter,
-            fileHostFilter, fileUserFilter, regFrom, regTo, fileFrom, fileTo, sizeFrom, sizeTo, usr);
+        return module.getFileList(bioParams, usr);
     }
 
     private static void addFieldMeta(final List<Field> flds, final String fldName, final MetaType fldType, final String fldTitle){
