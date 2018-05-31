@@ -148,11 +148,17 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return !Strings.isNullOrEmpty(contentType) && contentType.startsWith("multipart/form-data");
     }
 
+    private static boolean isUrlencodedFormRequest(HttpServletRequest request){
+        String contentType = request.getHeader("Content-Type");
+        return !Strings.isNullOrEmpty(contentType) && contentType.startsWith("application/x-www-form-urlencoded");
+    }
+
+
     public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         String uploadedJson = null;
-        if (!isMultypartRequest(request)) {
+        if (!isMultypartRequest(request) && !isUrlencodedFormRequest(request)) {
             Httpc.readDataFromRequest(request, sb);
             uploadedJson = sb.toString();
         }
