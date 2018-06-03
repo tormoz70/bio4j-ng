@@ -81,7 +81,7 @@ public class PgSQLUtils implements RDBMSUtils {
             return MetaType.INTEGER;
         if(Arrays.asList("DECIMAL", "NUMERIC", "REAL", "DOUBLE PRECISION").contains(typeName))
             return MetaType.DECIMAL;
-        if(Arrays.asList("DATE", "TIMESTAMP", "TIME", "TIMESTAMP WITH TIME ZONE", "TIME WITH TIME ZONE").contains(typeName))
+        if(Arrays.asList("DATE", "TIMESTAMP", "TIME", "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITHOUT TIME ZONE", "TIME WITH TIME ZONE", "TIME WITHOUT TIME ZONE").contains(typeName))
             return MetaType.DATE;
         if(Arrays.asList("BYTEA").contains(typeName))
             return MetaType.BLOB;
