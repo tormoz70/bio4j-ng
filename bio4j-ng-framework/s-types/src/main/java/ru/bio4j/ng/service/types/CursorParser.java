@@ -156,7 +156,7 @@ public class CursorParser {
                 String paramName = Doms.getAttribute(paramElem, "name", "", String.class);
                 MetaType paramType = Converter.toType(Doms.getAttribute(paramElem, "type", "string", String.class), MetaType.class);
                 Param.Direction paramDir = Converter.toType(Doms.getAttribute(paramElem, "direction", "IN", String.class), Param.Direction.class);
-                Boolean override = Doms.getAttribute(paramElem, "override", false, Boolean.class);
+                Boolean override = Doms.getAttribute(paramElem, "override", true, Boolean.class);
                 String format = Doms.getAttribute(paramElem, "format", null, String.class);
                 Object defaultValue = Doms.getAttribute(paramElem, "defaultValue", null, MetaTypeConverter.write(paramType));
                 Param param = p.getParam(paramName, true);
