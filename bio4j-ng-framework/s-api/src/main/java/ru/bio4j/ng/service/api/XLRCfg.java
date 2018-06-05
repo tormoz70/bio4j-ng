@@ -14,7 +14,6 @@ import java.util.List;
 @XStreamAlias("report")
 public class XLRCfg {
 
-
     @XStreamAlias("field")
     public static class ColumnDefinition {
         @XStreamAsAttribute
