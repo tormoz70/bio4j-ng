@@ -1,12 +1,12 @@
-package ru.bio4j.ng.database.pgsql.impl;
+package ru.bio4j.ng.fcloud.h2registry;
 
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.RDBMSUtils;
+import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.database.commons.DbUtils;
@@ -22,12 +22,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ru.bio4j.ng.database.commons.DbUtils;
-
 /**
- * Утилиты для работы с метаданными СУБД PostgreSQL
+ * Утилиты для работы с метаданными СУБД H2
  */
-public class PgSQLUtils implements RDBMSUtils {
+public class H2SQLUtilsImpl implements RDBMSUtils {
 	private static class PackageName {
 		public final String pkgName;
 		public final String methodName;
@@ -42,7 +40,7 @@ public class PgSQLUtils implements RDBMSUtils {
      * @param storedProcName  - имя процедуры в виде [methodName] или [packageName].[methodName]
      * @return
      */
-    private PgSQLUtils.PackageName parsStoredProcName(String storedProcName) {
+    private H2SQLUtilsImpl.PackageName parsStoredProcName(String storedProcName) {
         //String pkgName = null;
         //String methodName = null;
         //String[] storedProcNameParts = Strings.split(storedProcName, ".");
@@ -52,7 +50,7 @@ public class PgSQLUtils implements RDBMSUtils {
         //    pkgName    = storedProcNameParts[0];
         //    methodName = storedProcNameParts[1];
         //}
-        PackageName pkg = new PgSQLUtils.PackageName(null, storedProcName);
+        PackageName pkg = new H2SQLUtilsImpl.PackageName(null, storedProcName);
     	return pkg;
     }
 
@@ -75,15 +73,16 @@ public class PgSQLUtils implements RDBMSUtils {
         if(Strings.isNullOrEmpty(typeName))
             return MetaType.UNDEFINED;
         typeName = typeName.toUpperCase();
-        if(Arrays.asList("CHARACTER", "CHARACTER VARYING", "TEXT").contains(typeName))
+        if(Arrays.asList("VARCHAR", "LONGVARCHAR", "VARCHAR2", "NVARCHAR", "NVARCHAR2", "VARCHAR_CASESENSITIVE", "VARCHAR_IGNORECASE",
+                "CHAR", "CHARACTER", "NCHAR", "CLOB", "TINYTEXT", "TEXT", "MEDIUMTEXT", "LONGTEXT", "NTEXT", "NCLOB").contains(typeName))
             return MetaType.STRING;
-        if(Arrays.asList("SMALLINT  ", "INTEGER", "BIGINT", "SMALLSERIAL", "SERIAL", "BIGSERIAL").contains(typeName))
+        if(Arrays.asList("INT  ", "INTEGER", "MEDIUM", "INT4", "SIGNED", "SMALLINT", "INT2", "YEAR", "BIGINT", "INT8", "IDENTITY", "TINYINT").contains(typeName))
             return MetaType.INTEGER;
-        if(Arrays.asList("DECIMAL", "NUMERIC", "REAL", "DOUBLE PRECISION").contains(typeName))
+        if(Arrays.asList("DECIMAL", "NUMERIC", "NUMBER", "DEC", "DOUBLE", "FLOAT", "FLOAT8", "REAL", "FLOAT4").contains(typeName))
             return MetaType.DECIMAL;
         if(Arrays.asList("DATE", "TIMESTAMP", "TIME", "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITHOUT TIME ZONE", "TIME WITH TIME ZONE", "TIME WITHOUT TIME ZONE").contains(typeName))
             return MetaType.DATE;
-        if(Arrays.asList("BYTEA").contains(typeName))
+        if(Arrays.asList("BLOB").contains(typeName))
             return MetaType.BLOB;
         if(Arrays.asList("REFCURSOR").contains(typeName))
             return MetaType.CURSOR;
@@ -189,7 +188,7 @@ public class PgSQLUtils implements RDBMSUtils {
 
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
     public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
-        PgSQLUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
+        H2SQLUtilsImpl.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
         try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
             st.setStringAtName("method_name", pkg.methodName);

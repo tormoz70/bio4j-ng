@@ -15,6 +15,7 @@ public class FileSpec {
     private String adesc;
     private String extParam;
     private String threadUID;
+    private String ownerUserUid;
 
     public String getFileUUID() {
         return fileUUID;
@@ -110,5 +111,13 @@ public class FileSpec {
 
     public void setCreDatetime(Date creDatetime) {
         this.creDatetime = creDatetime;
+    }
+
+    public String getOwnerUserUid() {
+        return ownerUserUid;
+    }
+
+    public void setOwnerUserUid(String ownerUserUid) {
+        this.ownerUserUid = ownerUserUid;
     }
 }

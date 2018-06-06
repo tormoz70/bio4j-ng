@@ -202,6 +202,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             if (!Strings.isNullOrEmpty(bioHeaderOffset))
                 result.offsetOrig = bioHeaderOffset;
         }
+        if(Strings.isNullOrEmpty(result.pageSizeOrig) && !Strings.isNullOrEmpty(result.limitOrig))
+            result.pageSizeOrig = result.limitOrig;
         if(Strings.isNullOrEmpty(result.pageSizeOrig)) {
             final String bioHeaderPageSize = request.getHeader("X-Pagination-Pagesize");
             if (!Strings.isNullOrEmpty(bioHeaderPageSize))

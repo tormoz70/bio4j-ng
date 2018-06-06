@@ -50,6 +50,8 @@ public class BioQueryParams {
     public String offsetOrig;
     public Integer offset;
     @Prop(name = "limit")
+    public String limitOrig;
+    @Prop(name = "pageSize")
     public String pageSizeOrig;
     public Integer pageSize;
     public Integer totalCount;

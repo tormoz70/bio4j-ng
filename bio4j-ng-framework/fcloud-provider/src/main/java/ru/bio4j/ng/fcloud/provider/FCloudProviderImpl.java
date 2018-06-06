@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioServiceBase;
 
+import java.util.Dictionary;
+
 @Component
 @Instantiate
 @Provides(specifications = FCloudProvider.class)
@@ -32,7 +34,8 @@ public class FCloudProviderImpl extends BioServiceBase implements FCloudProvider
     @Override
     public BioFCloudApiModule getApi() throws Exception {
         if(fcloudApi == null) {
-            fcloudApi = moduleProvider.getFCloudApiModule("fcloud-api");
+            String fcloudApiModuleName = configProvider.getConfig().getFcloudApi();
+            fcloudApi = moduleProvider.getFCloudApiModule(fcloudApiModuleName);
         }
         return fcloudApi;
     }

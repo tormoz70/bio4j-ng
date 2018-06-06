@@ -11,7 +11,7 @@ public class BioConfig {
     private String errorHandler = "std";
 
     @Prop(name = "bio.fcloud.api")
-    private String bioFCloudApi = "fcloud-h2registry";
+    private String fcloudApi = "fcloud-h2registry";
 
     @Prop(name = "ehcache.persistent.path")
     private String cachePersistentPath = "./ehcache-persistent";
@@ -168,5 +168,13 @@ public class BioConfig {
 
     public void setErrorHandler(String errorHandler) {
         this.errorHandler = errorHandler;
+    }
+
+    public String getFcloudApi() {
+        return fcloudApi;
+    }
+
+    public void setFcloudApi(String fcloudApi) {
+        this.fcloudApi = fcloudApi;
     }
 }

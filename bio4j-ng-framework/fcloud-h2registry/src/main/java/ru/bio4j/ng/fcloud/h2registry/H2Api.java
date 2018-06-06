@@ -4,10 +4,7 @@ import org.h2.jdbcx.JdbcDataSource;
 import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.SQLParamGetter;
 import ru.bio4j.ng.database.api.SQLParamSetter;
-import ru.bio4j.ng.database.commons.DbCallableParamGetter;
-import ru.bio4j.ng.database.commons.DbCallableParamSetter;
-import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
-import ru.bio4j.ng.database.commons.DbSelectableParamSetter;
+import ru.bio4j.ng.database.commons.*;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.Connection;
@@ -18,7 +15,7 @@ public class H2Api {
 
     private static H2Api instance = new H2Api();
     private H2Api(){
-
+        DbUtils.getInstance().init(new H2SQLTypeConverterImpl(), new H2SQLUtilsImpl());
     }
 
 
@@ -38,13 +35,14 @@ public class H2Api {
         return rs;
     }
 
-    public void execSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
+    public boolean execSql(final Connection conn, final String sql, final List<Param> params) throws Exception {
         SQLNamedParametersStatement stmnt = DbNamedParametersStatement.prepareCall(conn, sql);
         SQLParamSetter paramSetter = new DbCallableParamSetter();
         SQLParamGetter paramGetter = new DbCallableParamGetter();
         paramSetter.setParamsToStatement(stmnt, params);
-        stmnt.execute();
+        boolean rslt = stmnt.execute();
         paramGetter.getParamsFromStatement(stmnt, params);
+        return rslt;
     }
 
     public static H2Api getInstance() {

@@ -10,6 +10,14 @@ public class FCloudConfig extends SQLContextConfig {
     @Prop(name = "fcloud.tmp.path")
     private String cloudTmpPath = null;
 
+    @Prop(name = "fcloud.db.connection.url")
+    private String dbConnectionUrl = null;
+    @Prop(name = "fcloud.db.connection.username")
+    private String dbConnectionUsername = null;
+    @Prop(name = "fcloud.db.connection.password")
+    private String dbConnectionPassword = null;
+
+
     public String getCloudRootPath() {
         return cloudRootPath;
     }
@@ -24,5 +32,31 @@ public class FCloudConfig extends SQLContextConfig {
 
     public void setCloudTmpPath(String cloudTmpPath) {
         this.cloudTmpPath = cloudTmpPath;
+    }
+
+    @Override
+    public String getDbConnectionUrl() {
+        return dbConnectionUrl;
+    }
+
+    @Override
+    public void setDbConnectionUrl(String dbConnectionUrl) {
+        this.dbConnectionUrl = dbConnectionUrl;
+    }
+
+    public String getDbConnectionUsername() {
+        return dbConnectionUsername;
+    }
+
+    public void setDbConnectionUsername(String dbConnectionUsername) {
+        this.dbConnectionUsername = dbConnectionUsername;
+    }
+
+    public String getDbConnectionPassword() {
+        return dbConnectionPassword;
+    }
+
+    public void setDbConnectionPassword(String dbConnectionPassword) {
+        this.dbConnectionPassword = dbConnectionPassword;
     }
 }

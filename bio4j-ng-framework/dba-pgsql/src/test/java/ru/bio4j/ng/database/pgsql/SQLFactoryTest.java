@@ -14,7 +14,7 @@ import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLContext;
-import ru.bio4j.ng.database.pgsql.impl.PgSQLUtils;
+import ru.bio4j.ng.database.pgsql.impl.PgSQLUtilsImpl;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
@@ -255,7 +255,7 @@ public class SQLFactoryTest {
                 long leng1 = 0;
                 LOG.debug("conn: " + conn);
 
-                PgSQLUtils utl = new PgSQLUtils();
+                PgSQLUtilsImpl utl = new PgSQLUtilsImpl();
                 StoredProgMetadata md = utl.detectStoredProcParamsAuto("test_stored_inout", conn, null);
                 LOG.debug("md: " + md);
                 leng1 = md.getParamDeclaration().size();

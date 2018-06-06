@@ -72,9 +72,34 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
         return "FCloudRegistry module";
     }
 
+    private String dbConnectionUrl;
+    private String dbConnectionUsername;
+    private String dbConnectionPassword;
+
+    private Connection getDbConnection() throws Exception {
+        return H2Api.getInstance().getConnection(dbConnectionUrl, dbConnectionUsername, dbConnectionPassword);
+    }
+
+    private static void initDbDirectory(final String dbConnUrl) throws Exception {
+        String dbPathStr = dbConnUrl.substring("jdbc:h2:".length());
+        Path dbPath = new File(dbPathStr).toPath().toAbsolutePath();
+        Files.createDirectories(dbPath.getParent());
+    }
+
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
         doOnUpdated(conf, "fcloud-h2registry-config-updated");
+        if(isReady()) {
+            LOG.debug("About to init FCLOUDREG database...");
+            dbConnectionUrl = this.getConfig().getDbConnectionUrl();
+            initDbDirectory(dbConnectionUrl);
+            dbConnectionUsername = this.getConfig().getDbConnectionUsername();
+            dbConnectionPassword = this.getConfig().getDbConnectionPassword();
+            Connection conn = getDbConnection();
+            FCloudDBApi.initDB(conn, "FCLOUDREG");
+            LOG.debug("FCLOUDREG database inited!");
+        }
+
     }
 
     @Validate
@@ -115,58 +140,14 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
         Files.delete(_storePath);
     }
 
-
-
     private void storeFileSpec2db(final FileSpec fileSpec, User usr) throws Exception {
-//        final BioAppModule module = this.moduleProvider.getAppModule("efond2");
-//        final BioCursor cursor = module.getCursor("imports.register");
-
-//        Connection conn = H2Api.getConnection("jdbc:h2:˜/test", "sa", "sa");
-//        FCloudDBApi.initDB(conn);
-
-
-//
-//        final String fileUUID = fileSpec.getFileUUID();
-//        final long recsCount = importMrc.calcRecords(fileUUID);
-//
-//        String rslt = context.execBatch((ctx, conn, cur, u) -> {
-//            List<Param> prms = new ArrayList<>();
-//            try (Paramus paramus = Paramus.set(prms)) {
-//                paramus.add("p_filesuid", fileUUID)
-//                        .add("p_filenameorig", fileSpec.getFileNameOrig())
-//                        .add("p_md5", fileSpec.getMd5())
-//                        .add("p_bsize", fileSpec.getFileSize())
-//                        .add("p_rmtipaddr", fileSpec.getRemoteIpAddress())
-//                        .add("p_mediatype", fileSpec.getContentType())
-//                        .add("p_uploaduid", fileSpec.getUploadUID())
-//                        .add("p_adesc", fileSpec.getAdesc())
-//                        .add("p_extparam", fileSpec.getExtParam())
-//                        .add("p_recscount", recsCount);
-//            }
-//            SQLStoredProc sp = ctx.createStoredProc();
-//            sp.init(conn, cur.getExecSqlDef().getPreparedSql(), cur.getExecSqlDef().getParamDeclaration()).execSQL(prms, u);
-//            return "OK";
-//        }, cursor, usr);
-
+        Connection conn = getDbConnection();
+        FCloudDBApi.storeFileSpec(conn, fileSpec, usr);
     }
 
     private void removeFileSpecFromDb(final String fileUUID, User usr) throws Exception {
-        final BioAppModule module = this.moduleProvider.getAppModule("efond2");
-        final BioCursor cursor = module.getCursor("imports.remove");
-
-        //        final SQLContext context = this.getSQLContext();
-//
-//        String rslt = context.execBatch((ctx, conn, cur, u) -> {
-//
-//            List<Param> prms = new ArrayList<>();
-//            try (Paramus paramus = Paramus.set(prms)) {
-//                paramus.add("p_filesuid", fileUUID);
-//            }
-//            SQLStoredProc sp = ctx.createStoredProc();
-//            sp.init(conn, cur.getExecSqlDef().getPreparedSql(), cur.getExecSqlDef().getParamDeclaration()).execSQL(prms, u);
-//            return "OK";
-//        }, cursor, null);
-
+        Connection conn = getDbConnection();
+        FCloudDBApi.removeFileSpec(conn, fileUUID, usr);
     }
 
     private static String generateLocalPath(String uuid){

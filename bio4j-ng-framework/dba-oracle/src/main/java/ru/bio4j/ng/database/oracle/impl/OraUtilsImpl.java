@@ -1,6 +1,5 @@
 package ru.bio4j.ng.database.oracle.impl;
 
-import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleResultSet;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
@@ -16,8 +15,6 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +24,7 @@ import java.util.regex.Pattern;
 /**
  * Утилиты для работы с метаданными СУБД Oracle
  */
-public class OraUtils implements RDBMSUtils {
+public class OraUtilsImpl implements RDBMSUtils {
 	private static class PackageName {
 		public final String pkgName;
 		public final String methodName;
@@ -42,7 +39,7 @@ public class OraUtils implements RDBMSUtils {
      * @param storedProcName  - имя процедуры в виде [methodName] или [packageName].[methodName]
      * @return
      */
-    private OraUtils.PackageName parsStoredProcName(String storedProcName) {
+    private OraUtilsImpl.PackageName parsStoredProcName(String storedProcName) {
         String pkgName = null;
         String methodName = null;
         String[] storedProcNameParts = Strings.split(storedProcName, ".");
@@ -52,7 +49,7 @@ public class OraUtils implements RDBMSUtils {
             pkgName    = storedProcNameParts[0];
             methodName = storedProcNameParts[1];
         }
-        PackageName pkg = new OraUtils.PackageName(pkgName, methodName);
+        PackageName pkg = new OraUtilsImpl.PackageName(pkgName, methodName);
     	return pkg;
     }
 
@@ -104,7 +101,7 @@ public class OraUtils implements RDBMSUtils {
             " and a.object_name = upper(:method_name)" +
             " order by position";
     public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
-        OraUtils.PackageName pkg = this.parsStoredProcName(storedProcName);
+        OraUtilsImpl.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
         try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
             st.setStringAtName("package_name", pkg.pkgName);

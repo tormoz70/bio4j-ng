@@ -35,7 +35,7 @@ public class OraContext extends DbContextAbstract {
         wrappers = new OraWrappersImpl(this.getDBMSName());
         DbUtils.getInstance().init(
                 new OraTypeConverterImpl(),
-                new OraUtils()
+                new OraUtilsImpl()
         );
     }
 

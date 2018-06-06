@@ -7,7 +7,6 @@ import ru.bio4j.ng.database.commons.*;
 
 import javax.sql.DataSource;
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class PgSQLContext extends DbContextAbstract {
@@ -36,7 +35,7 @@ public class PgSQLContext extends DbContextAbstract {
         wrappers = new PgSQLWrappersImpl(this.getDBMSName());
         DbUtils.getInstance().init(
                 new PgSQLTypeConverterImpl(),
-                new PgSQLUtils()
+                new PgSQLUtilsImpl()
         );
     }
 
