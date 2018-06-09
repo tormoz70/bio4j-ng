@@ -3,6 +3,7 @@ package ru.bio4j.ng.database.oracle;
 import com.thoughtworks.xstream.exts.XStreamUtility;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
@@ -42,7 +43,7 @@ public class SQLFactoryTest {
 
     @BeforeTest
     public static void setUpClass() throws Exception {
-        context = DbContextAbstract.create(
+        context = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)
@@ -569,7 +570,7 @@ public class SQLFactoryTest {
     public void testSQLCommandOpenCursor2() {
         try {
 
-            SQLContext contextLocal = DbContextAbstract.create(
+            SQLContext contextLocal = DbContextFactory.createApache(
                     SQLConnectionPoolConfig.builder()
                             .poolName("TEST-CONN-POOL-123")
                             .dbDriverName(testDBDriverName)
@@ -735,7 +736,7 @@ public class SQLFactoryTest {
     public void testSQLCommandOpenCursor3() {
         try {
 
-            SQLContext contextLocal = DbContextAbstract.create(
+            SQLContext contextLocal = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                     .poolName("TEST-CONN-POOL-123")
                     .dbDriverName(testDBDriverName)
@@ -801,7 +802,7 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandOpenCursor4() throws Exception {
 
-        SQLContext ctx = DbContextAbstract.create(
+        SQLContext ctx = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -862,7 +863,7 @@ public class SQLFactoryTest {
     @Test(enabled = false)
     public void testSQLCommandOpenCursor5() throws Exception {
 
-        SQLContext ctx = DbContextAbstract.create(
+        SQLContext ctx = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -902,7 +903,7 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void test67() throws Exception {
 
-        SQLContext ctx = DbContextAbstract.create(
+        SQLContext ctx = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)

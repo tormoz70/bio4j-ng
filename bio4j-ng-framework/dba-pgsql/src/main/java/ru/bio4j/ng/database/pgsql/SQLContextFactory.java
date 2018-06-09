@@ -2,13 +2,14 @@ package ru.bio4j.ng.database.pgsql;
 
 import ru.bio4j.ng.database.api.SQLConnectionPoolConfig;
 import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.service.types.SQLContextConfig;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLContext;
 
 public class SQLContextFactory {
     public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {
-        return DbContextAbstract.create(config, PgSQLContext.class);
+        return DbContextFactory.createApache(config, PgSQLContext.class);
     }
     public static SQLContext create(SQLContextConfig config) throws Exception {
         return create(SQLConnectionPoolConfig.builder()

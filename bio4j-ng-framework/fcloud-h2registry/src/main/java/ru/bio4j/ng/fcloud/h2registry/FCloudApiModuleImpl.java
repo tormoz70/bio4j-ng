@@ -86,20 +86,29 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
         Files.createDirectories(dbPath.getParent());
     }
 
+    private volatile boolean databaseInited = false;
+    private synchronized void initDatabase() throws Exception {
+        if(!databaseInited) {
+            LOG.debug("About to init FCLOUDREG database...");
+            dbConnectionUrl = this.getConfig().getDbConnectionUrl();
+            LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionUrl = %s", dbConnectionUrl));
+            initDbDirectory(dbConnectionUrl);
+            LOG.debug(String.format("About to init FCLOUDREG database: initDbDirectory - %s", "done"));
+            dbConnectionUsername = this.getConfig().getDbConnectionUsername();
+            dbConnectionPassword = this.getConfig().getDbConnectionPassword();
+            LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionUsername = %s", dbConnectionUsername));
+            LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionPassword = %s", dbConnectionPassword));
+            Connection conn = getDbConnection();
+            LOG.debug(String.format("About to init FCLOUDREG database: Connection - %s", "opened"));
+            FCloudDBApi.initDB(conn, "FCLOUDREG");
+            LOG.debug("FCLOUDREG database inited!");
+            databaseInited = true;
+        }
+    }
+
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
         doOnUpdated(conf, "fcloud-h2registry-config-updated");
-        if(isReady()) {
-            LOG.debug("About to init FCLOUDREG database...");
-            dbConnectionUrl = this.getConfig().getDbConnectionUrl();
-            initDbDirectory(dbConnectionUrl);
-            dbConnectionUsername = this.getConfig().getDbConnectionUsername();
-            dbConnectionPassword = this.getConfig().getDbConnectionPassword();
-            Connection conn = getDbConnection();
-            FCloudDBApi.initDB(conn, "FCLOUDREG");
-            LOG.debug("FCLOUDREG database inited!");
-        }
-
     }
 
     @Validate
@@ -181,6 +190,7 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             final List<Param> params,
             final User usr
     ) throws Exception {
+        initDatabase();
         Path rootPath = getCloudRootPath();
         FileSpec file = null;
         if(!Strings.isNullOrEmpty(fileName)){
@@ -217,12 +227,13 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             final List<Param> params,
             final User usr
     ) throws Exception {
+        initDatabase();
         return null;
     }
 
     @Override
     public InputStream getFile(final String fileUUID, final User usr) throws Exception {
-        FCloudConfig cfg = this.getConfig();
+//        FCloudConfig cfg = this.getConfig();
         String rootPath = this.getCloudRootPath().toString();
         String _storeFilePath = getStorePath(rootPath, fileUUID);
         return Utl.openFile(_storeFilePath);
@@ -230,7 +241,8 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
 
     @Override
     public void removeFile(final String fileUUID, final User usr) throws Exception {
-        FCloudConfig cfg = this.getConfig();
+        initDatabase();
+//        FCloudConfig cfg = this.getConfig();
         String rootPath = this.getCloudRootPath().toString();
         String _storeFilePath = getStorePath(rootPath, fileUUID);
         Utl.deleteFile(_storeFilePath, true);

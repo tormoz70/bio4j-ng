@@ -275,18 +275,5 @@ public abstract class DbContextAbstract implements SQLContext {
         return DbUtils.getInstance().detectStoredProcParamsAuto(sql, conn, paramsDeclaration);
     }
 
-    public static <T extends DbContextAbstract> SQLContext create(SQLConnectionPoolConfig config, Class<T> clazz) throws Exception {
-        LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
-        final PoolProperties properties = new PoolProperties();
-        properties.setMaxActive(config.getMaxPoolSize());
-        properties.setDriverClassName(config.getDbDriverName());
-        properties.setUrl(config.getDbConnectionUrl());
-        properties.setUsername(config.getDbConnectionUsr());
-        properties.setPassword(config.getDbConnectionPwd());
-        properties.setCommitOnReturn(false);
-        DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(properties);
-        Constructor<T> constructor = clazz.getConstructor(DataSource.class, SQLConnectionPoolConfig.class);
-        return constructor.newInstance(new Object[]{dataSource, config});
-    }
 
 }

@@ -16,10 +16,10 @@ public class SQLConnectionPoolConfig {
         private String dbConnectionUrl;
         private String dbConnectionUsr;
         private String dbConnectionPwd;
-        private int minPoolSize = 2;
-        private int maxPoolSize = 10;
-        private int connectionWaitTimeout = 5;
-        private int initialPoolSize = 5;
+        private int minPoolSize;
+        private int maxPoolSize;
+        private int connectionWaitTimeout;
+        private int initialPoolSize;
         private String currentSchema = null;
 
         public Builder poolName(String poolName) {

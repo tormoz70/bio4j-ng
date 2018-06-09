@@ -8,6 +8,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.DbContextAbstract;
+import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.User;
 
@@ -28,7 +29,7 @@ public class SQLFactoryTest1 {
 
     @BeforeTest(enabled = false)
     public static void setUpClass() throws Exception {
-        context = DbContextAbstract.create(
+        context = DbContextFactory.createApache(
             SQLConnectionPoolConfig.builder()
                 .poolName("TEST-CONN-POOL")
                 .dbDriverName(testDBDriverName)
