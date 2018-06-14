@@ -84,14 +84,20 @@ public class BeanProperty {
 
     public Boolean isAnnotated() {
         Method rm = getReadMethod();
-        if (rm != null) {
-            if (rm.isAnnotationPresent(JSON.class)) {
-                return rm.getAnnotation(JSON.class).include();
-            }
-        } else if (property != null) {
-            if (property.isAnnotationPresent(JSON.class)) {
-                return property.getAnnotation(JSON.class).include();
-            }
+        if (rm != null && rm.isAnnotationPresent(JSON.class)) {
+            return rm.getAnnotation(JSON.class).include();
+        } else if (property != null && property.isAnnotationPresent(JSON.class)) {
+            return property.getAnnotation(JSON.class).include();
+        }
+        return null;
+    }
+
+    public String overrideName() {
+        Method rm = getReadMethod();
+        if (rm != null && rm.isAnnotationPresent(JSON.class)) {
+            return rm.getAnnotation(JSON.class).overrideName();
+        } else if (property != null && property.isAnnotationPresent(JSON.class)) {
+            return property.getAnnotation(JSON.class).overrideName();
         }
         return null;
     }

@@ -139,7 +139,7 @@ public class DbUtils {
             throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
         if(clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
-        T result = (T)clazz.newInstance();
+        T result = clazz.newInstance();
         for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
             String fldName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);

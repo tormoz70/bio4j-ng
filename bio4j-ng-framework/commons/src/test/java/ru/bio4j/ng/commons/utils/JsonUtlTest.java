@@ -45,7 +45,7 @@ public class JsonUtlTest {
         TBox testBox = new TBox();
         testBox.setName("Test-Box");
 		String expected =
-		 "{\"created\":null,\"err\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"type\":\"undefined\",\"volume\":null}";
+		 "{\"crd\":null,\"err\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"type\":\"undefined\",\"volume\":null}";
 		String testJson = Jsons.encode(testBox);
 		System.out.println(testJson);
 		Assert.assertEquals(expected, testJson);
@@ -205,6 +205,14 @@ public class JsonUtlTest {
     public void bdecode9() throws Exception {
         List<ABean> dummy = Jsons.decodeABeans("{seld:[1,2,3]}");
         Assert.assertEquals(dummy.size(), 1);
+    }
+
+    @Test(enabled = true)
+    public void bdecode10() throws Exception {
+        TBox dummy = new TBox();
+        dummy.setCreated(new Date());
+        String json = Jsons.encode(dummy);
+        Assert.assertEquals(json.substring(1, 6), "\"crd\"");
     }
 
 }

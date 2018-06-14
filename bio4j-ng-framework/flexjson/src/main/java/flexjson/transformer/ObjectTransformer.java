@@ -31,7 +31,8 @@ public class ObjectTransformer extends AbstractTransformer {
                 BeanAnalyzer analyzer = BeanAnalyzer.analyze( resolveClass(object) );
                 TypeContext typeContext = context.writeOpenObject();
                 for( BeanProperty prop : analyzer.getProperties() ) {
-                    String name = prop.getName();
+                    String overrideName = context.overrideName(prop);
+                    String name = overrideName != null && overrideName.length() > 0 ? overrideName : prop.getName();
                     path.enqueue(name);
                     if( context.isIncluded(prop) ) {
                         Object value = prop.getValue( object );

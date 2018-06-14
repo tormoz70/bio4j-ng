@@ -1,5 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
+import flexjson.JSON;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.MetaType;
 
@@ -8,6 +9,7 @@ import java.util.Date;
 public class TBox {
     private MetaType type = MetaType.UNDEFINED;
 	private String name;
+	@JSON(overrideName = "crd")
 	private Date created;
 	private Double volume;
 	private TPacket[] packets;

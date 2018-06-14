@@ -379,6 +379,10 @@ public class JSONContext {
         }
     }
 
+    public String overrideName(BeanProperty prop) {
+        return prop != null ? prop.overrideName() : null;
+    }
+
     public boolean isIncluded(String key, Object value) {
         
         PathExpression expression = matches( pathExpressions );

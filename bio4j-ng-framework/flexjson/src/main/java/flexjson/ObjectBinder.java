@@ -318,12 +318,13 @@ public class ObjectBinder {
     }
 
     private Object findFieldInJson( Map map, BeanProperty property ) {
-        Object value = map.get( property.getName() );
-        if( value == null ) {
-            String field = property.getName();
+        String field = property.getName();
+        String overrideName = property.overrideName();
+        if(overrideName != null && overrideName.length() > 0)
+            field = overrideName;
+        Object value = map.get( field );
+        if( value == null )
             value = map.get( upperCase(field) );
-        }
-
         return value;
     }
 
