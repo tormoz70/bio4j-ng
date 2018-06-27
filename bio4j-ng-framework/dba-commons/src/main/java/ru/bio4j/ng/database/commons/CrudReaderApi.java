@@ -50,6 +50,7 @@ public class CrudReaderApi {
     private static ABeanPage readStoreData(final List<Param> params, final SQLContext context, final Connection conn, final BioCursor cursorDef) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
+        final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         result.setTotalCount(Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, 0));
         result.setPaginationOffset(Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0));
         result.setRows(new ArrayList<>());
@@ -83,6 +84,10 @@ public class CrudReaderApi {
         result.setPaginationCount(result.getRows().size());
         int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         result.setPaginationPage(pageSize > 0 ? (int)Math.floor(result.getPaginationOffset() / pageSize) + 1 : 0);
+        if(result.getRows().size() < paginationPagesize) {
+            result.setTotalCount(result.getPaginationOffset() + result.getRows().size());
+            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, result.getTotalCount());
+        }
         return result;
     }
 
@@ -97,8 +102,8 @@ public class CrudReaderApi {
             final SQLContext context,
             final BioCursor cursor,
             final User user) throws Exception {
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
-        cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
+        //cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
+        //cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
         long result = context.execBatch((ctx, conn, cur, usr) -> {
             try (SQLCursor c = ctx.createCursor()
                     .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, null);) {
