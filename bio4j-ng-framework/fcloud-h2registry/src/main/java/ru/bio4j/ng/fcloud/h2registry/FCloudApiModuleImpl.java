@@ -13,15 +13,13 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioModuleBase;
-import ru.bio4j.ng.service.types.SQLContextConfig;
+import ru.bio4j.ng.service.api.SQLContextConfig;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.List;
@@ -63,7 +61,7 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
     }
 
     @Override
-    protected SQLContext createSQLContext(SQLContextConfig config) throws Exception {
+    protected SQLContext createSQLContext() throws Exception {
         return null;
     }
 

@@ -2,10 +2,9 @@ package ru.bio4j.ng.database.oracle;
 
 import ru.bio4j.ng.database.api.SQLConnectionPoolConfig;
 import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.commons.DbContextAbstract;
 import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
-import ru.bio4j.ng.service.types.SQLContextConfig;
+import ru.bio4j.ng.service.api.SQLContextConfig;
 
 public class SQLContextFactory {
     public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {

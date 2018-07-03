@@ -22,11 +22,15 @@ public abstract class BioServiceBase<T> implements BioService {
     private Class<T> typeOfConfig;
     protected Configurator<T> getConfigurator(){
         if(configurator == null) {
-            typeOfConfig = (Class<T>)
-                    ((ParameterizedType) getClass()
-                            .getGenericSuperclass())
-                            .getActualTypeArguments()[0];
-            configurator = new Configurator<>(typeOfConfig);
+            try {
+                typeOfConfig = (Class<T>)
+                        ((ParameterizedType) getClass()
+                                .getGenericSuperclass())
+                                .getActualTypeArguments()[0];
+                configurator = new Configurator<>(typeOfConfig);
+            } catch (ClassCastException e){
+                configurator = null;
+            }
         }
         return configurator;
     }
@@ -58,19 +62,26 @@ public abstract class BioServiceBase<T> implements BioService {
 
     protected void doOnUpdated(Dictionary conf, String configUpdatedEventName) throws Exception {
         if(!Utl.confIsEmpty(conf)) {
-            getConfigurator().update(conf);
-            configIsReady = getConfigurator().isUpdated();
-            if (configIsReady) {
-                fireEventConfigUpdated(configUpdatedEventName);
+            Configurator<T> configurator = getConfigurator();
+            if(configurator != null) {
+                configurator.update(conf);
+                configIsReady = configurator.isUpdated();
+                if (configIsReady) {
+                    fireEventConfigUpdated(configUpdatedEventName);
+                }
             }
         }
     }
 
     public T getConfig() {
-        if(!getConfigurator().isUpdated()) {
-            return null;
+        Configurator<T> configurator = getConfigurator();
+        if(configurator != null) {
+            if (!configurator.isUpdated()) {
+                return null;
+            }
+            return configurator.getConfig();
         }
-        return getConfigurator().getConfig();
+        return null;
     }
 
     public boolean configIsReady() {

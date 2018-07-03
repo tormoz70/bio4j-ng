@@ -3,7 +3,7 @@ package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.service.api.Prop;
 
-public class BioConfig {
+public class BioConfig extends AnConfig {
     @Prop(name = "bio.debug")
     private boolean bioDebug = false;
 

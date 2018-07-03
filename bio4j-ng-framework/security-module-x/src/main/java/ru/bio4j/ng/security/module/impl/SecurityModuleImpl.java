@@ -8,14 +8,15 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioSecurityModule;
+import ru.bio4j.ng.service.api.DbConfigProvider;
 import ru.bio4j.ng.service.api.SecurityProvider;
 import ru.bio4j.ng.service.types.BioModuleBase;
-import ru.bio4j.ng.service.types.SQLContextConfig;
+import ru.bio4j.ng.service.api.SQLContextConfig;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Dictionary;
 
-@Component(managedservice="security.config")
+@Component
 @Instantiate
 @Provides(specifications = BioSecurityModule.class,
         properties = {@StaticServiceProperty(
@@ -23,13 +24,15 @@ import java.util.Dictionary;
                 value = "security", // key must be always "security" for security module
                 type = "java.lang.String"
         )})
-public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements BioSecurityModule {
+public class SecurityModuleImpl extends BioModuleBase implements BioSecurityModule {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityModuleImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;
     @Requires
     private SecurityProvider securityProvider;
+    @Requires
+    private DbConfigProvider dbConfigProvider;
 
     @Override
     public String getKey() {
@@ -59,8 +62,9 @@ public class SecurityModuleImpl extends BioModuleBase<SecurityConfig> implements
         return "Security module";
     }
 
-    protected SQLContext createSQLContext(SQLContextConfig config) throws Exception {
-            return ru.bio4j.ng.database.pgsql.SQLContextFactory.create(config);
+    protected SQLContext createSQLContext() throws Exception {
+        SQLContextConfig cfg = dbConfigProvider.getConfig();
+        return ru.bio4j.ng.database.pgsql.SQLContextFactory.create(cfg);
     }
 
     @Override

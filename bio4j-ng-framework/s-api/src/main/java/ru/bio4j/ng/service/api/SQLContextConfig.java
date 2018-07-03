@@ -1,6 +1,7 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.service.api;
 
 
+import ru.bio4j.ng.service.api.AnConfig;
 import ru.bio4j.ng.service.api.Prop;
 
 public class SQLContextConfig extends AnConfig {

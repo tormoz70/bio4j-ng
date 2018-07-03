@@ -502,6 +502,7 @@
         <module>content-resolver</module>
         <module>security-provider</module>
         <module>config</module>
+        <module>db-config</module>
         <module>router</module>
         <module>remote-api-wab</module>
         <module>fcloud-api-wab</module>

@@ -1,7 +1,7 @@
 package ru.bio4j.ng.security.module.impl;
 
 import ru.bio4j.ng.service.api.Prop;
-import ru.bio4j.ng.service.types.SQLContextConfig;
+import ru.bio4j.ng.service.api.SQLContextConfig;
 
 public class SecurityConfig extends SQLContextConfig {
 
