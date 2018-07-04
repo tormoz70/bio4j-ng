@@ -312,4 +312,24 @@ public class CrudReaderApi {
         return result;
     }
 
+    public static StringBuilder loadJson(
+            final List<Param> params,
+            final SQLContext context,
+            final BioCursor cursor,
+            final User user) throws Exception {
+        StringBuilder result = context.execBatch((ctx, conn, cur, usr) -> {
+            final StringBuilder r = new StringBuilder();
+
+            try(SQLCursor c = ctx.createCursor()
+                    .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, null);) {
+                while(c.reader().next()) {
+                    List<Object> values = c.reader().getValues();
+                    for(Object val : values)
+                        r.append(val);
+                }
+            }
+            return r;
+        }, cursor, user);
+        return result;
+    }
 }
