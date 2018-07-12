@@ -169,6 +169,9 @@ public class BioRespBuilder {
                 jsonBuilder = new StringBuilder();
             return jsonBuilder;
         }
+        public void setJsonBuilder(StringBuilder jsonBuilder){
+            this.jsonBuilder = jsonBuilder;
+        }
 
         @Override
         public String json(){
@@ -180,6 +183,11 @@ public class BioRespBuilder {
     }
     public static JsonBuilder jsonBuilder() {
         return create(JsonBuilder.class);
+    }
+    public static JsonBuilder jsonBuilder(StringBuilder jsonBuilder) {
+        JsonBuilder result = create(JsonBuilder.class);
+        result.setJsonBuilder(jsonBuilder);
+        return result;
     }
 
 }

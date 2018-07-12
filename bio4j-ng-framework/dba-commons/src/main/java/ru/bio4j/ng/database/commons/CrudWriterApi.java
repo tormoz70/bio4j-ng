@@ -65,5 +65,21 @@ public class CrudWriterApi {
         }, cursor, user);
     }
 
+    public static void execSQL(
+            final List<Param> params,
+            final SQLContext context,
+            final BioCursor cursor,
+            final User user) throws Exception {
+        UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
+        if (sqlDef == null)
+            throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
+        context.execBatch((context1, conn, cur, usr) -> {
+            SQLStoredProc cmd = context1.createStoredProc();
+            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+            cmd.execSQL(params, user, true);
+            return 0;
+        }, cursor, user);
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.commons.CrudWriterApi;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.UpdelexSQLDef;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
@@ -12,19 +13,27 @@ import java.util.List;
 
 public class ProviderExec extends ProviderAn<BioRequestStoredProg> {
 
+//    private static BioRespBuilder.DataBuilder processExec(final BioRequestStoredProg request, final SQLContext ctx, final BioCursor cursor) throws Exception {
+//        final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
+//        final SQLStoredProc cmd = ctx.createStoredProc();
+//        final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
+//        if(sqlDef == null)
+//            throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
+//
+//        List<Param> r = ctx.execBatch((context, conn, use) -> {
+//            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+//            cmd.execSQL(request.getBioParams(), null);
+//            return cmd.getParams();
+//        }, request.getUser());
+//        result.bioParams(r);
+//        return result.exception(null);
+//    }
+
     private static BioRespBuilder.DataBuilder processExec(final BioRequestStoredProg request, final SQLContext ctx, final BioCursor cursor) throws Exception {
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder();
-        final SQLStoredProc cmd = ctx.createStoredProc();
-        final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
-        if(sqlDef == null)
-            throw new Exception(String.format("For bio \"%s\" must be defined \"execute\" sql!", cursor.getBioCode()));
-
-        List<Param> r = ctx.execBatch((context, conn, use) -> {
-            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
-            cmd.execSQL(request.getBioParams(), null);
-            return cmd.getParams();
-        }, request.getUser());
-        result.bioParams(r);
+        final List<Param> params = request.getBioParams();
+        CrudWriterApi.execSQL(params, ctx, cursor, request.getUser());
+        result.bioParams(params);
         return result.exception(null);
     }
 

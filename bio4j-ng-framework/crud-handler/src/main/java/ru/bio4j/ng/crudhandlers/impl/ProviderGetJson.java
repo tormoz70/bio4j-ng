@@ -2,6 +2,7 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.model.transport.BioRequestGetJson;
@@ -12,23 +13,31 @@ import java.util.List;
 
 public class ProviderGetJson extends ProviderAn<BioRequestGetJson> {
 
+//    private static BioRespBuilder.JsonBuilder processCursorAsJsonProvider(final BioRequestGetJson request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
+//        LOG.debug("Try process Cursor \"{}\" as JsonProvider!!!", cursor.getBioCode());
+//        BioRespBuilder.JsonBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
+////                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
+//            final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder();
+//
+//            try(SQLCursor c = context.createCursor()
+//                    .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), null);) {
+//                while(c.reader().next()) {
+//                    List<Object> values = c.reader().getValues();
+//                    for(Object val : values)
+//                        result.getJsonBuilder().append(val);
+//                }
+//            }
+//            return result.exception(null);
+//        }, cursor, request.getUser());
+//        return response;
+//
+//    }
+
     private static BioRespBuilder.JsonBuilder processCursorAsJsonProvider(final BioRequestGetJson request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
         LOG.debug("Try process Cursor \"{}\" as JsonProvider!!!", cursor.getBioCode());
-        BioRespBuilder.JsonBuilder response = ctx.execBatch((context, conn, cur, usr) -> {
-//                tryPrepareSessionContext(request.getUser().getInnerUid(), conn);
-            final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder();
-
-            try(SQLCursor c = context.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParamDeclaration()).open(request.getBioParams(), null);) {
-                while(c.reader().next()) {
-                    List<Object> values = c.reader().getValues();
-                    for(Object val : values)
-                        result.getJsonBuilder().append(val);
-                }
-            }
-            return result.exception(null);
-        }, cursor, request.getUser());
-        return response;
+        final StringBuilder json = CrudReaderApi.loadJson(request.getBioParams(), ctx, cursor, request.getUser());
+        final BioRespBuilder.JsonBuilder result = BioRespBuilder.jsonBuilder(json);
+        return result;
 
     }
 
