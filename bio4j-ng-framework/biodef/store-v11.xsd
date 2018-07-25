@@ -130,27 +130,23 @@
                                         <xs:extension base="xs:string">
                                             <xs:attribute name="name" type="xs:string" use="required">
                                                 <xs:annotation>
-                                                    <xs:documentation>Имя поля.</xs:documentation>
+                                                    <xs:documentation>Имя поля</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="type" type="ftype" use="required"/>
                                             <xs:attribute name="encoding" type="fencoding" use="optional">
                                                 <xs:annotation>
-                                                    <xs:documentation>Кодировка для полей типа CLOB. По умолчанию
-                                                        UTF-8
-                                                    </xs:documentation>
+                                                    <xs:documentation>Кодировка для полей типа CLOB. По умолчанию UTF-8</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="width" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation>Ширина колонки в Grid.</xs:documentation>
+                                                    <xs:documentation>Ширина колонки в Grid</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="format" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation>Формат вывода данных. Например, для типа "date" -
-                                                        "yyyy.MM.dd HH:mm:ss"
-                                                    </xs:documentation>
+                                                    <xs:documentation>Формат вывода данных. Например, для типа "date" - "yyyy.MM.dd HH:mm:ss"</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="align">
@@ -168,59 +164,47 @@
                                             </xs:attribute>
                                             <xs:attribute name="defaultVal" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation>Значение по умолчанию. Не работает для поля типа
-                                                        'date'.
-                                                    </xs:documentation>
+                                                    <xs:documentation>Значение по умолчанию (не работает для поля типа 'date')</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="header" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation>Заголовок при отображении в DataGrid
-                                                    </xs:documentation>
+                                                    <xs:documentation>Заголовок при отображении в DataGrid</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="filter" type="xs:boolean">
                                                 <xs:annotation>
-                                                    <xs:documentation>Вкл фитрации по полю
-                                                    </xs:documentation>
+                                                    <xs:documentation>Вкл фитрации по полю</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="hidden" type="xs:boolean">
                                                 <xs:annotation>
-                                                    <xs:documentation>Если true, то это скрытая колонка в DataGrid
-                                                    </xs:documentation>
+                                                    <xs:documentation>Если true, то это скрытая колонка в DataGrid</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="showTooltip" type="xs:boolean">
                                                 <xs:annotation>
-                                                    <xs:documentation>Если true, отображать всплывающую подсказаку с полным текстом ячейки
-                                                    </xs:documentation>
+                                                    <xs:documentation>Если true, отображать всплывающую подсказаку с полным текстом ячейки</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="readOnly" type="xs:boolean">
                                                 <xs:annotation>
-                                                    <xs:documentation>Если true, то это колонка в DataGrid только для
-                                                        чтения. По умолчанию true.
-                                                    </xs:documentation>
+                                                    <xs:documentation>Если true, то это колонка в DataGrid только для чтения (по умолчанию true)</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="boolVals">
                                                 <xs:annotation>
-                                                    <xs:documentation>Значения поля, соответствующие 'true' и 'false'
-                                                        для типа поля 'boolean', разделённые символом ':'.
-                                                    </xs:documentation>
+                                                    <xs:documentation>Значения поля, соответствующие 'true' и 'false' для типа поля 'boolean', разделённые символом ':'</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="pk" type="xs:boolean">
                                                 <xs:annotation>
-                                                    <xs:documentation>Признак того, что поле является первичным ключем
-                                                    </xs:documentation>
+                                                    <xs:documentation>Признак того, что поле является первичным ключем</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="useNull" type="xs:boolean">
                                                 <xs:annotation>
-                                                    <xs:documentation>На клиенте не приводить значение null к типу колонки
-                                                    </xs:documentation>
+                                                    <xs:documentation>На клиенте не приводить значение null к типу колонки</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="group" type="xs:byte">
@@ -228,7 +212,7 @@
                                                     <xs:documentation>Номер группы</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
-                                            <xs:attribute name="group_aggr">
+                                            <xs:attribute name="groupAggr">
                                                 <xs:annotation>
                                                     <xs:documentation>Агри функция</xs:documentation>
                                                 </xs:annotation>
@@ -246,23 +230,17 @@
                                             </xs:attribute>
                                             <xs:attribute name="expEnabled" type="xs:boolean" default="true">
                                                 <xs:annotation>
-                                                    <xs:documentation>Поле доступно для экспорта ИО (по умолчанию
-                                                        "доступно")
-                                                    </xs:documentation>
+                                                    <xs:documentation>Поле доступно для экспорта ИО (по умолчанию "доступно")</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="expWidth" type="xs:integer" default="30">
                                                 <xs:annotation>
-                                                    <xs:documentation>Ширина колонки при экспорте в Excel (по умолчанию
-                                                        30)
-                                                    </xs:documentation>
+                                                    <xs:documentation>Ширина колонки при экспорте в Excel (по умолчанию 30)</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="expFormat" type="xs:string" default="@">
                                                 <xs:annotation>
-                                                    <xs:documentation>Формат колонки при экспорте в Excel (по умолчанию
-                                                        '@')
-                                                    </xs:documentation>
+                                                    <xs:documentation>Формат колонки при экспорте в Excel (по умолчанию '@')</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                             <xs:attribute name="sorter" type="xs:string" default="@">
@@ -273,6 +251,11 @@
                                             <xs:attribute name="tooltip" type="xs:string" default="@">
                                                 <xs:annotation>
                                                     <xs:documentation>Имя колонки, из которой будет браться tooltip</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="mandatory" type="xs:boolean" default="true">
+                                                <xs:annotation>
+                                                    <xs:documentation>При сохранении поле должно быть заполнено обязательно</xs:documentation>
                                                 </xs:annotation>
                                             </xs:attribute>
                                         </xs:extension>

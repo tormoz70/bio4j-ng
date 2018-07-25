@@ -14,6 +14,19 @@
         <!--<tag>bio4j-ng-framework-1.4.1</tag>-->
     <!--</scm>-->
 
+    <distributionManagement>
+        <repository>
+            <id>nexus-deployment</id>
+            <name>Internal Releases</name>
+            <url>http://5.8.177.199:8081/repository/fk-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-deployment</id>
+            <name>Internal Snapshots</name>
+            <url>http://5.8.177.199:8081/repository/fk-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <bioDebug>true</bioDebug>
 
@@ -429,11 +442,6 @@
                 <artifactId>bio4j-ng-rapi</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!--<dependency>-->
-                <!--<groupId>${project.groupId}</groupId>-->
-                <!--<artifactId>bio4j-ng-module-commons</artifactId>-->
-                <!--<version>${project.version}</version>-->
-            <!--</dependency>-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bio4j-ng-module-provider</artifactId>
