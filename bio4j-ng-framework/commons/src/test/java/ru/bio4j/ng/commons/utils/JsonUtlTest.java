@@ -179,6 +179,12 @@ public class JsonUtlTest {
         Assert.assertEquals(dummy.get(0).get("tdictId"), 7);
     }
 
+    @Test(enabled = true)
+    public void bdecode71() throws Exception {
+        ABean dummy = Jsons.decodeABean(tstPost7);
+        Assert.assertEquals(dummy.get("tdictId"), 7);
+    }
+
     private static final String tstPost8 = "[\n" +
             "    {\n" +
             "        \"loocaption\": \"item-finance-type - Вид финансирования\",\n" +

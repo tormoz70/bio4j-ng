@@ -157,6 +157,14 @@ public class Jsons {
         return new ArrayList<>();
     }
 
+    public static ABean decodeABean(String json) throws Exception {
+        json = String.format("{\"abean\":%s}", json);
+        ABeanWrapper dummy2 = decode(json, ABeanWrapper.class);
+        if(dummy2.abean != null)
+            return dummy2.abean;
+        return null;
+    }
+
     private static List<Expression> parsExprationLevel(HashMap<String, Object> map) {
         List<Expression> expressions = new ArrayList<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
