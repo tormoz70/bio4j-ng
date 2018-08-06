@@ -151,6 +151,8 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
         String dirName = extractDirName(paramDesc);
         paramDesc = cutDirNames(paramDesc);
         String paramNameFromDesc = paramDesc.substring(0, paramDesc.indexOf(" ")).trim().toLowerCase();
+        paramNameFromDesc = paramNameFromDesc.startsWith("\"") ? paramNameFromDesc.substring(1) : paramNameFromDesc;
+        paramNameFromDesc = paramNameFromDesc.endsWith("\"") ? paramNameFromDesc.substring(0, paramNameFromDesc.length()-1) : paramNameFromDesc;
         paramDesc = cutFirstItem(paramDesc, paramNameFromDesc);
         String typeName = paramDesc;
         MetaType type = decodeType(typeName);

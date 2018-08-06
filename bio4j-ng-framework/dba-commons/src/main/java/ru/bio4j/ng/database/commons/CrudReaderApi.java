@@ -98,12 +98,9 @@ public class CrudReaderApi {
 
     public static long calcTotalCount(
             final List<Param> params,
-            final Filter filter,
             final SQLContext context,
             final BioCursor cursor,
             final User user) throws Exception {
-        //cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
-        //cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
         long result = context.execBatch((ctx, conn, cur, usr) -> {
             try (SQLCursor c = ctx.createCursor()
                     .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, null);) {
@@ -145,7 +142,7 @@ public class CrudReaderApi {
         long factOffset = paginationOffset;
         long totalCount = paginationTotalcount;
         if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
-            totalCount = calcTotalCount(params, filter, context, cursor, user);
+            totalCount = calcTotalCount(params, context, cursor, user);
             factOffset = (int)Math.floor(totalCount / paginationPagesize) * paginationPagesize;
             LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
         }
@@ -252,7 +249,7 @@ public class CrudReaderApi {
         long factOffset = paginationOffset;
         long totalCount = paginationTotalcount;
         if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
-            totalCount = calcTotalCount(params, filter, context, cursor, user);
+            totalCount = calcTotalCount(params, context, cursor, user);
             factOffset = (int)Math.floor(totalCount / paginationPagesize) * paginationPagesize;
             LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
         }

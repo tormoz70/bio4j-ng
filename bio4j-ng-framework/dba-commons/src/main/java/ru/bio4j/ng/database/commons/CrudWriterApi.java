@@ -72,7 +72,7 @@ public class CrudWriterApi {
             final User user) throws Exception {
         UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if (sqlDef == null)
-            throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
+            throw new Exception(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
         context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
             cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
