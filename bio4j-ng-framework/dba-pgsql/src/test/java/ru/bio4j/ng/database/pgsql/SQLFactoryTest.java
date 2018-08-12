@@ -20,6 +20,7 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -234,6 +235,36 @@ public class SQLFactoryTest {
                             .add("p_param2", "QWE")
                             .add(Param.builder().name("p_param3").type(MetaType.INTEGER).value(1).build())
                             .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value(0).build());
+                    prms = paramus.get();
+                }
+                cmd.init(conn, "test_stored_inout");
+                cmd.execSQL(prms, usr);
+                leng1 = cmd.getParamValue("p_param1", Integer.class, null);
+                conn.rollback();
+                return leng1;
+            }, null);
+            LOG.debug("leng: " + leng);
+            Assert.assertEquals(leng, 3);
+        } catch (SQLException ex) {
+            LOG.error("Error!", ex);
+            Assert.fail();
+        }
+    }
+
+    @Test(enabled = true)
+    public void testSQLCommandExecINOUTSQL11() throws Exception {
+        try {
+            int leng = context.execBatch((context, conn, usr) -> {
+                int leng1 = 0;
+                LOG.debug("conn: " + conn);
+
+                SQLStoredProc cmd = context.createStoredProc();
+                List<Param> prms;
+                try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
+                    paramus.add(Param.builder().name("p_param1").value(new BigDecimal(123)).build())
+                            .add("p_param2", "QWE")
+                            .add(Param.builder().name("p_param3").value(1D).build())
+                            .add(Param.builder().name("p_param4").value(5L).build());
                     prms = paramus.get();
                 }
                 cmd.init(conn, "test_stored_inout");

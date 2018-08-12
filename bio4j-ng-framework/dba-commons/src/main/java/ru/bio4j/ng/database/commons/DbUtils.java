@@ -228,9 +228,14 @@ public class DbUtils {
             for(Param p : src){
                 Param exists = findParamIgnorePrefix(p.getName(), dst);
                 if(exists != null && exists != p) {
+                    MetaType dstType = p.getType();
+//                    if(dstType == MetaType.UNDEFINED && exists.getValue() != null)
+//                        dstType = MetaTypeConverter.read(exists.getValue().getClass());
+//                    if(dstType == MetaType.UNDEFINED)
+//                        dstType = p.getType();
                     if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType()) {
-                        exists.setValue(Converter.toType(p.getValue(), MetaTypeConverter.write(p.getType())));
-                        exists.setType(p.getType());
+                        exists.setValue(Converter.toType(p.getValue(), MetaTypeConverter.write(dstType)));
+                        exists.setType(dstType);
                     } else
                         exists.setValue(p.getValue());
                     if(normalizeName)

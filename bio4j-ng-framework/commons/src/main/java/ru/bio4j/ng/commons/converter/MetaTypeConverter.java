@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.converter;
 
 import ru.bio4j.ng.model.transport.MetaType;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Date;
 
@@ -35,7 +36,7 @@ public class MetaTypeConverter {
         if (type == MetaType.INTEGER)
             return Long.class;
         if (type == MetaType.DECIMAL)
-            return Double.class;
+            return BigDecimal.class;
         if (type == MetaType.DATE)
             return Date.class;
         if (type == MetaType.BOOLEAN)

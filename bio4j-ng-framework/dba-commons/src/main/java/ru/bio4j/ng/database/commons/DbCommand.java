@@ -8,6 +8,7 @@ import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -155,7 +156,8 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
                 if(params != null) {
                     for (Param p : params) {
                         Param exists = Paramus.getParam(this.params, DbUtils.normalizeParamName(p.getName()));
-                        if (exists != null && !exists.getName().equalsIgnoreCase(p.getName()))
+                        if (exists != null && !exists.getName().equalsIgnoreCase(p.getName())
+                            && Utl.arrayContains(new Param.Direction[]{Param.Direction.INOUT, Param.Direction.OUT}, exists.getDirection()))
                             exists.setName(p.getName());
                     }
                 }

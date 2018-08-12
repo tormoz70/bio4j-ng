@@ -10,6 +10,7 @@ import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.RestParamNames;
 import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,19 +28,27 @@ public class CrudWriterApi {
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         int affected = context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
-            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
-            for (ABean row : rows) {
-                DbUtils.applayRowToParams(row, params);
-                cmd.execSQL(params, null);
-                try (Paramus paramus = Paramus.set(cmd.getParams())) {
-                    for (Param p : paramus.get()) {
-                        if (Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())) {
-                            Field fld = cur.findField(DbUtils.trimParamNam(p.getName()));
-                            row.put(fld.getName().toLowerCase(), p.getValue());
+            try {
+                cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+                List<Param> prms = new ArrayList<>();
+                for (ABean row : rows) {
+                    prms.clear();
+                    Paramus.setParams(prms, params);
+                    DbUtils.applayRowToParams(row, prms);
+                    cmd.execSQL(prms, usr, true);
+                    try (Paramus paramus = Paramus.set(cmd.getParams())) {
+                        for (Param p : paramus.get()) {
+                            if (Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())) {
+                                Field fld = cur.findField(DbUtils.trimParamNam(p.getName()));
+                                row.put(fld.getName().toLowerCase(), p.getValue());
+                            }
                         }
                     }
                 }
+            } finally {
+                cmd.getStatement().close();
             }
+
             return 0;
         }, cursor, user);
         return rows;
