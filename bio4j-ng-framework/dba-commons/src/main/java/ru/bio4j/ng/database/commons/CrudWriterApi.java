@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons;
 
+import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.SQLContext;
@@ -54,7 +55,7 @@ public class CrudWriterApi {
         return rows;
     }
 
-    public static void deleteRecords(
+    public static int deleteRecords(
             final List<Param> params,
             final List<Object> ids,
             final SQLContext context,
@@ -66,12 +67,21 @@ public class CrudWriterApi {
         int affected = context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
             cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+            int r = 0;
             for (Object id : ids) {
-                Paramus.setParamValue(params, RestParamNames.DELETE_PARAM_PKVAL, id, MetaTypeConverter.read(id.getClass()));
-                cmd.execSQL(params, user, true);
+                Param prm = Paramus.getParam(cmd.getParams(), RestParamNames.DELETE_PARAM_PKVAL);
+                if(prm == null)
+                    prm = cmd.getParams().size() > 0 ? cmd.getParams().get(0) : null;
+                if(prm != null) {
+                    Paramus.setParamValue(params, prm.getName(), id, MetaTypeConverter.read(id.getClass()));
+                    cmd.execSQL(params, user, true);
+                    r++;
+                } else
+                    throw new Exception(String.format("ID Param not found in Delete sql of \"%s\"!", cur.getBioCode()));
             }
-            return 0;
+            return r;
         }, cursor, user);
+        return affected;
     }
 
     public static void execSQL(
