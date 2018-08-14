@@ -247,10 +247,10 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
         removeFileSpecFromDb(fileUUID, usr);
     }
 
-//    @Override
-//    public void runImport(User usr) throws Exception {
-//
-//    }
+    @Override
+    public void runImport(User usr) throws Exception {
+
+    }
 
 
 }

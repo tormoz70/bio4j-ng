@@ -82,5 +82,8 @@ public class BioQueryParams {
     @Prop(name = "query")
     public String query;
 
+    @Prop(name = "gcount")
+    public String gcount;
+
     public List<Param> bioParams;
 }

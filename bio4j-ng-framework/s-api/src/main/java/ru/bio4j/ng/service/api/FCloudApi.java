@@ -30,4 +30,5 @@ public interface FCloudApi {
 
     void removeFile(final String fileUUID, final User usr) throws Exception;
 
+    void runImport(final User usr) throws Exception;
 }

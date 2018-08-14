@@ -1,12 +1,15 @@
 package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
+import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.model.transport.ABeanPage;
 import ru.bio4j.ng.model.transport.jstore.*;
+import ru.bio4j.ng.service.types.BioQueryParams;
 import ru.bio4j.ng.service.types.BioRespBuilder;
+import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,10 +23,10 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
         return (pg - 1) * pageSize;
     }
 
-    private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final Logger LOG) throws Exception {
+    private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final boolean forceCalcCount, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
 
-        ABeanPage beanPage = CrudReaderApi.loadPage(request.getBioParams(), request.getFilter(), request.getSort(), ctx, cursor, request.getUser());
+        ABeanPage beanPage = CrudReaderApi.loadPage(request.getBioParams(), request.getFilter(), request.getSort(), ctx, cursor, forceCalcCount, request.getUser());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
         result.bioCode(cursor.getBioCode());
@@ -84,7 +87,9 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
             if(request.getLimit() <= 0) {
                 responseBuilder = processCursorAsSelectableSinglePage(request, context, cursor, LOG);
             }else {
-                responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, LOG);
+                BioQueryParams qParams = request.getHttpRequest() instanceof BioWrappedRequest ? ((BioWrappedRequest)request.getHttpRequest()).getBioQueryParams() : null;
+                boolean forceCalcCount = qParams != null ? Converter.toType(qParams.gcount, boolean.class) : false;
+                responseBuilder = processCursorAsSelectableWithPagging(request, context, cursor, forceCalcCount, LOG);
             }
             response.addHeader("X-Pagination-Current-Page", ""+request.getPage());
             response.addHeader("X-Pagination-Per-Page", ""+request.getLimit());

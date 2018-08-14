@@ -118,6 +118,7 @@ public class CrudReaderApi {
             final List<Sort> sort,
             final SQLContext context,
             final BioCursor cursor,
+            final boolean forceCalcCount,
             final User user) throws Exception {
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
         final int paginationOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0);
@@ -141,8 +142,9 @@ public class CrudReaderApi {
 
         long factOffset = paginationOffset;
         long totalCount = paginationTotalcount;
-        if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
+        if(forceCalcCount || paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1))
             totalCount = calcTotalCount(params, context, cursor, user);
+        if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
             factOffset = (int)Math.floor(totalCount / paginationPagesize) * paginationPagesize;
             LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
         }

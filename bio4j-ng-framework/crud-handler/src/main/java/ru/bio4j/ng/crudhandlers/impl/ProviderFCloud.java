@@ -73,11 +73,11 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
         writeResponse(json, response);
     }
 
-//    private void runImport(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
-//        fcloudProvider.getApi().runImport(request.getUser());
-//        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
-//        response.getWriter().append(responseBuilder.json());
-//    }
+    private void runImport(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
+        fcloudProvider.getApi().runImport(request.getUser());
+        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
+        response.getWriter().append(responseBuilder.json());
+    }
 
      private void processUpload(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
         Collection<Part> parts = null;
@@ -163,6 +163,9 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
                 break;
             case METADATA:
                 getMetadata(response);
+                break;
+            case RUNIMPORT:
+                runImport(request, response);
                 break;
         }
     }
