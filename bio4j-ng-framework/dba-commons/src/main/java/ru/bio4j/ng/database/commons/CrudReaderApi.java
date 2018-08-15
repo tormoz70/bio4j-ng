@@ -166,7 +166,7 @@ public class CrudReaderApi {
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
-            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LAST, locFactOffset+paginationPagesize);
+            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LIMIT, paginationPagesize);
             return readStoreData(params, ctx, conn, cur);
         }, cursor, user);
         return result;
@@ -273,7 +273,7 @@ public class CrudReaderApi {
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
-            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LAST, locFactOffset+paginationPagesize);
+            Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LIMIT, paginationPagesize);
             return readStoreDataExt(params, ctx, conn, cur, beanType);
         }, cursor, user);
         return result;

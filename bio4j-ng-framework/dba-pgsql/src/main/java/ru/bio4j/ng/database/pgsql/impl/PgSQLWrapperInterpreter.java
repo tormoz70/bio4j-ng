@@ -20,31 +20,37 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         put(Ge.class, "%s >= %s");
         put(Lt.class, "%s < %s");
         put(Le.class, "%s <= %s");
-        put(Bgn.class, "%s like %s");
-        put(End.class, "%s like %s");
-        put(Contains.class, "%s like %s");
+        put(Bgn.class, "%s %s %s");
+        put(End.class, "%s %s %s");
+        put(Contains.class, "%s %s %s");
     }};
 
     private static String decodeCompare(String alias, Expression e) {
         String column = appendAlias(alias, e.getColumn());
         Object value = e.getValue();
         String templ = compareTemplates.get(e.getClass());
-        if(e instanceof Bgn)
-            value = value+"%";
-        if(e instanceof End)
-            value = "%"+value;
-        if(e instanceof Contains)
-            value = "%"+value+"%";
+        if (e instanceof Bgn)
+            value = value + "%";
+        if (e instanceof End)
+            value = "%" + value;
+        if (e instanceof Contains)
+            value = "%" + value + "%";
         if (Strings.isString(value))
             value = "'"+value+"'";
-        if (e.ignoreCase()) {
-            value = "upper("+value+")";
-            column = "upper("+column+")";
-        }
+        String slike = e.ignoreCase() ? "ilike" : "like";
+//        if (e.ignoreCase()) {
+//            value = "upper("+value+")";
+//            column = "upper("+column+")";
+//        }
 
         if (value != null && value instanceof Date)
             value = "to_date('" + new SimpleDateFormat("YYYYMMdd").format(value) + "', 'YYYYMMDD')";
-        return "("+String.format(templ, column, value)+")";
+        String rslt;
+        if(e.getClass() == Bgn.class || e.getClass() == End.class || e.getClass() == Contains.class)
+            rslt = "("+String.format(templ, column, slike, value)+")";
+        else
+            rslt = "("+String.format(templ, column, value)+")";
+        return rslt;
     }
 
     private static String appendAlias(String alias, String column){
@@ -60,7 +66,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
             for(Object chld : e.getChildren()){
                 rslt.append(((rslt.length() == 0) ? "" : logicalOp) + this._filterToSQL(alias, (Expression) chld));
             }
-            return "("+rslt.toString()+")";
+            return rslt.length() > 0 ? "("+rslt.toString()+")" : null;
         }
 
         if(e instanceof Compare){

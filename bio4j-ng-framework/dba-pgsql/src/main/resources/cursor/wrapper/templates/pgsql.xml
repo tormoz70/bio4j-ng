@@ -24,13 +24,13 @@
       ${QUERY_PLACEHOLDER} - запрос который небходимо разбить на страницы (т.е. иметь возможность
                 запросить :PAGING_COUNT зaписей с :PAGING_OFFSET )
       :pagination$offset  - количество пропущенных записей до первой загруженной
-      :pagination$last    - последняя запись которую нужно загрузить
+      :pagination$limit    - записей на странице
     -->
     <template type="pagination"><![CDATA[
     SELECT * FROM (
         SELECT pgng$wrpr0.*, row_number() over () rnum$pgng
           FROM ( ${QUERY_PLACEHOLDER} ) as pgng$wrpr0
-    ) pgng$wrpr WHERE (pgng$wrpr.rnum$pgng > :pagination$offset) AND (pgng$wrpr.rnum$pgng <= :pagination$last)
+    ) pgng$wrpr OFFSET :pagination$offset LIMIT :pagination$limit
     ]]></template>
 
     <!--

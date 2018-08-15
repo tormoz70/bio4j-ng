@@ -1,0 +1,13 @@
+{
+  "sorter": {
+    "summ": "desc",
+    "dateFrom": "asc"
+  },
+  "filter":{
+    "or": [
+      {"containsi": {"aname": ""}},
+      {"containsi": {"adesc": ""}},
+      {"containsi": {"autors": ""}}
+    ]
+  }
+}

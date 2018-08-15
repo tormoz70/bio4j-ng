@@ -170,12 +170,17 @@ public class Jsons {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if(entry.getKey().equalsIgnoreCase("and")) {
                 Expression e = FilterBuilder.and();
-                e.addAll(parsExprationLevel((HashMap<String, Object>)entry.getValue()));
+                //e.addAll(parsExprationLevel((HashMap<String, Object>)entry.getValue()));
+                List<HashMap<String, Object>> itms = (List<HashMap<String, Object>>)entry.getValue();
+                for(HashMap<String, Object> itm : itms)
+                    e.addAll(parsExprationLevel(itm));
                 expressions.add(e);
             }
             if(entry.getKey().equalsIgnoreCase("or")) {
                 Expression e = FilterBuilder.or();
-                e.addAll(parsExprationLevel((HashMap<String, Object>)entry.getValue()));
+                List<HashMap<String, Object>> itms = (List<HashMap<String, Object>>)entry.getValue();
+                for(HashMap<String, Object> itm : itms)
+                    e.addAll(parsExprationLevel(itm));
                 expressions.add(e);
             }
             if(entry.getKey().equalsIgnoreCase("eq")) {
@@ -219,33 +224,51 @@ public class Jsons {
             }
             if(entry.getKey().equalsIgnoreCase("bgn")) {
                 Map.Entry<String, Object> fldVal = ((HashMap<String, Object>)entry.getValue()).entrySet().iterator().next();
-                Expression e = FilterBuilder.bgn(fldVal.getKey(), (String)fldVal.getValue(), false);
-                expressions.add(e);
+                String sval = (String)fldVal.getValue();
+                if(!Strings.isNullOrEmpty(sval)) {
+                    Expression e = FilterBuilder.bgn(fldVal.getKey(), sval, false);
+                    expressions.add(e);
+                }
             }
             if(entry.getKey().equalsIgnoreCase("bgni")) {
                 Map.Entry<String, Object> fldVal = ((HashMap<String, Object>)entry.getValue()).entrySet().iterator().next();
-                Expression e = FilterBuilder.bgn(fldVal.getKey(), (String)fldVal.getValue(), true);
-                expressions.add(e);
+                String sval = (String)fldVal.getValue();
+                if(!Strings.isNullOrEmpty(sval)) {
+                    Expression e = FilterBuilder.bgn(fldVal.getKey(), sval, true);
+                    expressions.add(e);
+                }
             }
             if(entry.getKey().equalsIgnoreCase("end")) {
                 Map.Entry<String, Object> fldVal = ((HashMap<String, Object>)entry.getValue()).entrySet().iterator().next();
-                Expression e = FilterBuilder.end(fldVal.getKey(), (String)fldVal.getValue(), false);
-                expressions.add(e);
+                String sval = (String)fldVal.getValue();
+                if(!Strings.isNullOrEmpty(sval)) {
+                    Expression e = FilterBuilder.end(fldVal.getKey(), sval, false);
+                    expressions.add(e);
+                }
             }
             if(entry.getKey().equalsIgnoreCase("endi")) {
                 Map.Entry<String, Object> fldVal = ((HashMap<String, Object>)entry.getValue()).entrySet().iterator().next();
-                Expression e = FilterBuilder.end(fldVal.getKey(), (String)fldVal.getValue(), true);
-                expressions.add(e);
+                String sval = (String)fldVal.getValue();
+                if(!Strings.isNullOrEmpty(sval)) {
+                    Expression e = FilterBuilder.end(fldVal.getKey(), sval, true);
+                    expressions.add(e);
+                }
             }
             if(entry.getKey().equalsIgnoreCase("contains")) {
                 Map.Entry<String, Object> fldVal = ((HashMap<String, Object>)entry.getValue()).entrySet().iterator().next();
-                Expression e = FilterBuilder.contains(fldVal.getKey(), (String)fldVal.getValue(), false);
-                expressions.add(e);
+                String sval = (String)fldVal.getValue();
+                if(!Strings.isNullOrEmpty(sval)) {
+                    Expression e = FilterBuilder.contains(fldVal.getKey(), sval, false);
+                    expressions.add(e);
+                }
             }
             if(entry.getKey().equalsIgnoreCase("containsi")) {
                 Map.Entry<String, Object> fldVal = ((HashMap<String, Object>)entry.getValue()).entrySet().iterator().next();
-                Expression e = FilterBuilder.contains(fldVal.getKey(), (String)fldVal.getValue(), true);
-                expressions.add(e);
+                String sval = (String)fldVal.getValue();
+                if(!Strings.isNullOrEmpty(sval)) {
+                    Expression e = FilterBuilder.contains(fldVal.getKey(), sval, true);
+                    expressions.add(e);
+                }
             }
         }
         return expressions;
@@ -276,7 +299,8 @@ public class Jsons {
 
         for (Map.Entry<String, Object> entry : filterAndSorterJsonObj.entrySet()) {
             if (entry.getKey().equalsIgnoreCase("filter")) {
-                filterAndSorter.getFilter().add(parsExprationLevel((HashMap<String, Object>)entry.getValue()).get(0));
+                Expression e = parsExprationLevel((HashMap<String, Object>)entry.getValue()).get(0);
+                filterAndSorter.getFilter().add(e);
             }
             if (entry.getKey().equalsIgnoreCase("sorter")) {
                 filterAndSorter.setSorter(parsSorter((HashMap<String, Object>)entry.getValue()));

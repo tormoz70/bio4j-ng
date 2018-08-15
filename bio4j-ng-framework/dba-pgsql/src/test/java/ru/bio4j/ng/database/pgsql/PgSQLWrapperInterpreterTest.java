@@ -1,16 +1,16 @@
-package ru.bio4j.ng.database.oracle;
+package ru.bio4j.ng.database.pgsql;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.oracle.impl.OraWrapperInterpreter;
+import ru.bio4j.ng.database.pgsql.impl.PgSQLWrapperInterpreter;
 import ru.bio4j.ng.model.transport.FilterAndSorter;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.io.InputStream;
 
-public class OraWrapperInterpreterTest {
+public class PgSQLWrapperInterpreterTest {
 
 //    @Test(enabled = false)
 //    public void filterToSQLTest() throws Exception {
@@ -37,7 +37,7 @@ public class OraWrapperInterpreterTest {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter2.json");
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
-        OraWrapperInterpreter filterWrapper = new OraWrapperInterpreter();
+        PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
         Assert.assertNotNull(sql);
     }
@@ -47,9 +47,19 @@ public class OraWrapperInterpreterTest {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter3.json");
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
-        OraWrapperInterpreter filterWrapper = new OraWrapperInterpreter();
+        PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
         Assert.assertNotNull(sql);
+    }
+
+    @Test(enabled = true)
+    public void filterAndSorterToSQLTest2() throws Exception {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter4.json");
+        String json = Utl.readStream(inputStream);
+        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        Assert.assertNull(sql);
     }
 
 }
