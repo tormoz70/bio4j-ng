@@ -47,7 +47,7 @@ public class CrudReaderApi {
         }
     }
 
-    private static ABeanPage readStoreData(final List<Param> params, final SQLContext context, final Connection conn, final BioCursor cursorDef) throws Exception {
+    private static ABeanPage readStoreData(final List<Param> params, final SQLContext context, final Connection conn, final BioCursor cursorDef, final User usr) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
         final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
@@ -58,7 +58,7 @@ public class CrudReaderApi {
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
         try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, null);) {
+                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, usr);) {
             long estimatedTime = System.currentTimeMillis() - startTime;
             LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
             result.setMetadata(cursorDef.getFields());
@@ -167,7 +167,7 @@ public class CrudReaderApi {
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LIMIT, paginationPagesize);
-            return readStoreData(params, ctx, conn, cur);
+            return readStoreData(params, ctx, conn, cur, usr);
         }, cursor, user);
         return result;
     }
@@ -176,7 +176,7 @@ public class CrudReaderApi {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
         ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
-            return readStoreData(params, ctx, conn, cur);
+            return readStoreData(params, ctx, conn, cur, user);
         }, cursor, user);
         return result;
     }
@@ -188,7 +188,7 @@ public class CrudReaderApi {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
         preparePkParamValue(params, pkField);
         ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
-            return readStoreData(params, ctx, conn, cur);
+            return readStoreData(params, ctx, conn, cur, user);
         }, cursor, user);
         return result;
     }
