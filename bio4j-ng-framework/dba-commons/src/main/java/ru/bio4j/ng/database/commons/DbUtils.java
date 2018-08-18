@@ -134,6 +134,22 @@ public class DbUtils {
         return r;
     }
 
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final String sql, Class<T> clazz) throws Exception {
+        T r = ctx.execBatch(new SQLActionScalar<T>() {
+            @Override
+            public T exec(SQLContext context, Connection conn, User u) throws Exception {
+                try(SQLCursor c = context.createCursor()
+                        .init(conn, sql, null).open(params, u);){
+                    if(c.reader().next()){
+                        return Converter.toType(c.reader().getValue(1), clazz);
+                    }
+                }
+                return null;
+            }
+        }, usr);
+        return r;
+    }
+
     public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
         if(reader == null)
             throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
