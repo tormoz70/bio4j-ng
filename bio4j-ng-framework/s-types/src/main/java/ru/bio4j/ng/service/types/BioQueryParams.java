@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class BioQueryParams {
+    public static final String CS_UPLOADEXTPARAM = "upldprm";
+    public static final String CS_UPLOADTYPE = "upldType";
+
     public HttpServletRequest request;
     public String method;
     public String remoteIP;
@@ -38,9 +41,11 @@ public class BioQueryParams {
     public String fcloudFileUid;
     @Prop(name = "uplduid")
     public String fcloudUploadUid;
+    @Prop(name = CS_UPLOADTYPE)
+    public String fcloudUploadType;
     @Prop(name = "uplddsc")
     public String fcloudUploadDesc;
-    @Prop(name = "upldprm")
+    @Prop(name = CS_UPLOADEXTPARAM)
     public String fcloudExtParam;
 
     @Prop(name = "page")

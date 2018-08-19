@@ -513,7 +513,6 @@
         <module>db-config</module>
         <module>router</module>
         <module>remote-api-wab</module>
-        <module>fcloud-api-wab</module>
         <!--bio-modules-->
         <module>module-provider</module>
         <module>security-module-x</module>

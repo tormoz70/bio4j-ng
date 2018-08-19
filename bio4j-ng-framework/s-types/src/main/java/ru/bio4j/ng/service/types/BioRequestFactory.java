@@ -195,6 +195,7 @@ public abstract class BioRequestFactory<T extends BioRequest> {
             rslt.setUploadUid(qprms.fcloudUploadUid);
             rslt.setUploadDesc(qprms.fcloudUploadDesc);
             rslt.setExtParam(qprms.fcloudExtParam);
+            rslt.setUploadType(qprms.fcloudUploadType);
             return rslt;
         }
     }

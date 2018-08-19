@@ -184,6 +184,8 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             final Date fileDatetime,
             final String contentType,
             final String remoteHost,
+            final String uploadType,
+            final String uploadExtParam,
             final String uploadDesc,
             final List<Param> params,
             final User usr
@@ -226,6 +228,14 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             final User usr
     ) throws Exception {
         initDatabase();
+        return null;
+    }
+
+    @Override
+    public FileSpec getFileSpec(
+            final String fileUid,
+            final User usr
+    ) throws Exception {
         return null;
     }
 

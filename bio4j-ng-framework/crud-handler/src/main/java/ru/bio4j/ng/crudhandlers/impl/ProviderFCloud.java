@@ -3,10 +3,12 @@ package ru.bio4j.ng.crudhandlers.impl;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Httpc;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
+import ru.bio4j.ng.service.types.BioQueryParams;
 import ru.bio4j.ng.service.types.BioRespBuilder;
 import ru.bio4j.ng.service.api.FCloudProvider;
 import ru.bio4j.ng.service.api.FileSpec;
@@ -79,30 +81,47 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
         response.getWriter().append(responseBuilder.json());
     }
 
-     private void processUpload(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
+
+    private void processUpload(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
         Collection<Part> parts = null;
         try {
             parts = request.getHttpRequest().getParts();
         } catch (Exception e) {}
         if(parts != null) {
-            //LOG.debug("Parts recived: {}", parts.size());
+            for (Part p : parts) {
+                String fileName = Httpc.extractFileNameFromPart(p);
+                if(Strings.isNullOrEmpty(fileName)) {
+                    String paramName = p.getName();
+                    String paramValue = Utl.readStream(p.getInputStream());
+                    Paramus.setParamValue(request.getBioParams(), paramName, paramValue);
+                    if (Strings.compare(paramName, BioQueryParams.CS_UPLOADEXTPARAM, true))
+                        request.setExtParam(paramValue);
+
+                }
+            }
+
             List<FileSpec> files = new ArrayList<>();
             for (Part p : parts) {
                 String fileName = Httpc.extractFileNameFromPart(p);
-                FileSpec file = fcloudProvider.getApi().regFile(
-                        request.getUploadUid(),
-                        fileName,
-                        p.getInputStream(),
-                        p.getSize(),
-                        null,
-                        p.getContentType(),
-                        request.getRemoteIP(),
-                        request.getUploadDesc(),
-                        request.getBioParams(),
-                        request.getUser()
-                );
-                if(file != null)
-                    files.add(file);
+                if(!Strings.isNullOrEmpty(fileName)) {
+                    FileSpec file = fcloudProvider.getApi().regFile(
+                            request.getUploadUid(),
+                            fileName,
+                            p.getInputStream(),
+                            p.getSize(),
+                            null,
+                            p.getContentType(),
+                            request.getRemoteIP(),
+                            request.getUploadType(),
+                            request.getExtParam(),
+                            request.getUploadDesc(),
+                            request.getBioParams(),
+                            request.getUser()
+                    );
+                    if (file != null) {
+                        files.add(file);
+                    }
+                }
             }
             writeResult(files, response);
         } else
@@ -110,6 +129,8 @@ public class ProviderFCloud extends ProviderAn<BioRequestFCloud> {
     }
 
     private void processDownload(final BioRequestFCloud request, final HttpServletResponse response) throws Exception {
+        FileSpec fileSpec = fcloudProvider.getApi().getFileSpec(request.getFileUid(), request.getUser());
+        response.setContentType(fileSpec.getContentType());
         try(InputStream ios = fcloudProvider.getApi().getFile(request.getFileUid(), request.getUser())){
             Utl.writeInputToOutput(ios, response.getOutputStream());
         }

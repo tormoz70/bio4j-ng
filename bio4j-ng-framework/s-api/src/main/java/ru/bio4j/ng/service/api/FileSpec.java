@@ -12,6 +12,7 @@ public class FileSpec {
     private String md5;
     private String contentType;
     private String remoteIpAddress;
+    private String uploadType;
     private String adesc;
     private String extParam;
     private String threadUID;
@@ -119,5 +120,13 @@ public class FileSpec {
 
     public void setOwnerUserUid(String ownerUserUid) {
         this.ownerUserUid = ownerUserUid;
+    }
+
+    public String getUploadType() {
+        return uploadType;
+    }
+
+    public void setUploadType(String uploadType) {
+        this.uploadType = uploadType;
     }
 }

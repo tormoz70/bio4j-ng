@@ -16,6 +16,8 @@ public interface FCloudApi {
             final Date fileDatetime,
             final String contentType,
             final String remoteHost,
+            final String uploadType,
+            final String uploadExtParam,
             final String uploadDesc,
             final List<Param> params,
             final User usr
@@ -23,6 +25,11 @@ public interface FCloudApi {
 
     List<FileSpec> getFileList(
             final List<Param> params,
+            final User usr
+    ) throws Exception;
+
+    FileSpec getFileSpec(
+            final String fileUid,
             final User usr
     ) throws Exception;
 
