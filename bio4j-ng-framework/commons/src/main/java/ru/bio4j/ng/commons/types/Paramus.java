@@ -408,6 +408,8 @@ public class Paramus implements Closeable {
         } else {
             if(addIfNotExists) {
                 MetaType valueType = MetaTypeConverter.read(value != null ? value.getClass() : String.class);
+                if (forceType != MetaType.UNDEFINED)
+                    valueType = forceType;
                 this.add(Param.builder()
                         .name(name)
                         .value(value)
