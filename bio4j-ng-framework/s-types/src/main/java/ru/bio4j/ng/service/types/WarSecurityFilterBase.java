@@ -78,6 +78,7 @@ public class WarSecurityFilterBase {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
         resp.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
         final BioWrappedRequest req = (BioWrappedRequest) request;
         final String servletPath = req.getServletPath();
         final HttpSession session = req.getSession();
