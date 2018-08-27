@@ -59,7 +59,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             // nop
                         } else
                             try {
-                                val = (val != null) ? Converter.toType(val, targetValType) : val;
+                                val = (val != null) ? Converter.toType(val, targetValType, true) : val;
                             } catch (ConvertValueException e) {
                                 throw new SQLException(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\". Message: %s",
                                         paramName, val, (valType != null ? valType.getSimpleName() : null),

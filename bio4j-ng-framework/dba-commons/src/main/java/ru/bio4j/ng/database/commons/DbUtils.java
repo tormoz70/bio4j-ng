@@ -239,17 +239,16 @@ public class DbUtils {
         return null;
     }
 
-    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists) throws Exception {
+    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean overwriteTypes) throws Exception {
+        boolean addIfNotExists = true;
         if(src != null && dst != null) {
             for(Param p : src){
                 Param exists = findParamIgnorePrefix(p.getName(), dst);
                 if(exists != null && exists != p) {
-                    MetaType dstType = p.getType();
-//                    if(dstType == MetaType.UNDEFINED && exists.getValue() != null)
-//                        dstType = MetaTypeConverter.read(exists.getValue().getClass());
-//                    if(dstType == MetaType.UNDEFINED)
-//                        dstType = p.getType();
-                    if (p.getType() != null && p.getType() != MetaType.UNDEFINED && p.getType() != exists.getType()) {
+                    MetaType srcType = p.getType();
+                    MetaType dstType = overwriteTypes || exists.getType() == MetaType.UNDEFINED ? srcType : exists.getType();
+
+                    if (srcType != null && srcType != MetaType.UNDEFINED && srcType != exists.getType()) {
                         exists.setValue(Converter.toType(p.getValue(), MetaTypeConverter.write(dstType)));
                         exists.setType(dstType);
                     } else
@@ -269,9 +268,9 @@ public class DbUtils {
         }
     }
 
-    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName) throws Exception {
-        applyParamsToParams(src, dst, normalizeName, true);
-    }
+//    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean overwriteTypes) throws Exception {
+//        applyParamsToParams(src, dst, normalizeName, overwriteTypes);
+//    }
 
     public static void applayRowToParams(StoreRow row, List<Param> params){
         try(Paramus paramus = Paramus.set(params)) {
