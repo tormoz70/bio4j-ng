@@ -30,7 +30,8 @@
                             waffle.windows.auth.*;resolution:="optional",
                             *</Import-Package>
                         <Embed-Dependency>*;scope=compile</Embed-Dependency>
-                        <Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*;org.apache.http.*</Export-Package>
+                        <!--<Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*;org.apache.http.*</Export-Package>-->
+                        <Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*</Export-Package>
                         <remoteOBR />
                     </instructions>
                 </configuration>
@@ -57,6 +58,17 @@
             <artifactId>ojdbc8</artifactId>
             <version>${ojdbc.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.toolchain</groupId>
+            <artifactId>jetty-osgi-servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -89,7 +101,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-stypes</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
