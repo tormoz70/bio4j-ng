@@ -60,6 +60,12 @@ public abstract class RestServiceBase {
         return rslt;
     }
 
+    protected <T> T _getFirst(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
+        BioAppModule module = getModule();
+        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz, true);
+        return rslt.size() > 0 ? rslt.get(0) : null;
+    }
+
     protected String _getJson(String bioCode, HttpServletRequest request) throws Exception {
         BioAppModule module = getModule();
         StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, module);
@@ -82,13 +88,13 @@ public abstract class RestServiceBase {
         return RestApiAdapter.loadBean(bioCode, request, module, id);
     }
 
-    protected ABean _getSuccess() {
+    protected static ABean _getSuccess() {
         ABean rslt = new ABean();
         rslt.put("success", true);
         return rslt;
     }
 
-    protected List<ABean> _exctarctBean(HttpServletRequest request) throws Exception {
+    protected static List<ABean> _exctarctBean(HttpServletRequest request) throws Exception {
         List<ABean> abeans = null;
         String abeanJson = null;
         try {
@@ -100,7 +106,7 @@ public abstract class RestServiceBase {
         return abeans;
     }
 
-    protected ABean _setBean(ABean bean, String attrName, Object attrValue, Class<?> attrType) throws Exception {
+    protected static ABean _setBean(ABean bean, String attrName, Object attrValue, Class<?> attrType) throws Exception {
         if(bean == null)
             bean = new ABean();
         if(bean.containsKey(attrName))
@@ -110,7 +116,7 @@ public abstract class RestServiceBase {
         return bean;
     }
 
-    protected List<Param> _setBeanToBioParams(ABean bean, List<Param> params) throws Exception {
+    protected static List<Param> _setBeanToBioParams(ABean bean, List<Param> params) throws Exception {
         if(params == null)
             params = new ArrayList<>();
         if(bean == null)
@@ -120,7 +126,7 @@ public abstract class RestServiceBase {
         return params;
     }
 
-    protected <T> List<T> _parsIdsTyped(String ids, Class<T> clazz) throws Exception {
+    protected static <T> List<T> _parsIdsTyped(String ids, Class<T> clazz) throws Exception {
         List<T> rslt = new ArrayList<>();
         String[] idsArrayOrig = Strings.split(ids, ",", ";", " ");
         for (String id : idsArrayOrig) {
@@ -129,7 +135,7 @@ public abstract class RestServiceBase {
         return rslt;
     }
 
-    protected List<Object> _parsIds(String ids, Class<?> clazz) throws Exception {
+    protected static List<Object> _parsIds(String ids, Class<?> clazz) throws Exception {
         List<Object> rslt = new ArrayList<>();
         String[] idsArrayOrig = Strings.split(ids, ",", ";", " ");
         for (String id : idsArrayOrig) {
@@ -138,32 +144,30 @@ public abstract class RestServiceBase {
         return rslt;
     }
 
-    protected void _setBioParamToRequest(String paramName, Object paramValue, HttpServletRequest request) throws Exception {
+    protected static void _setBioParamToRequest(String paramName, Object paramValue, HttpServletRequest request) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         Paramus.setParamValue(queryParams.bioParams, paramName, paramValue);
     }
 
-    protected void _setSorterToRequest(String fieldName, Sort.Direction direction, HttpServletRequest request) throws Exception {
+    protected static void _setSorterToRequest(String fieldName, Sort.Direction direction, HttpServletRequest request) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
-        FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
-        if(fs == null)
-            fs = new FilterAndSorter();
-        if(fs.getSorter() == null)
-            fs.setSorter(new ArrayList<>());
-        Sort newSort = new Sort();
-        newSort.setFieldName(fieldName);
-        newSort.setDirection(direction);
-        fs.getSorter().add(newSort);
+        if(queryParams.sort == null)
+            queryParams.sort = new ArrayList<>();
+        queryParams.sort.clear();
+        if(!Strings.isNullOrEmpty(fieldName)) {
+            Sort newSort = new Sort();
+            newSort.setFieldName(fieldName);
+            newSort.setDirection(direction);
+            queryParams.sort.add(newSort);
+        }
     }
 
-    protected void _setBeanToRequest(ABean bean, HttpServletRequest request) throws Exception {
+    protected static void _setBeanToRequest(ABean bean, HttpServletRequest request) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         _setBeanToBioParams(bean, queryParams.bioParams);
     }
 
-    protected <T> T _getBioParamFromRequest(String paramName, HttpServletRequest request, Class<T> paramType) throws Exception {
+    protected static <T> T _getBioParamFromRequest(String paramName, HttpServletRequest request, Class<T> paramType) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         return Paramus.paramValue(queryParams.bioParams, paramName, paramType, null);
     }

@@ -36,6 +36,11 @@ public class RestApiAdapter {
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
             fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+        if(fs == null) {
+            fs = new FilterAndSorter();
+            fs.setSorter(queryParams.sort);
+            fs.setFilter(queryParams.filter);
+        }
         if(pageSize > 0) {
             boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
             return CrudReaderApi.loadPage(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, forceCalcCount, user);
@@ -56,6 +61,11 @@ public class RestApiAdapter {
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
             fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+        if(fs == null) {
+            fs = new FilterAndSorter();
+            fs.setSorter(queryParams.sort);
+            fs.setFilter(queryParams.filter);
+        }
         ABean rslt = new ABean();
         ru.bio4j.ng.model.transport.jstore.filter.Filter filter = fs != null ? fs.getFilter() : null;
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
@@ -69,7 +79,8 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final BioAppModule module,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType,
+            final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         final List<Param> params = queryParams.bioParams;
         final SQLContext context = module.getSQLContext();
@@ -79,10 +90,22 @@ public class RestApiAdapter {
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
             fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
-        if(pageSize > 0)
-            return CrudReaderApi.loadPageExt(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user, beanType);
-        else
+        if(fs == null) {
+            fs = new FilterAndSorter();
+            fs.setSorter(queryParams.sort);
+            fs.setFilter(queryParams.filter);
+        }
+        if((pageSize == 0) || forceAll)
             return CrudReaderApi.loadAllExt(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user, beanType);
+        else
+            return CrudReaderApi.loadPageExt(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user, beanType);
+    }
+    public static <T> List<T> loadPageExt(
+            final String bioCode,
+            final HttpServletRequest request,
+            final BioAppModule module,
+            final Class<T> beanType) throws Exception {
+        return loadPageExt(bioCode, request, module, beanType, false);
     }
 
     public static StoreMetadata getMetadata(

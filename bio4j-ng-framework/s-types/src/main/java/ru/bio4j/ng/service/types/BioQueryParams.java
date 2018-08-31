@@ -73,11 +73,11 @@ public class BioQueryParams {
     @Prop(name = "rmtsessionuid")
     public String rmtSessionUid;
 
-    @Prop(name = "sort")
+    @Prop(name = "asorter")
     public String sortOrig;
     public List<Sort> sort;
 
-    @Prop(name = "filter")
+    @Prop(name = "afilter")
     public String filterOrig;
     public Filter filter;
 

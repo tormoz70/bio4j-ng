@@ -272,7 +272,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
         if(result.pageSize == null && result.pageSizeOrig == null) result.pageSize = 50;
         if(result.page == null && result.pageOrig == null) result.page = 1;
-        if(result.offset == null && result.offsetOrig == null) result.offset = 0;
+        if((result.offset == null && result.offsetOrig == null) || result.offset == 0) result.offset = 1;
 
         extractBioParamsFromQuery(result);
         setQueryParamsToBioParams(result);
