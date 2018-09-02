@@ -30,7 +30,7 @@
     SELECT * FROM (
         SELECT pgng$wrpr0.*, row_number() over () rnum$pgng
           FROM ( ${QUERY_PLACEHOLDER} ) as pgng$wrpr0
-    ) pgng$wrpr OFFSET :pagination$offset LIMIT :pagination$limit
+    ) pgng$wrpr OFFSET :pagination$offset-1 LIMIT :pagination$limit
     ]]></template>
 
     <!--
