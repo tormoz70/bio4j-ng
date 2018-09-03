@@ -30,7 +30,10 @@
     SELECT * FROM (
         SELECT pgng$wrpr0.*, ROWNUM rnum$pgng
           FROM ( ${QUERY_PLACEHOLDER} ) pgng$wrpr0
-    ) pgng$wrpr WHERE pgng$wrpr.rnum$pgng BETWEEN :pagination$offset AND  :pagination$offset+:pagination$limit-1
+    ) pgng$wrpr WHERE pgng$wrpr.rnum$pgng BETWEEN
+        :pagination$offset + 1
+        AND
+        :pagination$offset+:pagination$limit
     ]]></template>
 
     <!--

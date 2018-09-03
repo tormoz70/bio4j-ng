@@ -108,7 +108,7 @@ public class CrudReaderApi {
             final User user) throws Exception {
         long result = context.execBatch((ctx, conn, cur, usr) -> {
             try (SQLCursor c = ctx.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, null);) {
+                    .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, user);) {
                 if (c.reader().next())
                     return c.reader().getValue(1, long.class);
                 return 0L;
