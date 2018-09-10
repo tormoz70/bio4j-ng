@@ -26,7 +26,8 @@ public class RestApiAdapter {
     public static ABeanPage loadPage(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module) throws Exception {
+            final BioAppModule module,
+            final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         final List<Param> params = queryParams.bioParams;
         final SQLContext context = module.getSQLContext();
@@ -41,11 +42,19 @@ public class RestApiAdapter {
             fs.setSorter(queryParams.sort);
             fs.setFilter(queryParams.filter);
         }
-        if(pageSize > 0) {
+        if(pageSize == 0 || forceAll) {
+            return CrudReaderApi.loadAll(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user);
+        } else {
             boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
             return CrudReaderApi.loadPage(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, forceCalcCount, user);
-        } else
-            return CrudReaderApi.loadAll(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user);
+        }
+    }
+
+    public static ABeanPage loadPage(
+            final String bioCode,
+            final HttpServletRequest request,
+            final BioAppModule module) throws Exception {
+        return loadPage(bioCode, request, module, false);
     }
 
     public static ABean calcTotalCount(

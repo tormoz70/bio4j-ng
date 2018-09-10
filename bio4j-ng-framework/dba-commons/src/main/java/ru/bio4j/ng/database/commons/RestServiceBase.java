@@ -66,6 +66,12 @@ public abstract class RestServiceBase {
         return rslt.size() > 0 ? rslt.get(0) : null;
     }
 
+    protected ABean _getFirst(String bioCode, HttpServletRequest request) throws Exception {
+        BioAppModule module = getModule();
+        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, module);
+        return rslt.getRows().size() > 0 ? rslt.getRows().get(0) : null;
+    }
+
     protected String _getJson(String bioCode, HttpServletRequest request) throws Exception {
         BioAppModule module = getModule();
         StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, module);
