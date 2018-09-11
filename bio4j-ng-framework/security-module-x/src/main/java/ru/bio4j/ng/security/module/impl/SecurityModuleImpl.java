@@ -73,6 +73,11 @@ public class SecurityModuleImpl extends BioModuleBase implements BioSecurityModu
     }
 
     @Override
+    public User restoreUser(String stokenOrUsrUid) throws Exception {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public User getUser(final String stoken, final String remoteIP, final String remoteClient) throws Exception {
         throw new NotImplementedException();
     }

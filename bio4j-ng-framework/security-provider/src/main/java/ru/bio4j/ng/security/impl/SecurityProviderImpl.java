@@ -5,6 +5,7 @@ import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
@@ -21,21 +22,51 @@ public class SecurityProviderImpl extends BioServiceBase implements SecurityProv
     @Requires
     private ModuleProvider moduleProvider;
 
-    private final String securityModuleKey = "security";
+    private final String defaultSecurityModuleKey = "security";
 
-    private BioSecurityModule _securityModule = null;
-    private BioSecurityModule getSecurityModule() throws Exception {
-        if(_securityModule != null)
-            return _securityModule;
-        LOG.debug("getting module {}...", securityModuleKey);
-        _securityModule = moduleProvider.getSecurityModule(securityModuleKey);
-        if(_securityModule != null) {
-            LOG.debug("module {} found!", securityModuleKey);
-        } else
-            LOG.debug("module {} not found!", securityModuleKey);
-        return _securityModule;
+    private String securityModuleKey = null;
+    private BioSecurityModule securityModule = null;
+    private boolean inited = false;
+
+    @Override
+    public void init(final String securityModuleKey) throws Exception {
+        String trySecurityModuleKey = Strings.isNullOrEmpty(securityModuleKey) ? defaultSecurityModuleKey : securityModuleKey;
+        if(!Strings.compare(trySecurityModuleKey, this.securityModuleKey, true)) {
+            this.securityModuleKey = trySecurityModuleKey;
+            this.securityModule = getSecurityModule();
+            if(this.securityModule != null) {
+                LOG.debug("Security module {} inited!", this.securityModuleKey);
+            } else {
+                throw new IllegalArgumentException(String.format("Security module \"{}\" not found!", this.securityModuleKey));
+            }
+        }
+        inited = true;
     }
 
+    private void internalInit() throws Exception {
+        if(!inited){
+            init(null);
+        }
+    }
+
+    public BioSecurityModule getSecurityModule() throws Exception {
+        internalInit();
+        if(securityModule != null)
+            return securityModule;
+        LOG.debug("getting module {}...", securityModuleKey);
+        securityModule = moduleProvider.getSecurityModule(securityModuleKey);
+        if(securityModule != null) {
+            LOG.debug("Security module {} found!", securityModuleKey);
+        } else {
+            throw new IllegalArgumentException(String.format("Security module \"{}\" not found!", securityModuleKey));
+        }
+        return securityModule;
+    }
+
+    @Override
+    public User restoreUser(final String stoken) throws Exception {
+        return getSecurityModule().restoreUser(stoken);
+    }
 
     @Override
     public User getUser(final String stoken, final String remoteIP, final String remoteClient) throws Exception {
