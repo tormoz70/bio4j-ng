@@ -228,11 +228,21 @@ public class DbUtils {
         return paramName.toLowerCase();
     }
 
+    public static String cutParamPrefix(String paramName) {
+        if(Strings.isNullOrEmpty(paramName))
+            return paramName;
+        if(paramName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[0]))
+            return paramName.substring(DEFAULT_PARAM_PREFIX[0].length());
+        if(paramName.toUpperCase().startsWith(DEFAULT_PARAM_PREFIX[1]))
+            return paramName.substring(DEFAULT_PARAM_PREFIX[1].length());
+        return paramName;
+    }
+
     public static Param findParamIgnorePrefix(String paramName, List<Param> params) {
+        String paramName2Find = cutParamPrefix(paramName);
         for (Param param : params) {
-            if(param.getName().equalsIgnoreCase(paramName.toLowerCase()) ||
-                    param.getName().equalsIgnoreCase(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramName.toLowerCase()) ||
-                    param.getName().equalsIgnoreCase(DEFAULT_PARAM_PREFIX[0].toLowerCase() + paramName.toLowerCase())) {
+            String prmName = cutParamPrefix(param.getName());
+            if(prmName.equalsIgnoreCase(paramName2Find)) {
                 return param;
             }
         }

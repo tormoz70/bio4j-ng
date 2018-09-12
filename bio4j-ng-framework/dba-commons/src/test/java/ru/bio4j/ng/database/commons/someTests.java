@@ -42,5 +42,19 @@ public class someTests {
         System.out.println(type.getCanonicalName());
     }
 
+    @Test
+    public void cutParamPrefix() throws Exception {
+        String r = DbUtils.cutParamPrefix("okeeper_id");
+        Assert.assertEquals(r, "okeeper_id");
+        r = DbUtils.cutParamPrefix("p_okeeper_id");
+        Assert.assertEquals(r, "okeeper_id");
+        r = DbUtils.cutParamPrefix("v_okeeper_id");
+        Assert.assertEquals(r, "okeeper_id");
+        r = DbUtils.cutParamPrefix("P_OKEEPER_ID");
+        Assert.assertEquals(r, "OKEEPER_ID");
+        r = DbUtils.cutParamPrefix("V_OKEEPER_ID");
+        Assert.assertEquals(r, "OKEEPER_ID");
+    }
+
 
 }
