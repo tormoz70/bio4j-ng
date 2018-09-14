@@ -47,7 +47,7 @@ public class CrudWriterApi {
                     }
                 }
             } finally {
-                cmd.getStatement().close();
+                cmd.close();
             }
 
             return 0;
@@ -65,19 +65,23 @@ public class CrudWriterApi {
         if (sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
         int affected = context.execBatch((context1, conn, cur, usr) -> {
-            SQLStoredProc cmd = context1.createStoredProc();
-            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
             int r = 0;
-            for (Object id : ids) {
-                Param prm = Paramus.getParam(cmd.getParams(), RestParamNames.DELETE_PARAM_PKVAL);
-                if(prm == null)
-                    prm = cmd.getParams().size() > 0 ? cmd.getParams().get(0) : null;
-                if(prm != null) {
-                    Paramus.setParamValue(params, prm.getName(), id, MetaTypeConverter.read(id.getClass()));
-                    cmd.execSQL(params, user, true);
-                    r++;
-                } else
-                    throw new Exception(String.format("ID Param not found in Delete sql of \"%s\"!", cur.getBioCode()));
+            SQLStoredProc cmd = context1.createStoredProc();
+            try {
+                cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+                for (Object id : ids) {
+                    Param prm = Paramus.getParam(cmd.getParams(), RestParamNames.DELETE_PARAM_PKVAL);
+                    if (prm == null)
+                        prm = cmd.getParams().size() > 0 ? cmd.getParams().get(0) : null;
+                    if (prm != null) {
+                        Paramus.setParamValue(params, prm.getName(), id, MetaTypeConverter.read(id.getClass()));
+                        cmd.execSQL(params, user, true);
+                        r++;
+                    } else
+                        throw new Exception(String.format("ID Param not found in Delete sql of \"%s\"!", cur.getBioCode()));
+                }
+            } finally {
+                cmd.close();
             }
             return r;
         }, cursor, user);
@@ -95,7 +99,7 @@ public class CrudWriterApi {
         context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
             cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
-            cmd.execSQL(params, user, true);
+            cmd.execSQL(params, user);
             return 0;
         }, cursor, user);
     }

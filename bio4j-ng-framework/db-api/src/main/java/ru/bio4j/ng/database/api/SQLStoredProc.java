@@ -19,4 +19,5 @@ public interface SQLStoredProc extends SQLCommand {
     void execSQL(Object params, User usr, boolean stayOpened) throws Exception;
     void execSQL(Object params, User usr) throws Exception;
     void execSQL(User usr) throws Exception;
+    void close() throws Exception;
 }

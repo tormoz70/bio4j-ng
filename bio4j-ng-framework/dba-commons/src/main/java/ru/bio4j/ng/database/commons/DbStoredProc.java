@@ -10,6 +10,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.commons.utils.SrvcUtils;
 
 import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +82,13 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     @Override
     protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception {
         DbUtils.applyParamsToParams(params, this.params, false, overwriteType);
+    }
+
+    @Override
+    public void close() throws Exception {
+        Statement statement = getStatement();
+        if(statement != null)
+            statement.close();
     }
 
 }
