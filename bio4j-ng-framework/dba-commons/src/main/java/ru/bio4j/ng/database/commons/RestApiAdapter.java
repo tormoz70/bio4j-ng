@@ -22,6 +22,32 @@ import java.util.List;
 
 public class RestApiAdapter {
 
+    public static ABeanPage loadPage(
+            final BioAppModule module,
+            final String bioCode,
+            final List<Param> params,
+            final User user,
+            final boolean forceAll,
+            final FilterAndSorter filterAndSorter,
+            final boolean forceCalcCount
+            ) throws Exception {
+        final SQLContext context = module.getSQLContext();
+        final BioCursor cursor = module.getCursor(bioCode);
+        int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
+        if(pageSize == 0 || forceAll)
+            return CrudReaderApi.loadAll(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, cursor, user);
+        else
+            return CrudReaderApi.loadPage(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, cursor, forceCalcCount, user);
+    }
+
+    public static ABeanPage loadPage(
+            final BioAppModule module,
+            final String bioCode,
+            final List<Param> params,
+            final User user,
+            final boolean forceAll) throws Exception {
+        return loadPage(module, bioCode, params, user, forceAll, null, false);
+    }
 
     public static ABeanPage loadPage(
             final String bioCode,
@@ -30,10 +56,7 @@ public class RestApiAdapter {
             final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         final List<Param> params = queryParams.bioParams;
-        final SQLContext context = module.getSQLContext();
-        final BioCursor cursor = module.getCursor(bioCode);
         final User user = ((BioWrappedRequest)request).getUser();
-        int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
             fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
@@ -42,13 +65,10 @@ public class RestApiAdapter {
             fs.setSorter(queryParams.sort);
             fs.setFilter(queryParams.filter);
         }
-        if(pageSize == 0 || forceAll) {
-            return CrudReaderApi.loadAll(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user);
-        } else {
-            boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
-            return CrudReaderApi.loadPage(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, forceCalcCount, user);
-        }
+        boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
+        return loadPage(module, bioCode, params, user, forceAll, fs, forceCalcCount);
     }
+
 
     public static ABeanPage loadPage(
             final String bioCode,
@@ -85,6 +105,33 @@ public class RestApiAdapter {
     }
 
     public static <T> List<T> loadPageExt(
+            final BioAppModule module,
+            final String bioCode,
+            final List<Param> params,
+            final User user,
+            final boolean forceAll,
+            final Class<T> beanType,
+            final FilterAndSorter filterAndSorter) throws Exception {
+        final SQLContext context = module.getSQLContext();
+        final BioCursor cursor = module.getCursor(bioCode);
+        int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
+        if(pageSize == 0 || forceAll)
+            return CrudReaderApi.loadAllExt(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, cursor, user, beanType);
+        else
+            return CrudReaderApi.loadPageExt(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, cursor, user, beanType);
+    }
+
+    public static <T> List<T> loadPageExt(
+            final BioAppModule module,
+            final String bioCode,
+            final List<Param> params,
+            final User user,
+            final Class<T> beanType,
+            final boolean forceAll) throws Exception {
+        return loadPageExt(module, bioCode, params, user, forceAll, beanType, null);
+    }
+
+    public static <T> List<T> loadPageExt(
             final String bioCode,
             final HttpServletRequest request,
             final BioAppModule module,
@@ -92,10 +139,7 @@ public class RestApiAdapter {
             final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         final List<Param> params = queryParams.bioParams;
-        final SQLContext context = module.getSQLContext();
-        final BioCursor cursor = module.getCursor(bioCode);
         final User user = ((BioWrappedRequest)request).getUser();
-        int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
             fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
@@ -104,10 +148,7 @@ public class RestApiAdapter {
             fs.setSorter(queryParams.sort);
             fs.setFilter(queryParams.filter);
         }
-        if((pageSize == 0) || forceAll)
-            return CrudReaderApi.loadAllExt(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user, beanType);
-        else
-            return CrudReaderApi.loadPageExt(params, fs != null ? fs.getFilter() : null, fs != null ? fs.getSorter() : null, context, cursor, user, beanType);
+        return loadPageExt(module, bioCode, params, user, forceAll, beanType, fs);
     }
     public static <T> List<T> loadPageExt(
             final String bioCode,

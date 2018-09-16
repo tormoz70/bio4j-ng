@@ -7,10 +7,7 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.ABean;
-import ru.bio4j.ng.model.transport.ABeanPage;
-import ru.bio4j.ng.model.transport.FilterAndSorter;
-import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppModule;
@@ -54,6 +51,21 @@ public abstract class RestServiceBase {
         rslt.setMetadata(null);
         return rslt;
     }
+
+    protected ABeanPage _getList(String bioCode, List<Param> prms, User user, boolean forceAll, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception {
+        BioAppModule module = getModule();
+        ABeanPage rslt = RestApiAdapter.loadPage(module, bioCode, prms, user, forceAll, filterAndSorter, forceCalcCount);
+        rslt.setMetadata(null);
+        return rslt;
+    }
+
+    protected ABeanPage _getList(String bioCode, List<Param> prms, User user, boolean forceAll) throws Exception {
+        BioAppModule module = getModule();
+        ABeanPage rslt = RestApiAdapter.loadPage(module, bioCode, prms, user, forceAll);
+        rslt.setMetadata(null);
+        return rslt;
+    }
+
     protected <T> List<T> _getList(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
         BioAppModule module = getModule();
         List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz);
