@@ -124,9 +124,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
-    protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception {
-        DbUtils.applyParamsToParams(params, this.params, false, overwriteType);
-    }
+    protected abstract void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception;
 
     protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
         Exception lastError = null;
@@ -151,7 +149,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
                 getParamsFromStatement(); // Вытаскиваем OUT-параметры
 
-                DbUtils.applyParamsToParams(this.params, params, false, false);
+                DbUtils.applyParamsToParams(this.params, params, false, true, false);
                 //this.params = params;
                 if(params != null) {
                     for (Param p : params) {

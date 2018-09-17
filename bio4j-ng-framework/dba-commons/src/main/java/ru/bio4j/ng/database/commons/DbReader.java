@@ -5,6 +5,7 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.DBField;
 import ru.bio4j.ng.database.api.SQLReader;
+import ru.bio4j.ng.model.transport.Param;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -208,4 +209,5 @@ public class DbReader implements SQLReader {
     public List<Object> getValues() {
         return this.rowValues;
     }
+
 }

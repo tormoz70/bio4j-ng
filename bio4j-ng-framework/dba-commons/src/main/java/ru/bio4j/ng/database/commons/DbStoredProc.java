@@ -81,7 +81,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
     @Override
     protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception {
-        DbUtils.applyParamsToParams(params, this.params, false, overwriteType);
+        DbUtils.applyParamsToParams(params, this.params, false, false, overwriteType);
     }
 
     @Override

@@ -249,8 +249,7 @@ public class DbUtils {
         return null;
     }
 
-    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean overwriteTypes) throws Exception {
-        boolean addIfNotExists = true;
+    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
         if(src != null && dst != null) {
             for(Param p : src){
                 Param exists = findParamIgnorePrefix(p.getName(), dst);

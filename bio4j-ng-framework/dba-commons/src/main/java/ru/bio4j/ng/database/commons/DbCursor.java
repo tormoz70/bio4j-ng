@@ -128,4 +128,10 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
         }
 
     }
+
+    @Override
+    protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception {
+        DbUtils.applyParamsToParams(params, this.params, false, true, overwriteType);
+    }
+
 }
