@@ -158,7 +158,28 @@ public class RestApiAdapter {
         return loadPageExt(bioCode, request, module, beanType, false);
     }
 
-    public static StoreMetadata getMetadata(
+    public static ABean getMetadata(
+            final String bioCode,
+            BioAppModule module) throws Exception {
+        ABean rslt = new ABean();
+        final BioCursor cursor = module.getCursor(bioCode);
+        StoreMetadata metadata = new StoreMetadata();
+        metadata.setReadonly(cursor.getReadOnly());
+        metadata.setMultiSelection(cursor.getMultiSelection());
+        List<Field> fields = cursor.getFields();
+        metadata.setFields(fields);
+        rslt.put("dataset", metadata);
+        if(cursor.getUpdateSqlDef() != null) {
+            ABean createUpdateObject = new ABean();
+            for(Param p : cursor.getUpdateSqlDef().getParamDeclaration()){
+                createUpdateObject.put(DbUtils.cutParamPrefix(p.getName()), p.getType().name());
+            }
+            rslt.put("createUpdateObject", createUpdateObject);
+        }
+        return rslt;
+    }
+
+    public static StoreMetadata getMetadataOld(
             final String bioCode,
             BioAppModule module) throws Exception {
 

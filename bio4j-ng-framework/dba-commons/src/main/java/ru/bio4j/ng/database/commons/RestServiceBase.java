@@ -96,8 +96,13 @@ public abstract class RestServiceBase {
         return rslt;
     }
 
-    protected StoreMetadata _getMetadata(String bioCode) throws Exception {
+    protected StoreMetadata _getMetadataOld(String bioCode) throws Exception {
         BioAppModule module = getModule();
+        return RestApiAdapter.getMetadataOld(bioCode, module);
+    }
+
+    protected ABean _getMetadata(String bioCode) throws Exception {
+        BioAppModule module = this.getModule();
         return RestApiAdapter.getMetadata(bioCode, module);
     }
 
