@@ -61,31 +61,33 @@ public class CrudReaderApi {
         result.setRows(new ArrayList<>());
 
         long startTime = System.currentTimeMillis();
+        result.setMetadata(cursorDef.getFields());
+
         List<Param> prms = params;
-        try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, usr);) {
-            long estimatedTime = System.currentTimeMillis() - startTime;
-            LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
-            result.setMetadata(cursorDef.getFields());
-            while(c.reader().next()) {
-                ABean bean = new ABean();
-                for (Field field : result.getMetadata()) {
-                    DBField f = c.reader().getField(field.getName());
-                    if (f != null) {
-                        Object val = c.reader().getValue(f.getId());
-                        Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
-                        Object valTyped = Converter.toType(val, clazz);
-                        bean.put(field.getName().toLowerCase(), valTyped);
-                    } else
-                        bean.put(field.getName().toLowerCase(), null);
-                }
-                result.getRows().add(bean);
-                if(result.getRows().size() >= MAX_RECORDS_FETCH_LIMIT) {
-                    break;
-                }
-            }
-            LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.getRows().size());
-        }
+        context.createCursor()
+                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
+                .fetch(prms, usr, rs -> {
+                    if(rs.isFirstRow()) {
+                        long estimatedTime = System.currentTimeMillis() - startTime;
+                        LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
+                    }
+                    ABean bean = new ABean();
+                    for (Field field : result.getMetadata()) {
+                        DBField f = rs.getField(field.getName());
+                        if (f != null) {
+                            Object val = rs.getValue(f.getId());
+                            Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
+                            Object valTyped = Converter.toType(val, clazz);
+                            bean.put(field.getName().toLowerCase(), valTyped);
+                        } else
+                            bean.put(field.getName().toLowerCase(), null);
+                    }
+                    result.getRows().add(bean);
+                    if(result.getRows().size() >= MAX_RECORDS_FETCH_LIMIT)
+                        return false;
+                    return true;
+                });
+        LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.getRows().size());
         result.setPaginationCount(result.getRows().size());
         int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         result.setPaginationPage(pageSize > 0 ? (int)Math.floor(result.getPaginationOffset() / pageSize) + 1 : 0);
@@ -107,12 +109,9 @@ public class CrudReaderApi {
             final BioCursor cursor,
             final User user) throws Exception {
         long result = context.execBatch((ctx, conn, cur, usr) -> {
-            try (SQLCursor c = ctx.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, user);) {
-                if (c.reader().next())
-                    return c.reader().getValue(1, long.class);
-                return 0L;
-            }
+            return ctx.createCursor()
+                    .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration())
+                    .scalar(params, user, long.class, 0L);
         }, cursor, user);
         return result;
     }
@@ -159,15 +158,14 @@ public class CrudReaderApi {
             long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
             if(location != null) {
                 LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), location);
-                try (SQLCursor c = ctx.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, usr);) {
-                    if (c.reader().next()) {
-                        int locatedPos = c.reader().getValue(1, int.class);
-                        locFactOffset = calcOffset(locatedPos, paginationPagesize);
-                        LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), location, locatedPos, locFactOffset);
-                    } else {
-                        LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), location);
-                    }
+                int locatedPos = ctx.createCursor()
+                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration())
+                        .scalar(params, usr, int.class, -1);
+                if(locatedPos >= 0){
+                    locFactOffset = calcOffset(locatedPos, paginationPagesize);
+                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), location, locatedPos, locFactOffset);
+                } else {
+                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), location);
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
@@ -210,19 +208,20 @@ public class CrudReaderApi {
 
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
-        try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, usr);) {
-            long estimatedTime = System.currentTimeMillis() - startTime;
-            LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
-            while(c.reader().next()) {
-                T bean = DbUtils.createBeanFromReader(c.reader(), beanType);
-                result.add(bean);
-                if(result.size() >= MAX_RECORDS_FETCH_LIMIT) {
-                    break;
-                }
-            }
-            LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.size());
-        }
+        context.createCursor()
+                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
+                .fetch(prms, usr, rs -> {
+                    if (rs.isFirstRow()) {
+                        long estimatedTime = System.currentTimeMillis() - startTime;
+                        LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
+                    }
+                    T bean = DbUtils.createBeanFromReader(rs, beanType);
+                    result.add(bean);
+                    if (result.size() >= MAX_RECORDS_FETCH_LIMIT)
+                        return false;
+                    return true;
+                });
+        LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.size());
         return result;
     }
 
@@ -244,38 +243,37 @@ public class CrudReaderApi {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), filter));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
-        if(location != null) {
+        if (location != null) {
             Field pkField = cursor.getSelectSqlDef().findPk();
-            if(pkField == null)
+            if (pkField == null)
                 throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
             cursor.getSelectSqlDef().setLocateSql(context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
             preparePkParamValue(params, pkField);
         }
-        if(paginationPagesize > 0)
+        if (paginationPagesize > 0)
             cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getPaginationWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
 
         long factOffset = paginationOffset;
         long totalCount = paginationTotalcount;
-        if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
+        if (paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
             totalCount = calcTotalCount(params, context, cursor, user);
-            factOffset = (int)Math.floor(totalCount / paginationPagesize) * paginationPagesize;
+            factOffset = (int) Math.floor(totalCount / paginationPagesize) * paginationPagesize;
             LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
         List<T> result = context.execBatch((ctx, conn, cur, usr) -> {
             long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
-            if(location != null) {
+            if (location != null) {
                 LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), location);
-                try (SQLCursor c = ctx.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, usr);) {
-                    if (c.reader().next()) {
-                        int locatedPos = c.reader().getValue(1, int.class);
-                        locFactOffset = calcOffset(locatedPos, paginationPagesize);
-                        LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), location, locatedPos, locFactOffset);
-                    } else {
-                        LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), location);
-                    }
+                int locatedPos = ctx.createCursor()
+                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration())
+                        .scalar(params, usr, int.class, -1);
+                if (locatedPos >= 0) {
+                    locFactOffset = calcOffset(locatedPos, paginationPagesize);
+                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), location, locatedPos, locFactOffset);
+                } else {
+                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), location);
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
@@ -325,14 +323,14 @@ public class CrudReaderApi {
         StringBuilder result = context.execBatch((ctx, conn, cur, usr) -> {
             final StringBuilder r = new StringBuilder();
 
-            try(SQLCursor c = ctx.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParamDeclaration()).open(params, user);) {
-                while(c.reader().next()) {
-                    List<Object> values = c.reader().getValues();
-                    for(Object val : values)
-                        r.append(val);
-                }
-            }
+            ctx.createCursor()
+                    .init(conn, cur.getSelectSqlDef().getPreparedSql(), cur.getSelectSqlDef().getParamDeclaration())
+                    .fetch(params, user, rs -> {
+                        List<Object> values = rs.getValues();
+                        for (Object val : values)
+                            r.append(val);
+                        return true;
+                    });
             return r;
         }, cursor, user);
         return result;

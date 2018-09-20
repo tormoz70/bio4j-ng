@@ -72,43 +72,43 @@ public abstract class ProviderAn<T extends BioRequest> {
 
     protected static int readStoreData(final BioRequest request, final StoreData data, final SQLContext context, final Connection conn, final BioCursor cursorDef, final Logger LOG) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
-        int totalCount = 0;
-        long startTime = System.currentTimeMillis();
-        List<Param> prms = request.getBioParams();
-        try(SQLCursor c = context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration()).open(prms, null);) {
-            long estimatedTime = System.currentTimeMillis() - startTime;
-            LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime/1000));
-            data.setMetadata(new StoreMetadata());
-            data.getMetadata().setReadonly(cursorDef.getReadOnly());
-            data.getMetadata().setMultiSelection(cursorDef.getMultiSelection());
-            List<Field> fields = cursorDef.getFields();
-            data.getMetadata().setFields(fields);
-            List<StoreRow> rows = new ArrayList<>();
-            while(c.reader().next()) {
-                StoreRow r = new StoreRow();
-                ABean vals = new ABean();
-                for (Field field : fields) {
-                    DBField f = c.reader().getField(field.getName());
-                    if (f != null) {
-                        Object val = c.reader().getValue(f.getId());
-                        Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
-                        Object valTyped = Converter.toType(val, clazz);
-                        vals.put(field.getName().toLowerCase(), valTyped);
-                    } else
-                        vals.put(field.getName().toLowerCase(), null);
-                }
-                r.setData(vals);
-                rows.add(r);
-                totalCount = rows.size();
-                if(totalCount >= MAX_RECORDS_FETCH_LIMIT) {
-                    totalCount = 0;
-                    break;
-                }
-            }
-            LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), rows.size());
-            data.setRows(rows);
-        }
+        final long startTime = System.currentTimeMillis();
+        final List<Param> prms = request.getBioParams();
+        data.setMetadata(new StoreMetadata());
+        data.getMetadata().setReadonly(cursorDef.getReadOnly());
+        data.getMetadata().setMultiSelection(cursorDef.getMultiSelection());
+        final List<Field> fields = cursorDef.getFields();
+        data.getMetadata().setFields(fields);
+        final List<StoreRow> rows = new ArrayList<>();
+        context.createCursor()
+                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
+                .fetch(prms, request.getUser(), rs->{
+                    if(rs.isFirstRow()) {
+                        long estimatedTime = System.currentTimeMillis() - startTime;
+                        LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
+                    }
+                    StoreRow r = new StoreRow();
+                    ABean vals = new ABean();
+                    for (Field field : fields) {
+                        DBField f = rs.getField(field.getName());
+                        if (f != null) {
+                            Object val = rs.getValue(f.getId());
+                            Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
+                            Object valTyped = Converter.toType(val, clazz);
+                            vals.put(field.getName().toLowerCase(), valTyped);
+                        } else
+                            vals.put(field.getName().toLowerCase(), null);
+                    }
+                    r.setData(vals);
+                    rows.add(r);
+                    if(rs.getRowPos() >= MAX_RECORDS_FETCH_LIMIT) {
+                        return false;
+                    }
+                    return true;
+                });
+        int totalCount = rows.size();
+        LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), rows.size());
+        data.setRows(rows);
         return totalCount;
     }
 

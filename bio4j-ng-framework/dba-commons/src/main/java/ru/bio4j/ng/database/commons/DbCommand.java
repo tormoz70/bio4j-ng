@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.bio4j.ng.commons.types.DelegateSQLAction;
+import ru.bio4j.ng.commons.types.DelegateAction1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
@@ -108,7 +108,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         }
     }
 
-    private static String getSQL2Execute(String sql, List<Param> params) {
+    protected static String getSQL2Execute(String sql, List<Param> params) {
         StringBuilder sb = new StringBuilder();
         sb.append("{DbCommand.Params(before exec): ");
         sb.append(Paramus.paramsAsString(params));
@@ -116,7 +116,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
-    private static String getSQL2Execute(String sql, String params) {
+    protected static String getSQL2Execute(String sql, String params) {
         StringBuilder sb = new StringBuilder();
         sb.append("{DbCommand.Params(before exec): {\n");
         sb.append(params);
@@ -126,63 +126,17 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
     protected abstract void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception;
 
-    protected T processStatement(List<Param> params, DelegateSQLAction action) throws Exception {
-        Exception lastError = null;
-        try {
-            try {
-                this.resetCommand(); // Сбрасываем состояние
-
-                if(this.params == null)
-                    this.params = new ArrayList<>();
-
-                applyInParamsToStatmentParams(params, false);
-
-                if(!doBeforeStatement(this.params)) // Обрабатываем события
-                    return (T)this;
-
-                setParamsToStatement(); // Применяем параметры
-
-                if (action != null) {
-                    LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
-                    action.execute(); // Выполняем команду
-                }
-
-                getParamsFromStatement(); // Вытаскиваем OUT-параметры
-
-                DbUtils.applyParamsToParams(this.params, params, false, true, false);
-                //this.params = params;
-                if(params != null) {
-                    for (Param p : params) {
-                        Param exists = Paramus.getParam(this.params, DbUtils.normalizeParamName(p.getName()));
-                        if (exists != null && !exists.getName().equalsIgnoreCase(p.getName())
-                            && Utl.arrayContains(new Param.Direction[]{Param.Direction.INOUT, Param.Direction.OUT}, exists.getDirection()))
-                            exists.setName(p.getName());
-                    }
-                }
-            } catch (SQLException e) {
-                lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
-                throw lastError;
-            } catch (Exception e) {
-                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
-                throw lastError;
-            }
-        } finally {
-
-            this.doAfterStatement(SQLCommandAfterEvent.Attributes.build( // Обрабатываем события
-                    this.params, lastError
-            ));
-        }
-        return (T)this;
-    }
-
     protected void resetCommand() throws SQLException {
     }
 
 	@Override
 	public void cancel() throws SQLException {
         final SQLNamedParametersStatement stmnt = this.getStatement();
-        if(stmnt != null)
-            stmnt.cancel();
+        if(stmnt != null) {
+            try {
+                stmnt.cancel();
+            } catch (Exception ignore) {}
+        }
 	}
 
 	@Override

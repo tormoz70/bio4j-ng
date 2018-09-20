@@ -63,10 +63,8 @@ public abstract class DbContextAbstract implements SQLContext {
         int connectionPass = 0;
         while(connectionPass < CONNECTION_TRY_COUNT) {
             connectionPass++;
-//            if (Strings.isNullOrEmpty(userName))
             conn = this.cpool.getConnection();
-//            else
-//                conn = this.cpool.getConnection(userName, password);
+            //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
             if (conn.isClosed() || !conn.isValid(5)) {
                 LOG.debug("Connection is not valid or closed...");
                 conn = null;
@@ -133,116 +131,6 @@ public abstract class DbContextAbstract implements SQLContext {
             return null;
         }, null, usr);
     }
-
-    /**
-     * Выполняет execSQL - курсор.
-     */
-//    @Override
-//    public <R> R execSQL (final Connection connection, final UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
-//        SQLStoredProc sp = this.createStoredProc();
-//        sp.init(connection, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).execSQL(params, usr);
-//        List<Param> outparams = sqlDef.getParamDeclaration();
-//        for (Param p : outparams)
-//            if (p.getDirection() == Param.Direction.INOUT || p.getDirection() == Param.Direction.OUT)
-//                return (R) p.getValue();
-//        return null;
-//    }
-
-//    @Override
-//    public <R> R execSQL (final BioCursorDeclaration.UpdelexSQLDef sqlDef, final List<Param> params, final User usr) throws Exception {
-//        return execBatch((context, conn, param, u) -> execSQL(conn, sqlDef, params, u), null, usr);
-//    }
-
-    /**
-     * Выполняет action внутри соединения.
-     */
-    @Override
-    public <P, R> R execSQL(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception {
-        if (batch != null)
-            return batch.exec(this, conn, param, usr);
-        return null;
-    }
-
-
-    @Override
-    public <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception {
-        if (batch != null)
-            return batch.exec(this, conn, usr);
-        return null;
-    }
-
-    @Override
-    public void execSQL(final Connection conn, final SQLActionVoid action, final User usr) throws Exception {
-            if (action != null)
-                action.exec(this, conn, usr);
-    }
-
-    @Override
-    public List<Param> execSQL(final Connection conn, final String sql, List<Param> params, final User usr) throws Exception {
-        final SQLStoredProc cmd = this.createStoredProc();
-        cmd.init(conn, sql, params);
-        cmd.execSQL(params, usr);
-        return cmd.getParams();
-    }
-
-    @Override
-    public List<Param> execSQL(final String sql, List<Param> params, final User usr) throws Exception {
-        final SQLStoredProc cmd = this.createStoredProc();
-        return execBatch((context, conn, u) -> {
-            cmd.init(conn, sql);
-            cmd.execSQL(params, u);
-            return cmd.getParams();
-        }, usr);
-    }
-
-
-    /**
-     * Выполняет action внутри batch.
-     * Перед началом выполнения создается "точка отката".
-     * Если в процессе выполнения последовательности не было ошибок,
-     * по завершении выполняется удаление "точки отката" и возврат в родительский batch,
-     * иначе транзакция откатывается в "точку отката" и ошибка передается в родительский процесс.
-     * Если необходимо просто откатить транзакцию в "точку отката", то внутри action надо возбудить RollbackSQLAtomic.
-     * При этом транзакция откатится в "точку отката" и управление вернется в ротительскую процедуру без возбуждения какой либо ошибки.
-     */
-    @Override
-    public <P, R> R execSQLAtomic(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception {
-        R result = null;
-        final String savePointId = "DbAtomicActionSavePoint"; //Guid.NewGuid().ToString();
-        Savepoint savepoint = conn.setSavepoint(savePointId);
-        try {
-            if (batch != null){
-                return batch.exec(this, conn, param, usr);
-            }
-            conn.releaseSavepoint(savepoint);
-        } catch (RollbackSQLAtomic e) {
-            conn.rollback(savepoint);
-        } catch (Exception e) {
-            conn.rollback(savepoint);
-            throw e;
-        }
-        return null;
-    }
-
-
-    @Override
-    public <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception {
-        return execSQLAtomic(conn, (context, conn1, param)->{
-            if (batch != null)
-                return batch.exec(context, conn1, usr);
-            return null;
-        }, null);
-    }
-
-    @Override
-    public void execSQLAtomic(final Connection conn, final SQLActionVoid action, final User usr) throws Exception {
-        execSQLAtomic(conn, (context, conn1, param) -> {
-            if(action != null)
-                action.exec(context, conn1, usr);
-            return null;
-        }, null);
-    }
-
 
     @Override
     public SQLCursor createCursor(){

@@ -101,51 +101,29 @@ public class DbUtils {
         return r;
     }
 
-    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateAction1<SQLReader, Integer> delegateAction) throws Exception {
+    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateSQLFetch action) throws Exception {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
-        int r = ctx.execBatch(new SQLActionScalar<Integer>() {
-            @Override
-            public Integer exec(SQLContext context, Connection conn, User u) throws Exception {
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
-                    while(c.reader().next()){
-                        delegateAction.callback(c.reader());
-                    }
-                }
-                return 0;
-            }
+        int r = ctx.execBatch((context, conn, u) -> {
+            context.createCursor()
+                    .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
+                    .fetch(params, u, action);
+            return 0;
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, Class<T> clazz) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, Class<T> clazz, T defaultValue) throws Exception {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
-        T r = ctx.execBatch(new SQLActionScalar<T>() {
-            @Override
-            public T exec(SQLContext context, Connection conn, User u) throws Exception {
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).open(params, u);){
-                    if(c.reader().next()){
-                        return Converter.toType(c.reader().getValue(1), clazz);
-                    }
-                }
-                return null;
-            }
+        T r = ctx.execBatch((context, conn, u) -> {
+            return context.createCursor()
+                    .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(params, u, clazz, defaultValue);
         }, usr);
         return r;
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final String sql, Class<T> clazz) throws Exception {
-        T r = ctx.execBatch(new SQLActionScalar<T>() {
-            @Override
-            public T exec(SQLContext context, Connection conn, User u) throws Exception {
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sql, null).open(params, u);){
-                    if(c.reader().next()){
-                        return Converter.toType(c.reader().getValue(1), clazz);
-                    }
-                }
-                return null;
-            }
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+        T r = ctx.execBatch((SQLActionScalar<T>) (context, conn, u) -> {
+            return context.createCursor()
+                    .init(conn, sql, null).scalar(params, u, clazz, defaultValue);
         }, usr);
         return r;
     }

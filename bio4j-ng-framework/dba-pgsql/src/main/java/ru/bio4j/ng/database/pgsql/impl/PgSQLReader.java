@@ -5,8 +5,5 @@ import ru.bio4j.ng.database.commons.DbReader;
 import java.sql.*;
 
 public class PgSQLReader extends DbReader {
-    public PgSQLReader(ResultSet resultSet) {
-        super(resultSet);
-    }
 
 }

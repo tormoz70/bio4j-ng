@@ -7,20 +7,26 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 
-public interface SQLCursor extends SQLCommand, AutoCloseable {
-    SQLCursor init(Connection conn, String sql, List<Param> prms, int timeout) throws Exception;
-    SQLCursor init(Connection conn, String sql, List<Param> prms) throws Exception;
-    SQLCursor init(Connection conn, String sql) throws Exception;
-//    SQLCursor init(Connection conn, BioCursor.SelectSQLDef sqlDef, int timeout) throws Exception;
-//    SQLCursor init(Connection conn, BioCursor.SelectSQLDef sqlDef) throws Exception;
+public interface SQLCursor extends SQLCommand {
+    SQLCursor init(final Connection conn, final String sql, final List<Param> prms, final int timeout) throws Exception;
+    SQLCursor init(final Connection conn, final String sql, final List<Param> prms) throws Exception;
+    SQLCursor init(final Connection conn, final String sql) throws Exception;
 
     String getSQL();
 
-    SQLReader createReader(ResultSet resultSet);
+    SQLReader createReader();
 
-    SQLCursor open(List<Param> params, User usr) throws Exception;
-    SQLCursor open(User usr) throws Exception;
-    boolean isActive();
+    boolean fetch(final List<Param> params, final User usr, final DelegateSQLFetch onrecord) throws Exception;
+    boolean fetch(final User usr, final DelegateSQLFetch onrecord) throws Exception;
 
-    SQLReader reader();
+    public <T> T scalar(final List<Param> params, final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception;
+    public <T> T scalar(final List<Param> params, final User usr, final Class<T> clazz, T defaultValue) throws Exception;
+    public <T> T scalar(final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception;
+    public <T> T scalar(final User usr, final Class<T> clazz, T defaultValue) throws Exception;
+
+    <T> List<T> beans(final List<Param> params, final User usr, final Class<T> clazz) throws Exception;
+    <T> List<T> beans(final User usr, final Class<T> clazz) throws Exception;
+    <T> T firstBean(final List<Param> params, final User usr, final Class<T> clazz) throws Exception;
+    <T> T firstBean(final User usr, final Class<T> clazz) throws Exception;
+
 }

@@ -41,6 +41,13 @@ public class SQLFactoryTest {
 
     private static SQLContext context;
 
+    private static class Var {
+        int iummy;
+        double dummy;
+        String summy;
+        byte[] bummy;
+    }
+
     @BeforeTest
     public static void setUpClass() throws Exception {
         context = DbContextFactory.createApache(
@@ -128,16 +135,16 @@ public class SQLFactoryTest {
             Double dummysum = context.execBatch(new SQLActionScalar<Double>() {
                 @Override
                 public Double exec(SQLContext context, Connection conn, User usr) throws Exception {
-                    Double dummysum = 0.0;
+                    Var var = new Var();
                     String sql = "select user as curuser, :dummy as dm, :dummy1 as dm1 from dual";
                     List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
-                    try(SQLCursor c = context.createCursor()
-                            .init(conn, sql, null).open(prms, usr);){
-                        while(c.reader().next()){
-                            dummysum += c.reader().getValue("DM", Double.class);
-                        }
-                    }
-                    return dummysum;
+                    context.createCursor()
+                            .init(conn, sql, null)
+                            .fetch(prms, usr, rs->{
+                                var.dummy += rs.getValue("DM", Double.class);
+                                return true;
+                            });
+                    return var.dummy;
                 }
             }, null);
             LOG.debug("dummysum: " + dummysum);
@@ -152,22 +159,19 @@ public class SQLFactoryTest {
     @Test(enabled = false)
     public void testSQLCommandOpenCursor1() {
         try {
-            Double dummysum = 0.0;
             byte[] schema = context.execBatch(new SQLActionScalar<byte[]>() {
                 @Override
                 public byte[] exec(SQLContext context, Connection conn, User usr) throws Exception {
-                    byte[] schema = null;
+                    Var var = new Var();
                     String sql = "select * from table(givcapi.upld.get_schemas)";
-                    try(SQLCursor c = context.createCursor()
-                            .init(conn, sql, null).open(usr);){
-                        while(c.reader().next()){
-                            if(schema == null){
-                                schema = c.reader().getValue("XSD_BODY", byte[].class);
-                            }
-
-                        }
-                    }
-                    return schema;
+                    context.createCursor()
+                            .init(conn, sql, null)
+                            .fetch(usr, rs->{
+                                if(var.bummy == null)
+                                    var.bummy = rs.getValue("XSD_BODY", byte[].class);
+                                return true;
+                            });
+                    return var.bummy;
                 }
             }, null);
             Assert.assertTrue(schema.length > 0);
@@ -713,14 +717,13 @@ public class SQLFactoryTest {
                     //params.add(Param.builder().name("prm2").value("qwe").build());
                     params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
-
-                    try(SQLCursor c = context.createCursor()
-                            .init(conn, sql, params).open(usr);){
-                        while(c.reader().next()){
-//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
-                            cnt++;
-                        }
-                    }
+                    Var var = new Var();
+                    context.createCursor()
+                            .init(conn, sql, params)
+                            .fetch(usr, rs->{
+                                var.iummy++;
+                                return true;
+                            });
                     return ""+cnt;
                 }
             }, null);
@@ -780,14 +783,13 @@ public class SQLFactoryTest {
                             params.add(Param.builder().name("force_org_id").type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
-
-                    try(SQLCursor c = context.createCursor()
-                            .init(conn, sql, params).open(usr);){
-                        while(c.reader().next()){
-//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
-                            cnt++;
-                        }
-                    }
+                    Var var = new Var();
+                    context.createCursor()
+                            .init(conn, sql, params)
+                            .fetch(usr, rs->{
+                                var.iummy++;
+                                return true;
+                            });
                     return ""+cnt;
                 }
             }, null);
@@ -847,13 +849,13 @@ public class SQLFactoryTest {
             params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
             params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
 
-            try(SQLCursor c = context.createCursor()
-                    .init(conn, sql, params).open(usr);){
-                while(c.reader().next()){
-//                                schema = c.reader().getValue("XSD_BODY", byte[].class);
-                    cnt++;
-                }
-            }
+            Var var = new Var();
+            context.createCursor()
+                    .init(conn, sql, params)
+                    .fetch(usr, rs->{
+                        var.iummy++;
+                        return true;
+                    });
             return ""+cnt;
 
         }, null, null);
@@ -880,13 +882,9 @@ public class SQLFactoryTest {
             List<Param> params = new ArrayList<>();
             params.add(Param.builder().name("p_rpt_uid").value("4F923F3C7A395D05E0531E32A8C06A1D").type(MetaType.STRING).build());
 
-            try(SQLCursor c = context1.createCursor()
-                    .init(conn, sql, params).open(usr);) {
-                if(c.reader().next()){
-                    return c.reader().getValue("state_desc", String.class);
-                }
-            }
-            return null;
+            return context1.createCursor()
+                    .init(conn, sql, params)
+                    .scalar(usr, "state_desc", String.class, null);
 
         }, null, null);
 
@@ -919,16 +917,12 @@ public class SQLFactoryTest {
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("222.sql"));
 
             List<Param> params = new ArrayList<>();
-            TestROject r = null;
-            try(SQLCursor c = context.createCursor()
-                    .init(conn, sql, params).open(usr);){
-                if(c.reader().next()){
-                    r = DbUtils.createBeanFromReader(c.reader(), TestROject.class);
-                }
-            }
+            TestROject r =  context.createCursor()
+                    .init(conn, sql, params).firstBean(usr, TestROject.class);
             return r.fname;
-
         }, null, null);
         Assert.assertEquals(rslt, "qwe");
     }
+
+
 }

@@ -2,7 +2,6 @@ package ru.bio4j.ng.database.commons;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.DelegateSQLAction;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
@@ -16,7 +15,7 @@ import java.util.List;
 /**
  * Реализует 3 основных вида запроса Query, Exec, Scalar
  */
-public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoCloseable {
+public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     private static final Logger LOG = LoggerFactory.getLogger(DbCursor.class);
 
 
@@ -27,6 +26,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
 
     public DbCursor() {
         this.setParamSetter(new DbSelectableParamSetter());
+        this.reader = createReader();
     }
 
 	@Override
@@ -48,16 +48,6 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
     }
 
 
-//    @Override
-//    public SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef, int timeout) throws Exception {
-//        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration(), timeout);
-//    }
-//
-//    @Override
-//    public SQLCursor init(Connection conn, BioCursorDeclaration.SelectSQLDef sqlDef) throws Exception {
-//        return this.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration(), 60);
-//    }
-
     @Override
 	protected void prepareStatement() throws SQLException {
         this.preparedSQL = this.sql;
@@ -66,47 +56,8 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
 	}
 
     @Override
-    protected void resetCommand() throws SQLException {
-        super.resetCommand();
-        if (this.isActive()){
-            try {
-                this.close();
-            } catch (Exception e) {}
-        }
-    }
-
-    @Override
-    public SQLReader createReader(ResultSet resultSet) {
-        return new DbReader(resultSet);
-    }
-
-	@Override
-	public SQLCursor open(List<Param> params, User usr) throws Exception {
-        List<Param> prms = params != null ? params : new ArrayList<>();
-        SrvcUtils.applyCurrentUserParams(usr, prms);
-        return this.processStatement(params, new DelegateSQLAction() {
-            @Override
-            public void execute() throws SQLException {
-                final DbCursor self = DbCursor.this;
-                self.reader = createReader(self.preparedStatement.executeQuery());
-                self.isActive = true;
-            }
-        });
-	}
-
-    @Override
-    public SQLCursor open(User usr) throws Exception {
-        return this.open(null, usr);
-    }
-
-	@Override
-	public boolean isActive() {
-		return this.isActive;
-	}
-
-    @Override
-    public SQLReader reader() {
-        return this.reader;
+    public SQLReader createReader() {
+        return new DbReader();
     }
 
     @Override
@@ -115,18 +66,122 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor, AutoClo
 	}
 
     @Override
-    public void close() throws Exception {
-        this.isActive = false;
-        this.cancel();
-        final Statement stmnt = this.getStatement();
-        if(stmnt != null)
-            stmnt.close();
+    public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) throws Exception {
+        boolean rslt = false;
+        try {
+            List<Param> prms = params != null ? params : new ArrayList<>();
+            SrvcUtils.applyCurrentUserParams(usr, prms);
+            Exception lastError = null;
+            try {
+                this.resetCommand(); // Сбрасываем состояние
 
-        if(this.reader != null) {
-            this.reader.close();
-            this.reader = null;
+                if (this.params == null)
+                    this.params = new ArrayList<>();
+
+                applyInParamsToStatmentParams(params, false);
+
+                if (!doBeforeStatement(this.params)) // Обрабатываем события
+                    return rslt;
+
+                setParamsToStatement(); // Применяем параметры
+
+                LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
+                try (ResultSet result = this.preparedStatement.executeQuery()) {
+                    this.isActive = true;
+                    while (this.reader.next(result)) {
+                        rslt = true;
+                        if (onrecord != null) {
+                            if (!onrecord.callback(this.reader))
+                                break;
+                        }
+                    }
+                }
+
+            } catch (SQLException e) {
+                lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
+                throw lastError;
+            } catch (Exception e) {
+                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
+                throw lastError;
+            }
+        } finally {
+            if (this.preparedStatement != null)
+                try {
+                    this.preparedStatement.close();
+                } catch (Exception ignore) {
+                }
+            return rslt;
         }
+    }
 
+    @Override
+    public boolean fetch(User usr, DelegateSQLFetch onrecord) throws Exception {
+        return this.fetch(null, usr, onrecord);
+    }
+
+    private static class ScalarResult<T> {
+        public T result;
+    }
+
+    @Override
+    public <T> T scalar(final List<Param> params, final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception {
+        final ScalarResult<T> rslt = new ScalarResult();
+        if(this.fetch(null, usr, (rs -> {
+            if(rs.getFields().size() > 0) {
+                if(Strings.isNullOrEmpty(fieldName))
+                    rslt.result = rs.getValue(0, clazz);
+                else
+                    rslt.result = rs.getValue(fieldName, clazz);
+            }
+            return false;
+        })))
+            return rslt.result;
+        return defaultValue;
+    }
+
+    @Override
+    public <T> T scalar(final List<Param> params, final User usr, final Class<T> clazz, T defaultValue) throws Exception {
+        return scalar(params, usr, null, clazz, defaultValue);
+    }
+
+    @Override
+    public <T> T scalar(final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception {
+        return scalar(null, usr, fieldName, clazz, defaultValue);
+    }
+
+    @Override
+    public <T> T scalar(final User usr, final Class<T> clazz, T defaultValue) throws Exception {
+        return scalar(null, usr, null, clazz, defaultValue);
+    }
+
+    @Override
+    public <T> List<T> beans(final List<Param> params, final User usr, final Class<T> clazz) throws Exception {
+        final List<T> rslt = new ArrayList<>();
+        this.fetch(null, usr, (rs -> {
+            rslt.add(DbUtils.createBeanFromReader(rs, clazz));
+            return true;
+        }));
+        return rslt;
+    }
+
+    @Override
+    public <T> List<T> beans(final User usr, final Class<T> clazz) throws Exception {
+        return beans(null, usr, clazz);
+    }
+
+    @Override
+    public <T> T firstBean(final List<Param> params, final User usr, final Class<T> clazz) throws Exception {
+        final List<T> rslt = new ArrayList<>();
+        this.fetch(null, usr, (rs -> {
+            rslt.add(DbUtils.createBeanFromReader(rs, clazz));
+            return false;
+        }));
+        return rslt.size() > 0 ? rslt.get(0) : null;
+    }
+
+    @Override
+    public <T> T firstBean(final User usr, final Class<T> clazz) throws Exception {
+        return firstBean(null, usr, clazz);
     }
 
     @Override

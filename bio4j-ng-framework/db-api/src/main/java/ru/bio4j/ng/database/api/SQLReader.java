@@ -7,13 +7,14 @@ import java.util.List;
  * Created by ayrat on 24.04.14.
  */
 public interface SQLReader {
-    boolean next() throws Exception;
 
-    ResultSet getResultSet();
+    boolean next(final ResultSet resultSet) throws Exception;
 
     List<DBField> getFields();
 
-    Long getRowPos();
+    long getRowPos();
+
+    boolean isFirstRow();
 
     DBField getField(int fieldId);
     DBField getField(String fieldName);
@@ -26,8 +27,6 @@ public interface SQLReader {
 
     Object getValue(String fieldName);
     Object getValue(int fieldId);
-
-    void close() throws Exception;
 
     List<Object> getValues();
 }

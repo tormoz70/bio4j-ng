@@ -45,6 +45,13 @@ public class SQLFactoryTest {
 
     private static SQLContext context;
 
+    private static class Var {
+        int iummy;
+        double dummy;
+        String summy;
+        byte[] bummy;
+    }
+
     @BeforeTest
     public static void setUpClass() throws Exception {
         context = DbContextFactory.createApache(
@@ -112,16 +119,16 @@ public class SQLFactoryTest {
     public void testSQLCommandOpenCursor() {
         try {
             Double dummysum = context.execBatch((context, conn, usr) -> {
-                Double dummysum1 = 0.0;
+                Var var = new Var();
                 String sql = "select user as curuser, :dummy as dm, :dummy1 as dm1";
                 List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sql, null).open(prms, usr);){
-                    while(c.reader().next()){
-                        dummysum1 += c.reader().getValue("DM", Double.class);
-                    }
-                }
-                return dummysum1;
+                context.createCursor()
+                        .init(conn, sql, null)
+                        .fetch(prms, usr, rs->{
+                            var.dummy += rs.getValue("DM", Double.class);
+                            return true;
+                        });
+                return var.dummy;
             }, null);
             LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 101.0);
@@ -136,7 +143,7 @@ public class SQLFactoryTest {
     public void testSQLCommandOpenCursor111() {
         try {
             Double dummysum = context.execBatch((context, conn, usr) -> {
-                Double dummysum1 = 0.0;
+                Var var = new Var();
                 String sql = "select * from test_tbl where fld2 = :fld2";
                 List<Param> prms = Paramus.set(new ArrayList<Param>()).add(
                         Param.builder()
@@ -145,13 +152,13 @@ public class SQLFactoryTest {
                                 .value(null)
                                 .build()
                 ).pop();
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sql, null).open(prms, usr);){
-                    while(c.reader().next()){
-                        dummysum1 += c.reader().getValue("fld1", String.class).length();
-                    }
-                }
-                return dummysum1;
+                context.createCursor()
+                        .init(conn, sql, null)
+                        .fetch(prms, usr, rs->{
+                            var.dummy += rs.getValue("fld1", Double.class);
+                            return true;
+                        });
+                return var.dummy;
             }, null);
             LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 0.0);
@@ -167,18 +174,16 @@ public class SQLFactoryTest {
         try {
             Double dummysum = 0.0;
             byte[] schema = context.execBatch((context, conn, usr) -> {
-                byte[] schema1 = null;
+                Var var = new Var();
                 String sql = "select * from table(givcapi.upld.get_schemas)";
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sql, null).open(usr);){
-                    while(c.reader().next()){
-                        if(schema1 == null){
-                            schema1 = c.reader().getValue("XSD_BODY", byte[].class);
-                        }
-
-                    }
-                }
-                return schema1;
+                context.createCursor()
+                        .init(conn, sql, null)
+                        .fetch(usr, rs->{
+                            if(var.bummy == null)
+                                var.bummy = rs.getValue("XSD_BODY", byte[].class);
+                            return true;
+                        });
+                return var.bummy;
             }, null);
             Assert.assertTrue(schema.length > 0);
         } catch (Exception ex) {
@@ -556,9 +561,11 @@ public class SQLFactoryTest {
         final String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("new-sbkitem.sql"));
         try {
             Integer dummy = context.execBatch((context, conn, usr) -> {
-                try(SQLCursor c = context.createCursor()
-                        .init(conn, sql, null).open(usr);){
-                }
+                context.createCursor()
+                        .init(conn, sql, null)
+                        .fetch(usr, rs->{
+                           return false;
+                        });
                 return 0;
             }, null);
             LOG.debug("dummy: " + dummy);
