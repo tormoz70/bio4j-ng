@@ -109,9 +109,9 @@ public class CrudReaderApi {
             final BioCursor cursor,
             final User user) throws Exception {
         long result = context.execBatch((ctx, conn, cur, usr) -> {
-            return ctx.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration())
-                    .scalar(params, user, long.class, 0L);
+            SQLCursor c = ctx.createCursor();
+            c.init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration());
+            return c.scalar(params, user, long.class, 0L);
         }, cursor, user);
         return result;
     }

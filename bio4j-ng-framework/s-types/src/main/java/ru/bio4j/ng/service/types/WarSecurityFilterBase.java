@@ -2,8 +2,10 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
@@ -43,12 +45,15 @@ public class WarSecurityFilterBase {
             publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
     }
 
+    public final static String SCFG_PARAM_NAME_BIODEBUG = "bioDebug";
+    public final static String SCFG_PARAM_NAME_PUBLIC_AREAS = "publicAreas";
+
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG = LoggerFactory.getLogger(this.getClass());
         debug("init...");
         if (filterConfig != null) {
-            bioDebug = Strings.compare(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_BIODEBUG), "true", true);
-            initPublicAreas(filterConfig.getInitParameter(BioServletBase.SCFG_PARAM_NAME_PUBLIC_AREAS));
+            bioDebug = Strings.compare(filterConfig.getInitParameter(SCFG_PARAM_NAME_BIODEBUG), "true", true);
+            initPublicAreas(filterConfig.getInitParameter(SCFG_PARAM_NAME_PUBLIC_AREAS));
             errorPage = filterConfig.getInitParameter("error_page");
             debug(" Security filter config : {" +
                   "   -- bioDebug : {}\n"+
@@ -74,6 +79,14 @@ public class WarSecurityFilterBase {
         return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
     }
 
+    protected static ABean buildSuccess(User user) {
+        ABean rslt = new ABean();
+        rslt.put("success", true);
+        if(user != null)
+            rslt.put("user", user);
+        return rslt;
+    }
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
@@ -94,12 +107,16 @@ public class WarSecurityFilterBase {
                 if (securityProvider != null) {
                     if (!Strings.isNullOrEmpty(qprms.login)) {
                         User user = loginProcessor.login(qprms);
-                        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
-                        response.getWriter().append(responseBuilder.json());
+//                        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().user(user).exception(null);
+//                        response.getWriter().append(responseBuilder.json());
+                        ABean result = buildSuccess(user);
+                        response.getWriter().append(Jsons.encode(result));
                     } else if (qprms.requestType != null && qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias())) {
                         loginProcessor.logoff(qprms);
-                        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
-                        response.getWriter().append(responseBuilder.json());
+//                        BioRespBuilder.DataBuilder responseBuilder = BioRespBuilder.dataBuilder().exception(null);
+//                        response.getWriter().append(responseBuilder.json());
+                        ABean result = buildSuccess(null);
+                        response.getWriter().append(Jsons.encode(result));
                     } else {
                         User user = loginProcessor.getUser(qprms);
                         req.setUser(user);

@@ -2,6 +2,7 @@ package ru.bio4j.ng.database.commons;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
@@ -126,16 +127,16 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     @Override
     public <T> T scalar(final List<Param> params, final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception {
         final ScalarResult<T> rslt = new ScalarResult();
-        if(this.fetch(null, usr, (rs -> {
+        if(this.fetch(params, usr, (rs -> {
             if(rs.getFields().size() > 0) {
                 if(Strings.isNullOrEmpty(fieldName))
-                    rslt.result = rs.getValue(0, clazz);
+                    rslt.result = rs.getValue(1, clazz);
                 else
                     rslt.result = rs.getValue(fieldName, clazz);
             }
             return false;
         })))
-            return rslt.result;
+            return Converter.toType(rslt.result, clazz);
         return defaultValue;
     }
 
