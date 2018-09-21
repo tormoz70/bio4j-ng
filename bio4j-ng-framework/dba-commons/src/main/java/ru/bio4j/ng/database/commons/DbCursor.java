@@ -172,7 +172,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     @Override
     public <T> T firstBean(final List<Param> params, final User usr, final Class<T> clazz) throws Exception {
         final List<T> rslt = new ArrayList<>();
-        this.fetch(null, usr, (rs -> {
+        this.fetch(params, usr, (rs -> {
             rslt.add(DbUtils.createBeanFromReader(rs, clazz));
             return false;
         }));
