@@ -81,7 +81,7 @@ public class FCloudDBApi {
         rslt.setOwnerUserUid(getColumnValue(resultSet, metaData, "USR_UID", String.class));
         rslt.setFileNameOrig(getColumnValue(resultSet, metaData, "FILENAMEORIG", String.class));
         rslt.setMd5(getColumnValue(resultSet, metaData, "MD5", String.class));
-        rslt.setFileSize(getColumnValue(resultSet, metaData, "BSIZE", long.class));
+        rslt.setFileSize(getColumnValue(resultSet, metaData, "BSIZE", int.class));
         rslt.setRemoteIpAddress(getColumnValue(resultSet, metaData, "RMTIPADDR", String.class));
         rslt.setFileDatetime(getColumnValue(resultSet, metaData, "FLDATE", Date.class));
         rslt.setCreDatetime(getColumnValue(resultSet, metaData, "LDDATE", Date.class));

@@ -12,14 +12,12 @@ public interface FCloudApi {
             final String uploadUID,
             final String fileName,
             final InputStream inputStream,
-            final long fileSize,
             final Date fileDatetime,
             final String contentType,
             final String remoteHost,
             final String uploadType,
             final String uploadExtParam,
             final String uploadDesc,
-            final List<Param> params,
             final User usr
     ) throws Exception;
 

@@ -583,16 +583,18 @@ public class Utl {
         return md5;
     }
 
-    public static Path storeInputStream(InputStream inputStream, Path path) throws IOException {
+    public static int storeInputStream(InputStream inputStream, Path path) throws IOException {
+        int len = 0;
         Files.createDirectories(path.getParent());
         try(OutputStream out = new FileOutputStream(new File(path.toString()))) {
             int read = 0;
             final byte[] bytes = new byte[1024];
             while ((read = inputStream.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
+                len += read;
             }
         }
-        return path;
+        return len;
     }
 
     public static Path storeBlob(byte[] blob, Path path) throws IOException {
@@ -607,8 +609,8 @@ public class Utl {
         return storeBlob(blob, Paths.get(path));
     }
 
-    public static String storeInputStream(InputStream inputStream, String path) throws IOException {
-        return storeInputStream(inputStream, Paths.get(path)).toString();
+    public static int storeInputStream(InputStream inputStream, String path) throws IOException {
+        return storeInputStream(inputStream, Paths.get(path));
     }
 
 

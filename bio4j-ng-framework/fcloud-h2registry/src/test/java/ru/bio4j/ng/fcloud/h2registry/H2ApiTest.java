@@ -48,7 +48,7 @@ public class H2ApiTest {
         fileSpec.setFileUUID("test-file-uid");
         fileSpec.setFileNameOrig("test-file-name");
         fileSpec.setMd5("test-file-md5");
-        fileSpec.setFileSize(100L);
+        fileSpec.setFileSize(100);
         fileSpec.setRemoteIpAddress("localhost");
         fileSpec.setFileDatetime(new Date());
         fileSpec.setCreDatetime(new Date());

@@ -129,10 +129,17 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
         return new File(cfg.getCloudRootPath()).toPath().toAbsolutePath();
     }
 
-    private String storeUploaded2Tmp(InputStream inputStream, FileSpec file) throws Exception {
-        String tmpPath = getCloudTmpPath().toString();
-        tmpPath = Utl.normalizePath(tmpPath) + file.getFileUUID() + STORE_FILE_EXT;
-        return Utl.storeInputStream(inputStream, tmpPath);
+    private static class StoredFile{
+        public String filePath;
+        public int fileSize;
+    }
+
+    private StoredFile storeUploaded2Tmp(InputStream inputStream, String fileUid) throws Exception {
+        StoredFile rslt = new StoredFile();
+        rslt.filePath = getCloudTmpPath().toString();
+        rslt.filePath = Utl.normalizePath(rslt.filePath) + fileUid + STORE_FILE_EXT;
+        rslt.fileSize = Utl.storeInputStream(inputStream, rslt.filePath);
+        return rslt;
     }
 
 
@@ -180,14 +187,12 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             final String uploadUID,
             final String fileName,
             final InputStream inputStream,
-            final long fileSize,
             final Date fileDatetime,
             final String contentType,
             final String remoteHost,
             final String uploadType,
             final String uploadExtParam,
             final String uploadDesc,
-            final List<Param> params,
             final User usr
     ) throws Exception {
         initDatabase();
@@ -198,17 +203,16 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
             file.setUploadUID(uploadUID);
             file.setFileUUID(Utl.generateUUID());
             file.setFileNameOrig(fileName);
-            file.setFileSize(fileSize);
-            String _tmpFilePath = storeUploaded2Tmp(inputStream, file);
-            String md5 = Utl.md5(_tmpFilePath);
+            StoredFile _tmpFile = storeUploaded2Tmp(inputStream, file.getFileUUID());
+            String md5 = Utl.md5(_tmpFile.filePath);
             file.setMd5(md5);
+            file.setFileSize(_tmpFile.fileSize);
             file.setContentType(contentType);
             file.setRemoteIpAddress(remoteHost);
             file.setAdesc(uploadDesc);
-            //file.setExtParam(extParam);
-            String _tmpAttrsPath = storeAttrs(file, _tmpFilePath);
+            String _tmpAttrsPath = storeAttrs(file, _tmpFile.filePath);
             String _storeFilePath = getStorePath(rootPath.toString(), file.getFileUUID());
-            moveTmp2Store(Paths.get(_tmpFilePath), Paths.get(_storeFilePath));
+            moveTmp2Store(Paths.get(_tmpFile.filePath), Paths.get(_storeFilePath));
             String _storeAttrsPath = Utl.fileNameWithoutExt(_storeFilePath) + STORE_ATTRS_EXT;
             moveTmp2Store(Paths.get(_tmpAttrsPath), Paths.get(_storeAttrsPath));
             try {

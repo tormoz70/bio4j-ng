@@ -7,7 +7,7 @@ public class FileSpec {
     private String fileUUID;
     private Date creDatetime;
     private String fileNameOrig;
-    private Long fileSize;
+    private int fileSize;
     private Date fileDatetime;
     private String md5;
     private String contentType;
@@ -34,11 +34,11 @@ public class FileSpec {
         this.fileNameOrig = fileNameOrig;
     }
 
-    public Long getFileSize() {
+    public int getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(Long fileSize) {
+    public void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
 
