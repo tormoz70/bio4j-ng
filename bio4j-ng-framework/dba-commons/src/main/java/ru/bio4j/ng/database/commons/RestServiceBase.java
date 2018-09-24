@@ -45,6 +45,13 @@ public abstract class RestServiceBase {
         return moduleProvider.getAppModule("efond2");
     }
 
+    protected ABeanPage _getList(String bioCode, HttpServletRequest request, boolean forceAll) throws Exception {
+        BioAppModule module = getModule();
+        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, module, forceAll);
+        rslt.setMetadata(null);
+        return rslt;
+    }
+
     protected ABeanPage _getList(String bioCode, HttpServletRequest request) throws Exception {
         BioAppModule module = getModule();
         ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, module);
@@ -69,6 +76,12 @@ public abstract class RestServiceBase {
     protected <T> List<T> _getList(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
         BioAppModule module = getModule();
         List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz);
+        return rslt;
+    }
+
+    protected <T> List<T> _getList(String bioCode, HttpServletRequest request, Class<T> calzz, boolean forceAll) throws Exception {
+        BioAppModule module = getModule();
+        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz, forceAll);
         return rslt;
     }
 
