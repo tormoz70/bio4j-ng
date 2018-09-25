@@ -19,7 +19,9 @@ import ru.bio4j.ng.service.api.SelectSQLDef;
 import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
 import java.lang.reflect.Field;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 
@@ -316,6 +318,15 @@ public class DbUtils {
                 }
             }
         }
-
     }
+
+    public static boolean execSQL(Connection conn, String sql, List<Param> params) throws SQLException {
+        try(CallableStatement cs = conn.prepareCall(sql)) {
+            return cs.execute();
+        }
+    }
+    public static boolean execSQL(Connection conn, String sql) throws SQLException {
+        return execSQL(conn, sql, null);
+    }
+
 }

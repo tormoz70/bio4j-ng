@@ -23,8 +23,9 @@ public class OraContext extends DbContextAbstract {
                             if(attrs.getConnection() != null) {
                                 String curSchema = sender.getConfig().getCurrentSchema().toUpperCase();
                                 LOG.debug("onAfterGetConnection - start setting current_schema="+curSchema);
-                                CallableStatement cs1 = attrs.getConnection().prepareCall( "alter session set current_schema="+curSchema);
-                                cs1.execute();
+//                                CallableStatement cs1 = attrs.getConnection().prepareCall( "alter session set current_schema="+curSchema);
+//                                cs1.execute();
+                                DbUtils.execSQL(attrs.getConnection(), "alter session set current_schema="+curSchema);
                                 LOG.debug("onAfterGetConnection - OK. current_schema now is "+curSchema);
                             }
                         }
