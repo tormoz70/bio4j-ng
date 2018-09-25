@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.commons.*;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
 import java.sql.SQLException;
 
 public class OraContext extends DbContextAbstract {
@@ -23,8 +22,7 @@ public class OraContext extends DbContextAbstract {
                             if(attrs.getConnection() != null) {
                                 String curSchema = sender.getConfig().getCurrentSchema().toUpperCase();
                                 LOG.debug("onAfterGetConnection - start setting current_schema="+curSchema);
-                                CallableStatement cs1 = attrs.getConnection().prepareCall( "alter session set current_schema="+curSchema);
-                                cs1.execute();
+                                DbUtils.execSQL(attrs.getConnection(), "alter session set current_schema="+curSchema);
                                 LOG.debug("onAfterGetConnection - OK. current_schema now is "+curSchema);
                             }
                         }

@@ -65,24 +65,18 @@ public class SQLFactoryTest {
                 @Override
                 public Object exec(SQLContext context, Connection conn, User usr) throws Exception {
                     String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_test_table.sql"));
-                    CallableStatement cs = conn.prepareCall(sql);
-                    cs.execute();
+                    DbUtils.execSQL(conn, sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_simple.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    DbUtils.execSQL(conn, sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_error.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    DbUtils.execSQL(conn, sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    DbUtils.execSQL(conn, sql);
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    DbUtils.execSQL(conn, sql);
 
                     sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_storeclob.sql"));
-                    cs = conn.prepareCall(sql);
-                    cs.execute();
+                    DbUtils.execSQL(conn, sql);
                     return null;
                 }
             }, null);
@@ -98,16 +92,11 @@ public class SQLFactoryTest {
             context.execBatch(new SQLActionScalar<Object>() {
                 @Override
                 public Object exec(SQLContext context, Connection conn, User usr) throws Exception {
-                    CallableStatement cs = conn.prepareCall("drop procedure test_stored_prop");
-                    cs.execute();
-                    cs = conn.prepareCall("drop procedure test_stored_error");
-                    cs.execute();
-                    cs = conn.prepareCall("drop procedure test_stored_cursor");
-                    cs.execute();
-                    cs = conn.prepareCall("drop procedure test_stored_inout");
-                    cs.execute();
-                    cs = conn.prepareCall("drop table test_tbl");
-                    cs.execute();
+                    DbUtils.execSQL(conn, "drop procedure test_stored_prop");
+                    DbUtils.execSQL(conn, "drop procedure test_stored_error");
+                    DbUtils.execSQL(conn, "drop procedure test_stored_cursor");
+                    DbUtils.execSQL(conn, "drop procedure test_stored_inout");
+                    DbUtils.execSQL(conn, "drop table test_tbl");
                     return null;
                 }
             }, null);

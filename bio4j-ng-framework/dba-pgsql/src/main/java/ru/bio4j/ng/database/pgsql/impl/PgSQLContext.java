@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.commons.*;
 
 import javax.sql.DataSource;
-import java.sql.CallableStatement;
 import java.sql.SQLException;
 
 public class PgSQLContext extends DbContextAbstract {
@@ -23,8 +22,7 @@ public class PgSQLContext extends DbContextAbstract {
                             if(attrs.getConnection() != null) {
                                 String curSchema = sender.getConfig().getCurrentSchema().toUpperCase();
                                 LOG.debug("onAfterGetConnection - start setting current_schema="+curSchema);
-                                CallableStatement cs1 = attrs.getConnection().prepareCall( "SET search_path = "+curSchema);
-                                cs1.execute();
+                                DbUtils.execSQL(attrs.getConnection(), "SET search_path = "+curSchema);
                                 LOG.debug("onAfterGetConnection - OK. current_schema now is "+curSchema);
                             }
                         }
