@@ -66,17 +66,18 @@ public class SQLFactoryTest {
         //if(true) return;
         try {
             context.execBatch((context, conn, usr) -> {
-                String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_test_table.sql"));
-                Statement cs = conn.createStatement();
-                cs.execute(sql);
-                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_simple.sql"));
-                cs.execute(sql);
-                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_error.sql"));
-                cs.execute(sql);
-                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
-                cs.execute(sql);
-                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
-                cs.execute(sql);
+                try(Statement cs = conn.createStatement()) {
+                    String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_test_table.sql"));
+                    cs.execute(sql);
+                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_simple.sql"));
+                    cs.execute(sql);
+                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_error.sql"));
+                    cs.execute(sql);
+                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
+                    cs.execute(sql);
+                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
+                    cs.execute(sql);
+                }
                 return null;
             }, null);
         } catch (SQLException ex) {
