@@ -71,6 +71,9 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
                     if (this.params == null)
                         this.params = new ArrayList<>();
 
+                    if(!stayOpened)
+                        prepareStatement();
+
                     applyInParamsToStatmentParams(prms, false);
 
                     if (!doBeforeStatement(this.params)) // Обрабатываем события
@@ -83,8 +86,8 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
                     getParamsFromStatement(); // Вытаскиваем OUT-параметры
 
-                    DbUtils.applyParamsToParams(this.params, prms, false, true, false);
-                    if (params != null) {
+                    DbUtils.applyParamsToParams(this.params, params, false, true, false);
+                    if (this.params != null) {
                         for (Param p : prms) {
                             Param exists = Paramus.getParam(this.params, DbUtils.normalizeParamName(p.getName()));
                             if (exists != null && !exists.getName().equalsIgnoreCase(p.getName())

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -666,6 +667,37 @@ public class Utl {
                     .direction(direction)
                     .value(valObj)
                     .build());
+        }
+        return result;
+    }
+
+    public static List<Param> abeanToParams(ABean bean) throws Exception {
+        List<Param> result = new ArrayList<>();
+        if(bean == null)
+            return result;
+        for(String key : bean.keySet()) {
+            String paramName = key;
+            if(paramName.equals("this$1")) continue;
+            if(!paramName.toLowerCase().startsWith("p_"))
+                paramName = "p_" + paramName.toLowerCase();
+            Object valObj = bean.get(key);
+            result.add(Param.builder().name(paramName).value(valObj).build());
+        }
+        return result;
+    }
+
+
+    public static List<Param> hashmapToParams(HashMap<String, Object> bean) throws Exception {
+        List<Param> result = new ArrayList<>();
+        if(bean == null)
+            return result;
+        for(String key : bean.keySet()) {
+            String paramName = key;
+            if(paramName.equals("this$1")) continue;
+            if(!paramName.toLowerCase().startsWith("p_"))
+                paramName = "p_" + paramName.toLowerCase();
+            Object valObj = bean.get(key);
+            result.add(Param.builder().name(paramName).value(valObj).build());
         }
         return result;
     }

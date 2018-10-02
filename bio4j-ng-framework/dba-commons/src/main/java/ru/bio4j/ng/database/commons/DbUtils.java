@@ -2,7 +2,6 @@ package ru.bio4j.ng.database.commons;
 
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
-import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.Prop;
@@ -164,11 +163,16 @@ public class DbUtils {
         if(params != null){
             if(params instanceof List)
                 rslt = (List<Param>)params;
+            else if(params instanceof ABean)
+                rslt = Utl.abeanToParams((ABean) params);
+            else if(params instanceof HashMap)
+                rslt = Utl.hashmapToParams((HashMap) params);
             else
                 rslt = Utl.beanToParams(params);
         }
         return rslt;
     }
+
 
     public static String generateSignature(String procName, List<Param> params) throws Exception {
         StringBuilder args = new StringBuilder();
@@ -229,7 +233,29 @@ public class DbUtils {
         return null;
     }
 
-    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+    public static String findKeyIgnorePrefix(String paramName, ABean bean) {
+        String paramName2Find = cutParamPrefix(paramName);
+        for (String key : bean.keySet()) {
+            String prmName = cutParamPrefix(key);
+            if(prmName.equalsIgnoreCase(paramName2Find)) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    public static String findKeyIgnorePrefix(String paramName, HashMap<String, Object> bean) {
+        String paramName2Find = cutParamPrefix(paramName);
+        for (String key : bean.keySet()) {
+            String prmName = cutParamPrefix(key);
+            if(prmName.equalsIgnoreCase(paramName2Find)) {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    private static void applyParamsToParams0(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
         if(src != null && dst != null) {
             for(Param p : src){
                 Param exists = findParamIgnorePrefix(p.getName(), dst);
@@ -253,6 +279,87 @@ public class DbUtils {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private static void applyParamsToABean(List<Param> src, ABean dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+        if(src != null && dst != null) {
+            for(Param p : src){
+                String existsKey = findKeyIgnorePrefix(p.getName(), dst);
+                if(existsKey != null) {
+                    if(normalizeName) {
+                        String newName = normalizeParamName(existsKey);
+                        dst.remove(existsKey);
+                        dst.put(newName, p.getValue());
+                    } else
+                        dst.put(existsKey, p.getValue());
+                } else {
+                    if(addIfNotExists) {
+                        if(normalizeName) {
+                            String newName = normalizeParamName(p.getName());
+                            dst.put(newName, p.getValue());
+                        } else
+                            dst.put(p.getName(), p.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void applyParamsToHashMap(List<Param> src, HashMap<String, Object> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+        if(src != null && dst != null) {
+            for(Param p : src){
+                String existsKey = findKeyIgnorePrefix(p.getName(), dst);
+                if(existsKey != null) {
+                    if(normalizeName) {
+                        String newName = normalizeParamName(existsKey);
+                        dst.remove(existsKey);
+                        dst.put(newName, p.getValue());
+                    } else
+                        dst.put(existsKey, p.getValue());
+                } else {
+                    if(addIfNotExists) {
+                        if(normalizeName) {
+                            String newName = normalizeParamName(p.getName());
+                            dst.put(newName, p.getValue());
+                        } else
+                            dst.put(p.getName(), p.getValue());
+                    }
+                }
+            }
+        }
+    }
+
+    public static void applyParamsToObject(List<Param> src, Object dst) throws Exception {
+        if (src == null || src.size() == 0 || dst == null)
+            return;
+        Class<?> dstType = dst.getClass();
+        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(dstType)) {
+            String param2find = fld.getName();
+            Prop prp = fld.getAnnotation(Prop.class);
+            if (prp != null && !Strings.isNullOrEmpty(prp.name())) {
+                param2find = prp.name().toLowerCase();
+                Param param = findParamIgnorePrefix(param2find, src);
+                if (param != null) {
+                    fld.setAccessible(true);
+                    Object valObj = param.getValue();
+                    fld.set(dst, valObj);
+                }
+            }
+        }
+    }
+
+    public static void applyParamsToParams(List<Param> src, Object dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+        if(src != null && dst != null) {
+            if(dst instanceof List) {
+                applyParamsToParams0(src, (List<Param>) dst, normalizeName, addIfNotExists, overwriteTypes);
+            } else if(dst instanceof ABean) {
+                applyParamsToABean(src, (ABean) dst, normalizeName, addIfNotExists, overwriteTypes);
+            } else if(dst instanceof HashMap) {
+                applyParamsToHashMap(src, (HashMap<String, Object>) dst, normalizeName, addIfNotExists, overwriteTypes);
+            } else {
+                applyParamsToObject(src, dst);
             }
         }
     }

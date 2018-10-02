@@ -201,10 +201,12 @@ public class RestApiAdapter {
         final SQLContext context = module.getSQLContext();
         final BioCursor cursor = module.getCursor(bioCode);
         final User user = ((BioWrappedRequest)request).getUser();
-        Paramus.setParamValue(params, RestParamNames.GETROW_PARAM_PKVAL, id, MetaTypeConverter.read(id.getClass()));
-        ABeanPage rslt = CrudReaderApi.loadRecord(params, context, cursor, user);
-        if(rslt.getRows() != null && rslt.getRows().size() > 0)
-            return rslt.getRows().get(0);
+        if(id != null) {
+            Paramus.setParamValue(params, RestParamNames.GETROW_PARAM_PKVAL, id, MetaTypeConverter.read(id.getClass()));
+            ABeanPage rslt = CrudReaderApi.loadRecord(params, context, cursor, user);
+            if (rslt.getRows() != null && rslt.getRows().size() > 0)
+                return rslt.getRows().get(0);
+        }
         return null;
     }
 
