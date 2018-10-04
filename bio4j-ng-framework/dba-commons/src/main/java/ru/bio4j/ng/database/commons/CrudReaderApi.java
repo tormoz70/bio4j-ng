@@ -78,9 +78,9 @@ public class CrudReaderApi {
                             Object val = rs.getValue(f.getId());
                             Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
                             Object valTyped = Converter.toType(val, clazz);
-                            bean.put(field.getName().toLowerCase(), valTyped);
+                            bean.put(field.getName(), valTyped);
                         } else
-                            bean.put(field.getName().toLowerCase(), null);
+                            bean.put(field.getName(), null);
                     }
                     result.getRows().add(bean);
                     if(result.getRows().size() >= MAX_RECORDS_FETCH_LIMIT)
