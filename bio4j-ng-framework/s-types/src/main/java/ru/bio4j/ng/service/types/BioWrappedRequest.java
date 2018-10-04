@@ -251,6 +251,9 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrig)) {
             result.sort = Utl.restoreSimpleSort(result.sortOrig);
         }
+        if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrig1)) {
+            result.sort = Utl.restoreSimpleSort(result.sortOrig1);
+        }
         if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrig)) {
             result.filter = Utl.restoreSimpleFilter(result.filterOrig);
         }
@@ -258,10 +261,13 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             SortAndFilterObj obj = Jsons.decode("{ \"sort\":" + result.sortOrig + " }", SortAndFilterObj.class);
             result.sort = obj.sort;
         }
+        if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrig1)) {
+            SortAndFilterObj obj = Jsons.decode("{ \"sort\":" + result.sortOrig1 + " }", SortAndFilterObj.class);
+            result.sort = obj.sort;
+        }
         if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrig)) {
             result.filter = Jsons.decode(result.filterOrig, Filter.class);
         }
-
 
         result.page = Converter.toType(result.pageOrig, Integer.class, true);
         result.offset = Converter.toType(result.offsetOrig, Integer.class, true);

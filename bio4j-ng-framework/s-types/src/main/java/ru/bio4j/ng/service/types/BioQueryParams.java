@@ -75,6 +75,8 @@ public class BioQueryParams {
 
     @Prop(name = "asorter")
     public String sortOrig;
+    @Prop(name = "sort")
+    public String sortOrig1;
     public List<Sort> sort;
 
     @Prop(name = "afilter")
