@@ -26,6 +26,11 @@ public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements Con
     }
 
     @Updated
+    public void updated() {
+        // The instance was reconfigured
+    }
+
+    @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
         doOnUpdated(conf, "bio-config-updated");
         ErrorHandler.getInstance().init(this.getConfig().getErrorHandler(), this.getConfig().isBioDebug());
