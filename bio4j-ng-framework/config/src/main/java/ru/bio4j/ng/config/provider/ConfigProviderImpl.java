@@ -25,10 +25,9 @@ public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements Con
         return eventAdmin;
     }
 
-    @Updated
-    public void updated() {
-        // The instance was reconfigured
-    }
+//    @Updated
+//    public void updated() {
+//    }
 
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {

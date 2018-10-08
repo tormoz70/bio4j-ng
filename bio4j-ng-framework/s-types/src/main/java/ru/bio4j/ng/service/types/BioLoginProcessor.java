@@ -20,29 +20,19 @@ public class BioLoginProcessor {
     }
 
     public User login(BioQueryParams qprms) throws Exception {
-        //if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGIN.getAlias()))
-        //    throw new IllegalArgumentException(String.format("prms.requestType must be \"%s\"!", BioRoute.LOGIN.getAlias()));
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
 
-        BioRequestFactory factory = new BioRequestFactory.Login();
-        BioRequest request = factory.restore(qprms, BioRoute.LOGIN.getClazz(), null);
-        return securityProvider.login(request.getLogin(), qprms.remoteIP, qprms.remoteClient);
+//        BioRequestFactory factory = new BioRequestFactory.Login();
+//        BioRequest request = factory.restore(qprms, BioRoute.LOGIN.getClazz(), null);
+        return securityProvider.login(qprms.login, qprms.remoteIP, qprms.remoteClient);
     }
 
-//    public Boolean loggedin(SrvcUtils.BioQueryParams qprms) throws Exception {
-//        if(securityProvider == null)
-//            throw new IllegalArgumentException("SecurityHandler not defined!");
-//
-//        return securityProvider.loggedin(qprms.stoken, qprms.remoteIP);
-//    }
-
     public void logoff(BioQueryParams qprms) throws Exception {
-        if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias()))
-            throw new IllegalArgumentException(String.format("prms.requestType must be \"%s\"!", BioRoute.LOGOUT.getAlias()));
+//        if(qprms.requestType == null || !qprms.requestType.equalsIgnoreCase(BioRoute.LOGOUT.getAlias()))
+//            throw new IllegalArgumentException(String.format("prms.requestType must be \"%s\"!", BioRoute.LOGOUT.getAlias()));
         if(securityProvider == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");
-
         securityProvider.logoff(qprms.stoken, qprms.remoteIP);
     }
 

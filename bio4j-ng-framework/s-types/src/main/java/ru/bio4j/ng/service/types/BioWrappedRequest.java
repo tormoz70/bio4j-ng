@@ -128,8 +128,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGESIZE, qprms.pageSize, MetaType.INTEGER);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_OFFSET, qprms.offset, MetaType.INTEGER);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, qprms.totalCount);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.GETROW_PARAM_PKVAL, qprms.id);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.RAPI_PARAM_FILEHASHCODE, qprms.fileHashCode);
+//        Paramus.setParamValue(qprms.bioParams, RestParamNames.GETROW_PARAM_PKVAL, qprms.id);
+//        Paramus.setParamValue(qprms.bioParams, RestParamNames.RAPI_PARAM_FILEHASHCODE, qprms.fileHashCode);
         Paramus.setParamValue(qprms.bioParams, RestParamNames.QUERY_PARAM_VALUE, qprms.query);
         Object location = qprms.location;
         if (location != null && location instanceof String) {
@@ -171,11 +171,11 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
         result.remoteClient = Httpc.extractRealRemoteClient(request);
 
-        if(Strings.isNullOrEmpty(result.moduleKey)) {
-            final String bioHeaderModuleKey = request.getHeader("X-Module");
-            if (!Strings.isNullOrEmpty(bioHeaderModuleKey))
-                result.moduleKey = bioHeaderModuleKey;
-        }
+//        if(Strings.isNullOrEmpty(result.moduleKey)) {
+//            final String bioHeaderModuleKey = request.getHeader("X-Module");
+//            if (!Strings.isNullOrEmpty(bioHeaderModuleKey))
+//                result.moduleKey = bioHeaderModuleKey;
+//        }
         final String bioHeaderClientName = request.getHeader("X-Client");
         if(!Strings.isNullOrEmpty(bioHeaderClientName)) {
             result.remoteClient = bioHeaderClientName;
@@ -234,8 +234,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 result.login = obj.getLogin();
         }
 
-        result.fcloudCmd = FCloudCommand.decode(result.fcloudCmdOrig);
-        result.rmtCommand = RmtCommand.decode(result.rmtCommandOrig);
+//        result.fcloudCmd = FCloudCommand.decode(result.fcloudCmdOrig);
+//        result.rmtCommand = RmtCommand.decode(result.rmtCommandOrig);
 
         if((result.sort == null || result.filter == null) && !Strings.isNullOrEmpty(result.jsonData)) {
             SortAndFilterObj obj = null;
