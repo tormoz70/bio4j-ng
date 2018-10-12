@@ -20,33 +20,14 @@ public class BioQueryParams {
     public String remoteClient;
     public String remoteClientVersion;
 
-//    @Prop(name = "rqt")
-//    public String requestType;
-//    @Prop(name = "bm")
-//    public String moduleKey;
-//    @Prop(name = "biocd")
-//    public String bioCode;
     @Prop(name = "stoken")
     public String stoken;
     @Prop(name = "jsonData")
     public String jsonData;
-//    @Prop(name = "hf")
-//    public String fileHashCode;
     @Prop(name = "login")
     public String login;
-//    @Prop(name = "fcmd")
-//    public String fcloudCmdOrig;
-//    public FCloudCommand fcloudCmd;
-//    @Prop(name = "fluid")
-//    public String fcloudFileUid;
-//    @Prop(name = "uplduid")
-//    public String fcloudUploadUid;
     @Prop(name = CS_UPLOADTYPE)
     public String fcloudUploadType;
-//    @Prop(name = "uplddsc")
-//    public String fcloudUploadDesc;
-//    @Prop(name = CS_UPLOADEXTPARAM)
-//    public String fcloudExtParam;
 
     @Prop(name = "page")
     public String pageOrig;
@@ -64,15 +45,6 @@ public class BioQueryParams {
     @Prop(name = "locate")
     public String location;
 
-//    @Prop(name = "id")
-//    public String id;
-
-//    @Prop(name = "rmtcmd")
-//    public String rmtCommandOrig;
-//    public RmtCommand rmtCommand;
-//    @Prop(name = "rmtsessionuid")
-//    public String rmtSessionUid;
-
     @Prop(name = "asorter")
     public String sortOrig;
     public List<Sort> sort;
@@ -80,9 +52,6 @@ public class BioQueryParams {
     @Prop(name = "afilter")
     public String filterOrig;
     public Filter filter;
-
-//    @Prop(name = "selection")
-//    public String selection;
 
     @Prop(name = "query")
     public String query;
