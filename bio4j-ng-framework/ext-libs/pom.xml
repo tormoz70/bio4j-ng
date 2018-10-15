@@ -27,12 +27,14 @@
                         <!--</Export-Package>-->
                         <Export-Package>
                             org.apache.commons.beanutils.*,
-                            org.apache.http.*
+                            org.apache.http.*,
+                            com.mchange.v2.c3p0.*
                         </Export-Package>
                         <Embed-Dependency>
                             commons-beanutils-core,
                             httpcore,
-                            httpclient
+                            httpclient,
+                            c3p0
                         </Embed-Dependency>
                     </instructions>
                 </configuration>
@@ -66,6 +68,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 </project>
