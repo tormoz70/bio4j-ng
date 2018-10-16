@@ -109,18 +109,23 @@ public class Utl {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readStream(InputStream in, String encoding) throws IOException {
+	public static String readStream(InputStream in, String encoding, boolean addLineSeparator) throws IOException {
 		InputStreamReader is = new InputStreamReader(in, encoding);
 		StringBuilder sb=new StringBuilder();
 		BufferedReader br = new BufferedReader(is);
 		String read = br.readLine();
 		while(read != null) {
 		    sb.append(read);
-            sb.append(System.lineSeparator());
-		    read =br.readLine();
+		    if(addLineSeparator)
+                sb.append(System.lineSeparator());
+		    read=br.readLine();
 		}
 		return sb.toString();
 	}
+
+    public static String readStream(InputStream in, String encoding) throws IOException {
+	    return readStream(in, encoding, true);
+    }
 
     public static String readStream(InputStream in) throws IOException {
         return readStream(in, "UTF-8");
