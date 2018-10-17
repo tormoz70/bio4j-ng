@@ -69,10 +69,10 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     @Override
     public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) throws Exception {
         boolean rslt = false;
+        Exception lastError = null;
         try {
             List<Param> prms = params != null ? params : new ArrayList<>();
             SrvcUtils.applyCurrentUserParams(usr, prms);
-            Exception lastError = null;
             try {
                 this.resetCommand(); // Сбрасываем состояние
 
@@ -98,12 +98,11 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
                     }
                 }
 
-            } catch (SQLException e) {
-                lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
-                throw lastError;
+            //} catch (SQLException e) {
+            //    lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
+            //    throw lastError;
             } catch (Exception e) {
                 lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
-                throw lastError;
             }
         } finally {
             if (this.preparedStatement != null)
@@ -111,6 +110,8 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
                     this.preparedStatement.close();
                 } catch (Exception ignore) {
                 }
+            if(lastError != null)
+                throw lastError;
             return rslt;
         }
     }
