@@ -1,6 +1,8 @@
 package ru.bio4j.ng.database.pgsql.impl;
 
 
+import ru.bio4j.ng.commons.converter.DateParseException;
+import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -25,9 +27,32 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         put(Contains.class, "%s %s %s");
     }};
 
-    private static String decodeCompare(String alias, Expression e) {
+    private static Object detectDateTime(Object value, Expression e) throws Exception {
+        if(value instanceof String) {
+            String strValue = (String) value;
+            Date detectedValue = null;
+            String fmtDetected = DateTimeParser.getInstance().detectFormat(strValue);
+            if (!Strings.isNullOrEmpty(fmtDetected)) {
+                if (fmtDetected.equalsIgnoreCase("yyyy-MM-dd")) {
+                    if (e instanceof Le)
+                        detectedValue = DateTimeParser.getInstance().pars(strValue + "T23:59:59", "yyyy-MM-dd'T'HH:mm:ss");
+                    else
+                        detectedValue = DateTimeParser.getInstance().pars(strValue, "yyyy-MM-dd");
+                } else {
+                    detectedValue = DateTimeParser.getInstance().pars(strValue, fmtDetected);
+                }
+            }
+            if (detectedValue != null) {
+                SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd'T'HHmmss");
+                return String.format("to_timestamp('%s', 'YYYY-MM-DD\"T\"HH24MISS')", dt1.format(detectedValue));
+            }
+        }
+        return value;
+    }
+
+    private static String decodeCompare(String alias, Expression e) throws Exception {
         String column = appendAlias(alias, e.getColumn());
-        Object value = e.getValue();
+        Object value = detectDateTime(e.getValue(), e);
         String templ = compareTemplates.get(e.getClass());
         if (e instanceof Bgn)
             value = value + "%";
@@ -35,8 +60,11 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
             value = "%" + value;
         if (e instanceof Contains)
             value = "%" + value + "%";
-        if (Strings.isString(value))
-            value = "'"+value+"'";
+        if (Strings.isString(value)) {
+            String strValue = (String)value;
+            if(!strValue.startsWith("to_timestamp"))
+                value = "'" + value + "'";
+        }
         String slike = e.ignoreCase() ? "ilike" : "like";
 //        if (e.ignoreCase()) {
 //            value = "upper("+value+")";
@@ -57,7 +85,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         return (Strings.isNullOrEmpty(alias) ? ""  : alias+".")+column;
     }
 
-    private String _filterToSQL(String alias, Expression e) {
+    private String _filterToSQL(String alias, Expression e) throws Exception {
         if(e instanceof Logical){
             String logicalOp = (e instanceof And) ? " and " : (
                     (e instanceof Or) ? " or " : " unknown-logical "

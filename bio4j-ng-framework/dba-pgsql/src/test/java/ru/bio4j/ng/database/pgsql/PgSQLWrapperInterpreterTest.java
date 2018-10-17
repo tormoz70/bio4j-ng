@@ -62,4 +62,15 @@ public class PgSQLWrapperInterpreterTest {
         Assert.assertNull(sql);
     }
 
+    @Test(enabled = true)
+    public void filterAndSorterToSQLTest5() throws Exception {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter5.json");
+        String json = Utl.readStream(inputStream);
+        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        System.out.println(sql);
+        Assert.assertNotNull(sql);
+    }
+
 }
