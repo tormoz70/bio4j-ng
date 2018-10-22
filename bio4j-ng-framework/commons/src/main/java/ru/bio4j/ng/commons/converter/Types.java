@@ -83,6 +83,11 @@ public class Types {
         return number2Number(parsDouble(inValue), targetType);
     }
 
+    public static <T> T char2Number(Character inValue, Class<T> targetType) {
+        inValue = inValue == null ? '0' : inValue;
+        return number2Number(parsDouble(""+inValue), targetType);
+    }
+
     public static <T> T number2Number(Number inValue, Class<T> targetType) {
         if(inValue != null) {
             if (targetType == Byte.class)
@@ -202,6 +207,14 @@ public class Types {
                 value.toLowerCase().equals("1") ||
                 value.toLowerCase().equals("yes") ||
                 value.toLowerCase().equals("y");
+    }
+
+    public static Boolean parsBoolean(Character value) {
+        if(value == null)
+            return false;
+        return  Character.compare(Character.toLowerCase(value), 't') == 0 ||
+                Character.compare(Character.toLowerCase(value), '1') == 0 ||
+                Character.compare(Character.toLowerCase(value), 'y') == 0;
     }
 
     public static <T> T parsEnum(String value, Class<T> type) {
