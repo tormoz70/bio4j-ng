@@ -357,6 +357,33 @@ public class Utl {
         return result;
     }
 
+    public static boolean applyValuesToBeanFromABean(ABean vals, Object bean) throws ApplyValuesToBeanException {
+        boolean result = false;
+        if(vals == null)
+            throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
+        if(bean == null)
+            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+        Class<?> type = bean.getClass();
+        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
+            String fldName = fld.getName();
+            Prop p = findAnnotation(Prop.class, fld);
+            if(p != null)
+                fldName = p.name();
+            Object valObj = vals.get(fldName);
+            if(valObj != null){
+                try {
+                    Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
+                    fld.setAccessible(true);
+                    fld.set(bean, val);
+                    if(!result) result = true;
+                } catch (Exception e) {
+                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+                }
+            }
+        }
+        return result;
+    }
+
     private static Field findFieldOfBean(Class<?> type, String fieldName) {
         for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             if(fld.getName().equals(fieldName))
@@ -690,7 +717,6 @@ public class Utl {
         }
         return result;
     }
-
 
     public static List<Param> hashmapToParams(HashMap<String, Object> bean) throws Exception {
         List<Param> result = new ArrayList<>();
