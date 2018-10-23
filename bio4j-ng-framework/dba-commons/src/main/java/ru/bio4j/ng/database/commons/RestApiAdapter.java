@@ -1,5 +1,7 @@
 package ru.bio4j.ng.database.commons;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class RestApiAdapter {
+    private static final Logger LOG = LoggerFactory.getLogger(RestApiAdapter.class);
 
     public static ABeanPage loadPage(
             final BioAppModule module,
@@ -58,8 +61,13 @@ public class RestApiAdapter {
         final List<Param> params = queryParams.bioParams;
         final User user = ((BioWrappedRequest)request).getUser();
         FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+        if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
+            try {
+                fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+            } catch (Exception e) {
+                LOG.error(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
+            }
+        }
         if(fs == null) {
             fs = new FilterAndSorter();
             fs.setSorter(queryParams.sort);
