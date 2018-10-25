@@ -198,6 +198,15 @@ public class Strings {
         return false;
     }
 
+    public static Boolean containsIgnoreCase(String[] list, String soughtFor) {
+        for (String current : list) {
+            if (current.equalsIgnoreCase(soughtFor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static <T> T findIgnoreCase(Map<String, T> map, String soughtFor) {
         for (String current : map.keySet()) {
             if (current.equalsIgnoreCase(soughtFor)) {

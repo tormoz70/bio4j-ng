@@ -384,6 +384,22 @@ public class Utl {
         return result;
     }
 
+    public static void applyValuesToABeanFromABean(ABean srcBean, ABean dstBean, boolean addIfNotExists) throws ApplyValuesToBeanException {
+        boolean result = false;
+        if(srcBean == null)
+            throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
+        if(dstBean == null)
+            throw new IllegalArgumentException("Argument \"dstBean\" cannot be null!");
+        for(String key : srcBean.keySet()) {
+            if(dstBean.containsKey(key))
+                dstBean.put(key, srcBean.get(key));
+            else{
+                if(addIfNotExists)
+                    dstBean.put(key, srcBean.get(key));
+            }
+        }
+    }
+
     private static Field findFieldOfBean(Class<?> type, String fieldName) {
         for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
             if(fld.getName().equals(fieldName))
