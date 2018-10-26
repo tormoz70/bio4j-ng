@@ -3,6 +3,8 @@ package ru.bio4j.ng.database.commons;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.ABeans;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.model.transport.*;
@@ -27,7 +29,7 @@ public class CrudWriterApi {
         UpdelexSQLDef sqlDef = cursor.getUpdateSqlDef();
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
-        int affected = context.execBatch((context1, conn, cur, usr) -> {
+        context.execBatch((context1, conn, cur, usr) -> {
             SQLStoredProc cmd = context1.createStoredProc();
             try {
                 cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
@@ -52,6 +54,19 @@ public class CrudWriterApi {
 
             return 0;
         }, cursor, user);
+
+        List<Param> prms = new ArrayList<>();
+        Field pkField = cursor.findPk();
+        String pkFieldName = pkField.getName().toLowerCase();
+        Class<?> pkClazz = MetaTypeConverter.write(pkField.getMetaType());
+        for(ABean bean : rows){
+            Object pkvalue = ABeans.extractAttrFromBean(bean, pkFieldName, pkClazz, null);
+            Paramus.setParamValue(prms, RestParamNames.GETROW_PARAM_PKVAL, pkvalue);
+            ABeanPage pg = CrudReaderApi.loadRecord(prms, context, cursor, user);
+            if(pg.getRows().size() > 0)
+                Utl.applyValuesToABeanFromABean(pg.getRows().get(0), bean, true);
+        }
+
         return rows;
     }
 
