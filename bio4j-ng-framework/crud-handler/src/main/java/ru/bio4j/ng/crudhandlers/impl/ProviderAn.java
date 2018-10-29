@@ -32,7 +32,7 @@ public abstract class ProviderAn<T extends BioRequest> {
     protected final Logger LOG;
 
     //TODO Перенести в настройки
-    protected static final int MAX_RECORDS_FETCH_LIMIT = 2500;
+    protected static final int MAX_RECORDS_FETCH_LIMIT = 250000;
 
     protected BioAppModule module;
     protected ContentResolver contentResolver;
