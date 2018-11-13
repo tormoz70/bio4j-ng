@@ -104,7 +104,7 @@ public class CrudWriterApi {
     }
 
     public static void execSQL(
-            final List<Param> params,
+            final Object params,
             final SQLContext context,
             final BioCursor cursor,
             final User user) throws Exception {

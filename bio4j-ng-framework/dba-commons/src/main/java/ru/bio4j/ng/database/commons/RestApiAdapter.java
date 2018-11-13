@@ -268,6 +268,16 @@ public class RestApiAdapter {
         CrudWriterApi.execSQL(params, context, cursor, user);
     }
 
+    public static void exec(
+            final String bioCode,
+            final Object params,
+            final BioAppModule module,
+            final User user) throws Exception {
+        final SQLContext context = module.getSQLContext();
+        final BioCursor cursor = module.getCursor(bioCode);
+        CrudWriterApi.execSQL(params, context, cursor, user);
+    }
+
     public static void execForEach(
             final String bioCode,
             final HttpServletRequest request,
