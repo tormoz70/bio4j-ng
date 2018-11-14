@@ -338,15 +338,15 @@ public class DbUtils {
         for (java.lang.reflect.Field fld : Utl.getAllObjectFields(dstType)) {
             String param2find = fld.getName();
             Prop prp = fld.getAnnotation(Prop.class);
-            if (prp != null && !Strings.isNullOrEmpty(prp.name())) {
+            if (prp != null && !Strings.isNullOrEmpty(prp.name()))
                 param2find = prp.name().toLowerCase();
-                Param param = findParamIgnorePrefix(param2find, src);
-                if (param != null) {
-                    fld.setAccessible(true);
-                    Object valObj = param.getValue();
-                    fld.set(dst, valObj);
-                }
+            Param param = findParamIgnorePrefix(param2find, src);
+            if (param != null) {
+                fld.setAccessible(true);
+                Object valObj = Converter.toType(param.getValue(), fld.getType());
+                fld.set(dst, valObj);
             }
+
         }
     }
 
