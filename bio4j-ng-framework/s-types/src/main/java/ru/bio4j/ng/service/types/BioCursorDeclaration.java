@@ -9,10 +9,9 @@ import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.service.api.*;
 
-import java.io.Serializable;
 import java.util.*;
 
-public class BioCursorDeclaration implements BioCursor {
+public class BioCursorDeclaration implements BioSQLDefinition {
 
     public String getExportTitle() {
         return exportTitle;
@@ -40,7 +39,7 @@ public class BioCursorDeclaration implements BioCursor {
 
 
     public static class SQLDefImpl implements SQLDef {
-        private BioCursor owner;
+        private BioSQLDefinition owner;
         private final String sql;
         private String preparedSql;
 
@@ -57,8 +56,8 @@ public class BioCursorDeclaration implements BioCursor {
             return Utl.buildBeanStateInfo(this, this.getClass().getSimpleName(), "  ", "owner");
         }
 
-        public void setOwner(BioCursor bioCursor){
-            owner = bioCursor;
+        public void setOwner(BioSQLDefinition bioSQLDefinition){
+            owner = bioSQLDefinition;
         }
         public List<Field> getFields() {
             return owner.getFields();

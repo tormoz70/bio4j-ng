@@ -3,7 +3,7 @@ package ru.bio4j.ng.database.commons;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
 import ru.bio4j.ng.commons.utils.Strings;
@@ -81,50 +81,47 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor) throws Exception {
+    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioSQLDefinition cursor) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new IllegalArgumentException("Cursor definition has no Exec Sql definition!");
-        List<Param> r = ctx.execBatch(new SQLActionScalar<List<Param>>() {
-            @Override
-            public List<Param> exec(SQLContext context, Connection conn, User u) throws Exception {
-                cmd.init(conn, sqlDef.getPreparedSql());
-                cmd.execSQL(params, u);
-                for (Param p : cmd.getParams()) {
-                    Param foundPrm = Paramus.getParam(params, p.getName());
-                    if(foundPrm != null)
-                        foundPrm.setValue(p.getValue());
-                }
-                return cmd.getParams();
+        List<Param> r = ctx.execBatch((SQLActionScalar0<List<Param>>) (context) -> {
+            cmd.init(context.getCurrentConnection(), sqlDef.getPreparedSql());
+            cmd.execSQL(params, context.getCurrentUser());
+            for (Param p : cmd.getParams()) {
+                Param foundPrm = Paramus.getParam(params, p.getName());
+                if(foundPrm != null)
+                    foundPrm.setValue(p.getValue());
             }
+            return cmd.getParams();
         }, usr);
         return r;
     }
 
-    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, final DelegateSQLFetch action) throws Exception {
+    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioSQLDefinition cursor, final DelegateSQLFetch action) throws Exception {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
-        int r = ctx.execBatch((context, conn, u) -> {
+        int r = ctx.execBatch((context) -> {
             context.createCursor()
-                    .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
-                    .fetch(params, u, action);
+                    .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
+                    .fetch(params, context.getCurrentUser(), action);
             return 0;
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioCursor cursor, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioSQLDefinition cursor, Class<T> clazz, T defaultValue) throws Exception {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
-        T r = ctx.execBatch((context, conn, u) -> {
+        T r = ctx.execBatch((context) -> {
             return context.createCursor()
-                    .init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(params, u, clazz, defaultValue);
+                    .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(params, context.getCurrentUser(), clazz, defaultValue);
         }, usr);
         return r;
     }
 
     public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
-        T r = ctx.execBatch((SQLActionScalar<T>) (context, conn, u) -> {
+        T r = ctx.execBatch((SQLActionScalar0<T>) (context) -> {
             return context.createCursor()
-                    .init(conn, sql, null).scalar(params, u, clazz, defaultValue);
+                    .init(context.getCurrentConnection(), sql, null).scalar(params, context.getCurrentUser(), clazz, defaultValue);
         }, usr);
         return r;
     }

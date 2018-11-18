@@ -7,6 +7,6 @@ import java.sql.Connection;
 /**
  *
  */
-public interface SQLActionVoid {
-    void exec(SQLContext context, Connection conn, User usr) throws Exception;
+public interface SQLActionVoid0 {
+    void exec(SQLContext context) throws Exception;
 }

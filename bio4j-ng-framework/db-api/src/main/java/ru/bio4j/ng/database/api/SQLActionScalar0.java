@@ -8,6 +8,6 @@ import java.sql.Connection;
  *
  * @param <R> - тип возвращаемого параметра
  */
-public interface SQLActionScalar<R> {
-    R exec(SQLContext context, Connection conn, User usr) throws Exception;
+public interface SQLActionScalar0<R> {
+    R exec(SQLContext context) throws Exception;
 }

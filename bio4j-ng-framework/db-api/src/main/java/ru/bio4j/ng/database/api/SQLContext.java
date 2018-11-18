@@ -10,17 +10,21 @@ public interface SQLContext {
     //Connection getConnection() throws SQLException;
     //Connection getConnection(String userName, String password) throws SQLException;
 
-    void execBatch (final SQLActionVoid batch, final User usr) throws Exception;
-    <R> R execBatch (final SQLActionScalar<R> batch, final User usr) throws Exception;
-    <P, R> R execBatch (final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
+    User getCurrentUser();
+    Connection getCurrentConnection();
 
-//    <P, R> R execSQLAtomic(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
-//    <R> R execSQLAtomic(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception;
-//    void execSQLAtomic(final Connection conn, final SQLActionVoid action, final User usr) throws Exception;
+    void execBatch (final SQLActionVoid0 batch, final User usr) throws Exception;
+    <P> void execBatch (final SQLActionVoid1 batch, final P param, final User usr) throws Exception;
+    <R> R execBatch (final SQLActionScalar0<R> batch, final User usr) throws Exception;
+    <P, R> R execBatch (final SQLActionScalar1<P, R> batch, final P param, final User usr) throws Exception;
+
+//    <P, R> R execSQLAtomic(final Connection conn, final SQLAction1<P, R> batch, final P param, final User usr) throws Exception;
+//    <R> R execSQLAtomic(final Connection conn, final SQLActionScalar0<R> batch, final User usr) throws Exception;
+//    void execSQLAtomic(final Connection conn, final SQLActionVoid0 action, final User usr) throws Exception;
 //
-//    <P, R> R execSQL(final Connection conn, final SQLAction<P, R> batch, final P param, final User usr) throws Exception;
-//    <R> R execSQL(final Connection conn, final SQLActionScalar<R> batch, final User usr) throws Exception;
-//    void execSQL(final Connection conn, final SQLActionVoid action, final User usr) throws Exception;
+//    <P, R> R execSQL(final Connection conn, final SQLAction1<P, R> batch, final P param, final User usr) throws Exception;
+//    <R> R execSQL(final Connection conn, final SQLActionScalar0<R> batch, final User usr) throws Exception;
+//    void execSQL(final Connection conn, final SQLActionVoid0 action, final User usr) throws Exception;
 //    List<Param> execSQL(final Connection conn, final String sql, List<Param> params, final User usr) throws Exception;
 //    List<Param> execSQL(final String sql, List<Param> params, final User usr) throws Exception;
 

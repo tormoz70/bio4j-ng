@@ -1,6 +1,5 @@
 package ru.bio4j.ng.database.commons;
 
-import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.ABeans;
@@ -9,7 +8,7 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.RestParamNames;
 import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
@@ -24,25 +23,25 @@ public class CrudWriterApi {
             final List<Param> params,
             final List<ABean> rows,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user) throws Exception {
         UpdelexSQLDef sqlDef = cursor.getUpdateSqlDef();
         if(sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
-        context.execBatch((context1, conn, cur, usr) -> {
-            SQLStoredProc cmd = context1.createStoredProc();
+        context.execBatch((ctx) -> {
+            SQLStoredProc cmd = ctx.createStoredProc();
             try {
-                cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+                cmd.init(ctx.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
                 List<Param> prms = new ArrayList<>();
                 for (ABean row : rows) {
                     prms.clear();
                     Paramus.setParams(prms, params);
                     DbUtils.applayRowToParams(row, prms);
-                    cmd.execSQL(prms, usr, true);
+                    cmd.execSQL(prms, ctx.getCurrentUser(), true);
                     try (Paramus paramus = Paramus.set(cmd.getParams())) {
                         for (Param p : paramus.get()) {
                             if (Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).contains(p.getDirection())) {
-                                Field fld = cur.findField(DbUtils.trimParamNam(p.getName()));
+                                Field fld = cursor.findField(DbUtils.trimParamNam(p.getName()));
                                 row.put(fld.getName().toLowerCase(), p.getValue());
                             }
                         }
@@ -53,7 +52,7 @@ public class CrudWriterApi {
             }
 
             return 0;
-        }, cursor, user);
+        }, user);
 
         List<Param> prms = new ArrayList<>();
         Field pkField = cursor.findPk();
@@ -74,16 +73,16 @@ public class CrudWriterApi {
             final List<Param> params,
             final List<Object> ids,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user) throws Exception {
         UpdelexSQLDef sqlDef = cursor.getDeleteSqlDef();
         if (sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
-        int affected = context.execBatch((context1, conn, cur, usr) -> {
+        int affected = context.execBatch((ctx) -> {
             int r = 0;
-            SQLStoredProc cmd = context1.createStoredProc();
+            SQLStoredProc cmd = ctx.createStoredProc();
             try {
-                cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+                cmd.init(ctx.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
                 for (Object id : ids) {
                     Param prm = Paramus.getParam(cmd.getParams(), RestParamNames.DELETE_PARAM_PKVAL);
                     if (prm == null)
@@ -93,30 +92,39 @@ public class CrudWriterApi {
                         cmd.execSQL(params, user, true);
                         r++;
                     } else
-                        throw new Exception(String.format("ID Param not found in Delete sql of \"%s\"!", cur.getBioCode()));
+                        throw new Exception(String.format("ID Param not found in Delete sql of \"%s\"!", cursor.getBioCode()));
                 }
             } finally {
                 cmd.close();
             }
             return r;
-        }, cursor, user);
+        }, user);
         return affected;
+    }
+
+    public static void execSQLLocal(
+            final Object params,
+            final SQLContext context,
+            final BioSQLDefinition cursor) throws Exception {
+        UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
+        if (sqlDef == null)
+            throw new Exception(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
+        if (context.getCurrentConnection() == null)
+            throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+
+        SQLStoredProc cmd = context.createStoredProc();
+        cmd.init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+        cmd.execSQL(params, context.getCurrentUser());
     }
 
     public static void execSQL(
             final Object params,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user) throws Exception {
-        UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
-        if (sqlDef == null)
-            throw new Exception(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
-        context.execBatch((context1, conn, cur, usr) -> {
-            SQLStoredProc cmd = context1.createStoredProc();
-            cmd.init(conn, sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
-            cmd.execSQL(params, user);
-            return 0;
-        }, cursor, user);
+        context.execBatch((ctx) -> {
+            execSQLLocal(params, ctx, cursor);
+        }, user);
     }
 
 

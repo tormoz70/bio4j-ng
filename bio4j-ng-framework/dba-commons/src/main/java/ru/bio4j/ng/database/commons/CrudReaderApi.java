@@ -13,7 +13,7 @@ import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.RestParamNames;
 
 import java.sql.Connection;
@@ -52,7 +52,7 @@ public class CrudReaderApi {
             final List<Param> params,
             final SQLContext context,
             final Connection conn,
-            final BioCursor cursorDef,
+            final BioSQLDefinition cursorDef,
             final User usr) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
@@ -107,13 +107,13 @@ public class CrudReaderApi {
     public static long calcTotalCount(
             final List<Param> params,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user) throws Exception {
-        long result = context.execBatch((ctx, conn, cur, usr) -> {
+        long result = context.execBatch((ctx) -> {
             SQLCursor c = ctx.createCursor();
-            c.init(conn, cur.getSelectSqlDef().getTotalsSql(), cur.getSelectSqlDef().getParamDeclaration());
+            c.init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getTotalsSql(), cursor.getSelectSqlDef().getParamDeclaration());
             return c.scalar(params, user, long.class, 0L);
-        }, cursor, user);
+        }, user);
         return result;
     }
 
@@ -122,7 +122,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final boolean forceCalcCount,
             final User user) throws Exception {
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
@@ -155,63 +155,65 @@ public class CrudReaderApi {
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
-        final ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
+        final ABeanPage result = context.execBatch((ctx) -> {
             long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
             if(location != null) {
-                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), location);
+                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
                 int locatedPos = ctx.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration())
-                        .scalar(params, usr, int.class, -1);
+                        .init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
+                        .scalar(params, ctx.getCurrentUser(), int.class, -1);
                 if(locatedPos >= 0){
                     locFactOffset = calcOffset(locatedPos, paginationPagesize);
-                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), location, locatedPos, locFactOffset);
+                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cursor.getBioCode(), location, locatedPos, locFactOffset);
                 } else {
-                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), location);
+                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cursor.getBioCode(), location);
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LIMIT, paginationPagesize);
-            return readStoreData(params, ctx, conn, cur, usr);
-        }, cursor, user);
+            return readStoreData(params, ctx, ctx.getCurrentConnection(), cursor, ctx.getCurrentUser());
+        }, user);
         return result;
     }
 
-    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final BioCursor cursor, User user) throws Exception {
+    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final BioSQLDefinition cursor, User user) throws Exception {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
-        ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
-            return readStoreData(params, ctx, conn, cur, user);
-        }, cursor, user);
+        ABeanPage result = context.execBatch((ctx) -> {
+            return readStoreData(params, ctx, ctx.getCurrentConnection(), cursor, ctx.getCurrentUser());
+        }, user);
         return result;
     }
 
-    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioCursor cursor, final User user) throws Exception {
+    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioSQLDefinition cursor, final User user) throws Exception {
         Field pkField = cursor.getSelectSqlDef().findPk();
         if(pkField == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getSql(), pkField.getName()));
         preparePkParamValue(params, pkField);
-        ABeanPage result = context.execBatch((ctx, conn, cur, usr) -> {
-            return readStoreData(params, ctx, conn, cur, user);
-        }, cursor, user);
+        ABeanPage result = context.execBatch((ctx) -> {
+            return readStoreData(params, ctx, ctx.getCurrentConnection(), cursor, ctx.getCurrentUser());
+        }, user);
         return result;
     }
 
     private static <T> List<T> readStoreDataExt(
             final List<Param> params,
             final SQLContext context,
-            final Connection conn,
-            final BioCursor cursorDef,
-            final Class<T> beanType,
-            final User usr) throws Exception {
+            final BioSQLDefinition cursorDef,
+            final Class<T> beanType) throws Exception {
+
+        if (context.getCurrentConnection() == null)
+            throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursorDef.getBioCode()));
+
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         List<T> result = new ArrayList<>();
 
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
         context.createCursor()
-                .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
-                .fetch(prms, usr, rs -> {
+                .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
+                .fetch(prms, context.getCurrentUser(), rs -> {
                     if (rs.isFirstRow()) {
                         long estimatedTime = System.currentTimeMillis() - startTime;
                         LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
@@ -231,7 +233,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user,
             final Class<T> beanType) throws Exception {
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
@@ -263,24 +265,24 @@ public class CrudReaderApi {
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
-        List<T> result = context.execBatch((ctx, conn, cur, usr) -> {
+        List<T> result = context.execBatch((ctx) -> {
             long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
             if (location != null) {
-                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cur.getBioCode(), location);
+                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
                 int locatedPos = ctx.createCursor()
-                        .init(conn, cur.getSelectSqlDef().getLocateSql(), cur.getSelectSqlDef().getParamDeclaration())
-                        .scalar(params, usr, int.class, -1);
+                        .init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
+                        .scalar(params, ctx.getCurrentUser(), int.class, -1);
                 if (locatedPos >= 0) {
                     locFactOffset = calcOffset(locatedPos, paginationPagesize);
-                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cur.getBioCode(), location, locatedPos, locFactOffset);
+                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cursor.getBioCode(), location, locatedPos, locFactOffset);
                 } else {
-                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cur.getBioCode(), location);
+                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cursor.getBioCode(), location);
                 }
             }
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
             Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_LIMIT, paginationPagesize);
-            return readStoreDataExt(params, ctx, conn, cur, beanType, user);
-        }, cursor, user);
+            return readStoreDataExt(params, ctx, cursor, beanType);
+        }, user);
         return result;
     }
 
@@ -289,20 +291,20 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user,
             final Class<T> beanType) throws Exception {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
-        List<T> result = context.execBatch((ctx, conn, cur, usr) -> {
-            return readStoreDataExt(params, ctx, conn, cur, beanType, user);
-        }, cursor, user);
+        List<T> result = context.execBatch((ctx) -> {
+            return readStoreDataExt(params, ctx, cursor, beanType);
+        }, user);
         return result;
     }
 
     public static <T> List<T> loadRecordExt(
             final List<Param> params,
-            final SQLContext context, final BioCursor cursor,
+            final SQLContext context, final BioSQLDefinition cursor,
             final User user,
             final Class<T> beanType) throws Exception {
         Field pkField = cursor.getSelectSqlDef().findPk();
@@ -310,22 +312,22 @@ public class CrudReaderApi {
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getSql(), pkField.getName()));
         preparePkParamValue(params, pkField);
-        List<T> result = context.execBatch((ctx, conn, cur, usr) -> {
-            return readStoreDataExt(params, ctx, conn, cur, beanType, user);
-        }, cursor, user);
+        List<T> result = context.execBatch((ctx) -> {
+            return readStoreDataExt(params, ctx, cursor, beanType);
+        }, user);
         return result;
     }
 
     public static StringBuilder loadJson(
             final List<Param> params,
             final SQLContext context,
-            final BioCursor cursor,
+            final BioSQLDefinition cursor,
             final User user) throws Exception {
-        StringBuilder result = context.execBatch((ctx, conn, cur, usr) -> {
+        StringBuilder result = context.execBatch((ctx) -> {
             final StringBuilder r = new StringBuilder();
 
             ctx.createCursor()
-                    .init(conn, cur.getSelectSqlDef().getSql(), cur.getSelectSqlDef().getParamDeclaration())
+                    .init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getSql(), cursor.getSelectSqlDef().getParamDeclaration())
                     .fetch(params, user, rs -> {
                         List<Object> values = rs.getValues();
                         for (Object val : values)
@@ -333,7 +335,7 @@ public class CrudReaderApi {
                         return true;
                     });
             return r;
-        }, cursor, user);
+        }, user);
         return result;
     }
 }

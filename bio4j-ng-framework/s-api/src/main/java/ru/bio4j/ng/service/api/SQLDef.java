@@ -14,5 +14,5 @@ public interface SQLDef {
         String getSql();
         String getPreparedSql();
         void setPreparedSql(String preparedSql);
-        void setOwner(BioCursor bioCursor);
+        void setOwner(BioSQLDefinition bioSQLDefinition);
 }

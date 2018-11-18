@@ -52,8 +52,8 @@ public class SQLFactoryTest1 {
 
     @Test(enabled = false)
     public void testCreateSQLConnectionPool() throws Exception {
-        context.execBatch((context, conn, usr) -> {
-            Assert.assertNotNull(conn);
+        context.execBatch((context) -> {
+            Assert.assertNotNull(context.getCurrentConnection());
             return null;
         }, null);
 

@@ -45,22 +45,22 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     private void prepareCursor(BioCursorDeclaration cursor) throws Exception {
         SQLContext context = this.getSQLContext();
-        context.execBatch((ctx, conn, usr) -> {
+        context.execBatch((ctx) -> {
             UpdelexSQLDef def = cursor.getUpdateSqlDef();
             if (def != null) {
-                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), conn, def.getParamDeclaration());
+                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), ctx.getCurrentConnection(), def.getParamDeclaration());
                 def.setSignature(sp.getSignature());
                 def.setParamDeclaration(sp.getParamDeclaration());
             }
             def = cursor.getDeleteSqlDef();
             if (def != null) {
-                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), conn, def.getParamDeclaration());
+                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), ctx.getCurrentConnection(), def.getParamDeclaration());
                 def.setSignature(sp.getSignature());
                 def.setParamDeclaration(sp.getParamDeclaration());
             }
             def = cursor.getExecSqlDef();
             if (def != null) {
-                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), conn, def.getParamDeclaration());
+                StoredProgMetadata sp = ctx.prepareStoredProc(def.getPreparedSql(), ctx.getCurrentConnection(), def.getParamDeclaration());
                 def.setSignature(sp.getSignature());
                 def.setParamDeclaration(sp.getParamDeclaration());
             }

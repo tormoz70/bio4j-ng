@@ -13,8 +13,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.service.api.BioCursor;
-import ru.bio4j.ng.database.commons.DbContextAbstract;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
@@ -61,24 +60,21 @@ public class SQLFactoryTest {
                 OraContext.class);
         //if(true) return;
         try {
-            context.execBatch(new SQLActionScalar<Object>() {
-                @Override
-                public Object exec(SQLContext context, Connection conn, User usr) throws Exception {
-                    String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_test_table.sql"));
-                    DbUtils.execSQL(conn, sql);
-                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_simple.sql"));
-                    DbUtils.execSQL(conn, sql);
-                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_error.sql"));
-                    DbUtils.execSQL(conn, sql);
-                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
-                    DbUtils.execSQL(conn, sql);
-                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
-                    DbUtils.execSQL(conn, sql);
+            context.execBatch((context) -> {
+                String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_test_table.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
+                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_simple.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
+                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_error.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
+                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
+                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
 
-                    sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_storeclob.sql"));
-                    DbUtils.execSQL(conn, sql);
-                    return null;
-                }
+                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_storeclob.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
+                return null;
             }, null);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -89,14 +85,14 @@ public class SQLFactoryTest {
     public static void finClass() throws Exception {
         //if(true) return;
         try {
-            context.execBatch(new SQLActionScalar<Object>() {
+            context.execBatch(new SQLActionScalar0<Object>() {
                 @Override
-                public Object exec(SQLContext context, Connection conn, User usr) throws Exception {
-                    DbUtils.execSQL(conn, "drop procedure test_stored_prop");
-                    DbUtils.execSQL(conn, "drop procedure test_stored_error");
-                    DbUtils.execSQL(conn, "drop procedure test_stored_cursor");
-                    DbUtils.execSQL(conn, "drop procedure test_stored_inout");
-                    DbUtils.execSQL(conn, "drop table test_tbl");
+                public Object exec(SQLContext context) throws Exception {
+                    DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_prop");
+                    DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_error");
+                    DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_cursor");
+                    DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_inout");
+                    DbUtils.execSQL(context.getCurrentConnection(), "drop table test_tbl");
                     return null;
                 }
             }, null);
@@ -108,10 +104,10 @@ public class SQLFactoryTest {
     @Test
     public void testCreateSQLConnectionPool() throws Exception {
 //        LOG.debug(Utl.buildBeanStateInfo(context.getStat(), null, null));
-        context.execBatch(new SQLActionScalar<Object>() {
+        context.execBatch(new SQLActionScalar0<Object>() {
             @Override
-            public Object exec(SQLContext context, Connection conn, User usr) throws Exception {
-                Assert.assertNotNull(conn);
+            public Object exec(SQLContext context) throws Exception {
+                Assert.assertNotNull(context.getCurrentConnection());
                 return null;
             }
         }, null);
@@ -121,15 +117,15 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandOpenCursor() {
         try {
-            Double dummysum = context.execBatch(new SQLActionScalar<Double>() {
+            Double dummysum = context.execBatch(new SQLActionScalar0<Double>() {
                 @Override
-                public Double exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Double exec(SQLContext context) throws Exception {
                     Var var = new Var();
                     String sql = "select user as curuser, :dummy as dm, :dummy1 as dm1 from dual";
                     List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
                     context.createCursor()
-                            .init(conn, sql, null)
-                            .fetch(prms, usr, rs->{
+                            .init(context.getCurrentConnection(), sql, null)
+                            .fetch(prms, context.getCurrentUser(), rs->{
                                 var.dummy += rs.getValue("DM", Double.class);
                                 return true;
                             });
@@ -148,14 +144,14 @@ public class SQLFactoryTest {
     @Test(enabled = false)
     public void testSQLCommandOpenCursor1() {
         try {
-            byte[] schema = context.execBatch(new SQLActionScalar<byte[]>() {
+            byte[] schema = context.execBatch(new SQLActionScalar0<byte[]>() {
                 @Override
-                public byte[] exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public byte[] exec(SQLContext context) throws Exception {
                     Var var = new Var();
                     String sql = "select * from table(givcapi.upld.get_schemas)";
                     context.createCursor()
-                            .init(conn, sql, null)
-                            .fetch(usr, rs->{
+                            .init(context.getCurrentConnection(), sql, null)
+                            .fetch(context.getCurrentUser(), rs->{
                                 if(var.bummy == null)
                                     var.bummy = rs.getValue("XSD_BODY", byte[].class);
                                 return true;
@@ -174,11 +170,11 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecSQL() throws Exception {
         try {
-            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+            int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Integer exec(SQLContext context) throws Exception {
                     int leng = 0;
-                    LOG.debug("conn: " + conn);
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                     SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
@@ -189,13 +185,13 @@ public class SQLFactoryTest {
                                       .type(MetaType.INTEGER)
                                       .direction(Param.Direction.OUT)
                                       .build());
-                        cmd.init(conn, storedProgName);
-                        cmd.execSQL(paramus.get(), usr);
+                        cmd.init(context.getCurrentConnection(), storedProgName);
+                        cmd.execSQL(paramus.get(), context.getCurrentUser());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
-                    conn.rollback();
+                    context.getCurrentConnection().rollback();
                     return leng;
                 }
             }, null);
@@ -210,25 +206,25 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecSQL1() throws Exception {
         try {
-            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+            int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Integer exec(SQLContext context) throws Exception {
                     int leng = 0;
-                    LOG.debug("conn: " + conn);
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                     SQLStoredProc cmd = context.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     List<Param> prms = new ArrayList<Param>();
                     prms.add(Param.builder().name("p_param1").value("FTW").build());
                     prms.add(Param.builder().name("p_param2").type(MetaType.INTEGER).direction(Param.Direction.OUT).build());
-                    cmd.init(conn, storedProgName);
+                    cmd.init(context.getCurrentConnection(), storedProgName);
                     Paramus.setParamValue(prms, "p_param1", "QWE");
                     Paramus.setParamValue(prms, "p_param3", "ASD");
-                    cmd.execSQL(prms, usr);
+                    cmd.execSQL(prms, context.getCurrentUser());
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
-                    conn.rollback();
+                    context.getCurrentConnection().rollback();
                     return leng;
                 }
             }, null);
@@ -243,11 +239,11 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecINOUTSQL() throws Exception {
         try {
-            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+            int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Integer exec(SQLContext context) throws Exception {
                     int leng = 0;
-                    LOG.debug("conn: " + conn);
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                     SQLStoredProc cmd = context.createStoredProc();
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
@@ -255,13 +251,13 @@ public class SQLFactoryTest {
                                 .add("p_param2", "QWE")
                                 .add(Param.builder().name("p_param3").type(MetaType.BOOLEAN).value(true).build())
                                 .add(Param.builder().name("p_param4").type(MetaType.DECIMAL).value("").build());
-                        cmd.init(conn, "test_stored_inout");
-                        cmd.execSQL(paramus.get(), usr);
+                        cmd.init(context.getCurrentConnection(), "test_stored_inout");
+                        cmd.execSQL(paramus.get(), context.getCurrentUser());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param1", Integer.class), 0);
                     }
-                    conn.rollback();
+                    context.getCurrentConnection().rollback();
                     return leng;
                 }
             }, null);
@@ -313,18 +309,18 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecStoreCLOB() throws Exception {
         try {
-            context.execBatch((context1, conn, usr) -> {
-                LOG.debug("conn: " + conn);
+            context.execBatch((ctx) -> {
+                LOG.debug("conn: " + ctx.getCurrentConnection());
 
                 String xml = creXML();
 
-                SQLStoredProc cmd = context1.createStoredProc();
+                SQLStoredProc cmd = ctx.createStoredProc();
                 List<Param> prms = new ArrayList<>();
                         Paramus.setParam(prms, Param.builder().name("p_param1").type(MetaType.STRING).value("ASD").build(), true);
                         Paramus.setParam(prms, Param.builder().name("p_param2").type(MetaType.INTEGER).value(1).build(), true);
                         Paramus.setParam(prms, Param.builder().name("p_param3").type(MetaType.CLOB).value(xml).build(), true);
-                cmd.init(conn, "test_store_clob");
-                cmd.execSQL(prms, usr);
+                cmd.init(ctx.getCurrentConnection(), "test_store_clob");
+                cmd.execSQL(prms, ctx.getCurrentUser());
 
             }, null);
         } catch (SQLException ex) {
@@ -336,18 +332,18 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecStoreCLOB1() throws Exception {
         try {
-            context.execBatch((context1, conn, usr) -> {
-                LOG.debug("conn: " + conn);
+            context.execBatch((ctx) -> {
+                LOG.debug("conn: " + ctx.getCurrentConnection());
 
                 String xml = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("qqq.xml"));
 
-                SQLStoredProc cmd = context1.createStoredProc();
+                SQLStoredProc cmd = ctx.createStoredProc();
                 List<Param> prms = new ArrayList<>();
                 Paramus.setParam(prms, Param.builder().name("p_param1").type(MetaType.STRING).value("ASD").build(), true);
                 Paramus.setParam(prms, Param.builder().name("p_param2").type(MetaType.INTEGER).value(1).build(), true);
                 Paramus.setParam(prms, Param.builder().name("p_param3").type(MetaType.CLOB).value(xml).build(), true);
-                cmd.init(conn, "test_store_clob");
-                cmd.execSQL(prms, usr);
+                cmd.init(ctx.getCurrentConnection(), "test_store_clob");
+                cmd.execSQL(prms, ctx.getCurrentUser());
 
             }, null);
         } catch (SQLException ex) {
@@ -359,25 +355,25 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecExtParam() throws Exception {
         try {
-            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+            int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Integer exec(SQLContext ctx) throws Exception {
                     int leng = 0;
-                    LOG.debug("conn: " + conn);
+                    LOG.debug("conn: " + ctx.getCurrentConnection());
 
-                    SQLStoredProc cmd = context.createStoredProc();
+                    SQLStoredProc cmd = ctx.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     List<Param> prms = new ArrayList<>();
                     try(Paramus paramus = Paramus.set(prms)) {
                         paramus.add("param1", "FTW")
                                 .add("param3", "ext");
                     }
-                    cmd.init(conn, storedProgName);
-                    cmd.execSQL(prms, usr);
+                    cmd.init(ctx.getCurrentConnection(), storedProgName);
+                    cmd.execSQL(prms, ctx.getCurrentUser());
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
                     }
-                    conn.rollback();
+                    ctx.getCurrentConnection().rollback();
                     return leng;
                 }
             }, null);
@@ -392,12 +388,12 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecError() throws Exception {
         try {
-            context.execBatch(new SQLAction<Object, Object>() {
+            context.execBatch(new SQLActionVoid1() {
                 @Override
-                public Object exec(SQLContext context, Connection conn, Object param, User usr) throws Exception {
-                    LOG.debug("conn: " + conn + "; param: " + param);
+                public void exec(SQLContext ctx, Object param) throws Exception {
+                    LOG.debug("conn: " + ctx.getCurrentConnection() + "; param: " + param);
 
-                    SQLStoredProc cmd = context.createStoredProc();
+                    SQLStoredProc cmd = ctx.createStoredProc();
                     String storedProgName = "test_stored_error";
                     List<Param> prms = new ArrayList<Param>();
                     prms.add(Param.builder().name("p_param1").value("FTW").build());
@@ -406,10 +402,9 @@ public class SQLFactoryTest {
                         .type(MetaType.INTEGER)
                         .direction(Param.Direction.OUT)
                         .build());
-                    cmd.init(conn, storedProgName);
+                    cmd.init(ctx.getCurrentConnection(), storedProgName);
 
-                    cmd.execSQL(prms, usr);
-                    return null;
+                    cmd.execSQL(prms, ctx.getCurrentUser());
                 }
             }, "AnContext", null);
         } catch (SQLException ex) {
@@ -421,13 +416,13 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandExecSQLAutoCommit() throws Exception {
         try {
-            int leng = context.execBatch(new SQLActionScalar<Integer>() {
+            int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Integer exec(SQLContext ctx) throws Exception {
                     int leng = 0;
-                    LOG.debug("conn: " + conn);
+                    LOG.debug("conn: " + ctx.getCurrentConnection());
 
-                    SQLStoredProc cmd = context.createStoredProc();
+                    SQLStoredProc cmd = ctx.createStoredProc();
                     String storedProgName = "test_stored_prop";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
@@ -436,7 +431,7 @@ public class SQLFactoryTest {
                                     .type(MetaType.INTEGER)
                                     .direction(Param.Direction.OUT)
                                     .build());
-                        cmd.init(conn, storedProgName).execSQL(paramus.get(), usr);
+                        cmd.init(ctx.getCurrentConnection(), storedProgName).execSQL(paramus.get(), ctx.getCurrentUser());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         leng = Utl.nvl(paramus.getParamValue("p_param2", Integer.class), 0);
@@ -470,9 +465,9 @@ public class SQLFactoryTest {
             paramus.add("p_login", "qweqwe@asd.com/qegedipe")
                    .add(Param.builder().name("v_uid").type(MetaType.STRING).direction(Param.Direction.OUT).build());
             List<Param> params = paramus.pop();
-            String uid = context.execBatch((SQLAction<List<Param>, String>) (context, conn, param, usr) -> {
-                SQLStoredProc prc = context.createStoredProc();
-                prc.init(conn, "bio_login2.check_login").execSQL(param, usr);
+            String uid = context.execBatch((SQLActionScalar1<List<Param>, String>) (ctx, p) -> {
+                SQLStoredProc prc = ctx.createStoredProc();
+                prc.init(ctx.getCurrentConnection(), "bio_login2.check_login").execSQL(p, ctx.getCurrentUser());
                 try(Paramus paramus1 = Paramus.set(prc.getParams())) {
                     return paramus1.getValueAsStringByName("v_uid", true);
                 }
@@ -489,13 +484,13 @@ public class SQLFactoryTest {
     @Test(enabled = false)
     public void testSQLCommandStoredProcRetCursor() throws Exception {
         try {
-            int c = context.execBatch(new SQLActionScalar<Integer>() {
+            int c = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public Integer exec(SQLContext ctx) throws Exception {
                     ResultSet resultSet = null;
-                    LOG.debug("conn: " + conn);
+                    LOG.debug("conn: " + ctx.getCurrentConnection());
 
-                    SQLStoredProc cmd = context.createStoredProc();
+                    SQLStoredProc cmd = ctx.createStoredProc();
                     String storedProgName = "test_stored_cursor";
                     try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
                         paramus.add("p_param1", "FTW")
@@ -504,7 +499,7 @@ public class SQLFactoryTest {
                                         .type(MetaType.CURSOR)
                                         .direction(Param.Direction.OUT)
                                         .build());
-                        cmd.init(conn, storedProgName).execSQL(paramus.get(), usr);
+                        cmd.init(ctx.getCurrentConnection(), storedProgName).execSQL(paramus.get(), ctx.getCurrentUser());
                     }
                     try(Paramus paramus = Paramus.set(cmd.getParams())) {
                         resultSet = paramus.getParamValue("p_param2", ResultSet.class);
@@ -573,9 +568,9 @@ public class SQLFactoryTest {
                             .build(),
                     OraContext.class);
 
-            String rslt = contextLocal.execBatch(new SQLActionScalar<String>() {
+            String rslt = contextLocal.execBatch(new SQLActionScalar0<String>() {
                 @Override
-                public String exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public String exec(SQLContext ctx) throws Exception {
                     String sql = "SELECT * FROM (\n" +
                             "        SELECT pgng$wrpr0.*, ROWNUM rnum$pgng\n" +
                             "          FROM ( with \n" +
@@ -707,9 +702,9 @@ public class SQLFactoryTest {
                     params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
                     Var var = new Var();
-                    context.createCursor()
-                            .init(conn, sql, params)
-                            .fetch(usr, rs->{
+                    ctx.createCursor()
+                            .init(ctx.getCurrentConnection(), sql, params)
+                            .fetch(ctx.getCurrentUser(), rs->{
                                 var.iummy++;
                                 return true;
                             });
@@ -738,9 +733,9 @@ public class SQLFactoryTest {
                     .build(),
                 OraContext.class);
 
-            String rslt = contextLocal.execBatch(new SQLActionScalar<String>() {
+            String rslt = contextLocal.execBatch(new SQLActionScalar0<String>() {
                 @Override
-                public String exec(SQLContext context, Connection conn, User usr) throws Exception {
+                public String exec(SQLContext ctx) throws Exception {
                     String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
 
                     int cnt = 0;
@@ -773,9 +768,9 @@ public class SQLFactoryTest {
                     params.add(Param.builder().name("paging$offset").value(0).type(MetaType.INTEGER).build());
                     params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
                     Var var = new Var();
-                    context.createCursor()
-                            .init(conn, sql, params)
-                            .fetch(usr, rs->{
+                    ctx.createCursor()
+                            .init(ctx.getCurrentConnection(), sql, params)
+                            .fetch(ctx.getCurrentUser(), rs->{
                                 var.iummy++;
                                 return true;
                             });
@@ -793,7 +788,7 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandOpenCursor4() throws Exception {
 
-        SQLContext ctx = DbContextFactory.createApache(
+        SQLContext context = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -804,7 +799,7 @@ public class SQLFactoryTest {
                 OraContext.class);
 
 
-        String rslt = ctx.execBatch((SQLAction<BioCursor, String>) (context, conn, cur, usr) -> {
+        String rslt = context.execBatch((ctx) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
 
@@ -839,22 +834,22 @@ public class SQLFactoryTest {
             params.add(Param.builder().name("paging$last").value(25).type(MetaType.INTEGER).build());
 
             Var var = new Var();
-            context.createCursor()
-                    .init(conn, sql, params)
-                    .fetch(usr, rs->{
+            ctx.createCursor()
+                    .init(ctx.getCurrentConnection(), sql, params)
+                    .fetch(ctx.getCurrentUser(), rs->{
                         var.iummy++;
                         return true;
                     });
             return ""+cnt;
 
-        }, null, null);
+        }, null);
         //response;
     }
 
     @Test(enabled = false)
     public void testSQLCommandOpenCursor5() throws Exception {
 
-        SQLContext ctx = DbContextFactory.createApache(
+        SQLContext context = DbContextFactory.createApache(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -864,18 +859,18 @@ public class SQLFactoryTest {
                         .build(),
                 OraContext.class);
 
-        String rslt = ctx.execBatch((context1, conn, cur, usr) -> {
+        String rslt = context.execBatch((ctx) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("333.sql"));
 
             List<Param> params = new ArrayList<>();
             params.add(Param.builder().name("p_rpt_uid").value("4F923F3C7A395D05E0531E32A8C06A1D").type(MetaType.STRING).build());
 
-            return context1.createCursor()
-                    .init(conn, sql, params)
-                    .scalar(usr, "state_desc", String.class, null);
+            return ctx.createCursor()
+                    .init(ctx.getCurrentConnection(), sql, params)
+                    .scalar(ctx.getCurrentUser(), "state_desc", String.class, null);
 
-        }, null, null);
+        }, null);
 
         Assert.assertTrue(rslt.length() > 0);
     }
@@ -901,15 +896,15 @@ public class SQLFactoryTest {
                 OraContext.class);
 
 
-        String rslt = ctx.execBatch((SQLAction<BioCursor, String>) (context, conn, cur, usr) -> {
+        String rslt = ctx.execBatch((context) -> {
 
             String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("222.sql"));
 
             List<Param> params = new ArrayList<>();
             TestROject r =  context.createCursor()
-                    .init(conn, sql, params).firstBean(usr, TestROject.class);
+                    .init(context.getCurrentConnection(), sql, params).firstBean(context.getCurrentUser(), TestROject.class);
             return r.fname;
-        }, null, null);
+        }, null);
         Assert.assertEquals(rslt, "qwe");
     }
 

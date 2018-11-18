@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
 import ru.bio4j.ng.service.api.BioAppModule;
-import ru.bio4j.ng.service.types.BioCursorDeclaration;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.service.types.CursorParser;
 import ru.bio4j.ng.model.transport.BioRequest;
@@ -44,8 +43,8 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     private ModuleProvider moduleProvider;
 
 
-    private BioCursor getCursorFromFileSystem(String bioCode, User usr) throws Exception {
-        BioCursor cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
+    private BioSQLDefinition getCursorFromFileSystem(String bioCode, User usr) throws Exception {
+        BioSQLDefinition cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
         if (cursor == null) {
             cursor = CursorParser.pars(configProvider.getConfig().getContentResolverPath(), bioCode);
             cacheService.put(CacheName.CURSOR, bioCode.toLowerCase(), cursor);
@@ -53,18 +52,18 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
         return cursor;
     }
 
-    private BioCursor getCursorFromModule(String moduleKey, String bioCode, User usr) throws Exception {
+    private BioSQLDefinition getCursorFromModule(String moduleKey, String bioCode, User usr) throws Exception {
         BioAppModule module = moduleProvider.getAppModule(moduleKey);
         if(module == null)
             throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
 
-        BioCursor cursor = module.getCursor(bioCode);
+        BioSQLDefinition cursor = module.getCursor(bioCode);
         return cursor;
     }
 
     @Override
-    public BioCursor getCursor(String moduleKey, String bioCode, User usr) throws Exception {
-        BioCursor cursor = getCursorFromFileSystem(bioCode, usr);
+    public BioSQLDefinition getCursor(String moduleKey, String bioCode, User usr) throws Exception {
+        BioSQLDefinition cursor = getCursorFromFileSystem(bioCode, usr);
         if(cursor == null)
             cursor = getCursorFromModule(moduleKey, bioCode, usr);
 
@@ -75,14 +74,14 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     }
 
     @Override
-    public BioCursor getCursor(String moduleKey, String bioCode) throws Exception {
+    public BioSQLDefinition getCursor(String moduleKey, String bioCode) throws Exception {
         return getCursor(moduleKey, bioCode, null);
     }
 
     @Override
-    public BioCursor getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
+    public BioSQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
-        BioCursor cursor = getCursor(moduleKey, bioCode, bioRequest.getUser());
+        BioSQLDefinition cursor = getCursor(moduleKey, bioCode, bioRequest.getUser());
 
 //        if(cursor != null)
 //            applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());

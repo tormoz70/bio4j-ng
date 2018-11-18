@@ -1,19 +1,14 @@
 package ru.bio4j.ng.database.commons;
 
-import org.apache.tomcat.jdbc.pool.PoolProperties;
-
-import java.lang.reflect.Constructor;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
 import javax.sql.DataSource;
 
@@ -31,6 +26,26 @@ public abstract class DbContextAbstract implements SQLContext {
     protected DbContextAbstract(final DataSource cpool, final SQLConnectionPoolConfig config) throws Exception {
         this.cpool = cpool;
         this.config = config;
+    }
+
+    private ThreadLocal<User> threadLocalUser = new  ThreadLocal<>();
+
+    public User getCurrentUser() {
+        return threadLocalUser.get();
+    }
+
+    private void setCurrentUser(User user) {
+        threadLocalUser.set(user);
+    }
+
+    private ThreadLocal<Connection> threadLocalConnection = new  ThreadLocal<>();
+
+    public Connection getCurrentConnection() {
+        return threadLocalConnection.get();
+    }
+
+    private void setCurrentConnection(Connection conn) {
+        threadLocalConnection.set(conn);
     }
 
     @Override
@@ -64,6 +79,8 @@ public abstract class DbContextAbstract implements SQLContext {
         while(connectionPass < CONNECTION_TRY_COUNT) {
             connectionPass++;
             conn = this.cpool.getConnection();
+            setCurrentConnection(conn);
+            setCurrentUser(user);
             //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
             if (conn.isClosed() || !conn.isValid(5)) {
                 LOG.debug("Connection is not valid or closed...");
@@ -95,13 +112,13 @@ public abstract class DbContextAbstract implements SQLContext {
      * иначе транзакция откатывается.
      */
     @Override
-    public <P, R> R execBatch (final SQLAction<P, R> batch, final P param, final User usr) throws Exception {
+    public <P, R> R execBatch (final SQLActionScalar1<P, R> batch, final P param, final User usr) throws Exception {
         R result = null;
         try(Connection conn = this.getConnection(usr)){
             conn.setAutoCommit(false);
             try {
                 if (batch != null)
-                    result = batch.exec(this, conn, param, usr);
+                    result = batch.exec(this, param);
                 conn.commit();
             } catch (Exception e) {
                 if (conn != null)
@@ -109,25 +126,37 @@ public abstract class DbContextAbstract implements SQLContext {
                         conn.rollback();
                     } catch (Exception e1) {}
                 throw e;
+            } finally {
+                setCurrentUser(null);
+                setCurrentConnection(null);
             }
         }
         return result;
     }
 
     @Override
-    public void execBatch (final SQLActionVoid batch, final User usr) throws Exception {
-        execBatch((context, conn, param, u) -> {
+    public void execBatch (final SQLActionVoid0 batch, final User usr) throws Exception {
+        execBatch((context, param) -> {
             if (batch != null)
-                batch.exec(context, conn, u);
+                batch.exec(context);
             return null;
         }, null, usr);
     }
 
     @Override
-    public <R> R execBatch (final SQLActionScalar<R> batch, final User usr) throws Exception {
-        return execBatch((context, conn, param, u) -> {
+    public <P> void execBatch (final SQLActionVoid1 batch, final P param, final User usr) throws Exception {
+        execBatch((context, prm) -> {
             if (batch != null)
-                return batch.exec(context, conn, u);
+                batch.exec(context, prm);
+            return null;
+        }, param, usr);
+    }
+
+    @Override
+    public <R> R execBatch (final SQLActionScalar0<R> batch, final User usr) throws Exception {
+        return execBatch((context, p) -> {
+            if (batch != null)
+                return batch.exec(context);
             return null;
         }, null, usr);
     }

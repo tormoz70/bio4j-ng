@@ -8,8 +8,8 @@ public interface ContentResolver extends BioService {
 
     SQLContext getSQLContext(String moduleKey) throws Exception;
 
-    BioCursor getCursor(String moduleKey, String bioCode, User usr) throws Exception;
-    BioCursor getCursor(String moduleKey, String bioCode) throws Exception;
-    BioCursor getCursor(String moduleKey, BioRequest bioRequest) throws Exception;
+    BioSQLDefinition getCursor(String moduleKey, String bioCode, User usr) throws Exception;
+    BioSQLDefinition getCursor(String moduleKey, String bioCode) throws Exception;
+    BioSQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception;
 
 }

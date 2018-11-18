@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public interface BioCursor extends Serializable {
+public interface BioSQLDefinition extends Serializable {
 
     String getExportTitle();
     void setExportTitle(String exportTitle);

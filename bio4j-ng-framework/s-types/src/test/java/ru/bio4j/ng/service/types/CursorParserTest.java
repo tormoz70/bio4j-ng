@@ -1,12 +1,11 @@
 package ru.bio4j.ng.service.types;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.service.api.BioCursor;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
 
 
 import java.io.InputStream;
@@ -18,7 +17,7 @@ public class CursorParserTest {
     public void toStringTest() throws Exception {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("rcard.xml");
         Document document = Utl.loadXmlDocument(inputStream);
-        BioCursor cursor = CursorParser.pars(null, document, "eve.rcard");
+        BioSQLDefinition cursor = CursorParser.pars(null, document, "eve.rcard");
         String out = cursor.toString();
         System.out.println(out);
     }
