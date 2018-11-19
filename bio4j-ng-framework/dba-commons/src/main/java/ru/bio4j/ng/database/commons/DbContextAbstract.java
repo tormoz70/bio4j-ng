@@ -28,20 +28,33 @@ public abstract class DbContextAbstract implements SQLContext {
         this.config = config;
     }
 
-    public User getCurrentUser() {
-        return DbContextThreadHolder.getCurrentUser();
+    private static class ThreadContext {
+        public User user;
+        public Connection connection;
     }
 
-    private void setCurrentUser(User user) {
-        DbContextThreadHolder.setCurrentUser(user);
+    public User getCurrentUser() {
+        return ThreadContextHolder.instance().getCurrentUser();
     }
+
+//    private void setCurrentUser(User user) {
+//        DbContextThreadHolder.setCurrentUser(user);
+//    }
 
     public Connection getCurrentConnection() {
-        return DbContextThreadHolder.getCurrentConnection();
+        return ThreadContextHolder.instance().getCurrentConnection();
     }
 
-    private void setCurrentConnection(Connection conn) {
-        DbContextThreadHolder.setCurrentConnection(conn);
+//    private void setCurrentConnection(Connection conn) {
+//        DbContextThreadHolder.setCurrentConnection(conn);
+//    }
+
+    private void setCurrentContext(User user, Connection conn) {
+        ThreadContextHolder.instance().setContext(user, conn);
+    }
+
+    private void closeCurrentContext() {
+        ThreadContextHolder.instance().close();
     }
 
     @Override
@@ -77,8 +90,6 @@ public abstract class DbContextAbstract implements SQLContext {
             conn = this.cpool.getConnection();
             //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
             if (conn.isClosed() || !conn.isValid(5)) {
-                setCurrentConnection(null);
-                setCurrentUser(null);
                 LOG.debug("Connection is not valid or closed...");
                 conn = null;
                 ((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
@@ -87,10 +98,7 @@ public abstract class DbContextAbstract implements SQLContext {
                     Thread.sleep(CONNECTION_AFTER_FAIL_PAUSE * 1000);
                 } catch (InterruptedException e) {}
             } else {
-                setCurrentConnection(conn);
-                setCurrentUser(user);
-                Connection connTest = getCurrentConnection();
-                LOG.debug("Connection \""+connTest+"\" is ok...");
+                LOG.debug("Connection is ok...");
                 break;
             }
         }
@@ -115,19 +123,19 @@ public abstract class DbContextAbstract implements SQLContext {
         R result = null;
         try(Connection conn = this.getConnection(usr)){
             conn.setAutoCommit(false);
+            setCurrentContext(usr, conn);
             try {
                 if (batch != null)
                     result = batch.exec(this, param);
-                conn.commit();
+                getCurrentConnection().commit();
             } catch (Exception e) {
-                if (conn != null)
+                if (getCurrentConnection() != null)
                     try {
-                        conn.rollback();
+                        getCurrentConnection().rollback();
                     } catch (Exception e1) {}
                 throw e;
             } finally {
-                setCurrentUser(null);
-                setCurrentConnection(null);
+                closeCurrentContext();
             }
         }
         return result;

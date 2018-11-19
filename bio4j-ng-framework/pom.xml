@@ -308,11 +308,11 @@
                 <version>${ehcache.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${postgresql-jdbc.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>postgresql</groupId>-->
+                <!--<artifactId>postgresql</artifactId>-->
+                <!--<version>${postgresql-jdbc.version}</version>-->
+            <!--</dependency>-->
 
             <!--jersey-->
             <dependency>
@@ -490,6 +490,9 @@
     </dependencies>
 
     <modules>
+
+        <module>ojdbc8-osgi</module>
+
         <!-- Common services -->
 		<module>ext-libs</module>
         <module>jetty-osgi-boot</module>

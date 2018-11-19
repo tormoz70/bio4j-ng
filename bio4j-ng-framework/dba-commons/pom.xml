@@ -15,49 +15,50 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>
-                            com.sun.security.*;resolution:="optional",
-                            com.sun.jna.*;resolution:="optional",
-                            sun.security.*;resolution:="optional",
-                            sun.reflect.generics.*;resolution:="optional",
-                            javax.*;resolution:="optional",
-                            oracle.*;resolution:="optional",
-                            com.oracle.common.*;resolution:="optional",
-                            org.objectweb.*;resolution:="optional",
-                            org.postgresql.*;resolution:="optional",
-                            waffle.windows.auth.*;resolution:="optional",
-                            *</Import-Package>
-                        <Embed-Dependency>*;scope=compile</Embed-Dependency>
-                        <!--<Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*;org.apache.http.*</Export-Package>-->
-                        <Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*</Export-Package>
-                        <remoteOBR />
-                    </instructions>
-                </configuration>
+                <!--<configuration>-->
+                    <!--<instructions>-->
+                        <!--<Import-Package>-->
+                            <!--com.sun.security.*;resolution:="optional",-->
+                            <!--com.sun.jna.*;resolution:="optional",-->
+                            <!--sun.security.*;resolution:="optional",-->
+                            <!--sun.reflect.generics.*;resolution:="optional",-->
+                            <!--*</Import-Package>-->
+                        <!--&lt;!&ndash;org.objectweb.*;resolution:="optional",&ndash;&gt;-->
+                        <!--&lt;!&ndash;waffle.windows.auth.*;resolution:="optional",&ndash;&gt;-->
+                        <!--&lt;!&ndash;javax.*;resolution:="optional",&ndash;&gt;-->
+                        <!--&lt;!&ndash;oracle.*;resolution:="optional",&ndash;&gt;-->
+                        <!--&lt;!&ndash;com.oracle.common.*;resolution:="optional",&ndash;&gt;-->
+                        <!--&lt;!&ndash;org.postgresql.*;resolution:="optional",&ndash;&gt;-->
+                        <!--<Embed-Dependency>*;scope=compile</Embed-Dependency>-->
+                        <!--&lt;!&ndash;<Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*;org.apache.http.*</Export-Package>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<Export-Package>ru.bio4j.ng.database.commons.*;oracle.jdbc.*</Export-Package>&ndash;&gt;-->
+                        <!--<Export-Package>ru.bio4j.ng.database.commons.*</Export-Package>-->
+                        <!--<remoteOBR />-->
+                    <!--</instructions>-->
+                <!--</configuration>-->
             </plugin>
         </plugins>
     </build>
     <dependencies>
 
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-jdbc</artifactId>-->
+            <!--<version>${tomcat-jdbc.version}</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-juli</artifactId>-->
+            <!--<version>${tomcat-juli.version}</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
             <version>${tomcat-jdbc.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-juli</artifactId>
-            <version>${tomcat-juli.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>${ojdbc.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -74,7 +75,14 @@
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>compile</scope>
+            <version>${postgresql-jdbc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc8-osgi</artifactId>
+            <version>${ojdbc.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     	  <dependency>

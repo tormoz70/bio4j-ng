@@ -50,13 +50,19 @@
             <version>${tomcat-juli.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.oracle</groupId>-->
+            <!--<artifactId>ojdbc8</artifactId>-->
+            <!--<version>${ojdbc.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>com.oracle</groupId>
-            <artifactId>ojdbc8</artifactId>
+            <artifactId>ojdbc8-osgi</artifactId>
             <version>${ojdbc.version}</version>
             <scope>provided</scope>
         </dependency>
-
 
     	<dependency>
             <groupId>${project.groupId}</groupId>
