@@ -57,7 +57,7 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
         if(module == null)
             throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
 
-        BioSQLDefinition cursor = module.getCursor(bioCode);
+        BioSQLDefinition cursor = module.getSQLDefinition(bioCode);
         return cursor;
     }
 

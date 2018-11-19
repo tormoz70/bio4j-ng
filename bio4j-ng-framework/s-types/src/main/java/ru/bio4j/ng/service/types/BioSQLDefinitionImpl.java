@@ -11,7 +11,7 @@ import ru.bio4j.ng.service.api.*;
 
 import java.util.*;
 
-public class BioCursorDeclaration implements BioSQLDefinition {
+public class BioSQLDefinitionImpl implements BioSQLDefinition {
 
     public String getExportTitle() {
         return exportTitle;
@@ -174,7 +174,7 @@ public class BioCursorDeclaration implements BioSQLDefinition {
 
     private final Map<SQLType, SQLDef> sqlDefs = new HashMap<>();
 
-    public BioCursorDeclaration(String bioCode) {
+    public BioSQLDefinitionImpl(String bioCode) {
         this.bioCode = bioCode;
     }
 

@@ -448,6 +448,7 @@ public class SQLFactoryTest {
         }
     }
 
+
     private static <T> T getParamValue(List<Param> params, Class<T> type, String paramName) throws SQLException {
         try {
             return Paramus.set(params).getValueByName(type, paramName, true);

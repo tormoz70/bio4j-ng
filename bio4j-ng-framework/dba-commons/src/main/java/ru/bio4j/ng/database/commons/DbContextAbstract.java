@@ -28,24 +28,20 @@ public abstract class DbContextAbstract implements SQLContext {
         this.config = config;
     }
 
-    private ThreadLocal<User> threadLocalUser = new  ThreadLocal<>();
-
     public User getCurrentUser() {
-        return threadLocalUser.get();
+        return DbContextThreadHolder.getCurrentUser();
     }
 
     private void setCurrentUser(User user) {
-        threadLocalUser.set(user);
+        DbContextThreadHolder.setCurrentUser(user);
     }
 
-    private ThreadLocal<Connection> threadLocalConnection = new  ThreadLocal<>();
-
     public Connection getCurrentConnection() {
-        return threadLocalConnection.get();
+        return DbContextThreadHolder.getCurrentConnection();
     }
 
     private void setCurrentConnection(Connection conn) {
-        threadLocalConnection.set(conn);
+        DbContextThreadHolder.setCurrentConnection(conn);
     }
 
     @Override
@@ -79,10 +75,10 @@ public abstract class DbContextAbstract implements SQLContext {
         while(connectionPass < CONNECTION_TRY_COUNT) {
             connectionPass++;
             conn = this.cpool.getConnection();
-            setCurrentConnection(conn);
-            setCurrentUser(user);
             //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
             if (conn.isClosed() || !conn.isValid(5)) {
+                setCurrentConnection(null);
+                setCurrentUser(null);
                 LOG.debug("Connection is not valid or closed...");
                 conn = null;
                 ((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
@@ -91,7 +87,10 @@ public abstract class DbContextAbstract implements SQLContext {
                     Thread.sleep(CONNECTION_AFTER_FAIL_PAUSE * 1000);
                 } catch (InterruptedException e) {}
             } else {
-                LOG.debug("Connection is ok...");
+                setCurrentConnection(conn);
+                setCurrentUser(user);
+                Connection connTest = getCurrentConnection();
+                LOG.debug("Connection \""+connTest+"\" is ok...");
                 break;
             }
         }
