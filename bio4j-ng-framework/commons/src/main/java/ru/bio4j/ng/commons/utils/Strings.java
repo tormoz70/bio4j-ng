@@ -1,9 +1,14 @@
 package ru.bio4j.ng.commons.utils;
 
+import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 
 
@@ -13,6 +18,8 @@ import java.util.*;
  *
  */
 public class Strings {
+    private static final Logger LOG = LoggerFactory.getLogger(Strings.class);
+
 	/**
 	 * Проверяет строку на null или пустую (length == 0)
 	 * @param str 
@@ -215,4 +222,17 @@ public class Strings {
         }
         return null;
     }
+
+    public static String loadFileFromRes(final BundleContext context, final String fileName) throws Exception {
+        URL url = context.getBundle().getResource(fileName);
+        if (url != null) {
+            LOG.debug("Loading cursor spec from \"{}\"", fileName + ".xml");
+            try (InputStream inputStream = url.openStream()) {
+                String result = Utl.readStream(inputStream);
+                return result;
+            }
+        }
+        return null;
+    }
+
 }

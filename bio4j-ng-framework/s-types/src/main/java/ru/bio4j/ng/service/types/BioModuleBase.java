@@ -20,29 +20,6 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     protected abstract BundleContext bundleContext();
 
-//    protected static void applyCurrentUserParams(final User usr, final Collection<BioSQLDefinitionImpl.SQLDef> sqlDefs) {
-//        if (usr != null && sqlDefs != null) {
-//            for (BioSQLDefinitionImpl.SQLDef sqlDef : sqlDefs) {
-//                if (sqlDef != null)
-//                    try (Paramus p = Paramus.set(sqlDef.getParamDeclaration())) {
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_GRANTS, usr.getGrants(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_IP, usr.getRemoteIP(), Param.Direction.IN, true);
-//                        p.setValue(SrvcUtils.PARAM_CURUSR_CLIENT, usr.getRemoteClient(), Param.Direction.IN, true);
-//                    }
-//            }
-//        }
-//    }
-
-//    protected static void applyBioParams(final List<Param> bioParams, Collection<BioSQLDefinitionImpl.SQLDef> sqlDefs) throws Exception {
-//        for(BioSQLDefinitionImpl.SQLDef sqlDef : sqlDefs) {
-//            if(sqlDef != null)
-//                sqlDef.setParams(bioParams);
-//        }
-//    }
-
     private void prepareSQL(BioSQLDefinitionImpl sqlDefinition) throws Exception {
         SQLContext context = this.getSQLContext();
         context.execBatch((ctx) -> {
@@ -72,22 +49,8 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
         prepareSQL(cursor);
-//        applyCurrentUserParams(usr, cursor.sqlDefs());
         return cursor;
     }
-
-//    public BioSQLDefinitionImpl getSQLDefinition(String bioCode) throws Exception {
-//        return getSQLDefinition(bioCode, null);
-//    }
-
-//    public BioSQLDefinitionImpl getSQLDefinition(BioRequest bioRequest) throws Exception {
-//        String bioCode = bioRequest.getBioCode();
-//        BioSQLDefinitionImpl cursor = getSQLDefinition(bioCode, bioRequest.getUser());
-//
-//        //applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
-//
-//        return cursor;
-//    }
 
     private SQLContext sqlContext = null;
     private boolean localSQLContextIsInited = false;
