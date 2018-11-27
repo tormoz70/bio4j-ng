@@ -23,7 +23,7 @@ import java.util.List;
 public class CrudReaderApi {
     protected final static Logger LOG = LoggerFactory.getLogger(CrudReaderApi.class);
 
-    private static final int MAX_RECORDS_FETCH_LIMIT = 2500;
+    private static final int MAX_RECORDS_FETCH_LIMIT = 250000;
 
     private static void preparePkParamValue(final List<Param> params, final Field pkField) throws Exception {
         Param pkParam = Paramus.getParam(params, RestParamNames.GETROW_PARAM_PKVAL);
