@@ -507,16 +507,16 @@
         <module>dba-commons</module>
         <module>dba-oracle</module>
         <module>dba-pgsql</module>
-        <module>sql-context</module>
+        <!--<module>sql-context</module>-->
         <module>ehcache</module>
         <module>content-resolver</module>
-        <module>security-provider</module>
+        <!--<module>security-provider</module>-->
         <module>config</module>
         <module>db-config</module>
         <!--bio-modules-->
-        <module>module-provider</module>
-        <module>security-module-x</module>
-        <module>fcloud-provider</module>
+        <!--<module>module-provider</module>-->
+        <!--<module>security-module-x</module>-->
+        <!--<module>fcloud-provider</module>-->
         <module>fcloud-h2registry</module>
 
     </modules>

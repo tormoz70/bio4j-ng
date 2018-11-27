@@ -12,7 +12,7 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
-import ru.bio4j.ng.service.api.BioAppModule;
+import ru.bio4j.ng.service.api.BioAppService;
 import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.RestParamNames;
 import ru.bio4j.ng.service.types.BioQueryParams;
@@ -25,7 +25,7 @@ public class RestApiAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(RestApiAdapter.class);
 
     public static ABeanPage loadPage(
-            final BioAppModule module,
+            final BioAppService module,
             final String bioCode,
             final List<Param> params,
             final User user,
@@ -43,7 +43,7 @@ public class RestApiAdapter {
     }
 
     public static ABeanPage loadPage(
-            final BioAppModule module,
+            final BioAppService module,
             final String bioCode,
             final List<Param> params,
             final User user,
@@ -54,7 +54,7 @@ public class RestApiAdapter {
     public static ABeanPage loadPage(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module,
+            final BioAppService module,
             final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         final List<Param> params = queryParams.bioParams;
@@ -80,14 +80,14 @@ public class RestApiAdapter {
     public static ABeanPage loadPage(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module) throws Exception {
+            final BioAppService module) throws Exception {
         return loadPage(bioCode, request, module, false);
     }
 
     public static ABean calcTotalCount(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module) throws Exception {
+            final BioAppService module) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
         final List<Param> params = queryParams.bioParams;
         final SQLContext context = module.getSQLContext();
@@ -112,7 +112,7 @@ public class RestApiAdapter {
     }
 
     public static <T> List<T> loadPageExt(
-            final BioAppModule module,
+            final BioAppService module,
             final String bioCode,
             final List<Param> params,
             final User user,
@@ -129,7 +129,7 @@ public class RestApiAdapter {
     }
 
     public static <T> List<T> loadPageExt(
-            final BioAppModule module,
+            final BioAppService module,
             final String bioCode,
             final List<Param> params,
             final User user,
@@ -141,7 +141,7 @@ public class RestApiAdapter {
     public static <T> List<T> loadPageExt(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module,
+            final BioAppService module,
             final Class<T> beanType,
             final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((BioWrappedRequest)request).getBioQueryParams();
@@ -160,14 +160,14 @@ public class RestApiAdapter {
     public static <T> List<T> loadPageExt(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module,
+            final BioAppService module,
             final Class<T> beanType) throws Exception {
         return loadPageExt(bioCode, request, module, beanType, false);
     }
 
     public static ABean getMetadata(
             final String bioCode,
-            BioAppModule module) throws Exception {
+            BioAppService module) throws Exception {
         ABean rslt = new ABean();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         StoreMetadata metadata = new StoreMetadata();
@@ -188,7 +188,7 @@ public class RestApiAdapter {
 
     public static StoreMetadata getMetadataOld(
             final String bioCode,
-            BioAppModule module) throws Exception {
+            BioAppService module) throws Exception {
 
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         StoreMetadata metadata = new StoreMetadata();
@@ -202,7 +202,7 @@ public class RestApiAdapter {
     public static ABean loadBean(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module,
+            final BioAppService module,
             final Object id) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
@@ -220,7 +220,7 @@ public class RestApiAdapter {
     public static StringBuilder loadJson(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module) throws Exception {
+            final BioAppService module) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -232,7 +232,7 @@ public class RestApiAdapter {
     public static List<ABean> saveBeans(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module,
+            final BioAppService module,
             final List<ABean> rows) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
@@ -244,7 +244,7 @@ public class RestApiAdapter {
     public static ABean deleteBeans(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module,
+            final BioAppService module,
             final List<Object> ids) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
@@ -259,7 +259,7 @@ public class RestApiAdapter {
     public static void exec(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module) throws Exception {
+            final BioAppService module) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -270,7 +270,7 @@ public class RestApiAdapter {
     public static void exec(
             final String bioCode,
             final Object params,
-            final BioAppModule module,
+            final BioAppService module,
             final User user) throws Exception {
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -292,7 +292,7 @@ public class RestApiAdapter {
     public static void execForEach(
             final String bioCode,
             final HttpServletRequest request,
-            final BioAppModule module) throws Exception {
+            final BioAppService module) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);

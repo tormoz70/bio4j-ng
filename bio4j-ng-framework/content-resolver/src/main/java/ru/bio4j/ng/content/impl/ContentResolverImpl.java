@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
-import ru.bio4j.ng.service.api.BioAppModule;
+import ru.bio4j.ng.service.api.BioAppService;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.service.types.CursorParser;
 import ru.bio4j.ng.model.transport.BioRequest;
@@ -39,11 +39,11 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     private ConfigProvider configProvider;
     @Requires
     private CacheService cacheService;
-    @Requires
-    private ModuleProvider moduleProvider;
+//    @Requires
+//    private ModuleProvider moduleProvider;
 
 
-    private BioSQLDefinition getCursorFromFileSystem(String bioCode, User usr) throws Exception {
+    private BioSQLDefinition getCursorFromFileSystem(String bioCode) throws Exception {
         BioSQLDefinition cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
         if (cursor == null) {
             cursor = CursorParser.pars(configProvider.getConfig().getContentResolverPath(), bioCode);
@@ -52,20 +52,20 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
         return cursor;
     }
 
-    private BioSQLDefinition getCursorFromModule(String moduleKey, String bioCode, User usr) throws Exception {
-        BioAppModule module = moduleProvider.getAppModule(moduleKey);
-        if(module == null)
-            throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
-
-        BioSQLDefinition cursor = module.getSQLDefinition(bioCode);
-        return cursor;
-    }
+//    private BioSQLDefinition getCursorFromModule(String moduleKey, String bioCode, User usr) throws Exception {
+//        BioAppService module = moduleProvider.getAppModule(moduleKey);
+//        if(module == null)
+//            throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
+//
+//        BioSQLDefinition cursor = module.getSQLDefinition(bioCode);
+//        return cursor;
+//    }
 
     @Override
-    public BioSQLDefinition getCursor(String moduleKey, String bioCode, User usr) throws Exception {
-        BioSQLDefinition cursor = getCursorFromFileSystem(bioCode, usr);
-        if(cursor == null)
-            cursor = getCursorFromModule(moduleKey, bioCode, usr);
+    public BioSQLDefinition getCursor(String moduleKey, String bioCode) throws Exception {
+        BioSQLDefinition cursor = getCursorFromFileSystem(bioCode);
+//        if(cursor == null)
+//            cursor = getCursorFromModule(moduleKey, bioCode, usr);
 
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in file system and module \"%s\"!", bioCode, moduleKey));
@@ -73,15 +73,11 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
         return cursor;
     }
 
-    @Override
-    public BioSQLDefinition getCursor(String moduleKey, String bioCode) throws Exception {
-        return getCursor(moduleKey, bioCode, null);
-    }
 
     @Override
     public BioSQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
-        BioSQLDefinition cursor = getCursor(moduleKey, bioCode, bioRequest.getUser());
+        BioSQLDefinition cursor = getCursor(moduleKey, bioCode);
 
 //        if(cursor != null)
 //            applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
@@ -89,13 +85,13 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
         return cursor;
     }
 
-    @Override
-    public SQLContext getSQLContext(String moduleKey) throws Exception {
-        BioAppModule module = moduleProvider.getAppModule(moduleKey);
-        if(module == null)
-            throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
-        return module.getSQLContext();
-    }
+//    @Override
+//    public SQLContext getSQLContext(String moduleKey) throws Exception {
+//        BioAppService module = moduleProvider.getAppModule(moduleKey);
+//        if(module == null)
+//            throw new Exception(String.format("Модуле \"%s\" not found in system!", moduleKey));
+//        return module.getSQLContext();
+//    }
 
     @Override
     public void onEvent(Path name, WatchEvent.Kind<Path> kind) {

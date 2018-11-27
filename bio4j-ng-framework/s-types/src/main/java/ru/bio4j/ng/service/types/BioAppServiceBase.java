@@ -15,8 +15,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(BioModuleBase.class);
+public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBase<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(BioAppServiceBase.class);
 
     protected abstract BundleContext bundleContext();
 
@@ -47,7 +47,7 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
     public BioSQLDefinitionImpl getSQLDefinition(String bioCode) throws Exception {
         BioSQLDefinitionImpl cursor = CursorParser.pars(bundleContext(), bioCode);
         if(cursor == null)
-            throw new Exception(String.format("Cursor \"%s\" not found in module \"%s\"!", bioCode, this.getKey()));
+            throw new Exception(String.format("Cursor \"%s\" not found in service \"%s\"!", bioCode, this.getClass().getName()));
         prepareSQL(cursor);
         return cursor;
     }
@@ -56,15 +56,15 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
     private boolean localSQLContextIsInited = false;
     protected synchronized void initSqlContext() throws Exception {
         if(sqlContext == null && !localSQLContextIsInited) {
-            LOG.debug("Start initSqlContext for module \"{}\"...", this.getKey());
+            LOG.debug("Start initSqlContext for service \"{}\"...", this.getClass().getName());
             localSQLContextIsInited = true;
-            LOG.debug("Try to create SQLContext for module \"{}\"...", this.getKey());
+            LOG.debug("Try to create SQLContext for service \"{}\"...", this.getClass().getName());
             sqlContext = createSQLContext();
             if(sqlContext != null)
-                LOG.debug("SQLContext for module \"{}\" CREATED!", this.getKey());
+                LOG.debug("SQLContext for service \"{}\" CREATED!", this.getClass().getName());
             else
-                LOG.debug("SQLContext for module \"{}\" NOT CREATED!", this.getKey());
-            LOG.debug("Exit initSqlContext for module \"{}\".", this.getKey());
+                LOG.debug("SQLContext for service \"{}\" NOT CREATED!", this.getClass().getName());
+            LOG.debug("Exit initSqlContext for service \"{}\".", this.getClass().getName());
         }
     }
 
@@ -77,16 +77,12 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
 
     protected abstract EventAdmin getEventAdmin();
 
-    public abstract String getKey();
-
     protected void fireEventModuleUpdated() throws Exception {
         // Откладываем отправку события чтобы успел инициализироваться логгер
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.schedule(() -> {
-            String selfModuleKey = getKey();
-            LOG.debug("Sending event [bio-module-updated] for module \"{}\"...", selfModuleKey);
+            LOG.debug("Sending event [bio-service-updated] for service \"{}\"...", this.getClass().getName());
             Map<String, Object> props = new HashMap<>();
-            props.put("bioModuleKey", selfModuleKey);
             getEventAdmin().postEvent(new Event("bio-module-updated", props));
             LOG.debug("Event sent.");
         }, 1, TimeUnit.SECONDS);
@@ -97,52 +93,11 @@ public abstract class BioModuleBase<T extends AnConfig> extends BioServiceBase<T
         // Откладываем отправку события чтобы успел инициализироваться логгер
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.schedule(() -> {
-            String selfModuleKey = this.getKey();
-            LOG.debug("Sending event [bio-module-started] for module \"{}\"...", selfModuleKey);
+            LOG.debug("Sending event [bio-service-started] for service \"{}\"...", this.getClass().getName());
             HashMap props = new HashMap();
-            props.put("bioModuleKey", selfModuleKey);
-            this.getEventAdmin().postEvent(new Event("bio-module-started", props));
+            this.getEventAdmin().postEvent(new Event("bio-service-started", props));
             LOG.debug("Event sent.");
         }, 1L, TimeUnit.SECONDS);
     }
 
-    //public abstract User login(final String login) throws Exception;
-
-    private final Map<String, BioHttpRequestProcessor> httpRequestProcessors = new HashMap<>();
-    protected void registerHttpRequestProcessor(String requestType, BioHttpRequestProcessor processor) {
-        if(httpRequestProcessors.containsKey(requestType))
-            throw new IllegalArgumentException(String.format("%s with key \"%s\" already registered!", BioHttpRequestProcessor.class.getSimpleName(), requestType));
-        httpRequestProcessors.put(requestType, processor);
-    }
-    protected void unregisterHttpRequestProcessor(String requestType) {
-        if(httpRequestProcessors.containsKey(requestType))
-            httpRequestProcessors.remove(requestType);
-    }
-
-    public BioHttpRequestProcessor getHttpRequestProcessor(String requestType) {
-        if(httpRequestProcessors.containsKey(requestType))
-            return httpRequestProcessors.get(requestType);
-        return null;
-    }
-
-    private Map<String, BioRouteHandler> routeMap;
-
-    public BioRouteHandler getRouteHandler(String key) {
-        if(routeMap != null && routeMap.containsKey(key))
-            return routeMap.get(key);
-        return null;
-    }
-
-    protected void registerRouteHandler(String key, BioRouteHandler routeHandler) {
-        if(routeMap == null)
-            routeMap = new HashMap<>();
-        if(routeMap.containsKey(key))
-            throw new IllegalArgumentException(String.format("%s with key \"%s\" already registered!", BioRouteHandler.class.getSimpleName(), key));
-        routeMap.put(key, routeHandler);
-    }
-
-    protected void unregisterRouteHandler(String key) {
-        if(routeMap != null && routeMap.containsKey(key))
-            routeMap.remove(key);
-    }
 }

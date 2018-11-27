@@ -12,8 +12,7 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.types.BioModuleBase;
-import ru.bio4j.ng.service.api.SQLContextConfig;
+import ru.bio4j.ng.service.types.BioAppServiceBase;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,26 +25,17 @@ import java.util.List;
 
 @Component(managedservice="fcloud-h2registry.config")
 @Instantiate
-@Provides(specifications = BioFCloudApiModule.class,
+@Provides(specifications = FCloudApi.class,
         properties = {@StaticServiceProperty(
                 name = "bioModuleKey",
                 value = "fcloud-h2registry", // key must be always "fcloud-api" for security module
                 type = "java.lang.String"
         )})
-public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements BioFCloudApiModule {
+public class FCloudApiModuleImpl extends BioAppServiceBase<FCloudConfig> implements FCloudApi {
     private static final Logger LOG = LoggerFactory.getLogger(FCloudApiModuleImpl.class);
 
     @Requires
     private EventAdmin eventAdmin;
-    @Requires
-    private ModuleProvider moduleProvider;
-    @Requires
-    private SecurityProvider securityProvider;
-
-    @Override
-    public String getKey() {
-        return "fcloud-h2registry";
-    }
 
     @Override
     protected EventAdmin getEventAdmin() {
@@ -63,11 +53,6 @@ public class FCloudApiModuleImpl extends BioModuleBase<FCloudConfig> implements 
     @Override
     protected SQLContext createSQLContext() throws Exception {
         return null;
-    }
-
-    @Override
-    public String getDescription() {
-        return "FCloudRegistry module";
     }
 
     private String dbConnectionUrl;

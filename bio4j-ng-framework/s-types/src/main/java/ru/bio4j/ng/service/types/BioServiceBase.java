@@ -1,9 +1,9 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.service.api.BioService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+import ru.bio4j.ng.service.api.BioService;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Dictionary;
@@ -37,11 +37,6 @@ public abstract class BioServiceBase<T> implements BioService {
 
     protected EventAdmin getEventAdmin(){
         return null;
-    }
-
-    @Override
-    public boolean isReady() {
-        return ready;
     }
 
     protected void fireEventConfigUpdated(final String configUpdatedEventName) throws Exception {

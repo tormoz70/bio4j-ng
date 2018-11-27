@@ -226,7 +226,7 @@ public class Strings {
     public static String loadFileFromRes(final BundleContext context, final String fileName) throws Exception {
         URL url = context.getBundle().getResource(fileName);
         if (url != null) {
-            LOG.debug("Loading cursor spec from \"{}\"", fileName + ".xml");
+            LOG.debug("Loading cursor spec from \"{}\"", fileName);
             try (InputStream inputStream = url.openStream()) {
                 String result = Utl.readStream(inputStream);
                 return result;

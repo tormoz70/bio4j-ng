@@ -8,7 +8,7 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.*;
+import ru.bio4j.ng.service.api.BioSecurityService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
@@ -63,16 +63,16 @@ public class WarSecurityFilterBase {
         debug("init - done.");
     }
 
-    protected SecurityProvider securityProvider;
+    protected BioSecurityService securityService;
     protected void initSecurityHandler(ServletContext servletContext) {
-        if(securityProvider == null) {
+        if(securityService == null) {
             try {
-                securityProvider = Utl.getService(servletContext, SecurityProvider.class);
+                securityService = Utl.getService(servletContext, BioSecurityService.class);
             } catch (IllegalStateException e) {
-                securityProvider = null;
+                securityService = null;
             }
         }
-        loginProcessor.setSecurityProvider(securityProvider);
+        loginProcessor.setSecurityService(securityService);
     }
 
     private boolean detectWeAreInPublicAreas(String bioCode) {
@@ -102,7 +102,7 @@ public class WarSecurityFilterBase {
                 debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
                 initSecurityHandler(req.getServletContext());
                 final BioQueryParams qprms = req.getBioQueryParams();
-                if (securityProvider != null) {
+                if (securityService != null) {
                     if (!Strings.isNullOrEmpty(qprms.login)) {
                         User user = loginProcessor.login(qprms);
                         ABean result = buildSuccess(user);

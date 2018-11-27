@@ -10,9 +10,8 @@ import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
-import ru.bio4j.ng.service.api.BioAppModule;
-import ru.bio4j.ng.service.api.FCloudProvider;
-import ru.bio4j.ng.service.api.ModuleProvider;
+import ru.bio4j.ng.service.api.BioAppService;
+import ru.bio4j.ng.service.api.FCloudApi;
 import ru.bio4j.ng.service.types.BioQueryParams;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
 
@@ -26,102 +25,104 @@ public abstract class RestServiceBase {
 
     protected abstract ServletContext getServletContext();
 
-    private ModuleProvider mmoduleProvider;
-    private ModuleProvider getModuleProvider() {
+    protected Class<? extends BioAppService> getBioAppServiceClass() {
+        return BioAppService.class;
+    }
+    protected Class<? extends FCloudApi> getFCloudApiClass() {
+        return FCloudApi.class;
+    }
+
+    private BioAppService mmoduleProvider;
+    protected BioAppService getAppService() {
         if(mmoduleProvider == null)
-            mmoduleProvider = Utl.getService(getServletContext(), ModuleProvider.class);
+            mmoduleProvider = Utl.getService(getServletContext(), getBioAppServiceClass());
         return mmoduleProvider;
     }
 
-    private FCloudProvider fcloudProvider;
-    protected FCloudProvider getFCloudProvider() {
-        if(fcloudProvider == null)
-            fcloudProvider = Utl.getService(getServletContext(), FCloudProvider.class);
-        return fcloudProvider;
-    }
-
-    protected BioAppModule getModule() throws Exception {
-        ModuleProvider moduleProvider = getModuleProvider();
-        return moduleProvider.getAppModule("efond2");
+    private FCloudApi fCloudApi;
+    protected FCloudApi getFCloudApi() {
+        if(fCloudApi == null)
+            fCloudApi = Utl.getService(getServletContext(), getFCloudApiClass());
+        return fCloudApi;
     }
 
     protected ABeanPage _getList(String bioCode, HttpServletRequest request, boolean forceAll) throws Exception {
-        BioAppModule module = getModule();
-        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, module, forceAll);
+        BioAppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, appService, forceAll);
         rslt.setMetadata(null);
         return rslt;
     }
 
     protected ABeanPage _getList(String bioCode, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, module);
+        BioAppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, appService);
         rslt.setMetadata(null);
         return rslt;
     }
 
     protected ABeanPage _getList(String bioCode, List<Param> prms, User user, boolean forceAll, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception {
-        BioAppModule module = getModule();
-        ABeanPage rslt = RestApiAdapter.loadPage(module, bioCode, prms, user, forceAll, filterAndSorter, forceCalcCount);
+        BioAppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, user, forceAll, filterAndSorter, forceCalcCount);
         rslt.setMetadata(null);
         return rslt;
     }
 
     protected ABeanPage _getList(String bioCode, List<Param> prms, User user, boolean forceAll) throws Exception {
-        BioAppModule module = getModule();
-        ABeanPage rslt = RestApiAdapter.loadPage(module, bioCode, prms, user, forceAll);
+        BioAppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, user, forceAll);
         rslt.setMetadata(null);
         return rslt;
     }
 
     protected <T> List<T> _getList(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
-        BioAppModule module = getModule();
-        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz);
+        BioAppService appService = getAppService();
+        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, appService, calzz);
         return rslt;
     }
 
     protected <T> List<T> _getList(String bioCode, HttpServletRequest request, Class<T> calzz, boolean forceAll) throws Exception {
-        BioAppModule module = getModule();
-        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz, forceAll);
+        BioAppService appService = getAppService();
+        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, appService, calzz, forceAll);
         return rslt;
     }
 
     protected <T> T _getFirst(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
-        BioAppModule module = getModule();
-        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, module, calzz, true);
+        BioAppService appService = getAppService();
+        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, appService, calzz, true);
         return rslt.size() > 0 ? rslt.get(0) : null;
     }
 
     protected ABean _getFirst(String bioCode, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, module);
+        BioAppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, appService);
         return rslt.getRows().size() > 0 ? rslt.getRows().get(0) : null;
     }
 
     protected String _getJson(String bioCode, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, module);
+        BioAppService appService = getAppService();
+        StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, appService);
         return rslt.toString();
     }
 
     protected ABean _getTotalCount(String bioCode, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        ABean rslt = RestApiAdapter.calcTotalCount(bioCode, request, module);
+        BioAppService appService = getAppService();
+        ABean rslt = RestApiAdapter.calcTotalCount(bioCode, request, appService);
         return rslt;
     }
 
     protected StoreMetadata _getMetadataOld(String bioCode) throws Exception {
-        BioAppModule module = getModule();
-        return RestApiAdapter.getMetadataOld(bioCode, module);
+        BioAppService appService = getAppService();
+        return RestApiAdapter.getMetadataOld(bioCode, appService);
     }
 
     protected ABean _getMetadata(String bioCode) throws Exception {
-        BioAppModule module = this.getModule();
-        return RestApiAdapter.getMetadata(bioCode, module);
+        BioAppService appService = getAppService();
+        return RestApiAdapter.getMetadata(bioCode, appService);
     }
 
     protected ABean _getSingle(String bioCode, Object id, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        return RestApiAdapter.loadBean(bioCode, request, module, id);
+        BioAppService appService = getAppService();
+        return RestApiAdapter.loadBean(bioCode, request, appService, id);
     }
 
     protected static ABean _getSuccess() {
@@ -209,18 +210,18 @@ public abstract class RestServiceBase {
     }
 
     protected ABean _delete(String bioCode, List<Object> ids, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        return RestApiAdapter.deleteBeans(bioCode, request, module, ids);
+        BioAppService appService = getAppService();
+        return RestApiAdapter.deleteBeans(bioCode, request, appService, ids);
     }
 
     protected void _exec(String bioCode, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        RestApiAdapter.exec(bioCode, request, module);
+        BioAppService appService = getAppService();
+        RestApiAdapter.exec(bioCode, request, appService);
     }
 
     protected List<ABean> _save(String bioCode, List<ABean> abeans, HttpServletRequest request) throws Exception {
-        BioAppModule module = getModule();
-        return RestApiAdapter.saveBeans(bioCode, request, module, abeans);
+        BioAppService appService = getAppService();
+        return RestApiAdapter.saveBeans(bioCode, request, appService, abeans);
     }
 
 }
