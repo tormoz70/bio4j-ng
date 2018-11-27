@@ -13,6 +13,7 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.BioAppServiceBase;
+import ru.bio4j.ng.service.types.BioServiceBase;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +26,8 @@ import java.util.List;
 
 @Component(managedservice="fcloud-h2registry.config")
 @Instantiate
-@Provides(specifications = FCloudApi.class,
-        properties = {@StaticServiceProperty(
-                name = "bioModuleKey",
-                value = "fcloud-h2registry", // key must be always "fcloud-api" for security module
-                type = "java.lang.String"
-        )})
-public class FCloudApiModuleImpl extends BioAppServiceBase<FCloudConfig> implements FCloudApi {
+@Provides(specifications = FCloudApi.class)
+public class FCloudApiModuleImpl extends BioServiceBase<FCloudConfig> implements FCloudApi {
     private static final Logger LOG = LoggerFactory.getLogger(FCloudApiModuleImpl.class);
 
     @Requires
@@ -42,17 +38,13 @@ public class FCloudApiModuleImpl extends BioAppServiceBase<FCloudConfig> impleme
         return eventAdmin;
     }
 
+
     @Context
     private BundleContext bundleContext;
 
     @Override
     protected BundleContext bundleContext() {
         return bundleContext;
-    }
-
-    @Override
-    protected SQLContext createSQLContext() throws Exception {
-        return null;
     }
 
     private String dbConnectionUrl;
@@ -97,7 +89,7 @@ public class FCloudApiModuleImpl extends BioAppServiceBase<FCloudConfig> impleme
     @Validate
     public void start() throws Exception {
         LOG.debug("Starting...");
-        fireEventModuleUpdated();
+//        fireEventModuleUpdated();
         LOG.debug("Started");
     }
 

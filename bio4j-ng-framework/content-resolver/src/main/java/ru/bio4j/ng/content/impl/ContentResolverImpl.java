@@ -39,8 +39,11 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     private ConfigProvider configProvider;
     @Requires
     private CacheService cacheService;
-//    @Requires
-//    private ModuleProvider moduleProvider;
+
+    @Override
+    protected BundleContext bundleContext() {
+        return bundleContext;
+    }
 
 
     private BioSQLDefinition getCursorFromFileSystem(String bioCode) throws Exception {

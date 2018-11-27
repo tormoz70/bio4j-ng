@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.config.provider;
 
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,14 @@ public class DbConfigProviderImpl extends BioServiceBase<SQLContextConfig> imple
 
     @Requires
     private EventAdmin eventAdmin;
+
+    @Context
+    private BundleContext bundleContext;
+
+    @Override
+    protected BundleContext bundleContext() {
+        return bundleContext;
+    }
 
     @Override
     protected EventAdmin getEventAdmin(){

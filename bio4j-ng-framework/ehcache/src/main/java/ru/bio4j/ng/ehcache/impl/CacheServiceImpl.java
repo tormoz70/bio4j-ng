@@ -10,6 +10,7 @@ import net.sf.ehcache.config.DiskStoreConfiguration;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.event.Publishes;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.Event;
@@ -38,12 +39,19 @@ import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 @Instantiate
 @Provides(specifications = CacheService.class)
 public class CacheServiceImpl extends BioServiceBase implements CacheService {
-
 	private static Logger LOG = LoggerFactory.getLogger(CacheService.class);
 
     private final static String CACHE_CONFIG_FILE = "ehcache-config.xml";
 
 	private final Map<CacheEventListener, CacheEventListenerWrapper> listeners = new ConcurrentHashMap<>();
+
+	@Context
+	private BundleContext bundleContext;
+
+	@Override
+	protected BundleContext bundleContext() {
+		return bundleContext;
+	}
 
 	@Override
 	public <Key extends Serializable, T extends Serializable> void put(CacheName cacheName, Key key, T value) {

@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(BioAppServiceBase.class);
 
-    protected abstract BundleContext bundleContext();
-
     private void prepareSQL(BioSQLDefinitionImpl sqlDefinition) throws Exception {
         SQLContext context = this.getSQLContext();
         context.execBatch((ctx) -> {
@@ -74,30 +72,5 @@ public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBa
     }
 
     protected abstract SQLContext createSQLContext() throws Exception;
-
-    protected abstract EventAdmin getEventAdmin();
-
-    protected void fireEventModuleUpdated() throws Exception {
-        // Откладываем отправку события чтобы успел инициализироваться логгер
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> {
-            LOG.debug("Sending event [bio-service-updated] for service \"{}\"...", this.getClass().getName());
-            Map<String, Object> props = new HashMap<>();
-            getEventAdmin().postEvent(new Event("bio-module-updated", props));
-            LOG.debug("Event sent.");
-        }, 1, TimeUnit.SECONDS);
-
-    }
-
-    protected void fireEventModuleStarted() throws Exception {
-        // Откладываем отправку события чтобы успел инициализироваться логгер
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(() -> {
-            LOG.debug("Sending event [bio-service-started] for service \"{}\"...", this.getClass().getName());
-            HashMap props = new HashMap();
-            this.getEventAdmin().postEvent(new Event("bio-service-started", props));
-            LOG.debug("Event sent.");
-        }, 1L, TimeUnit.SECONDS);
-    }
 
 }
