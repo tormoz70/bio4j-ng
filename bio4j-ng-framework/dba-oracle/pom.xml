@@ -38,18 +38,32 @@
         </plugins>
     </build>
     <dependencies>
+
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-jdbc</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-juli</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>${tomcat-jdbc.version}</version>
-            <scope>test</scope>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-jdbc-osgi</artifactId>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-juli</artifactId>
-            <version>${tomcat-juli.version}</version>
-            <scope>test</scope>
-        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.ops4j.pax.jdbc</groupId>-->
+            <!--<artifactId>pax-jdbc-pool-common</artifactId>-->
+            <!--<version>${pax-jdbc-pool.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
         <!--<dependency>-->
             <!--<groupId>com.oracle</groupId>-->
             <!--<artifactId>ojdbc8</artifactId>-->
@@ -57,12 +71,12 @@
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc8-osgi</artifactId>
-            <version>${ojdbc.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.oracle</groupId>-->
+            <!--<artifactId>ojdbc8-osgi</artifactId>-->
+            <!--<version>${ojdbc.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
     	<dependency>
             <groupId>${project.groupId}</groupId>

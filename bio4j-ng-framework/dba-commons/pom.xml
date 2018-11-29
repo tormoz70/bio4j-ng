@@ -20,12 +20,30 @@
     </build>
     <dependencies>
 
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-jdbc</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-jdbc-osgi</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <version>${tomcat-jdbc.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-jdbc-osgi</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.ops4j.pax.jdbc</groupId>-->
+            <!--<artifactId>pax-jdbc-pool-common</artifactId>-->
+            <!--<version>${pax-jdbc-pool.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.eclipse.jetty.toolchain</groupId>
@@ -38,18 +56,18 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql-jdbc.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc8-osgi</artifactId>
-            <version>${ojdbc.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>postgresql</groupId>-->
+            <!--<artifactId>postgresql</artifactId>-->
+            <!--<version>${postgresql-jdbc.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.oracle</groupId>-->
+            <!--<artifactId>ojdbc8-osgi</artifactId>-->
+            <!--<version>${ojdbc.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
     	  <dependency>
             <groupId>${project.groupId}</groupId>

@@ -84,6 +84,7 @@
 
         <tomcat-jdbc.version>9.0.8</tomcat-jdbc.version>
         <tomcat-juli.version>9.0.8</tomcat-juli.version>
+        <!--<pax-jdbc-pool.version>1.3.1</pax-jdbc-pool.version>-->
 
         <ojdbc.version>12.2.0.1</ojdbc.version>
 
@@ -197,18 +198,18 @@
 
             <!-- OSGi -->
             <dependency>
-				<groupId>org.osgi</groupId>
-				<artifactId>org.osgi.core</artifactId>
-				<version>${osgi.core.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.osgi</groupId>
-				<artifactId>org.osgi.compendium</artifactId>
-				<version>${osgi.compendium.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${osgi.core.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>${osgi.compendium.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.ipojo</artifactId>
                 <version>${osgi.ipojo.version}</version>
@@ -358,6 +359,24 @@
                 <version>${com.fasterxml.jackson.core.version}</version>
             </dependency>
 
+            <!--jdbc-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.tomcat</groupId>-->
+                <!--<artifactId>tomcat-jdbc</artifactId>-->
+                <!--<version>${tomcat-jdbc.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.apache.tomcat</groupId>-->
+                <!--<artifactId>tomcat-juli</artifactId>-->
+                <!--<version>${tomcat-juli.version}</version>-->
+            <!--</dependency>-->
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bio4j-jdbc-osgi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!--<dependency>-->
                 <!--<groupId>com.thoughtworks.xstream</groupId>-->
                 <!--<artifactId>xstream</artifactId>-->
@@ -492,9 +511,10 @@
     <modules>
 
         <module>ojdbc8-osgi</module>
+        <module>jdbc-osgi</module>
 
         <!-- Common services -->
-		<module>ext-libs</module>
+		    <module>ext-libs</module>
         <module>jetty-osgi-boot</module>
         <module>flexjson</module>
         <module>XStreamExts</module>
@@ -518,7 +538,6 @@
         <!--<module>security-module-x</module>-->
         <!--<module>fcloud-provider</module>-->
         <module>fcloud-h2registry</module>
-
     </modules>
 
 </project>
