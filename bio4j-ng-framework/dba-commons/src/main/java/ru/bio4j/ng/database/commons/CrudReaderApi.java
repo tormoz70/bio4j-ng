@@ -186,15 +186,19 @@ public class CrudReaderApi {
     }
 
     public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioSQLDefinition cursor, final User user) throws Exception {
+        ABeanPage result = context.execBatch((ctx) -> {
+            return loadRecordLocal(params, ctx, cursor);
+        }, user);
+        return result;
+    }
+
+    public static ABeanPage loadRecordLocal(final List<Param> params, final SQLContext context, final BioSQLDefinition cursor) throws Exception {
         Field pkField = cursor.getSelectSqlDef().findPk();
         if(pkField == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getSql(), pkField.getName()));
         preparePkParamValue(params, pkField);
-        ABeanPage result = context.execBatch((ctx) -> {
-            return readStoreData(params, ctx, ctx.getCurrentConnection(), cursor, ctx.getCurrentUser());
-        }, user);
-        return result;
+        return readStoreData(params, context, context.getCurrentConnection(), cursor, context.getCurrentUser());
     }
 
     private static <T> List<T> readStoreDataExt(

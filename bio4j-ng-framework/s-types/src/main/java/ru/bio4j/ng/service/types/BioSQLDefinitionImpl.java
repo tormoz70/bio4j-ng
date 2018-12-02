@@ -63,7 +63,7 @@ public class BioSQLDefinitionImpl implements BioSQLDefinition {
             return owner.getFields();
         }
 
-        public Field findPk() {
+        public Field findPk() throws Exception {
             return owner.findPk();
         }
 
@@ -182,18 +182,16 @@ public class BioSQLDefinitionImpl implements BioSQLDefinition {
         return Lists.first(fields, item -> Strings.compare(name, item.getName(), true));
     }
 
-    public Field findPk() {
-        try {
-            return Lists.first(fields, new DelegateCheck<Field>() {
-                @Override
-                public Boolean callback(Field item) {
-                    return item.isPk();
-                }
-            });
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public Field findPk() throws Exception {
+        Field pkField = Lists.first(fields, new DelegateCheck<Field>() {
+            @Override
+            public Boolean callback(Field item) {
+                return item.isPk();
+            }
+        });
+        if(pkField == null)
+            throw new Exception(String.format("PK field not found in bio defenition \"%s\"", this.bioCode));
+        return pkField;
     }
 
     public String getBioCode() { return bioCode; }

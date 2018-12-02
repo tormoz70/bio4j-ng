@@ -52,20 +52,21 @@ public class CrudWriterApi {
                 cmd.close();
             }
 
+            List<Param> prms = new ArrayList<>();
+            Field pkField = cursor.findPk();
+            String pkFieldName = pkField.getName().toLowerCase();
+            Class<?> pkClazz = MetaTypeConverter.write(pkField.getMetaType());
+            for(ABean bean : rows){
+                Object pkvalue = ABeans.extractAttrFromBean(bean, pkFieldName, pkClazz, null);
+                Paramus.setParamValue(prms, RestParamNames.GETROW_PARAM_PKVAL, pkvalue);
+                ABeanPage pg = CrudReaderApi.loadRecordLocal(prms, ctx, cursor);
+                if(pg.getRows().size() > 0)
+                    Utl.applyValuesToABeanFromABean(pg.getRows().get(0), bean, true);
+            }
+
             return 0;
         }, user);
 
-        List<Param> prms = new ArrayList<>();
-        Field pkField = cursor.findPk();
-        String pkFieldName = pkField.getName().toLowerCase();
-        Class<?> pkClazz = MetaTypeConverter.write(pkField.getMetaType());
-        for(ABean bean : rows){
-            Object pkvalue = ABeans.extractAttrFromBean(bean, pkFieldName, pkClazz, null);
-            Paramus.setParamValue(prms, RestParamNames.GETROW_PARAM_PKVAL, pkvalue);
-            ABeanPage pg = CrudReaderApi.loadRecord(prms, context, cursor, user);
-            if(pg.getRows().size() > 0)
-                Utl.applyValuesToABeanFromABean(pg.getRows().get(0), bean, true);
-        }
 
         return rows;
     }

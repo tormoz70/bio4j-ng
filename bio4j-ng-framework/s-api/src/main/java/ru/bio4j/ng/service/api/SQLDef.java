@@ -6,8 +6,8 @@ import ru.bio4j.ng.model.transport.jstore.Field;
 import java.util.List;
 
 public interface SQLDef {
-        List<Field> getFields();
-        Field findPk();
+        List<Field> getFields() throws Exception;
+        Field findPk() throws Exception;
         String getBioCode();
         void setParamDeclaration(List<Param> paramDeclaration);
         List<Param> getParamDeclaration();

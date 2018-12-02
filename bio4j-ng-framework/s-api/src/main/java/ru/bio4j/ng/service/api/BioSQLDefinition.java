@@ -20,7 +20,7 @@ public interface BioSQLDefinition extends Serializable {
 
     Field findField(final String name) throws Exception;
 
-    Field findPk();
+    Field findPk() throws Exception;
 
     String getBioCode();
 
