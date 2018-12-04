@@ -130,5 +130,14 @@ public class CrudWriterApi {
         }, user);
     }
 
+    public static <T> T selectScalar(
+            final Object params,
+            final SQLContext context,
+            final BioSQLDefinition sqlDefinition,
+            final Class<T> clazz,
+            final T defaultValue,
+            final User user) throws Exception {
+        return DbUtils.processSelectScalar(user, params, context, sqlDefinition, clazz, defaultValue);
+    }
 
 }

@@ -81,47 +81,43 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static List<Param> processExec(final User usr, final List<Param> params, final SQLContext ctx, final BioSQLDefinition cursor) throws Exception {
+    public static void processExec(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition cursor) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
             throw new IllegalArgumentException("Cursor definition has no Exec Sql definition!");
-        List<Param> r = ctx.execBatch((SQLActionScalar0<List<Param>>) (context) -> {
+        ctx.execBatch((context) -> {
             cmd.init(context.getCurrentConnection(), sqlDef.getPreparedSql());
             cmd.execSQL(params, context.getCurrentUser());
-            for (Param p : cmd.getParams()) {
-                Param foundPrm = Paramus.getParam(params, p.getName());
-                if(foundPrm != null)
-                    foundPrm.setValue(p.getValue());
-            }
-            return cmd.getParams();
         }, usr);
-        return r;
     }
 
-    public static void processSelect(final User usr, final List<Param> params, final SQLContext ctx, final BioSQLDefinition cursor, final DelegateSQLFetch action) throws Exception {
+    public static void processSelect(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition cursor, final DelegateSQLFetch action) throws Exception {
+        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch((context) -> {
             context.createCursor()
                     .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
-                    .fetch(params, context.getCurrentUser(), action);
+                    .fetch(prms, context.getCurrentUser(), action);
             return 0;
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final BioSQLDefinition cursor, Class<T> clazz, T defaultValue) throws Exception {
-        final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
+        final SelectSQLDef sqlDef = sqlDefinition.getSelectSqlDef();
         T r = ctx.execBatch((context) -> {
             return context.createCursor()
-                    .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(params, context.getCurrentUser(), clazz, defaultValue);
+                    .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
         }, usr);
         return r;
     }
 
-    public static <T> T processSelectScalar(final User usr, final List<Param> params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         T r = ctx.execBatch((SQLActionScalar0<T>) (context) -> {
             return context.createCursor()
-                    .init(context.getCurrentConnection(), sql, null).scalar(params, context.getCurrentUser(), clazz, defaultValue);
+                    .init(context.getCurrentConnection(), sql, null).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
         }, usr);
         return r;
     }
@@ -360,10 +356,6 @@ public class DbUtils {
             }
         }
     }
-
-//    public static void applyParamsToParams(List<Param> src, List<Param> dst, boolean normalizeName, boolean overwriteTypes) throws Exception {
-//        applyParamsToParams(src, dst, normalizeName, overwriteTypes);
-//    }
 
     public static void applayRowToParams(StoreRow row, List<Param> params){
         try(Paramus paramus = Paramus.set(params)) {

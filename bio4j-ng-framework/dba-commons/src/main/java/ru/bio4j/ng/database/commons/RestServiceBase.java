@@ -219,6 +219,11 @@ public abstract class RestServiceBase {
         RestApiAdapter.exec(bioCode, request, appService);
     }
 
+    protected <T> T _selectScalar(final String bioCode, final HttpServletRequest request, final Class<T> clazz, final T defaultValue) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.selectScalar(bioCode, request, appService, clazz, defaultValue, ((BioWrappedRequest) request).getUser());
+    }
+
     protected List<ABean> _save(String bioCode, List<ABean> abeans, HttpServletRequest request) throws Exception {
         BioAppService appService = getAppService();
         return RestApiAdapter.saveBeans(bioCode, request, appService, abeans);

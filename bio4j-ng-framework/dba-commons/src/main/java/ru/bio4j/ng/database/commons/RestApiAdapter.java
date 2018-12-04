@@ -277,6 +277,18 @@ public class RestApiAdapter {
         CrudWriterApi.execSQL(params, context, sqlDefinition, user);
     }
 
+    public static <T> T selectScalar(
+            final String bioCode,
+            final Object params,
+            final BioAppService module,
+            final Class<T> clazz,
+            final T defaultValue,
+            final User user) throws Exception {
+        final SQLContext context = module.getSQLContext();
+        final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
+        return CrudWriterApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);
+    }
+
     public static void execBatch(final SQLContext context, final SQLActionVoid0 action, final User user) throws Exception {
         context.execBatch(action, user);
 
