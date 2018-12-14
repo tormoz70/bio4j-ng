@@ -32,7 +32,7 @@ pipeline {
 		
 		stage('Pull') {
 			steps {
-				git(url: 'http://10.10.0.182/ekb-2/bio4j-ng-framework.git', branch: 'master', credentialsId: 'jenkins')
+				git(url: 'http://10.10.0.182/bio4j-ng/bio4j-ng-framework.git', branch: 'master', credentialsId: 'jenkins')
 			}
 		}
 
