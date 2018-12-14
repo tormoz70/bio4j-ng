@@ -32,7 +32,7 @@ pipeline {
 		
 		stage('Pull') {
 			steps {
-				git(url: 'http://10.10.0.182/ekb-2/bio4j-ng-framework.git', branch: 'dev-v1.7.0', credentialsId: 'jenkins')
+				git(url: 'http://10.10.0.182/ekb-2/bio4j-ng-framework.git', branch: 'master', credentialsId: 'jenkins')
 			}
 		}
 
@@ -42,8 +42,6 @@ pipeline {
 					configFile(fileId: 'oracle-settings-security', variable: 'ORACLE_MAVEN_SECURITY')]) {
 					sh 'mvn -s $MAVEN_SETTINGS -Dsettings.security=$ORACLE_MAVEN_SECURITY -Dmaven.test.skip=true clean install'
 				}
-
-//				sh 'mvn -Dmaven.test.skip=true clean install'
 			}
 		}
 		stage('Publish') {
