@@ -1,1 +1,0 @@
-mvn deploy:deploy-file -Dfile=org.apache.felix.eventadmin-1.4.8.jar -DgroupId=org.apache.felix -DartifactId=eventadmin -Dversion=1.4.8 -DgeneratePom=true -Dpackaging=jar -DrepositoryId=nexus-deployment -Durl=http://5.8.177.199:8081/repository/3d-party/

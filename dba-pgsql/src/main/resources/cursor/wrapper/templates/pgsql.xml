@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос который фильтрануть
+    -->
+    <template type="filtering"><![CDATA[
+    SELECT fltrng$wrpr.*
+     FROM ( ${QUERY_PLACEHOLDER} ) as fltrng$wrpr
+      ${WHERECLAUSE_PLACEHOLDER}
+    ]]></template>
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос который сортирнуть
+    -->
+    <template type="sorting"><![CDATA[
+    SELECT srtng$wrpr.*
+     FROM ( ${QUERY_PLACEHOLDER} ) as srtng$wrpr
+      ${ORDERBYCLAUSE_PLACEHOLDER}
+    ]]></template>
+
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос который небходимо разбить на страницы (т.е. иметь возможность
+                запросить :PAGING_COUNT зaписей с :PAGING_OFFSET )
+      :pagination$offset  - количество пропущенных записей до первой загруженной
+      :pagination$limit    - записей на странице
+    -->
+    <template type="pagination"><![CDATA[
+    SELECT * FROM (
+        SELECT pgng$wrpr0.*, row_number() over () rnum$pgng
+          FROM ( ${QUERY_PLACEHOLDER} ) as pgng$wrpr0
+    ) pgng$wrpr OFFSET :pagination$offset LIMIT :pagination$limit
+    ]]></template>
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо вычислить кол-во записей
+    -->
+    <template type="totals"><![CDATA[
+        SELECT COUNT(1) ttlCnt$wrpr
+          FROM ( ${QUERY_PLACEHOLDER} ) as ttlCnt$query
+    ]]></template>
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
+    -->
+    <template type="locate"><![CDATA[
+          SELECT outerq$locate.rnum$ FROM (SELECT innerq$locate.*, row_number() over () rnum$
+            FROM (${QUERY_PLACEHOLDER}) as innerq$locate) outerq$locate
+           WHERE ${WHERECLAUSE_PLACEHOLDER}
+    ]]></template>
+
+    <!--
+      ${QUERY_PLACEHOLDER} - запрос в котором небходимо найти запись
+    -->
+    <template type="getrow"><![CDATA[
+          SELECT * FROM (${QUERY_PLACEHOLDER}) as getrow$query
+           WHERE ${WHERECLAUSE_PLACEHOLDER}
+    ]]></template>
+
+</templates>
+

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report uid="5048BE9FC7A420E6E0531E32A8C06108" full_code="nsi.filmpu" started="2017-05-24T19:39:23">
+    <append>
+        <userUID>38522A3CD08D437DE0531E32A8C08E11</userUID>
+        <userName>gpsdom@gmail.com</userName>
+        <userOrgId>5567</userOrgId>
+        <userRoles>6</userRoles>
+        <remoteIP>127.0.0.1</remoteIP>
+        <inParams>
+            <param name="reg_from" type="UNDEFINED" size="0" direction="IN" fixed="false" id="0">
+                <value class="string"><![CDATA[2017-05-24T00:00:00.000+0300]]></value>
+            </param>
+            <param name="reg_to" type="UNDEFINED" size="0" direction="IN" fixed="false" id="0">
+                <value class="string"><![CDATA[2017-05-24T00:00:00.000+0300]]></value>
+            </param>
+        </inParams>
+    </append>
+    <dss>
+        <ds range="mRng">
+            <sql><![CDATA[select a0.pu_id, a0.film_id, a0.pu_num, a0.issued, pf.film_category, a0.rent_category, a0.rent_end, a0.rent_desc,
+             a0.distributors, a0.destr_phone, a0.contr_num, a0.contr_date, a0.cre_date,
+             pf.name_rus as rent_name, pf.prod_year, pf.madein, pf.studia, pf.genre, pf.age_restr, pf.view_restr,
+             nvl(pf.dur_hours, 0) * 60 + nvl(pf.dur_mins, 0) as fduration_min,
+             pf.dur_hours || ' час, ' || pf.dur_mins || ' мин' as fduration,
+             a0.pu_num || ' - ' || pf.name_rus as pu_desc,
+             (case when a0.pu_id < 100000000 and a0.orig_pu_id is null then 1 else 0 end) editable
+  from givc_nsi.pfilmnums a0
+    inner join givc_nsi.pfilms pf on pf.film_id = a0.film_id and pf.deleted = 0
+  where a0.deleted = 0
+    and (:p_sys_curusr_roles in ('1','2','6') or ((a0.pu_id > 100000000) or (a0.pu_id < 100000000 and a0.orig_pu_id is not null)))
+    and
+     (
+        (((:issued_from is null) or (trunc(a0.issued) >= :issued_from)) and
+             ((:issued_to is null) or (trunc(a0.issued) < to_date(:issued_to)+1))) and
+        ((:pu_num is null)    or (upper(a0.pu_num) like upper(:pu_num)||'%')) and
+        ((:rent_name is null) or (upper(pf.name_rus) like '%'||upper(:rent_name)||'%')) and
+        ((:prod_year is null) or (upper(pf.prod_year) like '%'||upper(:prod_year)||'%')) and
+        ((:madein is null) or (upper(pf.madein) like '%'||upper(:madein)||'%')) and
+        ((:studia is null) or (upper(pf.studia) like '%'||upper(:studia)||'%')) and
+        ((:genre is null) or (upper(pf.genre) like '%'||upper(:genre)||'%')) and
+        ((:view_restr is null) or (upper(pf.view_restr) like '%'||upper(:view_restr)||'%')) and
+        ((:distributors is null) or (upper(a0.distributors) like '%'||upper(:distributors)||'%')) and
+        ((:film_category is null) or (upper(pf.film_category) like '%'||upper(:film_category)||'%')) and
+        ((:rent_category is null) or (upper(a0.rent_category) like '%'||upper(:rent_category)||'%')) and
+        ((nvl(:onlymanual, 0) = 0) or (:onlymanual = 1 and a0.pu_id < 100000000))
+     )
+]]></sql>
+            <fields>
+                <field name="pu_id" type="integer" align="LEFT"/>
+                <field name="rent_name" type="string" header="Название фильма!" align="LEFT" expWidth="10"/>
+                <field name="pu_num" type="string" align="LEFT"/>
+                <field name="prod_year" type="string" align="LEFT"/>
+                <field name="madein" type="string" align="LEFT"/>
+                <field name="studia" type="string" align="LEFT"/>
+                <field name="genre" type="string" align="LEFT"/>
+                <field name="view_restr" type="string" align="LEFT"/>
+                <field name="fduration_min" type="integer" expFormat="#,##0" align="LEFT"/>
+                <field name="issued" type="date" expFormat="m/d/yyyy" align="LEFT"/>
+                <field name="rent_end" type="date" expFormat="m/d/yyyy" align="LEFT"/>
+                <field name="distributors" type="string" align="LEFT"/>
+                <field name="film_category" type="string" align="LEFT"/>
+                <field name="rent_category" type="string" align="LEFT"/>
+                <field name="rent_desc" type="string" align="LEFT"/>
+                <field name="editable" type="integer" align="LEFT"/>
+            </fields>
+            <sorts>
+                <sort fieldName="rent_name" direction="DESC"/>
+            </sorts>
+        </ds>
+    </dss>
+</report>

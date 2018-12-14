@@ -1,0 +1,38 @@
+{
+  "sorter": {
+    "summ": "desc",
+    "dateFrom": "asc"
+  },
+  "filter": {
+    "and": [
+      {"ge": {
+        "dateFrom": "2018-01-01"
+      }},
+      {"le": {
+        "dateFrom": "2018-01-31"
+      }},
+      {"or": [
+        {"bgn": {
+          "desc1": "Error"
+        }},
+        {"end": {
+          "desc1": "Oracle"
+        }},
+        {"not": {
+          "eqi": {
+            "operation": "play"
+          }
+        }}
+      ]},
+      {"not": {
+        "isnull": "field1"
+      }},
+      {"gt": {
+        "summ": 200
+      }},
+      {"lt": {
+        "summ": 500
+      }}
+    ]
+  }
+}

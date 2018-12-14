@@ -1,1 +1,0 @@
-SELECT 1 as id, 'qwe' as name  FROM DUAL

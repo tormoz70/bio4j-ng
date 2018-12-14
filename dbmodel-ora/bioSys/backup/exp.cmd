@@ -1,1 +1,0 @@
-exp.exe system/gausian828@givcdb_ekbs02 parfile=exp.par

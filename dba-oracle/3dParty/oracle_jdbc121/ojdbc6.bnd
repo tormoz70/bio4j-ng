@@ -1,0 +1,5 @@
+version=12.1.0
+Build-Jdk: 1.7.0_51
+Bundle-Version: ${version}
+Import-Package: !com.sun.security.*,!sun.security.*,!sun.reflect.*,!oracle.dms.*,!oracle.i18n.*,!oracle.ons.*,!oracle.security.*,!oracle.xdb.*,!oracle.xml.*,*
+Export-Package: oracle.jdbc.*,oracle.sql.*

@@ -1,1 +1,0 @@
-mvn deploy:deploy-file -Dfile=postgresql-42.1.4.jar -DgroupId=postgresql -DartifactId=postgresql -Dversion=42.1.4 -DgeneratePom=true -Dpackaging=jar -DrepositoryId=nexus-deployment -Durl=http://5.8.177.199:8081/repository/3d-party/

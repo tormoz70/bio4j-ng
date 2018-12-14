@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ru.bio4j.ng</groupId>
+        <artifactId>bio4j-ng-framework</artifactId>
+        <version>1.7.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>ext-libs</artifactId>
+    <packaging>bundle</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            !org.apache.commons.logging,
+                            !org.apache.tools.ant.*,
+                            *
+                        </Import-Package>
+                        <!--<Export-Package>-->
+                            <!--org.xmlpull.*-->
+                        <!--org.apache.commons.codec.*,-->
+                        <!--</Export-Package>-->
+                        <Export-Package>
+                            org.apache.commons.beanutils.*,
+                            org.apache.http.*,
+                            com.mchange.v2.c3p0.*
+                        </Export-Package>
+                        <Embed-Dependency>
+                            commons-beanutils-core,
+                            httpcore,
+                            httpclient,
+                            c3p0
+                        </Embed-Dependency>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils-core</artifactId>
+            <version>1.8.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.9</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+</project>
