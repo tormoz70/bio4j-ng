@@ -43,19 +43,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>postgresql</groupId>-->
-            <!--<artifactId>postgresql</artifactId>-->
-            <!--<version>${postgresql-jdbc.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>ojdbc8-osgi</artifactId>-->
-            <!--<version>${ojdbc.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-
     	  <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>bio4j-ng-dbapi</artifactId>
