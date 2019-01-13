@@ -216,8 +216,16 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
         if(Strings.isNullOrEmpty(bal.username)) {
             if (result.method == "POST") {
-                String usrname = request.getParameter("usrname");
-                String passwd = request.getParameter("passwd");
+                String usrname = null;
+                String passwd = null;
+                if(request.getParameterMap().containsKey("usrname"))
+                    usrname = request.getParameter("usrname");
+                else if(request.getParameterMap().containsKey("login"))
+                    usrname = request.getParameter("login");
+                if(request.getParameterMap().containsKey("passwd"))
+                    passwd = request.getParameter("passwd");
+                else if(request.getParameterMap().containsKey("password"))
+                    passwd = request.getParameter("password");
                 if (!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
                     result.login = usrname + "/" + passwd;
                 }
