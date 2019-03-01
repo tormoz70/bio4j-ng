@@ -4,6 +4,7 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.Prop;
 import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
@@ -24,6 +25,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Утилиты для работы с метаданными СУБД
@@ -327,6 +330,47 @@ public class DbUtils {
     }
     public static boolean execSQL(Connection conn, String sql) throws SQLException {
         return execSQL(conn, sql, null);
+    }
+
+    private static String cutEmptyFilterCondition(String sql, String paramName) {
+        String tagbgn = String.format("/*${filter-%s}*/", paramName).toLowerCase();
+        String tagend = String.format("/*{filter-%s}$*/", paramName).toLowerCase();
+        int posbgn = sql.toLowerCase().indexOf(tagbgn);
+        int posend = sql.toLowerCase().indexOf(tagend) + tagend.length();
+        return sql.substring(0, posbgn) + sql.substring(posend);
+    }
+
+
+    private static String cutEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+        List<String> paramConditions = new ArrayList<>();
+        Matcher m = Regexs.match(sql, "\\/\\*\\$\\{filter-.+\\}\\*\\/", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+        while(m.find()) {
+            String cond = m.group();
+            String paramName = cond.substring(11, cond.length() - 3);
+            paramConditions.add(paramName);
+        }
+        for(String pc : paramConditions) {
+            Param prm = Paramus.getParam(prms, pc);
+            if (prm == null || prm.isEmpty())
+                sql = cutEmptyFilterCondition(sql, pc);
+        }
+        return sql;
+    }
+
+    public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
+        List<String> paramConditions = new ArrayList<>();
+        Matcher m = Regexs.match(sql, "\\/\\*\\$\\{.+\\}\\*\\/", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+        while(m.find()) {
+            String cond = m.group();
+            String paramName = cond.substring(11, cond.length() - 3);
+            paramConditions.add(paramName);
+        }
+        for(String pc : paramConditions) {
+            Param prm = Paramus.getParam(prms, pc);
+            if (prm == null || prm.isEmpty())
+                sql = cutEmptyFilterCondition(sql, pc);
+        }
+        return sql;
     }
 
 }

@@ -2,6 +2,11 @@ package ru.bio4j.ng.commons.utils;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.model.transport.Param;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -126,4 +131,18 @@ public class eeeTest {
         Assert.assertTrue(true);
     }
 
+
+    @Test(enabled = true)
+    public void EvalsTest() throws Exception {
+        Evals evals = Evals.getInstance();
+        List<Param> prms = new ArrayList<>();
+        Paramus.setParamValue(prms, "SYS_CURUSERROLES", "6");
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES != '3'", prms));
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES == '6'", prms));
+        Paramus.setParamValue(prms, "SYS_CURUSERROLES", 6);
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES != '3'", prms));
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES == '6'", prms));
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES != 3", prms));
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES == 6", prms));
+    }
 }

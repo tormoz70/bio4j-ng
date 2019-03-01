@@ -14,16 +14,64 @@
         <!--<tag>bio4j-ng-framework-1.4.1</tag>-->
     <!--</scm>-->
 
+    <repositories>
+        <repository>
+            <id>fk-public</id>
+            <name>Public Maven Repo</name>
+            <url>http://5.8.177.199:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>fk-3d-party</id>
+            <name>3d Party Maven Repo</name>
+            <url>http://5.8.177.199:8081/repository/3d-party/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>fk-public</id>
+            <name>Public Maven Repo</name>
+            <url>http://5.8.177.199:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>fk-3d-party</id>
+            <name>3d Party Maven Repo</name>
+            <url>http://5.8.177.199:8081/repository/3d-party/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
     <distributionManagement>
         <repository>
             <id>nexus-deployment</id>
             <name>Internal Releases</name>
-            <url>http://5.8.177.199:8081/repository/fk-releases/</url>
+            <url>http://5.8.177.199:8081/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-deployment</id>
-            <name>Internal Snapshots</name>
-            <url>http://5.8.177.199:8081/repository/fk-snapshots</url>
+            <name>Internal Releases</name>
+            <url>http://5.8.177.199:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

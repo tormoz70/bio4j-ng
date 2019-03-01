@@ -23,7 +23,7 @@ public class SQLFactoryTest1 {
 //    private static final String testDBUrl = "jdbc:postgresql://192.168.50.47:5432/postgres";
 //    private static final String testDBUrl = "jdbc:postgresql://localhost:5432/postgres";
 //    private static final String testDBUrl = "jdbc:oracle:thin:@cmon-ora-dev:1521:MICEXDB";
-    private static final String testDBUrl = "jdbc:postgresql://192.168.10.136:5432/postgres";
+    private static final String testDBUrl = "jdbc:postgresql://10.10.0.221:5432/postgres";
     //private static final String testDBUrl = "jdbc:oracle:oci:@GIVCDB_EKBS03";
     //private static final String testDBUrl = "jdbc:oracle:thin:@https://databasetrial0901-rugivcmkrftrial07058.db.em1.oraclecloudapps.com/apex:1521:databasetrial0901";
 //    private static final String testDBUsr = "SCOTT";

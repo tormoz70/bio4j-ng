@@ -2,6 +2,8 @@ package ru.bio4j.ng.database.commons;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.utils.Utl;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,5 +58,11 @@ public class someTests {
         Assert.assertEquals(r, "OKEEPER_ID");
     }
 
+    @Test
+    public void cutEmptyFilterConditionsTest() throws Exception {
+        String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("load_log1.sql"));
+        sql = DbUtils.cutEmptyFilterConditions(sql, null);
+        System.out.println(sql);
+    }
 
 }
