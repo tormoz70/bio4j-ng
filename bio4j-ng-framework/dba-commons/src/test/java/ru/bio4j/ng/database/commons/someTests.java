@@ -2,9 +2,13 @@ package ru.bio4j.ng.database.commons;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.Param;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,7 +65,10 @@ public class someTests {
     @Test
     public void cutEmptyFilterConditionsTest() throws Exception {
         String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("load_log1.sql"));
-        sql = DbUtils.cutEmptyFilterConditions(sql, null);
+        List<Param> prms = new ArrayList<>();
+        Paramus.setParamValue(prms, "org_id", null);
+        Paramus.setParamValue(prms, "SYS_CURUSERROLES", null);
+        sql = DbUtils.cutFilterConditions(sql, prms);
         System.out.println(sql);
     }
 

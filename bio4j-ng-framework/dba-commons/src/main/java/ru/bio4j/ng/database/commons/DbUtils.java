@@ -4,12 +4,9 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Regexs;
+import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.service.api.Prop;
-import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -332,9 +329,13 @@ public class DbUtils {
         return execSQL(conn, sql, null);
     }
 
+    private static final String CS_CUTEMPTY_PLACEHOLDER_BGN = "/*${cutempty-%s}*/";
+    private static final String CS_CUTEMPTY_PLACEHOLDER_END = "/*{cutempty-%s}$*/";
+    private static final String CS_CUTEMPTY_REGEX = "\\/\\*\\$\\{cutempty-.+\\}\\*\\/";
+
     private static String cutEmptyFilterCondition(String sql, String paramName) {
-        String tagbgn = String.format("/*${filter-%s}*/", paramName).toLowerCase();
-        String tagend = String.format("/*{filter-%s}$*/", paramName).toLowerCase();
+        String tagbgn = String.format(CS_CUTEMPTY_PLACEHOLDER_BGN, paramName).toLowerCase();
+        String tagend = String.format(CS_CUTEMPTY_PLACEHOLDER_END, paramName).toLowerCase();
         int posbgn = sql.toLowerCase().indexOf(tagbgn);
         int posend = sql.toLowerCase().indexOf(tagend) + tagend.length();
         return sql.substring(0, posbgn) + sql.substring(posend);
@@ -343,10 +344,10 @@ public class DbUtils {
 
     private static String cutEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
         List<String> paramConditions = new ArrayList<>();
-        Matcher m = Regexs.match(sql, "\\/\\*\\$\\{filter-.+\\}\\*\\/", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+        Matcher m = Regexs.match(sql, CS_CUTEMPTY_REGEX, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
         while(m.find()) {
             String cond = m.group();
-            String paramName = cond.substring(11, cond.length() - 3);
+            String paramName = cond.substring(13, cond.length() - 3);
             paramConditions.add(paramName);
         }
         for(String pc : paramConditions) {
@@ -357,20 +358,44 @@ public class DbUtils {
         return sql;
     }
 
-    public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
-        List<String> paramConditions = new ArrayList<>();
-        Matcher m = Regexs.match(sql, "\\/\\*\\$\\{.+\\}\\*\\/", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+    private static final String CS_CUTIIF_PLACEHOLDER_BGN = "/*${cutiif}[%s]*/";
+    private static final String CS_CUTIIF_PLACEHOLDER_END = "/*{cutiif}$*/";
+    private static final String CS_CUTIIF_REGEX0 = "(?<=\\/\\*\\$\\{cutiif\\}\\*\\/).*(?=\\/\\*\\{cutiif\\}\\$\\*\\/)";
+    private static final String CS_CUTIIF_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
+    private static final String CS_CUTIIF_KEY = "<<cutiif-key-%02d>>";
+    private static final String CS_CUTIIF_EMPTYCASE = "/*empty*/";
+
+    private static String cutIIFConditions(String sql, List<Param> prms) throws Exception {
+        Map<String, String> conditions = new HashMap<>();
+        Matcher m = Regexs.match(sql, CS_CUTIIF_REGEX0, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+        final StringBuffer out = new StringBuffer(sql.length());
+        int indx = 0;
         while(m.find()) {
-            String cond = m.group();
-            String paramName = cond.substring(11, cond.length() - 3);
-            paramConditions.add(paramName);
+            String key = String.format(CS_CUTIIF_KEY, indx);
+            String cond = m.group(0);
+            conditions.put(key, cond);
+            m.appendReplacement(out, key);
+            indx++;
         }
-        for(String pc : paramConditions) {
-            Param prm = Paramus.getParam(prms, pc);
-            if (prm == null || prm.isEmpty())
-                sql = cutEmptyFilterCondition(sql, pc);
+        m.appendTail(out);
+        String rslt = out.toString();
+
+        for (String key : conditions.keySet()) {
+            String condition = conditions.get(key);
+            String js = Regexs.find(condition, CS_CUTIIF_REGEX1, Pattern.CASE_INSENSITIVE+Pattern.MULTILINE);
+            if(Evals.getInstance().runCondition(js, prms))
+                rslt = Strings.replace(rslt, key, CS_CUTIIF_EMPTYCASE);
+            else
+                rslt = Strings.replace(rslt, key, condition);
         }
-        return sql;
+
+        return rslt;
+    }
+
+    public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
+        String rslt = cutEmptyFilterConditions( sql, prms);
+        rslt = cutIIFConditions( rslt, prms);
+        return rslt;
     }
 
 }

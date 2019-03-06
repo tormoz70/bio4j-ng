@@ -46,16 +46,16 @@ SELECT
   WHERE a.packet_name = nvl(:packet_name_full, a.packet_name) 
     and (a.registred >= :reg_from AND a.registred < :reg_to+1)
     and (a.sess_org_id = case when :force_org_id is null then a.sess_org_id else :force_org_id end)
-    /*${iif-filter-[SYS_CURUSERROLES != '3']}*/and (:SYS_CURUSERROLES != '3' or (:SYS_CURUSERROLES = '3' and a.org_id = to_number(:SYS_CURODEPUID)))/*{filter-org_id}$*/
+    /*${cutiif}*//*[SYS_CURUSERROLES != '3']*/and (a.org_id = to_number(:SYS_CURODEPUID))/*{cutiif}$*/
     and (:SYS_CURUSERROLES != '4' or (:SYS_CURUSERROLES = '4' and o.holding_id = to_number(:SYS_CURODEPUID)))
     and (        
-        /*${filter-org_id}*/(a.org_id = to_number(regexp_substr(:org_id, '^\d+$'))) and/*{filter-org_id}$*/
-        /*${filter-sess_prnt_org_id}*/(a.sess_prnt_org_id = to_number(regexp_substr(:sess_prnt_org_id, '^\d+$'))) and/*{filter-sess_prnt_org_id}$*/
-        /*${filter-sess_org_id}*/(a.sess_org_id = to_number(regexp_substr(:sess_org_id, '^\d+$'))) and/*{filter-sess_org_id}$*/
-        /*${filter-packet_name}*/(lower(a.packet_name) like '%'||lower(:packet_name)||'%') and/*{filter-packet_name}$*/
-        /*${filter-ip}*/(lower(a.ip_addr) like '%'||lower(:ip)||'%') and/*{filter-ip}$*/
-        /*${filter-cur_pstate}*/(a.cur_pstate = detectCurPStateId(:cur_pstate)) and/*{filter-cur_pstate}$*/
-        /*${filter-message}*/(lower(a.cur_pstate_msg) like '%'||lower(:message)||'%') and/*{filter-message}$*/
-        /*${filter-test}*/(o.test = :test) and/*{filter-test}$*/
+        /*${cutiif}*//*[org_id != null]*/(a.org_id = to_number(regexp_substr(:org_id, '^\d+$'))) and/*{cutiif}$*/
+        /*${empty-filter-sess_prnt_org_id}*/(a.sess_prnt_org_id = to_number(regexp_substr(:sess_prnt_org_id, '^\d+$'))) and/*{empty-filter-sess_prnt_org_id}$*/
+        /*${empty-filter-sess_org_id}*/(a.sess_org_id = to_number(regexp_substr(:sess_org_id, '^\d+$'))) and/*{empty-filter-sess_org_id}$*/
+        /*${empty-filter-packet_name}*/(lower(a.packet_name) like '%'||lower(:packet_name)||'%') and/*{empty-filter-packet_name}$*/
+        /*${empty-filter-ip}*/(lower(a.ip_addr) like '%'||lower(:ip)||'%') and/*{empty-filter-ip}$*/
+        /*${empty-filter-cur_pstate}*/(a.cur_pstate = detectCurPStateId(:cur_pstate)) and/*{empty-filter-cur_pstate}$*/
+        /*${empty-filter-message}*/(lower(a.cur_pstate_msg) like '%'||lower(:message)||'%') and/*{empty-filter-message}$*/
+        /*${empty-filter-test}*/(o.test = :test) and/*{empty-filter-test}$*/
         1=1
     )

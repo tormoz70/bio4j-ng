@@ -21,9 +21,22 @@ public class Evals {
     }
 
     public boolean runCondition(String condition, List<Param> prms) throws Exception {
-        String CS_JSVAR = "%s = '%s'";
-        for (Param p : prms)
-            engine.eval(String.format(CS_JSVAR, p.getName(), (""+p.getValue()).toLowerCase()));
+        String CS_JSVAR = "%s = %s";
+        if(prms != null) {
+            for (Param p : prms) {
+                Object val = p.getValue();
+                String valStr = "null";
+                //String valStr = Jsons.encode(val);
+                if(val != null){
+                    if (val instanceof String)
+                        valStr = String.format("'%s'", val);
+                    else
+                        valStr = String.format("%s", ""+val);
+                }
+
+                engine.eval(String.format(CS_JSVAR, p.getName(), valStr));
+            }
+        }
         return (boolean)engine.eval(condition);
     }
 }

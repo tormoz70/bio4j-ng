@@ -144,5 +144,7 @@ public class eeeTest {
         Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES == '6'", prms));
         Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES != 3", prms));
         Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES == 6", prms));
+        Paramus.setParamValue(prms, "SYS_CURUSERROLES", null);
+        Assert.assertTrue(evals.runCondition("SYS_CURUSERROLES == null", prms));
     }
 }
