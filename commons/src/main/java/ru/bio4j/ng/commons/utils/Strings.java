@@ -235,4 +235,9 @@ public class Strings {
         return null;
     }
 
+    public static boolean decodeBool(final String value){
+	    String valueNotNull  = isNullOrEmpty(value) ? "0" : value.trim().toLowerCase();
+        return Arrays.asList(new String[] {"true", "yes", "t", "y", "1"}).contains(valueNotNull);
+    }
+
 }

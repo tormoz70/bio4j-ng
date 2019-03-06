@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.service.api.Prop;
 
 import javax.servlet.http.HttpServletRequest;

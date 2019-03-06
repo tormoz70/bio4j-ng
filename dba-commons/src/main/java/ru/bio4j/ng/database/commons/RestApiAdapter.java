@@ -7,6 +7,7 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLActionVoid0;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.*;
@@ -27,25 +28,26 @@ public class RestApiAdapter {
     public static ABeanPage loadPage(
             final BioAppService module,
             final String bioCode,
-            final List<Param> params,
+            final Object params,
             final User user,
             final boolean forceAll,
             final FilterAndSorter filterAndSorter,
             final boolean forceCalcCount
             ) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
-        int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
+        int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         if(pageSize == 0 || forceAll)
-            return CrudReaderApi.loadAll(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user);
+            return CrudReaderApi.loadAll(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user);
         else
-            return CrudReaderApi.loadPage(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, forceCalcCount, user);
+            return CrudReaderApi.loadPage(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, forceCalcCount, user);
     }
 
     public static ABeanPage loadPage(
             final BioAppService module,
             final String bioCode,
-            final List<Param> params,
+            final Object params,
             final User user,
             final boolean forceAll) throws Exception {
         return loadPage(module, bioCode, params, user, forceAll, null, false);
@@ -114,28 +116,68 @@ public class RestApiAdapter {
     public static <T> List<T> loadPageExt(
             final BioAppService module,
             final String bioCode,
-            final List<Param> params,
+            final Object params,
             final User user,
             final boolean forceAll,
             final Class<T> beanType,
             final FilterAndSorter filterAndSorter) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
-        int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
+        int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         if(pageSize == 0 || forceAll)
-            return CrudReaderApi.loadAllExt(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
+            return CrudReaderApi.loadAllExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
         else
-            return CrudReaderApi.loadPageExt(params, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
+            return CrudReaderApi.loadPageExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
     }
 
     public static <T> List<T> loadPageExt(
             final BioAppService module,
             final String bioCode,
-            final List<Param> params,
+            final Object params,
+            final boolean forceAll,
+            final Class<T> beanType,
+            final FilterAndSorter filterAndSorter) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
+        User user = null;
+        Param usrParam  = Paramus.getParam(prms, "p_userbean");
+        if(usrParam != null)
+            user = (User)usrParam.getValue();
+
+        final SQLContext context = module.getSQLContext();
+        final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
+        int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
+        if(pageSize == 0 || forceAll)
+            return CrudReaderApi.loadAllExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
+        else
+            return CrudReaderApi.loadPageExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
+    }
+
+    public static <T> List<T> loadPageExt(
+            final BioAppService module,
+            final String bioCode,
+            final Object params,
             final User user,
             final Class<T> beanType,
             final boolean forceAll) throws Exception {
         return loadPageExt(module, bioCode, params, user, forceAll, beanType, null);
+    }
+
+    public static <T> List<T> loadPageExt(
+            final BioAppService module,
+            final String bioCode,
+            final Object params,
+            final Class<T> beanType,
+            final boolean forceAll) throws Exception {
+        return loadPageExt(module, bioCode, params, forceAll, beanType, null);
+    }
+
+    public static <T> List<T> loadPageExt(
+            final BioAppService module,
+            final String bioCode,
+            final Object params,
+            final Class<T> beanType) throws Exception {
+        return loadPageExt(module, bioCode, params, beanType, false);
     }
 
     public static <T> List<T> loadPageExt(

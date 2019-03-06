@@ -341,6 +341,15 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return headerValue;
     }
 
+    public <T> T getBioQueryParam(String paramName, Class<T> paramType, T defaultValue) throws Exception {
+        final BioQueryParams queryParams = this.getBioQueryParams();
+        return Paramus.paramValue(queryParams.bioParams, paramName, paramType, defaultValue);
+    }
+
+    protected <T> T getBioQueryParam(String paramName, HttpServletRequest request, Class<T> paramType) throws Exception {
+        return getBioQueryParam(paramName, paramType, null);
+    }
+
     /**
      * get the Header names
      */
