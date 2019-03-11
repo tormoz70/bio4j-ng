@@ -16,9 +16,9 @@
 
     <repositories>
         <repository>
-            <id>fk-public</id>
+            <id>public</id>
             <name>Public Maven Repo</name>
-            <url>http://5.8.177.199:8081/nexus/content/groups/public/</url>
+            <url>http://192.168.70.190:8081/repository/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -27,9 +27,9 @@
             </snapshots>
         </repository>
         <repository>
-            <id>fk-3d-party</id>
-            <name>3d Party Maven Repo</name>
-            <url>http://5.8.177.199:8081/repository/3d-party/</url>
+            <id>3d-party</id>
+            <name>FK Party Maven Repo</name>
+            <url>http://192.167.70.190:8081/repository/3d-party/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -40,9 +40,9 @@
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>fk-public</id>
+            <id>public</id>
             <name>Public Maven Repo</name>
-            <url>http://5.8.177.199:8081/nexus/content/groups/public/</url>
+            <url>http://192.168.70.190:8081/repository/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -51,9 +51,9 @@
             </snapshots>
         </pluginRepository>
         <pluginRepository>
-            <id>fk-3d-party</id>
-            <name>3d Party Maven Repo</name>
-            <url>http://5.8.177.199:8081/repository/3d-party/</url>
+            <id>3d-party</id>
+            <name>FK Party Maven Repo</name>
+            <url>http://192.168.70.190:8081/repository/3d-party/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -65,13 +65,13 @@
     <distributionManagement>
         <repository>
             <id>nexus-deployment</id>
-            <name>Internal Releases</name>
-            <url>http://5.8.177.199:8081/nexus/content/repositories/releases/</url>
+            <name>Releases</name>
+            <url>http://192.168.70.190:8081/repository/fk-releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-deployment</id>
-            <name>Internal Releases</name>
-            <url>http://5.8.177.199:8081/nexus/content/repositories/snapshots/</url>
+            <name>Snapshots</name>
+            <url>http://192.168.70.190:8081/repository/fk-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
