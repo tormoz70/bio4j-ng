@@ -18,7 +18,7 @@
         <repository>
             <id>fk-public</id>
             <name>Public Maven Repo</name>
-            <url>http://5.8.177.199:8081/nexus/content/groups/public/</url>
+            <url>http://192.168.70.200:8081/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -29,7 +29,7 @@
         <repository>
             <id>fk-3d-party</id>
             <name>3d Party Maven Repo</name>
-            <url>http://5.8.177.199:8081/repository/3d-party/</url>
+            <url>http://192.168.70.200:8081/repository/3d-party/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -42,7 +42,7 @@
         <pluginRepository>
             <id>fk-public</id>
             <name>Public Maven Repo</name>
-            <url>http://5.8.177.199:8081/nexus/content/groups/public/</url>
+            <url>http://192.168.70.200:8081/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -53,7 +53,7 @@
         <pluginRepository>
             <id>fk-3d-party</id>
             <name>3d Party Maven Repo</name>
-            <url>http://5.8.177.199:8081/repository/3d-party/</url>
+            <url>http://192.168.70.200:8081/repository/3d-party/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -66,12 +66,12 @@
         <repository>
             <id>nexus-deployment</id>
             <name>Internal Releases</name>
-            <url>http://5.8.177.199:8081/nexus/content/repositories/releases/</url>
+            <url>http://192.168.70.200:8081/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-deployment</id>
             <name>Internal Releases</name>
-            <url>http://5.8.177.199:8081/nexus/content/repositories/snapshots/</url>
+            <url>http://192.168.70.200:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
