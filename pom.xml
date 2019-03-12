@@ -16,20 +16,9 @@
 
     <repositories>
         <repository>
-            <id>public</id>
-            <name>Public Maven Repo</name>
-            <url>http://192.168.70.190:8081/repository/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>3d-party</id>
-            <name>FK Party Maven Repo</name>
-            <url>http://192.168.70.190:8081/repository/3d-party/</url>
+            <id>maven-group</id>
+            <name>Maven Repo Group</name>
+            <url>http://192.168.70.190:8081/repository/maven-group/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -38,30 +27,6 @@
             </snapshots>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>public</id>
-            <name>Public Maven Repo</name>
-            <url>http://192.168.70.190:8081/repository/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>3d-party</id>
-            <name>FK Party Maven Repo</name>
-            <url>http://192.168.70.190:8081/repository/3d-party/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <distributionManagement>
         <repository>
             <id>nexus-deployment</id>
