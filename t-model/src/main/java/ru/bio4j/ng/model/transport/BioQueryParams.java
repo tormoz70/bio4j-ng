@@ -1,11 +1,7 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.model.transport;
 
-import ru.bio4j.ng.model.transport.FCloudCommand;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.RmtCommand;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.Prop;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

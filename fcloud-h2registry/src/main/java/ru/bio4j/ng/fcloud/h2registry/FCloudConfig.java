@@ -1,6 +1,6 @@
 package ru.bio4j.ng.fcloud.h2registry;
 
-import ru.bio4j.ng.service.api.Prop;
+import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.service.api.SQLContextConfig;
 
 public class FCloudConfig extends SQLContextConfig {

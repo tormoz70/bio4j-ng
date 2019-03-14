@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.bio4j.ng</groupId>
     <artifactId>bio4j-ng-framework</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!--<scm>-->
@@ -522,7 +522,7 @@
         <module>jdbc-osgi</module>
 
         <!-- Common services -->
-		    <module>ext-libs</module>
+        <module>ext-libs</module>
         <module>jetty-osgi-boot</module>
         <module>flexjson</module>
         <module>XStreamExts</module>

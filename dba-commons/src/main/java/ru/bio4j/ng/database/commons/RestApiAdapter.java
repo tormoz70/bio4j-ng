@@ -7,7 +7,6 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLActionVoid0;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.*;
@@ -16,7 +15,7 @@ import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppService;
 import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.RestParamNames;
-import ru.bio4j.ng.service.types.BioQueryParams;
+import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.http.HttpServletRequest;

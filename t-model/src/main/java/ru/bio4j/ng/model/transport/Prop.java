@@ -1,7 +1,4 @@
-package ru.bio4j.ng.service.api;
-
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
+package ru.bio4j.ng.model.transport;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

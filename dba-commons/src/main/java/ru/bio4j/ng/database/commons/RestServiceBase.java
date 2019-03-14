@@ -12,7 +12,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppService;
 import ru.bio4j.ng.service.api.FCloudApi;
-import ru.bio4j.ng.service.types.BioQueryParams;
+import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.ServletContext;

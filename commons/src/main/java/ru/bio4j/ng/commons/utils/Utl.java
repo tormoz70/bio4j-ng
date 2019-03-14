@@ -13,7 +13,7 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.Prop;
+import ru.bio4j.ng.model.transport.Prop;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -530,7 +530,7 @@ public class Utl {
 //            GenericDeclaration gd = paramFirst.getGenericDeclaration();
 //            String pname = paramFirst.getName();
 //            for(java.lang.reflect.Field fld : clazz.getDeclaredFields()) {
-//                if(pname.equals("" + fld.getGenericType())) {
+//                if(pname.compare("" + fld.getGenericType())) {
 //                    fld.setAccessible(true);
 //                    Object fldVal;
 //                    try {
