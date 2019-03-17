@@ -127,7 +127,8 @@
                         <Bundle-SymbolicName>${bundle-symbolic-name};singleton:=true</Bundle-SymbolicName>
                         <Bundle-Activator>org.eclipse.jetty.osgi.boot.JettyBootstrapActivator</Bundle-Activator>
                         <!--<DynamicImport-Package>org.eclipse.jetty.*;version="[$(version;===;${parsedVersion.osgiVersion}),$(version;==+;${parsedVersion.osgiVersion}))"</DynamicImport-Package>-->
-                        <Import-Package>javax.mail;version="1.4.0";resolution:=optional,
+                        <Import-Package>
+                            javax.mail;version="1.4.0";resolution:=optional,
                             javax.mail.event;version="1.4.0";resolution:=optional,
                             javax.mail.internet;version="1.4.0";resolution:=optional,
                             javax.mail.search;version="1.4.0";resolution:=optional,

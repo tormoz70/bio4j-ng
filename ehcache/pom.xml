@@ -10,10 +10,6 @@
     <artifactId>bio4j-ng-ehcache</artifactId>
     <packaging>bundle</packaging>
 
-    <properties>
-        <ehcache.version>2.6.11</ehcache.version>
-    </properties>
-
 	<build>
         <plugins>
             <plugin>

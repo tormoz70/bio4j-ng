@@ -9,6 +9,11 @@
     <artifactId>ext-libs</artifactId>
     <packaging>bundle</packaging>
 
+    <properties>
+        <commons-beanutils.version>1.9.3</commons-beanutils.version>
+        <org.apache.httpcomponents.httpclient.version>4.5.7</org.apache.httpcomponents.httpclient.version>
+        <org.apache.httpcomponents.httpcore.version>4.4.11</org.apache.httpcomponents.httpcore.version>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -50,21 +55,21 @@
 
         <dependency>
             <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils-core</artifactId>
-            <version>1.8.3</version>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.5</version>
+            <version>${org.apache.httpcomponents.httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.9</version>
+            <version>${org.apache.httpcomponents.httpcore.version}</version>
             <scope>compile</scope>
         </dependency>
 
