@@ -1,6 +1,7 @@
 package ru.bio4j.ng.commons.utils;
 
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
@@ -48,6 +49,14 @@ public class SrvcUtils {
                 p.setValue(SrvcUtils.PARAM_CURUSR_CLIENT, usr.getRemoteClient(), Param.Direction.IN, true);
             }
         }
+    }
+
+    public static ABean buildSuccess(User user) {
+        ABean rslt = new ABean();
+        rslt.put("success", true);
+        if(user != null)
+            rslt.put("user", user);
+        return rslt;
     }
 
 }

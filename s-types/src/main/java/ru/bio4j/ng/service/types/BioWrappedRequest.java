@@ -77,7 +77,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return rslt;
     }
 
-    private static void extractBioParamsFromQuery(BioQueryParams qparams) {
+    private static void extractBioParamsFromQuery(BioQueryParams qparams) throws Exception {
         List<String> sysParamNames = extractSysParamNames();
         qparams.bioParams = new ArrayList<>();
         Enumeration<String> paramNames = qparams.request.getParameterNames();
@@ -88,15 +88,12 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 qparams.bioParams.add(Param.builder().name(paramName).type(MetaType.STRING).direction(Param.Direction.IN).value(val).build());
             }
         }
-//        if(!Strings.isNullOrEmpty(qparams.jsonData)) {
-//            BioParamObj bioParamObj = null;
-//            try {
-//                bioParamObj = Jsons.decode(qparams.jsonData, BioParamObj.class);
-//            } catch (Exception e) {
-//            }
-//            if (bioParamObj != null && bioParamObj.getBioParams() != null)
-//                qparams.bioParams = Paramus.set(qparams.bioParams).merge(bioParamObj.getBioParams(), true).pop();
-//        }
+        if(!Strings.isNullOrEmpty(qparams.jsonData)) {
+            List<Param> bioParams = Utl.anjsonToParams(qparams.jsonData);
+            if (bioParams != null && bioParams.size() > 0) {
+                qparams.bioParams = Paramus.set(qparams.bioParams).merge(bioParams, true).pop();
+            }
+        }
 
     }
 
@@ -155,6 +152,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
 
     public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
+        if(request.getMethod() == "OPTIONS") return null;
         StringBuilder sb = new StringBuilder();
 
         String uploadedJson = null;

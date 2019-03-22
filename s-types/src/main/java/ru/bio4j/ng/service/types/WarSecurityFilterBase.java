@@ -3,6 +3,7 @@ package ru.bio4j.ng.service.types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.SrvcUtils;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.ABean;
@@ -83,14 +84,6 @@ public class WarSecurityFilterBase {
         return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
     }
 
-    protected static ABean buildSuccess(User user) {
-        ABean rslt = new ABean();
-        rslt.put("success", true);
-        if(user != null)
-            rslt.put("user", user);
-        return rslt;
-    }
-
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
@@ -109,15 +102,15 @@ public class WarSecurityFilterBase {
                 String pathInfo = req.getPathInfo();
                 if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
                     User user = loginProcessor.login(qprms);
-                    ABean result = buildSuccess(user);
+                    ABean result = SrvcUtils.buildSuccess(user);
                     response.getWriter().append(Jsons.encode(result));
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
                     User user = loginProcessor.getUser(qprms);
-                    ABean result = buildSuccess(user);
+                    ABean result = SrvcUtils.buildSuccess(user);
                     response.getWriter().append(Jsons.encode(result));
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/logoff", false)) {
                     loginProcessor.logoff(qprms);
-                    ABean result = buildSuccess(null);
+                    ABean result = SrvcUtils.buildSuccess(null);
                     response.getWriter().append(Jsons.encode(result));
                 } else {
                     User user = loginProcessor.getUser(qprms);

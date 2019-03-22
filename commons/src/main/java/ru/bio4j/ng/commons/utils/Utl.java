@@ -749,6 +749,25 @@ public class Utl {
         return result;
     }
 
+    public static List<Param> anjsonToParams(String anjson) throws Exception {
+        List<Param> result = new ArrayList<>();
+        if(Strings.isNullOrEmpty(anjson))
+            return result;
+
+        HashMap bioParamsContainer = Jsons.decode(anjson);
+        if(bioParamsContainer.containsKey("bioParams")) {
+            List<HashMap<String, Object>> bioParamsArray = (List)bioParamsContainer.get("bioParams");
+            for (HashMap<String, Object> prm : bioParamsArray) {
+                String paramName = (String)prm.get("name");
+                if (!paramName.toLowerCase().startsWith("p_"))
+                    paramName = "p_" + paramName.toLowerCase();
+                Object valObj = prm.get("value");
+                result.add(Param.builder().name(paramName).value(valObj).build());
+            }
+        }
+        return result;
+    }
+
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
