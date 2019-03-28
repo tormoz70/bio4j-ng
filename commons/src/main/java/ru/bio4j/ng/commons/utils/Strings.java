@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -239,5 +240,11 @@ public class Strings {
 	    String valueNotNull  = isNullOrEmpty(value) ? "0" : value.trim().toLowerCase();
         return Arrays.asList(new String[] {"true", "yes", "t", "y", "1"}).contains(valueNotNull);
     }
+
+    public static String formatDateTime(final Date value, String format) {
+        SimpleDateFormat dt1 = new SimpleDateFormat(format);
+        return dt1.format(value);
+    }
+
 
 }

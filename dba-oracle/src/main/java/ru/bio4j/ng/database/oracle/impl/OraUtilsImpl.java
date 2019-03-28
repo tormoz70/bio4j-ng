@@ -1,6 +1,5 @@
 package ru.bio4j.ng.database.oracle.impl;
 
-import oracle.jdbc.OracleResultSet;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
@@ -15,6 +14,7 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +26,11 @@ import java.util.regex.Pattern;
  */
 public class OraUtilsImpl implements RDBMSUtils {
 	private static class PackageName {
+        public final String schemaName;
 		public final String pkgName;
 		public final String methodName;
-		public PackageName(String pkgName, String methodName) {
+		public PackageName(String schemaName, String pkgName, String methodName) {
+            this.schemaName = schemaName;
 			this.pkgName = pkgName;
 			this.methodName = methodName;
 		}
@@ -39,18 +41,22 @@ public class OraUtilsImpl implements RDBMSUtils {
      * @param storedProcName  - имя процедуры в виде [methodName] или [packageName].[methodName]
      * @return
      */
-    private OraUtilsImpl.PackageName parsStoredProcName(String storedProcName) {
+    public static OraUtilsImpl.PackageName parsStoredProcName(String storedProcName) {
+        String schemaName = null;
         String pkgName = null;
         String methodName = null;
         String[] storedProcNameParts = Strings.split(storedProcName, ".");
-        if(storedProcNameParts.length == 1)
+        if (storedProcNameParts.length == 1) {
             methodName = storedProcNameParts[0];
-        if(storedProcNameParts.length == 2) {
+        } else if(storedProcNameParts.length == 2) {
             pkgName    = storedProcNameParts[0];
             methodName = storedProcNameParts[1];
+        } else if(storedProcNameParts.length == 3) {
+            schemaName    = storedProcNameParts[0];
+            pkgName    = storedProcNameParts[1];
+            methodName = storedProcNameParts[2];
         }
-        PackageName pkg = new OraUtilsImpl.PackageName(pkgName, methodName);
-    	return pkg;
+    	return new OraUtilsImpl.PackageName(schemaName, pkgName, methodName);
     }
 
 
@@ -96,7 +102,7 @@ public class OraUtilsImpl implements RDBMSUtils {
     private static final String SQL_GET_PARAMS_FROM_DBMS = "select "+
             " a.argument_name, a.position, a.sequence, a.data_type, a.in_out, a.data_length" +
             " from ALL_ARGUMENTS a" +
-            " where a.owner = sys_context('userenv', 'current_schema')" +
+            " where a.owner = coalesce(:schema_name, sys_context('userenv', 'current_schema'))" +
             " and (:package_name is null or a.package_name = upper(:package_name))" +
             " and a.object_name = upper(:method_name)" +
             " order by position";
@@ -104,32 +110,35 @@ public class OraUtilsImpl implements RDBMSUtils {
         OraUtilsImpl.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
         try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
+            st.setStringAtName("schema_name", pkg.schemaName);
             st.setStringAtName("package_name", pkg.pkgName);
             st.setStringAtName("method_name", pkg.methodName);
-            try (OracleResultSet rs = (OracleResultSet)st.executeQuery()) {
+            try (ResultSet rs = st.executeQuery()) {
                 try(Paramus p = Paramus.set(params)) {
                     int i = 0;
                     while (rs.next()) {
                         String parName = rs.getString("argument_name");
-                        String parType = rs.getString("data_type");
-                        String parDir = rs.getString("in_out");
-                        Param newParam  = Param.builder()
-                                .name(parName.toLowerCase())
-                                .type(decodeType(parType))
-                                .direction(decodeDirection(parDir))
-                                .build();
-                        Param overrideParam = null;
-                        if(paramsOverride != null && paramsOverride.size() > i)
-                            overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
-                        if(overrideParam != null) {
-                            if(overrideParam.getOverride())
-                                newParam.setName(DbUtils.normalizeParamName(overrideParam.getName()));
-                            if(overrideParam.getValue() != null)
-                                newParam.setValue(Converter.toType(overrideParam.getValue(), MetaTypeConverter.write(newParam.getType())));
+                        if(!Strings.isNullOrEmpty(parName)) {
+                            String parType = rs.getString("data_type");
+                            String parDir = rs.getString("in_out");
+                            Param newParam = Param.builder()
+                                    .name(parName.toLowerCase())
+                                    .type(decodeType(parType))
+                                    .direction(decodeDirection(parDir))
+                                    .build();
+                            Param overrideParam = null;
+                            if (paramsOverride != null && paramsOverride.size() > i)
+                                overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
+                            if (overrideParam != null) {
+                                if (overrideParam.getOverride())
+                                    newParam.setName(DbUtils.normalizeParamName(overrideParam.getName()));
+                                if (overrideParam.getValue() != null)
+                                    newParam.setValue(Converter.toType(overrideParam.getValue(), MetaTypeConverter.write(newParam.getType())));
+                            }
+                            DbUtils.checkParamName(newParam.getName());
+                            p.add(newParam);
+                            i++;
                         }
-                        DbUtils.checkParamName(newParam.getName());
-                        p.add(newParam);
-                        i++;
                     }
                 }
             }
