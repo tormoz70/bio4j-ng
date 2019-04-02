@@ -7,6 +7,7 @@ import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+import ru.bio4j.ng.service.api.BioSecurityService;
 import ru.bio4j.ng.service.api.RestParamNames;
 
 import java.nio.charset.Charset;
@@ -14,6 +15,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -155,6 +157,9 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         if(request.getMethod() == "OPTIONS") return null;
         StringBuilder sb = new StringBuilder();
 
+        ServletContext servletContext = request.getServletContext();
+        BioSecurityService securityService = (BioSecurityService) Utl.getService(servletContext, BioSecurityService.class);
+
         String uploadedJson = null;
         if (!isMultypartRequest(request) && !isUrlencodedFormRequest(request)) {
             Httpc.readDataFromRequest(request, sb);
@@ -184,11 +189,16 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 result.remoteClientVersion = bioHeaderClientVersion;
         }
         if(Strings.isNullOrEmpty(result.stoken)) {
-            final String bioHeaderSToken = request.getHeader("X-SToken");
+            final String securityTokenParam = securityService.paramSecurityToken();
+            final String bioHeaderSToken = request.getHeader(Strings.isNullOrEmpty(securityTokenParam) ? "X-SToken" : securityTokenParam);
             if (!Strings.isNullOrEmpty(bioHeaderSToken))
                 result.stoken = bioHeaderSToken;
+            if(Strings.isNullOrEmpty(result.stoken) && !Strings.isNullOrEmpty(securityTokenParam)){
+                result.stoken = request.getParameter(securityTokenParam);
+            }
+
         }
-        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
+//        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
 
         if(Strings.isNullOrEmpty(result.pageOrig)) {
             final String bioHeaderPage = request.getHeader("X-Pagination-Page");
@@ -216,6 +226,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             if (result.method == "POST") {
                 String usrname = null;
                 String passwd = null;
+                String userNameParam = securityService.paramUserName();
+                String passwordParam = securityService.paramPassword();
                 if(request.getParameterMap().containsKey("usrname"))
                     usrname = request.getParameter("usrname");
                 else if(request.getParameterMap().containsKey("login"))
@@ -226,6 +238,15 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                     passwd = request.getParameter("password");
                 if (!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
                     result.login = usrname + "/" + passwd;
+                }
+                if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(userNameParam) && !Strings.isNullOrEmpty(passwordParam)){
+                    if(request.getParameterMap().containsKey(userNameParam))
+                        usrname = request.getParameter(userNameParam);
+                    if(request.getParameterMap().containsKey(passwordParam))
+                        passwd = request.getParameter(passwordParam);
+                    if (!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
+                        result.login = usrname + "/" + passwd;
+                    }
                 }
             }
         } else

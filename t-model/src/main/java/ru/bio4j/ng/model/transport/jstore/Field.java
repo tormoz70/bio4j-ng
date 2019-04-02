@@ -15,6 +15,11 @@ public class Field {
     private String name;
 
     /**
+     * Имя атрибута
+     */
+    private String attrName;
+
+    /**
      * Формат отображения
      */
     private String format;
@@ -263,5 +268,13 @@ public class Field {
 
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
+    }
+
+    public String getAttrName() {
+        return attrName;
+    }
+
+    public void setAttrName(String attrName) {
+        this.attrName = attrName;
     }
 }

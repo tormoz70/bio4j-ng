@@ -217,11 +217,13 @@ public class CursorParser {
             boolean generate = Converter.toType(Doms.getAttribute(paramElem, "generate", "true", String.class), boolean.class);
             if (generate) {
                 String fieldName = Doms.getAttribute(paramElem, "name", "", String.class);
+                String attrName = Doms.getAttribute(paramElem, "attrName", null, String.class);
                 Field col = findCol(fieldName, fields);
                 if (col == null) {
                     col = new Field();
                     fields.add(col);
                     col.setName(fieldName);
+                    col.setAttrName(attrName);
                 }
                 col.setId(i + 1);
                 col.setFormat(Doms.getAttribute(paramElem, "format", null, String.class));

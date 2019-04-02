@@ -11,6 +11,7 @@ import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppService;
+import ru.bio4j.ng.service.api.BioSecurityService;
 import ru.bio4j.ng.service.api.FCloudApi;
 import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
@@ -25,18 +26,28 @@ public abstract class RestServiceBase {
 
     protected abstract ServletContext getServletContext();
 
-    protected Class<? extends BioAppService> getBioAppServiceClass() {
+    protected Class<? extends BioAppService> getAppServiceClass() {
         return BioAppService.class;
     }
     protected Class<? extends FCloudApi> getFCloudApiClass() {
         return FCloudApi.class;
     }
+    protected Class<? extends BioSecurityService> getSecurityServiceClass() {
+        return BioSecurityService.class;
+    }
 
-    private BioAppService mmoduleProvider;
+    private BioAppService appService;
     protected BioAppService getAppService() {
-        if(mmoduleProvider == null)
-            mmoduleProvider = Utl.getService(getServletContext(), getBioAppServiceClass());
-        return mmoduleProvider;
+        if(appService == null)
+            appService = Utl.getService(getServletContext(), getAppServiceClass());
+        return appService;
+    }
+
+    private BioSecurityService securityService;
+    protected BioSecurityService getSecurityService() {
+        if(securityService == null)
+            securityService = Utl.getService(getServletContext(), getSecurityServiceClass());
+        return securityService;
     }
 
     private FCloudApi fCloudApi;
@@ -236,6 +247,11 @@ public abstract class RestServiceBase {
     protected void _exec(String bioCode, HttpServletRequest request) throws Exception {
         BioAppService appService = getAppService();
         RestApiAdapter.exec(bioCode, request, appService);
+    }
+
+    protected void _exec(String bioCode, Object params, User user) throws Exception {
+        BioAppService appService = getAppService();
+        RestApiAdapter.exec(bioCode, params, appService, user);
     }
 
     protected <T> T _selectScalar(final String bioCode, final HttpServletRequest request, final Class<T> clazz, final T defaultValue) throws Exception {

@@ -73,4 +73,14 @@ public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBa
 
     protected abstract SQLContext createSQLContext() throws Exception;
 
+    public String paramSecurityToken(){
+        return null;
+    }
+    public String paramUserName(){
+        return null;
+    }
+    public String paramPassword(){
+        return null;
+    }
+
 }

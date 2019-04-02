@@ -74,14 +74,17 @@ public class CrudReaderApi {
                     }
                     ABean bean = new ABean();
                     for (Field field : result.getMetadata()) {
+                        String attrName = field.getAttrName();
+                        if(Strings.isNullOrEmpty(attrName))
+                            attrName = field.getName();
                         DBField f = rs.getField(field.getName());
                         if (f != null) {
                             Object val = rs.getValue(f.getId());
                             Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
                             Object valTyped = Converter.toType(val, clazz);
-                            bean.put(field.getName(), valTyped);
+                            bean.put(attrName, valTyped);
                         } else
-                            bean.put(field.getName(), null);
+                            bean.put(attrName, null);
                     }
                     result.getRows().add(bean);
                     if(result.getRows().size() >= MAX_RECORDS_FETCH_LIMIT)
