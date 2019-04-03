@@ -246,5 +246,29 @@ public class Strings {
         return dt1.format(value);
     }
 
+    public interface IRoundedStrProcessor {
+        String process(String found) throws Exception;
+    }
+
+    public static String findRoundedStr(final String text, final String roundBegin, final String roundEnd, final IRoundedStrProcessor callback) throws Exception {
+        String rslt = text;
+        if(!Strings.isNullOrEmpty(rslt)) {
+            final String tagbgn = roundBegin.toLowerCase();
+            final String tagend = roundEnd.toLowerCase();
+            int from = 0;
+            while (true) {
+                int posbgn = rslt.toLowerCase().indexOf(tagbgn, from);
+                int posend = rslt.toLowerCase().indexOf(tagend, from);
+                if (posbgn == -1) break;
+                String found = rslt.substring(posbgn + tagbgn.length(), posend);
+                String replacement = callback.process(found);
+                if(replacement == null)
+                    replacement = "";
+                rslt = rslt.substring(0, posbgn + tagbgn.length()) + replacement + rslt.substring(posend);
+                from = rslt.toLowerCase().indexOf(tagend, from) + tagend.length();
+            }
+        }
+        return rslt;
+    }
 
 }

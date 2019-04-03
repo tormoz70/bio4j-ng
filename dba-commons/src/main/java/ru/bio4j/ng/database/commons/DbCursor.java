@@ -84,6 +84,9 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
                 if (!doBeforeStatement(this.params)) // Обрабатываем события
                     return rslt;
 
+                // Удаляем из SQL условия #cut#
+                this.preparedSQL = DbUtils.cutFilterConditions(this.preparedSQL, this.params);
+
                 setParamsToStatement(); // Применяем параметры
 
                 LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));

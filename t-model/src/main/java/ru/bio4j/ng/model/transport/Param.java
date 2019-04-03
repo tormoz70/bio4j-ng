@@ -202,6 +202,10 @@ public class Param {
         this.value = value;
     }
 
+    public boolean isEmpty() {
+        return this.value == null || (""+this.value).length() == 0;
+    }
+
 	public Object getInnerObject() {
 		return this.innerObject;
 	}

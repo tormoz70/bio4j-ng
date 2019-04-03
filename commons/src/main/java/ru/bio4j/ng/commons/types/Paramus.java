@@ -481,6 +481,11 @@ public class Paramus implements Closeable {
 	    return getParamValue(paramName, false);
     }
 
+    public boolean paramIsEmpty(String paramName) throws ConvertValueException {
+        Param param = this.getParam(paramName, true);
+        return (param == null) || param.isEmpty();
+    }
+
     public static <T> T paramValue(Param param, Class<T> type) throws ConvertValueException {
         return Converter.toType(param.getValue(), type);
     }
@@ -504,6 +509,12 @@ public class Paramus implements Closeable {
     public static Object paramValue(List<Param> params, String paramName) throws Exception {
         try (Paramus paramus = Paramus.set(params)) {
             return paramus.getParamValue(paramName);
+        }
+    }
+
+    public static boolean paramIsEmpty(List<Param> params, String paramName) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            return paramus.paramIsEmpty(paramName);
         }
     }
 

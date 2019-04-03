@@ -3,11 +3,9 @@ package ru.bio4j.ng.database.commons;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.model.transport.Prop;
-import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -23,6 +21,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Утилиты для работы с метаданными СУБД
@@ -403,4 +403,52 @@ public class DbUtils {
     public static boolean execSQL(Connection conn, String sql) throws SQLException {
         return execSQL(conn, sql, null);
     }
+
+    private static final String CS_EMPTYCASE = "/*empty*/";
+    private static final String CS_CUTEMPTY_PLACEHOLDER_BGN = "/*${cutempty}*/";
+    private static final String CS_CUTEMPTY_PLACEHOLDER_END = "/*{cutempty}$*/";
+    private static final String CS_CUTEMPTY_PARAM = ":\\w+";
+
+    private static String cutEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+        return Strings.findRoundedStr(sql, CS_CUTEMPTY_PLACEHOLDER_BGN, CS_CUTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) throws Exception {
+                String rslt = found;
+                Matcher m = Regexs.match(rslt, CS_CUTEMPTY_PARAM, Pattern.CASE_INSENSITIVE);
+                boolean isEmpty = true;
+                while(m.find()) {
+                    String paramName = m.group(0).substring(1);
+                    Param prm = findParamIgnorePrefix(paramName, prms);
+                    isEmpty = isEmpty && (prm == null || prm.isEmpty());
+                }
+                if(isEmpty)
+                    rslt = CS_EMPTYCASE;
+                return rslt;
+            }
+        });
+    }
+
+    private static final String CS_CUTIIF_PLACEHOLDER_BGN = "/*${cutiif}*/";
+    private static final String CS_CUTIIF_PLACEHOLDER_END = "/*{cutiif}$*/";
+    private static final String CS_CUTIIF_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
+
+    private static String cutIIFConditions(final String sql, final List<Param> prms) throws Exception {
+        return Strings.findRoundedStr(sql, CS_CUTIIF_PLACEHOLDER_BGN, CS_CUTIIF_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) throws Exception {
+                String rslt = found;
+                String js = Regexs.find(rslt, CS_CUTIIF_REGEX1, Pattern.CASE_INSENSITIVE);
+                if(Evals.getInstance().runCondition(js, prms))
+                    rslt = CS_EMPTYCASE;
+                return rslt;
+            }
+        });
+    }
+
+    public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
+        String rslt = cutEmptyFilterConditions( sql, prms);
+        rslt = cutIIFConditions( rslt, prms);
+        return rslt;
+    }
+
 }

@@ -2,7 +2,14 @@ package ru.bio4j.ng.database.commons;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.Param;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,5 +63,34 @@ public class someTests {
         Assert.assertEquals(r, "OKEEPER_ID");
     }
 
+    @Test
+    public void cutEmptyFilterConditions0Test() throws Exception {
+        String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("load_log1.sql"));
+        List<Param> prms = new ArrayList<>();
+        Paramus.setParamValue(prms, "org_id", null);
+        Paramus.setParamValue(prms, "SYS_CURUSERROLES", null);
+        sql = DbUtils.cutFilterConditions(sql, prms);
+        System.out.println(sql);
+    }
 
+    @Test
+    public void cutEmptyFilterConditions1Test() throws Exception {
+        String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("films.sql"));
+        List<Param> prms = new ArrayList<>();
+        Paramus.setParamValue(prms, "p_calcFrom", null);
+        Paramus.setParamValue(prms, "p_genre", "123");
+        sql = DbUtils.cutFilterConditions(sql, prms);
+        System.out.println(sql);
+    }
+
+    @Test
+    public void findRoundedStrTest() throws Exception {
+        String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("films.sql"));
+        Strings.findRoundedStr(sql, "/*${cutiif}*/", "/*{cutiif}$*/", new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) {
+                return null;
+            }
+        });
+    }
 }
