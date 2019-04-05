@@ -170,6 +170,18 @@ public abstract class RestServiceBase {
         return abeans;
     }
 
+    protected static <T> T _exctarctBean(HttpServletRequest request, Class<T> clazz) throws Exception {
+        T bean = null;
+        String abeanJson = null;
+        try {
+            abeanJson = ((BioWrappedRequest)request).getBioQueryParams().jsonData;
+            bean = Jsons.decode(abeanJson, clazz);
+        } catch (Exception e) {
+            throw new Exception(String.format("Cannot decode json to bean(%s): %s", clazz.getCanonicalName(), abeanJson));
+        }
+        return bean;
+    }
+
     protected static ABean _setBean(ABean bean, String attrName, Object attrValue, Class<?> attrType) throws Exception {
         if(bean == null)
             bean = new ABean();

@@ -122,6 +122,24 @@ public class DbUtils {
         return r;
     }
 
+    public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) throws Exception {
+        ABean bean = new ABean();
+        for (ru.bio4j.ng.model.transport.jstore.Field field : metaData) {
+            String attrName = field.getAttrName();
+            if (Strings.isNullOrEmpty(attrName))
+                attrName = field.getName();
+            DBField f = reader.getField(field.getName());
+            if (f != null) {
+                Object val = reader.getValue(f.getId());
+                Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
+                Object valTyped = Converter.toType(val, clazz);
+                bean.put(attrName, valTyped);
+            } else
+                bean.put(attrName, null);
+        }
+        return bean;
+    }
+
     public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
         if(reader == null)
             throw new IllegalArgumentException("Argument \"reader\" cannot be null!");

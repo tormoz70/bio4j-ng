@@ -72,20 +72,7 @@ public class CrudReaderApi {
                         long estimatedTime = System.currentTimeMillis() - startTime;
                         LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
                     }
-                    ABean bean = new ABean();
-                    for (Field field : result.getMetadata()) {
-                        String attrName = field.getAttrName();
-                        if(Strings.isNullOrEmpty(attrName))
-                            attrName = field.getName();
-                        DBField f = rs.getField(field.getName());
-                        if (f != null) {
-                            Object val = rs.getValue(f.getId());
-                            Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
-                            Object valTyped = Converter.toType(val, clazz);
-                            bean.put(attrName, valTyped);
-                        } else
-                            bean.put(attrName, null);
-                    }
+                    ABean bean = DbUtils.createABeanFromReader(result.getMetadata(), rs);
                     result.getRows().add(bean);
                     if(result.getRows().size() >= MAX_RECORDS_FETCH_LIMIT)
                         return false;
@@ -225,7 +212,11 @@ public class CrudReaderApi {
                         long estimatedTime = System.currentTimeMillis() - startTime;
                         LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
                     }
-                    T bean = DbUtils.createBeanFromReader(rs, beanType);
+                    T bean;
+                    if(beanType == ABean.class)
+                        bean = (T)DbUtils.createABeanFromReader(cursorDef.getFields(), rs);
+                    else
+                        bean = DbUtils.createBeanFromReader(rs, beanType);
                     result.add(bean);
                     if (result.size() >= MAX_RECORDS_FETCH_LIMIT)
                         return false;

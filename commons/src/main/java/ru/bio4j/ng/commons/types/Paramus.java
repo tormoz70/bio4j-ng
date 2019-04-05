@@ -530,6 +530,12 @@ public class Paramus implements Closeable {
         return paramValueAsString(params, paramName, null);
     }
 
+    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType, Param.Direction direction) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.setValue(paramName, value, forceType, direction, true);
+        }
+    }
+
     public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType) throws Exception {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.setValue(paramName, value, forceType);
