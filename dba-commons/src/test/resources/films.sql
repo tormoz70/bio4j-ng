@@ -1,6 +1,6 @@
 with
 topsel0 as (
-    /*${cutiif}*//*[p_calcFrom == null]*/
+    /*@{cutempty}*//*[p_calcFrom]*/
     select a.pu_num,
            sum(a.tckts) as tckts,
            sum(a.summ) as summ,
@@ -25,8 +25,8 @@ topsel0 as (
             )
         )
      group by a.pu_num
-    /*{cutiif}$*/
-    /*${cutiif}*//*[p_calcFrom != null]*/
+    /*{cutempty}@*/
+    /*@{cutnotempty}*//*[p_calcFrom]*/
     select a.pu_num,
            a.tckts,
            a.summ,
@@ -49,7 +49,7 @@ topsel0 as (
             )
         )
      group by a.pu_num
-    /*{cutiif}$*/
+    /*{cutnotempty}@*/
 )
 select
         k.name_rus as fname, --Название фильма
@@ -70,14 +70,14 @@ select
         k.rntcategory as rentCategory  --Категория проката
 from TOPSEL0 a
     inner join CUB5$KINOSM0 k on k.pu_num = a.pu_num
-where /*${cutempty}*/(k.startdate >= trunc(:p_releaseFrom) and a.show_date < trunc(:p_releaseTo)+1) and/*{cutempty}$*/
-/*${cutempty}*/(k.pu_num = :p_movieId) and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.name_rus) like '%'||lower(:p_cinemaName)||'%') and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.prod_year)  like '%'||lower(:p_releaseYear)||'%') and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.genre)  like '%'||lower(:p_genre)||'%') and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.madein)  like '%'||lower(:p_country)||'%') and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.studia)  like '%'||lower(:p_production)||'%') and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.age_restr)  like '%'||lower(:p_ageRestriction)||'%') and/*{cutempty}$*/
-/*${cutempty}*/(lower(k.mdistributor)  like '%'||lower(:p_rightholders)||'%') and/*{cutempty}$*/
+where /*@{cutempty}*/(k.startdate >= trunc(:p_releaseFrom) and a.show_date < trunc(:p_releaseTo)+1) and/*{cutempty}@*/
+/*@{cutempty}*/(k.pu_num = :p_movieId) and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.name_rus) like '%'||lower(:p_cinemaName)||'%') and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.prod_year)  like '%'||lower(:p_releaseYear)||'%') and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.genre)  like '%'||lower(:p_genre)||'%') and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.madein)  like '%'||lower(:p_country)||'%') and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.studia)  like '%'||lower(:p_production)||'%') and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.age_restr)  like '%'||lower(:p_ageRestriction)||'%') and/*{cutempty}@*/
+/*@{cutempty}*/(lower(k.mdistributor)  like '%'||lower(:p_rightholders)||'%') and/*{cutempty}@*/
 1=1
 

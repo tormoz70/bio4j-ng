@@ -46,16 +46,16 @@ SELECT
   WHERE a.packet_name = nvl(:packet_name_full, a.packet_name) 
     and (a.registred >= :reg_from AND a.registred < :reg_to+1)
     and (a.sess_org_id = case when :force_org_id is null then a.sess_org_id else :force_org_id end)
-    /*${cutiif}*//*[SYS_CURUSERROLES != '3']*/and (a.org_id = to_number(:SYS_CURODEPUID))/*{cutiif}$*/
+    /*@{cutiif}*//*[SYS_CURUSERROLES != '3']*/and (a.org_id = to_number(:SYS_CURODEPUID))/*{cutiif}@*/
     and (:SYS_CURUSERROLES != '4' or (:SYS_CURUSERROLES = '4' and o.holding_id = to_number(:SYS_CURODEPUID)))
     and (        
-        /*${cutiif}*//*[org_id != null]*/(a.org_id = to_number(regexp_substr(:org_id, '^\d+$'))) and/*{cutiif}$*/
-        /*${cutempty-sess_prnt_org_id}*/(a.sess_prnt_org_id = to_number(regexp_substr(:sess_prnt_org_id, '^\d+$'))) and/*{cutempty-sess_prnt_org_id}$*/
-        /*${cutempty-sess_org_id}*/(a.sess_org_id = to_number(regexp_substr(:sess_org_id, '^\d+$'))) and/*{cutempty-sess_org_id}$*/
-        /*${cutempty-packet_name}*/(lower(a.packet_name) like '%'||lower(:packet_name)||'%') and/*{cutempty-packet_name}$*/
-        /*${cutempty-ip}*/(lower(a.ip_addr) like '%'||lower(:ip)||'%') and/*{cutempty-ip}$*/
-        /*${cutempty-cur_pstate}*/(a.cur_pstate = detectCurPStateId(:cur_pstate)) and/*{cutempty-cur_pstate}$*/
-        /*${cutempty-message}*/(lower(a.cur_pstate_msg) like '%'||lower(:message)||'%') and/*{cutempty-message}$*/
-        /*${cutempty-test}*/(o.test = :test) and/*{cutempty-test}$*/
+        /*@{cutiif}*//*[org_id != null]*/(a.org_id = to_number(regexp_substr(:org_id, '^\d+$'))) and/*{cutiif}@*/
+        /*@{cutempty-sess_prnt_org_id}*/(a.sess_prnt_org_id = to_number(regexp_substr(:sess_prnt_org_id, '^\d+$'))) and/*{cutempty-sess_prnt_org_id}@*/
+        /*@{cutempty-sess_org_id}*/(a.sess_org_id = to_number(regexp_substr(:sess_org_id, '^\d+$'))) and/*{cutempty-sess_org_id}@*/
+        /*@{cutempty-packet_name}*/(lower(a.packet_name) like '%'||lower(:packet_name)||'%') and/*{cutempty-packet_name}@*/
+        /*@{cutempty-ip}*/(lower(a.ip_addr) like '%'||lower(:ip)||'%') and/*{cutempty-ip}@*/
+        /*@{cutempty-cur_pstate}*/(a.cur_pstate = detectCurPStateId(:cur_pstate)) and/*{cutempty-cur_pstate}@*/
+        /*@{cutempty-message}*/(lower(a.cur_pstate_msg) like '%'||lower(:message)||'%') and/*{cutempty-message}@*/
+        /*@{cutempty-test}*/(o.test = :test) and/*{cutempty-test}@*/
         1=1
     )

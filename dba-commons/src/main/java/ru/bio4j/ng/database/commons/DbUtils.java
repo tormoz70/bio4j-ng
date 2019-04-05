@@ -405,31 +405,60 @@ public class DbUtils {
     }
 
     private static final String CS_EMPTYCASE = "/*empty*/";
-    private static final String CS_CUTEMPTY_PLACEHOLDER_BGN = "/*${cutempty}*/";
-    private static final String CS_CUTEMPTY_PLACEHOLDER_END = "/*{cutempty}$*/";
-    private static final String CS_CUTEMPTY_PARAM = ":\\w+";
+    private static final String CS_FIND_PARAM = ":\\w+";
+    private static final String CS_CHECKPRMS_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
 
+    private static boolean checkParamsIsEmpty(String sqlPart, List<Param> prms) {
+        boolean isEmpty = true;
+        String prmsList = Regexs.find(sqlPart, CS_CHECKPRMS_REGEX1, Pattern.CASE_INSENSITIVE);
+        if (!Strings.isNullOrEmpty(prmsList)) {
+            String[] prms2check = Strings.split(prmsList, ",");
+            for (String prmName : prms2check) {
+                Param prm = findParamIgnorePrefix(prmName, prms);
+                isEmpty = isEmpty && (prm == null || prm.isEmpty());
+            }
+        } else {
+            Matcher m = Regexs.match(sqlPart, CS_FIND_PARAM, Pattern.CASE_INSENSITIVE);
+            while (m.find()) {
+                String paramName = m.group(0).substring(1);
+                Param prm = findParamIgnorePrefix(paramName, prms);
+                isEmpty = isEmpty && (prm == null || prm.isEmpty());
+            }
+        }
+        return isEmpty;
+    }
+
+    private static final String CS_CUTEMPTY_PLACEHOLDER_BGN = "/*@{cutempty}*/";
+    private static final String CS_CUTEMPTY_PLACEHOLDER_END = "/*{cutempty}@*/";
     private static String cutEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
         return Strings.findRoundedStr(sql, CS_CUTEMPTY_PLACEHOLDER_BGN, CS_CUTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
             @Override
             public String process(String found) throws Exception {
-                String rslt = found;
-                Matcher m = Regexs.match(rslt, CS_CUTEMPTY_PARAM, Pattern.CASE_INSENSITIVE);
-                boolean isEmpty = true;
-                while(m.find()) {
-                    String paramName = m.group(0).substring(1);
-                    Param prm = findParamIgnorePrefix(paramName, prms);
-                    isEmpty = isEmpty && (prm == null || prm.isEmpty());
-                }
+                boolean isEmpty = checkParamsIsEmpty(found, prms);
                 if(isEmpty)
-                    rslt = CS_EMPTYCASE;
-                return rslt;
+                    return CS_EMPTYCASE;
+                return found;
             }
         });
     }
 
-    private static final String CS_CUTIIF_PLACEHOLDER_BGN = "/*${cutiif}*/";
-    private static final String CS_CUTIIF_PLACEHOLDER_END = "/*{cutiif}$*/";
+    private static final String CS_CUTNOTEMPTY_PLACEHOLDER_BGN = "/*@{cutnotempty}*/";
+    private static final String CS_CUTNOTEMPTY_PLACEHOLDER_END = "/*{cutnotempty}@*/";
+
+    private static String cutNotEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+        return Strings.findRoundedStr(sql, CS_CUTNOTEMPTY_PLACEHOLDER_BGN, CS_CUTNOTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) throws Exception {
+                boolean isEmpty = checkParamsIsEmpty(found, prms);
+                if(!isEmpty)
+                    return CS_EMPTYCASE;
+                return found;
+            }
+        });
+    }
+
+    private static final String CS_CUTIIF_PLACEHOLDER_BGN = "/*@{cutiif}*/";
+    private static final String CS_CUTIIF_PLACEHOLDER_END = "/*{cutiif}@*/";
     private static final String CS_CUTIIF_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
 
     private static String cutIIFConditions(final String sql, final List<Param> prms) throws Exception {
@@ -447,7 +476,8 @@ public class DbUtils {
 
     public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
         String rslt = cutEmptyFilterConditions( sql, prms);
-        rslt = cutIIFConditions( rslt, prms);
+        rslt = cutNotEmptyFilterConditions( rslt, prms);
+        //rslt = cutIIFConditions( rslt, prms);
         return rslt;
     }
 

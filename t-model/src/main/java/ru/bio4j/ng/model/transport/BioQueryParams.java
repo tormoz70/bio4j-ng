@@ -31,12 +31,14 @@ public class BioQueryParams {
     @Prop(name = "offset")
     public String offsetOrig;
     public Integer offset;
-    @Prop(name = "limit")
-    public String limitOrig;
-    @Prop(name = "per-page")
-    public String perPageOrig;
+
+//    @Prop(name = "limit")
+//    public String limitOrig;
+//    @Prop(name = "per-page")
+//    public String perPageOrig;
     @Prop(name = "pageSize")
     public String pageSizeOrig;
+
     public Integer pageSize;
     public Integer totalCount;
 

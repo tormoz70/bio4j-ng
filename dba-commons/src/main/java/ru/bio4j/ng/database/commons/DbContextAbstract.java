@@ -174,6 +174,11 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
+    public SQLCursor createDynamicCursor(){
+        return new DbDynamicCursor();
+    }
+
+    @Override
     public SQLStoredProc createStoredProc(){
         DbStoredProc cmd = new DbStoredProc();
         cmd.setParamSetter(new DbCallableParamSetter());

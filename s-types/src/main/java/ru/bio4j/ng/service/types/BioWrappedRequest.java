@@ -7,6 +7,8 @@ import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
+import ru.bio4j.ng.service.api.BioAppService;
+import ru.bio4j.ng.service.api.BioHttpParamMap;
 import ru.bio4j.ng.service.api.BioSecurityService;
 import ru.bio4j.ng.service.api.RestParamNames;
 
@@ -158,7 +160,9 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         StringBuilder sb = new StringBuilder();
 
         ServletContext servletContext = request.getServletContext();
-        BioSecurityService securityService = (BioSecurityService) Utl.getService(servletContext, BioSecurityService.class);
+        BioSecurityService securityService = Utl.getService(servletContext, BioSecurityService.class);
+        BioAppService appService = Utl.getService(servletContext, BioAppService.class);
+        BioHttpParamMap httpParamMap =  appService.getHttpParamMap();
 
         String uploadedJson = null;
         if (!isMultypartRequest(request) && !isUrlencodedFormRequest(request)) {
@@ -179,20 +183,21 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 //            if (!Strings.isNullOrEmpty(bioHeaderModuleKey))
 //                result.moduleKey = bioHeaderModuleKey;
 //        }
-        final String bioHeaderClientName = request.getHeader("X-Client");
+        final String bioHeaderClientName = request.getHeader(httpParamMap != null ? httpParamMap.clientHeader() : "X-Client");
         if(!Strings.isNullOrEmpty(bioHeaderClientName)) {
             result.remoteClient = bioHeaderClientName;
         }
         if(Strings.isNullOrEmpty(result.remoteClientVersion)) {
-            final String bioHeaderClientVersion = request.getHeader("X-Client-Ver");
+            final String bioHeaderClientVersion = request.getHeader(httpParamMap != null ? httpParamMap.clientVerHeader() : "X-Client-Ver");
             if (!Strings.isNullOrEmpty(bioHeaderClientVersion))
                 result.remoteClientVersion = bioHeaderClientVersion;
         }
         if(Strings.isNullOrEmpty(result.stoken)) {
-            final String securityTokenParam = securityService.paramSecurityToken();
-            final String bioHeaderSToken = request.getHeader(Strings.isNullOrEmpty(securityTokenParam) ? "X-SToken" : securityTokenParam);
+            final String securityTokenHeader = httpParamMap != null ? httpParamMap.securityTokenHeader() : "X-SToken";
+            final String bioHeaderSToken = request.getHeader(securityTokenHeader);
             if (!Strings.isNullOrEmpty(bioHeaderSToken))
                 result.stoken = bioHeaderSToken;
+            final String securityTokenParam = httpParamMap != null ? httpParamMap.securityToken() : "stoken";
             if(Strings.isNullOrEmpty(result.stoken) && !Strings.isNullOrEmpty(securityTokenParam)){
                 result.stoken = request.getParameter(securityTokenParam);
             }
@@ -200,25 +205,37 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         }
 //        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
 
+        if(Strings.isNullOrEmpty(result.pageOrig) && httpParamMap != null) {
+            result.pageOrig = request.getParameter(httpParamMap.page());
+        }
+        if(Strings.isNullOrEmpty(result.pageSizeOrig) && httpParamMap != null) {
+            result.pageSizeOrig = request.getParameter(httpParamMap.pageSize());
+        }
+        if(Strings.isNullOrEmpty(result.offsetOrig) && httpParamMap != null) {
+            result.offsetOrig = request.getParameter(httpParamMap.offset());
+        }
+
         if(Strings.isNullOrEmpty(result.pageOrig)) {
-            final String bioHeaderPage = request.getHeader("X-Pagination-Page");
+            final String bioHeaderPage = request.getHeader(httpParamMap != null ? httpParamMap.pageHeader() : "X-Pagination-Page");
             if (!Strings.isNullOrEmpty(bioHeaderPage))
                 result.pageOrig = bioHeaderPage;
         }
         if(Strings.isNullOrEmpty(result.offsetOrig)) {
-            final String bioHeaderOffset = request.getHeader("X-Pagination-Offset");
+            final String bioHeaderOffset = request.getHeader(httpParamMap != null ? httpParamMap.offsetHeader() : "X-Pagination-Offset");
             if (!Strings.isNullOrEmpty(bioHeaderOffset))
                 result.offsetOrig = bioHeaderOffset;
         }
-        if(Strings.isNullOrEmpty(result.pageSizeOrig) && !Strings.isNullOrEmpty(result.limitOrig))
-            result.pageSizeOrig = result.limitOrig;
-        if(Strings.isNullOrEmpty(result.pageSizeOrig) && !Strings.isNullOrEmpty(result.perPageOrig))
-            result.pageSizeOrig = result.perPageOrig;
         if(Strings.isNullOrEmpty(result.pageSizeOrig)) {
-            final String bioHeaderPageSize = request.getHeader("X-Pagination-Pagesize");
+            final String bioHeaderPageSize = request.getHeader(httpParamMap != null ? httpParamMap.pageSizeHeader() : "X-Pagination-Pagesize");
             if (!Strings.isNullOrEmpty(bioHeaderPageSize))
                 result.pageSizeOrig = bioHeaderPageSize;
         }
+
+//        if(Strings.isNullOrEmpty(result.pageSizeOrig) && !Strings.isNullOrEmpty(result.limitOrig))
+//            result.pageSizeOrig = result.limitOrig;
+//        if(Strings.isNullOrEmpty(result.pageSizeOrig) && !Strings.isNullOrEmpty(result.perPageOrig))
+//            result.pageSizeOrig = result.perPageOrig;
+
 
         BasicAutenticationLogin bal = detectBasicAutentication(request);
 
@@ -226,8 +243,6 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
             if (result.method == "POST") {
                 String usrname = null;
                 String passwd = null;
-                String userNameParam = securityService.paramUserName();
-                String passwordParam = securityService.paramPassword();
                 if(request.getParameterMap().containsKey("usrname"))
                     usrname = request.getParameter("usrname");
                 else if(request.getParameterMap().containsKey("login"))
@@ -239,6 +254,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 if (!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
                     result.login = usrname + "/" + passwd;
                 }
+                String userNameParam = httpParamMap != null ? httpParamMap.username() : null;
+                String passwordParam = httpParamMap != null ? httpParamMap.password() : null;
                 if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(userNameParam) && !Strings.isNullOrEmpty(passwordParam)){
                     if(request.getParameterMap().containsKey(userNameParam))
                         usrname = request.getParameter(userNameParam);
@@ -299,8 +316,10 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 (result.offset == null && result.offsetOrig != null && result.offsetOrig.equalsIgnoreCase("last"))) {
             result.offset = Sqls.UNKNOWN_RECS_TOTAL + 1 - result.pageSize;
         }
-        if(result.pageSize == null && result.pageSizeOrig == null) result.pageSize = 50;
-        if((result.page == null && result.pageOrig == null) || result.page < 1) result.page = 1;
+        if(result.pageSize == null && result.pageSizeOrig == null)
+            result.pageSize = 50;
+        if((result.page == null && result.pageOrig == null) || (result.page != null && result.page < 1))
+            result.page = 1;
         if(result.offset == null && result.offsetOrig == null && result.page != null)
             result.offset = (result.page - 1) * result.pageSize;
 

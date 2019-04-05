@@ -65,7 +65,7 @@ public class CrudReaderApi {
         result.setMetadata(cursorDef.getFields());
 
         List<Param> prms = params;
-        context.createCursor()
+        context.createDynamicCursor()
                 .init(conn, cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
                 .fetch(prms, usr, rs -> {
                     if(rs.isFirstRow()) {
@@ -113,7 +113,7 @@ public class CrudReaderApi {
             final BioSQLDefinition cursor,
             final User user) throws Exception {
         long result = context.execBatch((ctx) -> {
-            SQLCursor c = ctx.createCursor();
+            SQLCursor c = ctx.createDynamicCursor();
             c.init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getTotalsSql(), cursor.getSelectSqlDef().getParamDeclaration());
             return c.scalar(params, user, long.class, 0L);
         }, user);
@@ -162,7 +162,7 @@ public class CrudReaderApi {
             long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
             if(location != null) {
                 LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
-                int locatedPos = ctx.createCursor()
+                int locatedPos = ctx.createDynamicCursor()
                         .init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
                         .scalar(params, ctx.getCurrentUser(), int.class, -1);
                 if(locatedPos >= 0){
@@ -218,7 +218,7 @@ public class CrudReaderApi {
 
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
-        context.createCursor()
+        context.createDynamicCursor()
                 .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
                 .fetch(prms, context.getCurrentUser(), rs -> {
                     if (rs.isFirstRow()) {
@@ -276,7 +276,7 @@ public class CrudReaderApi {
             long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
             if (location != null) {
                 LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
-                int locatedPos = ctx.createCursor()
+                int locatedPos = ctx.createDynamicCursor()
                         .init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
                         .scalar(params, ctx.getCurrentUser(), int.class, -1);
                 if (locatedPos >= 0) {
@@ -333,7 +333,7 @@ public class CrudReaderApi {
         StringBuilder result = context.execBatch((ctx) -> {
             final StringBuilder r = new StringBuilder();
 
-            ctx.createCursor()
+            ctx.createDynamicCursor()
                     .init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getSql(), cursor.getSelectSqlDef().getParamDeclaration())
                     .fetch(params, user, rs -> {
                         List<Object> values = rs.getValues();
