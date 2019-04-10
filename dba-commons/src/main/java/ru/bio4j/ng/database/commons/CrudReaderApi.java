@@ -216,7 +216,7 @@ public class CrudReaderApi {
                     if(beanType == ABean.class)
                         bean = (T)DbUtils.createABeanFromReader(cursorDef.getFields(), rs);
                     else
-                        bean = DbUtils.createBeanFromReader(rs, beanType);
+                        bean = DbUtils.createBeanFromReader(cursorDef.getFields(), rs, beanType);
                     result.add(bean);
                     if (result.size() >= MAX_RECORDS_FETCH_LIMIT)
                         return false;

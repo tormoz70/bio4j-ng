@@ -39,11 +39,11 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
     @Override
     public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) throws Exception {
         boolean rslt = false;
-        Exception lastError = null;
+//        Exception lastError = null;
         try {
             List<Param> prms = params != null ? params : new ArrayList<>();
             SrvcUtils.applyCurrentUserParams(usr, prms);
-            try {
+//            try {
                 this.resetCommand(); // Сбрасываем состояние
 
                 if (this.params == null)
@@ -74,19 +74,19 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
                     }
                 }
 
-            } catch (Exception e) {
-                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
-            }
+//            } catch (Exception e) {
+//                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
+//            }
         } finally {
             if (this.preparedStatement != null)
                 try {
                     this.preparedStatement.close();
                 } catch (Exception ignore) {
                 }
-            if(lastError != null)
-                throw lastError;
-            return rslt;
+//            if(lastError != null)
+//                throw lastError;
         }
+        return rslt;
     }
 
 }

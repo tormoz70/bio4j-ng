@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons;
 
+import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.User;
 
 import java.sql.Connection;
@@ -19,17 +20,18 @@ public class ThreadContextHolder {
     private static class DbThreadContext {
         public User user;
         public Connection connection;
+        public SQLContext sqlContext;
     }
 
     private final ThreadLocal<Stack<DbThreadContext>> context = new ThreadLocal<>();
 
-    public void setContext(User user, Connection connection){
+    public void setContext(User user, Connection connection, SQLContext sqlContext){
         if(context.get() == null)
             context.set(new Stack<>());
         DbThreadContext newContext = new DbThreadContext();
         newContext.user = user;
         newContext.connection = connection;
-//        context.get().add(newContext);
+        newContext.sqlContext = sqlContext;
         context.get().push(newContext);
     }
 
@@ -40,19 +42,21 @@ public class ThreadContextHolder {
 
     public User getCurrentUser(){
         checkContext();
-//        return context.get().get(0).user;
         return context.get().peek().user;
     }
 
     public Connection getCurrentConnection(){
         checkContext();
-//        return context.get().get(0).connection;
         return context.get().peek().connection;
+    }
+
+    public SQLContext getSQLContext(){
+        checkContext();
+        return context.get().peek().sqlContext;
     }
 
     public void close(){
         checkContext();
-//        context.get().get(0);
         context.get().pop();
     }
 

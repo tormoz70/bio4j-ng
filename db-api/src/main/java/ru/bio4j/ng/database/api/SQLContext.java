@@ -41,4 +41,6 @@ public interface SQLContext {
 
     SQLConnectionPoolConfig getConfig();
     Wrappers getWrappers();
+    SQLReader createReader();
+
 }

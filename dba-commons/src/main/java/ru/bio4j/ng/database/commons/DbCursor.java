@@ -58,7 +58,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
     @Override
     public SQLReader createReader() {
-        return new DbReader();
+        return ThreadContextHolder.instance().getSQLContext().createReader();
     }
 
     @Override

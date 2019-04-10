@@ -46,11 +46,11 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-jdbc-osgi</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>bio4j-jdbc-osgi</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <!--<dependency>-->
             <!--<groupId>org.ops4j.pax.jdbc</groupId>-->
@@ -59,19 +59,19 @@
             <!--<scope>test</scope>-->
         <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>ojdbc8</artifactId>-->
-            <!--<version>${ojdbc.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>${ojdbc.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>ojdbc8-osgi</artifactId>-->
-            <!--<version>${ojdbc.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc8-osgi</artifactId>
+            <version>${ojdbc.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
     	<dependency>
             <groupId>${project.groupId}</groupId>
@@ -109,6 +109,12 @@
             <artifactId>flexjson</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>${project.groupId}</groupId>-->
+            <!--<artifactId>bio4j-jdbc-osgi</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>${project.groupId}</groupId>

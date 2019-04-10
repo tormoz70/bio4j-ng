@@ -140,17 +140,26 @@ public class DbUtils {
         return bean;
     }
 
-    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+    private static String findFieldName(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, String attrName) {
+        for (ru.bio4j.ng.model.transport.jstore.Field fld : metaData){
+            if(Strings.compare(fld.getName(), attrName, true) || Strings.compare(fld.getAttrName(), attrName, true))
+                return fld.getName();
+        }
+        return null;
+    }
+
+    public static <T> T createBeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader, Class<T> clazz) throws Exception {
         if(reader == null)
             throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
         if(clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         T result = clazz.newInstance();
         for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
-            String fldName = fld.getName();
+            String attrName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);
             if(p != null)
-                fldName = p.name();
+                attrName = p.name();
+            String fldName = metaData != null ? findFieldName(metaData, attrName) : attrName;
             Object valObj = null;
             DBField f = reader.getField(fldName);
             if (f != null)
@@ -162,11 +171,15 @@ public class DbUtils {
                     fld.setAccessible(true);
                     fld.set(result, val);
                 } catch (Exception e) {
-                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+                    throw new ApplyValuesToBeanException(attrName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
                 }
             }
         }
         return result;
+    }
+
+    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+        return createBeanFromReader(null, reader, clazz);
     }
 
     public static List<Param> decodeParams(Object params) throws Exception {
