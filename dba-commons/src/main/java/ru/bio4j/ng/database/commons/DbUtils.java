@@ -160,6 +160,8 @@ public class DbUtils {
             if(p != null)
                 attrName = p.name();
             String fldName = metaData != null ? findFieldName(metaData, attrName) : attrName;
+            if(Strings.isNullOrEmpty(fldName))
+                fldName = attrName;
             Object valObj = null;
             DBField f = reader.getField(fldName);
             if (f != null)

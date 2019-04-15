@@ -130,14 +130,14 @@ public class DbReader implements SQLReader {
         throw new IllegalArgumentException("Not implemented");
     }
 
-    private final String EXMSG_FieldNotFound = "Поле %s не найдено!";
-    private final String EXMSG_IndexOutOfBounds = "Индекс [%d] за пределами диапазона!";
-    private final String EXMSG_ParamIsNull = "Обязательный параметр [%s] пуст!";
+    private final String EXMSG_FieldNotFound = "Field %s not found!";
+    private final String EXMSG_IndexOutOfBounds = "Index [%d] out of range!";
+    private final String EXMSG_ParamIsNull = "Required parameter [%s] is null!";
 
     @Override
     public DBField getField(String fieldName) {
         if (Strings.isNullOrEmpty(fieldName))
-            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
+            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
         for(DBField f : fields)
             if(f.getName().toUpperCase().equals(fieldName.toUpperCase()))
                 return f;
@@ -165,7 +165,7 @@ public class DbReader implements SQLReader {
     @Override
     public <T> T getValue(String fieldName, Class<T> type) throws SQLException {
         if(Strings.isNullOrEmpty(fieldName))
-            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
+            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
 
         DBField fld = this.getField(fieldName);
         if(fld != null)
@@ -185,7 +185,7 @@ public class DbReader implements SQLReader {
     @Override
     public Object getValue(String fieldName) {
         if(Strings.isNullOrEmpty(fieldName))
-            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
+            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
 
         DBField fld = this.getField(fieldName);
         if(fld != null)
