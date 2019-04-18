@@ -86,7 +86,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
                     getParamsFromStatement(); // Вытаскиваем OUT-параметры
 
-                    DbUtils.applyParamsToParams(this.params, params, false, true, false);
+                    DbUtils.applyParamsToParams(DbUtils.findOUTParams(this.params), params, false, true, false);
                     if (this.params != null) {
                         for (Param p : prms) {
                             Param exists = Paramus.getParam(this.params, DbUtils.normalizeParamName(p.getName()));

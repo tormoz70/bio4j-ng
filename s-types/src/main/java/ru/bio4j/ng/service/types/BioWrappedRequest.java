@@ -32,18 +32,6 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return bioQueryParams;
     }
 
-    public static class LoginParamObj {
-        private String login;
-
-        public String getLogin() {
-            return login;
-        }
-
-        public void setLogin(String login) {
-            this.login = login;
-        }
-    }
-
     public static class SortAndFilterObj {
         private List<Sort> sort;
         private Filter filter;
@@ -236,6 +224,8 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 //        if(Strings.isNullOrEmpty(result.pageSizeOrig) && !Strings.isNullOrEmpty(result.perPageOrig))
 //            result.pageSizeOrig = result.perPageOrig;
 
+        String userNameParam = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.username()) ? httpParamMap.username() : null;
+        String passwordParam = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.password()) ? httpParamMap.password() : null;
 
         BasicAutenticationLogin bal = detectBasicAutentication(request);
 
@@ -254,8 +244,6 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
                 if (!Strings.isNullOrEmpty(usrname) && !Strings.isNullOrEmpty(passwd)) {
                     result.login = usrname + "/" + passwd;
                 }
-                String userNameParam = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.username()) ? httpParamMap.username() : null;
-                String passwordParam = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.password()) ? httpParamMap.password() : null;
                 if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(userNameParam) && !Strings.isNullOrEmpty(passwordParam)){
                     if(request.getParameterMap().containsKey(userNameParam))
                         usrname = request.getParameter(userNameParam);
@@ -271,13 +259,17 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
 
 
         if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(result.jsonData)) {
-            LoginParamObj obj = null;
+            ABean obj = null;
             try {
-                obj = Jsons.decode(result.jsonData, LoginParamObj.class);
+                obj = Jsons.decodeABean(result.jsonData);
             } catch (Exception e) {
             }
-            if (obj != null && !Strings.isNullOrEmpty(obj.getLogin()))
-                result.login = obj.getLogin();
+            if (obj != null && obj.containsKey("login"))
+                result.login = (String)obj.get("login");
+            if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(userNameParam) && !Strings.isNullOrEmpty(passwordParam)){
+                if (obj != null && obj.containsKey(userNameParam) && obj.containsKey(passwordParam))
+                    result.login = obj.get(userNameParam) + "/" + obj.get(passwordParam);
+            }
         }
 
 //        result.fcloudCmd = FCloudCommand.decode(result.fcloudCmdOrig);

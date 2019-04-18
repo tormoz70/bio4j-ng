@@ -376,8 +376,18 @@ public class DbUtils {
         }
     }
 
+    public static List<Param> findOUTParams(List<Param> prms) {
+        List<Param> rslt = new ArrayList<>();
+        for (Param p : prms) {
+            if (Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).indexOf(p.getDirection()) >= 0)
+                rslt.add(p);
+        }
+        return rslt;
+    }
+
     public static void applyParamsToParams(List<Param> src, Object dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
         if(src != null && dst != null) {
+
             if(dst instanceof List) {
                 applyParamsToParams0(src, (List<Param>) dst, normalizeName, addIfNotExists, overwriteTypes);
             } else if(dst instanceof ABean) {
