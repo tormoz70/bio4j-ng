@@ -50,12 +50,12 @@ SELECT
     and (:SYS_CURUSERROLES != '4' or (:SYS_CURUSERROLES = '4' and o.holding_id = to_number(:SYS_CURODEPUID)))
     and (        
         /*${cutiif}*//*[org_id != null]*/(a.org_id = to_number(regexp_substr(:org_id, '^\d+$'))) and/*{cutiif}$*/
-        /*${empty-filter-sess_prnt_org_id}*/(a.sess_prnt_org_id = to_number(regexp_substr(:sess_prnt_org_id, '^\d+$'))) and/*{empty-filter-sess_prnt_org_id}$*/
-        /*${empty-filter-sess_org_id}*/(a.sess_org_id = to_number(regexp_substr(:sess_org_id, '^\d+$'))) and/*{empty-filter-sess_org_id}$*/
-        /*${empty-filter-packet_name}*/(lower(a.packet_name) like '%'||lower(:packet_name)||'%') and/*{empty-filter-packet_name}$*/
-        /*${empty-filter-ip}*/(lower(a.ip_addr) like '%'||lower(:ip)||'%') and/*{empty-filter-ip}$*/
-        /*${empty-filter-cur_pstate}*/(a.cur_pstate = detectCurPStateId(:cur_pstate)) and/*{empty-filter-cur_pstate}$*/
-        /*${empty-filter-message}*/(lower(a.cur_pstate_msg) like '%'||lower(:message)||'%') and/*{empty-filter-message}$*/
-        /*${empty-filter-test}*/(o.test = :test) and/*{empty-filter-test}$*/
+        /*${cutempty-sess_prnt_org_id}*/(a.sess_prnt_org_id = to_number(regexp_substr(:sess_prnt_org_id, '^\d+$'))) and/*{cutempty-sess_prnt_org_id}$*/
+        /*${cutempty-sess_org_id}*/(a.sess_org_id = to_number(regexp_substr(:sess_org_id, '^\d+$'))) and/*{cutempty-sess_org_id}$*/
+        /*${cutempty-packet_name}*/(lower(a.packet_name) like '%'||lower(:packet_name)||'%') and/*{cutempty-packet_name}$*/
+        /*${cutempty-ip}*/(lower(a.ip_addr) like '%'||lower(:ip)||'%') and/*{cutempty-ip}$*/
+        /*${cutempty-cur_pstate}*/(a.cur_pstate = detectCurPStateId(:cur_pstate)) and/*{cutempty-cur_pstate}$*/
+        /*${cutempty-message}*/(lower(a.cur_pstate_msg) like '%'||lower(:message)||'%') and/*{cutempty-message}$*/
+        /*${cutempty-test}*/(o.test = :test) and/*{cutempty-test}$*/
         1=1
     )

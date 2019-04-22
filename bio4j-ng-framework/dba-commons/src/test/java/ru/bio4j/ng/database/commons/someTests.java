@@ -66,7 +66,7 @@ public class someTests {
     public void cutEmptyFilterConditionsTest() throws Exception {
         String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("load_log1.sql"));
         List<Param> prms = new ArrayList<>();
-        Paramus.setParamValue(prms, "org_id", null);
+        Paramus.setParamValue(prms, "org_id", 1);
         Paramus.setParamValue(prms, "SYS_CURUSERROLES", null);
         sql = DbUtils.cutFilterConditions(sql, prms);
         System.out.println(sql);
