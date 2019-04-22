@@ -323,9 +323,21 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final BioAppService module,
             final Class<T> clazz,
+            final T defaultValue) throws Exception {
+        final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
+        final User user = ((BioWrappedRequest)request).getUser();
+        final SQLContext context = module.getSQLContext();
+        final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
+        return CrudWriterApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);
+    }
+
+    public static <T> T selectScalar(
+            final String bioCode,
+            final Object params,
+            final BioAppService module,
+            final Class<T> clazz,
             final T defaultValue,
             final User user) throws Exception {
-        final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         return CrudWriterApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);

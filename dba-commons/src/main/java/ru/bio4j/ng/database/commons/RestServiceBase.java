@@ -125,6 +125,16 @@ public abstract class RestServiceBase {
         return rslt.getRows().size() > 0 ? rslt.getRows().get(0) : null;
     }
 
+    protected <T> T _getScalar(final String bioCode, final HttpServletRequest request, final Class<T> calzz, final T defaultValue) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.selectScalar(bioCode, request, appService, calzz, defaultValue);
+    }
+
+    protected <T> T _getScalar(final String bioCode, final Object params, Class<T> calzz, T defaultValue, User user) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.selectScalar(bioCode, params, appService, calzz, defaultValue, user);
+    }
+
     protected String _getJson(String bioCode, HttpServletRequest request) throws Exception {
         BioAppService appService = getAppService();
         StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, appService);
