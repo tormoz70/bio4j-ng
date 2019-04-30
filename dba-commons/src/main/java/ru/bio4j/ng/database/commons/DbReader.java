@@ -22,11 +22,11 @@ import java.util.List;
 public class DbReader implements SQLReader {
     public static final int FETCH_ROW_LIMIT = 10*10^6; // Максимальное кол-во записей, которое может вернуть запрос к БД (10 млн)
 
-    private long currentFetchedRowPosition = 0L;
-    private final List<DBField> fields = new ArrayList<>();
-    private final List<Object> rowValues = new ArrayList<>();
+    protected long currentFetchedRowPosition = 0L;
+    protected final List<DBField> fields = new ArrayList<>();
+    protected final List<Object> rowValues = new ArrayList<>();
 
-    private static String readClob(Clob clob) throws Exception {
+    protected String readClob(Clob clob) throws Exception {
         String result = null;
         if(clob != null) {
             Reader is = clob.getCharacterStream();
@@ -46,7 +46,7 @@ public class DbReader implements SQLReader {
         return result;
     }
 
-    private static byte[] readBlob(InputStream inputStream) throws Exception {
+    protected byte[] readBlob(InputStream inputStream) throws Exception {
         byte[] bFile = new byte[inputStream.available()];
         try {
             inputStream.read(bFile);
@@ -74,6 +74,8 @@ public class DbReader implements SQLReader {
                     String className = metadata.getColumnClassName(i);
                     if((sqlType == Types.BLOB) || (sqlType == Types.BINARY))
                         type = Byte[].class;
+                    else if(sqlType == Types.CLOB)
+                        type = String.class;
                     else
                         type = getClass().getClassLoader().loadClass(className);
                 } catch (ClassNotFoundException ex) {
@@ -128,14 +130,14 @@ public class DbReader implements SQLReader {
         throw new IllegalArgumentException("Not implemented");
     }
 
-    private final String EXMSG_FieldNotFound = "Поле %s не найдено!";
-    private final String EXMSG_IndexOutOfBounds = "Индекс [%d] за пределами диапазона!";
-    private final String EXMSG_ParamIsNull = "Обязательный параметр [%s] пуст!";
+    private final String EXMSG_FieldNotFound = "Field %s not found!";
+    private final String EXMSG_IndexOutOfBounds = "Index [%d] out of range!";
+    private final String EXMSG_ParamIsNull = "Required parameter [%s] is null!";
 
     @Override
     public DBField getField(String fieldName) {
         if (Strings.isNullOrEmpty(fieldName))
-            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
+            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
         for(DBField f : fields)
             if(f.getName().toUpperCase().equals(fieldName.toUpperCase()))
                 return f;
@@ -163,7 +165,7 @@ public class DbReader implements SQLReader {
     @Override
     public <T> T getValue(String fieldName, Class<T> type) throws SQLException {
         if(Strings.isNullOrEmpty(fieldName))
-            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
+            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
 
         DBField fld = this.getField(fieldName);
         if(fld != null)
@@ -183,7 +185,7 @@ public class DbReader implements SQLReader {
     @Override
     public Object getValue(String fieldName) {
         if(Strings.isNullOrEmpty(fieldName))
-            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, "fieldName"));
+            throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
 
         DBField fld = this.getField(fieldName);
         if(fld != null)

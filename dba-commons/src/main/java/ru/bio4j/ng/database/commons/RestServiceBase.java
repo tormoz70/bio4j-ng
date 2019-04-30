@@ -7,12 +7,18 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.SQLActionScalar0;
+import ru.bio4j.ng.database.api.SQLActionScalar1;
+import ru.bio4j.ng.database.api.SQLActionVoid0;
+import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppService;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
+import ru.bio4j.ng.service.api.BioSecurityService;
 import ru.bio4j.ng.service.api.FCloudApi;
-import ru.bio4j.ng.service.types.BioQueryParams;
+import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.ServletContext;
@@ -25,18 +31,28 @@ public abstract class RestServiceBase {
 
     protected abstract ServletContext getServletContext();
 
-    protected Class<? extends BioAppService> getBioAppServiceClass() {
+    protected Class<? extends BioAppService> getAppServiceClass() {
         return BioAppService.class;
     }
     protected Class<? extends FCloudApi> getFCloudApiClass() {
         return FCloudApi.class;
     }
+    protected Class<? extends BioSecurityService> getSecurityServiceClass() {
+        return BioSecurityService.class;
+    }
 
-    private BioAppService mmoduleProvider;
+    private BioAppService appService;
     protected BioAppService getAppService() {
-        if(mmoduleProvider == null)
-            mmoduleProvider = Utl.getService(getServletContext(), getBioAppServiceClass());
-        return mmoduleProvider;
+        if(appService == null)
+            appService = Utl.getService(getServletContext(), getAppServiceClass());
+        return appService;
+    }
+
+    private BioSecurityService securityService;
+    protected BioSecurityService getSecurityService() {
+        if(securityService == null)
+            securityService = Utl.getService(getServletContext(), getSecurityServiceClass());
+        return securityService;
     }
 
     private FCloudApi fCloudApi;
@@ -114,6 +130,16 @@ public abstract class RestServiceBase {
         return rslt.getRows().size() > 0 ? rslt.getRows().get(0) : null;
     }
 
+    protected <T> T _getScalar(final String bioCode, final HttpServletRequest request, final Class<T> calzz, final T defaultValue) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.selectScalar(bioCode, request, appService, calzz, defaultValue);
+    }
+
+    protected <T> T _getScalar(final String bioCode, final Object params, Class<T> calzz, T defaultValue, User user) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.selectScalar(bioCode, params, appService, calzz, defaultValue, user);
+    }
+
     protected String _getJson(String bioCode, HttpServletRequest request) throws Exception {
         BioAppService appService = getAppService();
         StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, appService);
@@ -157,6 +183,18 @@ public abstract class RestServiceBase {
             throw new Exception(String.format("Cannot decode json to bean: %s", abeanJson));
         }
         return abeans;
+    }
+
+    protected static <T> T _exctarctBean(HttpServletRequest request, Class<T> clazz) throws Exception {
+        T bean = null;
+        String abeanJson = null;
+        try {
+            abeanJson = ((BioWrappedRequest)request).getBioQueryParams().jsonData;
+            bean = Jsons.decode(abeanJson, clazz);
+        } catch (Exception e) {
+            throw new Exception(String.format("Cannot decode json to bean(%s): %s", clazz.getCanonicalName(), abeanJson));
+        }
+        return bean;
     }
 
     protected static ABean _setBean(ABean bean, String attrName, Object attrValue, Class<?> attrType) throws Exception {
@@ -238,6 +276,11 @@ public abstract class RestServiceBase {
         RestApiAdapter.exec(bioCode, request, appService);
     }
 
+    protected void _exec(String bioCode, Object params, User user) throws Exception {
+        BioAppService appService = getAppService();
+        RestApiAdapter.exec(bioCode, params, appService, user);
+    }
+
     protected <T> T _selectScalar(final String bioCode, final HttpServletRequest request, final Class<T> clazz, final T defaultValue) throws Exception {
         BioAppService appService = getAppService();
         return RestApiAdapter.selectScalar(bioCode, request, appService, clazz, defaultValue, ((BioWrappedRequest) request).getUser());
@@ -246,6 +289,27 @@ public abstract class RestServiceBase {
     protected List<ABean> _save(String bioCode, List<ABean> abeans, HttpServletRequest request) throws Exception {
         BioAppService appService = getAppService();
         return RestApiAdapter.saveBeans(bioCode, request, appService, abeans);
+    }
+
+    protected <T> List<T> _getList0(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, boolean forceAll, Class<T> calzz) throws Exception {
+        BioAppService appService = getAppService();
+        BioSQLDefinition sqldef = appService.getSQLDefinition(bioCode);
+        return RestApiAdapter.loadPage0Ext(sqldef, context, prms, forceAll, calzz, filterAndSorter);
+    }
+
+    protected void _execBatch(final SQLActionVoid0 action, final User user) throws Exception {
+        BioAppService appService = getAppService();
+        RestApiAdapter.execBatch(appService.getSQLContext(), action, user);
+    }
+
+    protected <T> T _execBatch(final SQLActionScalar0<T> action, final User user) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.execBatch(appService.getSQLContext(), action, user);
+    }
+
+    protected <P, T> T _execBatch(final SQLActionScalar1<P, T> action, P param, final User user) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.execBatch(appService.getSQLContext(), action, param, user);
     }
 
 }

@@ -73,4 +73,8 @@ public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBa
 
     protected abstract SQLContext createSQLContext() throws Exception;
 
+    public BioHttpParamMap getHttpParamMap() throws Exception {
+        return null;
+    }
+
 }

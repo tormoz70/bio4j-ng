@@ -11,8 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
-
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
@@ -483,6 +481,11 @@ public class Paramus implements Closeable {
 	    return getParamValue(paramName, false);
     }
 
+    public boolean paramIsEmpty(String paramName) throws ConvertValueException {
+        Param param = this.getParam(paramName, true);
+        return (param == null) || param.isEmpty();
+    }
+
     public static <T> T paramValue(Param param, Class<T> type) throws ConvertValueException {
         return Converter.toType(param.getValue(), type);
     }
@@ -509,6 +512,12 @@ public class Paramus implements Closeable {
         }
     }
 
+    public static boolean paramIsEmpty(List<Param> params, String paramName) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            return paramus.paramIsEmpty(paramName);
+        }
+    }
+
     public static String paramValueAsString(List<Param> params, String paramName, String defaultValue) throws Exception {
         String rslt = null;
         try (Paramus paramus = Paramus.set(params)) {
@@ -519,6 +528,12 @@ public class Paramus implements Closeable {
 
     public static String paramValueAsString(List<Param> params, String paramName) throws Exception {
         return paramValueAsString(params, paramName, null);
+    }
+
+    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType, Param.Direction direction) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.setValue(paramName, value, forceType, direction, true);
+        }
     }
 
     public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType) throws Exception {

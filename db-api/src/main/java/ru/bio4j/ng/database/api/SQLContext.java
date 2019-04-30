@@ -34,10 +34,13 @@ public interface SQLContext {
     void clearAfterEvents();
 
     SQLCursor createCursor();
+    SQLCursor createDynamicCursor();
     SQLStoredProc createStoredProc();
 
     String getDBMSName();
 
     SQLConnectionPoolConfig getConfig();
     Wrappers getWrappers();
+    SQLReader createReader();
+
 }

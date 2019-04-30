@@ -221,4 +221,12 @@ public class JsonUtlTest {
         Assert.assertEquals(json.substring(1, 6), "\"crd\"");
     }
 
+    private static final String cs_json0001 = "{\"storeId\":\"PrjsInProd\",\"bioParams\":[{\"name\":\"p_company_id\",\"value\":34}],\"totalCount\":999999999,\"offset\":0,\"limit\":-1,\"sort\":null,\"superclass\":{\"superclass\":{\"superclass\":{\"defaultConfig\":{},\"config\":{},\"$className\":\"Ext.Base\",\"isInstance\":true,\"$configPrefixed\":true,\"$configStrict\":true,\"isConfiguring\":false,\"isFirstInstance\":false,\"destroyed\":false,\"clearPropertiesOnDestroy\":true,\"clearPrototypeOnDestroy\":false,\"$links\":null},\"defaultConfig\":{},\"config\":{},\"$configPrefixed\":false,\"rqt\":\"\",\"bioCode\":\"\",\"$className\":\"Bio.request.Request\"},\"defaultConfig\":{},\"config\":{},\"$className\":\"Bio.request.store.Request\"},\"defaultConfig\":{},\"config\":{},\"pageSize\":0,\"$className\":\"Bio.request.store.GetDataSet\",\"$configPrefixed\":false,\"rqt\":\"\",\"bioCode\":\"\",\"isInstance\":true,\"$configStrict\":true,\"isConfiguring\":false,\"isFirstInstance\":false,\"destroyed\":false,\"clearPropertiesOnDestroy\":true,\"clearPrototypeOnDestroy\":false,\"$links\":null}";
+    @Test(enabled = true)
+    public void bdecode11() throws Exception {
+        List<Param> bioParams = Utl.anjsonToParams(cs_json0001);
+        Assert.assertNotNull(bioParams);
+        Assert.assertNotNull(Paramus.getParam(bioParams, "p_company_id"));
+    }
+
 }

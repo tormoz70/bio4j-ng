@@ -4,7 +4,7 @@
     <parent>
         <groupId>ru.bio4j.ng</groupId>
         <artifactId>bio4j-ng-framework</artifactId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.8.0-SNAPSHOT</version>
     </parent>
     <artifactId>ext-libs</artifactId>
     <packaging>bundle</packaging>
@@ -19,6 +19,16 @@
                         <Import-Package>
                             !org.apache.commons.logging,
                             !org.apache.tools.ant.*,
+                            !com.graphbuilder.*,
+                            !com.microsoft.schemas.office.powerpoint,
+                            !com.microsoft.schemas.office.word,
+                            !org.openxmlformats.schemas.officeDocument.x2006.math,
+                            !org.openxmlformats.schemas.schemaLibrary.x2006.main,
+                            !org.apache.batik.*,
+                            !com.sun.javadoc,
+                            !com.sun.tools.javadoc,
+                            !com.sun.java_cup.internal,
+                            !org.bouncycastle.asn1
                             *
                         </Import-Package>
                         <!--<Export-Package>-->
@@ -28,13 +38,26 @@
                         <Export-Package>
                             org.apache.commons.beanutils.*,
                             org.apache.http.*,
-                            com.mchange.v2.c3p0.*
+                            com.mchange.v2.c3p0.*,
+                            org.apache.poi.*,
+                            com.microsoft.schemas.*,
+                            org.apache.xmlbeans.*,
+                            net.sf.saxon.*,
+                            com.sun.org.apache.xerces.internal.*,
+                            com.sun.java_cup.internal.*,
+                            org.apache.xml.resolver.*
                         </Export-Package>
                         <Embed-Dependency>
                             commons-beanutils-core,
                             httpcore,
                             httpclient,
-                            c3p0
+                            c3p0,
+                            xmlbeans,
+                            Saxon-HE,
+                            xercesImpl,
+                            jaxp-ri,
+                            xml-resolver,
+                            poi-ooxml,poi-ooxml-schemas,poi
                         </Embed-Dependency>
                     </instructions>
                 </configuration>
@@ -72,6 +95,72 @@
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>4.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>3.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>net.sf.saxon</groupId>-->
+            <!--<artifactId>saxon</artifactId>-->
+            <!--<version>8.7</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.9.1-2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.12.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.org.apache</groupId>
+            <artifactId>jaxp-ri</artifactId>
+            <version>1.4</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.xml.parsers</groupId>
+            <artifactId>jaxp-ri</artifactId>
+            <version>1.4.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+            <version>1.2</version>
             <scope>compile</scope>
         </dependency>
 

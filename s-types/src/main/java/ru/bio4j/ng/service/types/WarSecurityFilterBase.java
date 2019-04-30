@@ -3,10 +3,12 @@ package ru.bio4j.ng.service.types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.SrvcUtils;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
+import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.BioSecurityService;
 
@@ -64,7 +66,7 @@ public class WarSecurityFilterBase {
     }
 
     protected BioSecurityService securityService;
-    protected void initSecurityHandler(ServletContext servletContext) {
+    protected void initSecurityHandler(ServletContext servletContext) throws Exception {
         if(securityService == null) {
             try {
                 securityService = Utl.getService(servletContext, BioSecurityService.class);
@@ -72,19 +74,14 @@ public class WarSecurityFilterBase {
                 securityService = null;
             }
         }
+        if (securityService == null) {
+            throw new BioError("Security provider not defined!");
+        }
         loginProcessor.setSecurityService(securityService);
     }
 
     private boolean detectWeAreInPublicAreas(String bioCode) {
         return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
-    }
-
-    protected static ABean buildSuccess(User user) {
-        ABean rslt = new ABean();
-        rslt.put("success", true);
-        if(user != null)
-            rslt.put("user", user);
-        return rslt;
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -102,18 +99,23 @@ public class WarSecurityFilterBase {
                 debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
                 initSecurityHandler(req.getServletContext());
                 final BioQueryParams qprms = req.getBioQueryParams();
-                if (securityService != null) {
-                    if (!Strings.isNullOrEmpty(qprms.login)) {
-                        User user = loginProcessor.login(qprms);
-                        ABean result = buildSuccess(user);
-                        response.getWriter().append(Jsons.encode(result));
-                    } else {
-                        User user = loginProcessor.getUser(qprms);
-                        req.setUser(user);
-                        chn.doFilter(req, resp);
-                    }
+                String pathInfo = req.getPathInfo();
+                if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
+                    User user = loginProcessor.login(qprms);
+                    ABean result = SrvcUtils.buildSuccess(user);
+                    response.getWriter().append(Jsons.encode(result));
+                } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
+                    User user = loginProcessor.getUser(qprms);
+                    ABean result = SrvcUtils.buildSuccess(user);
+                    response.getWriter().append(Jsons.encode(result));
+                } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/logoff", false)) {
+                    loginProcessor.logoff(qprms);
+                    ABean result = SrvcUtils.buildSuccess(null);
+                    response.getWriter().append(Jsons.encode(result));
                 } else {
-                    throw new BioError("Security provider not defined!");
+                    User user = loginProcessor.getUser(qprms);
+                    req.setUser(user);
+                    chn.doFilter(req, resp);
                 }
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);

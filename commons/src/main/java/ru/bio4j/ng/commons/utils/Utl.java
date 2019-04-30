@@ -13,7 +13,7 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.Prop;
+import ru.bio4j.ng.model.transport.Prop;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -530,7 +530,7 @@ public class Utl {
 //            GenericDeclaration gd = paramFirst.getGenericDeclaration();
 //            String pname = paramFirst.getName();
 //            for(java.lang.reflect.Field fld : clazz.getDeclaredFields()) {
-//                if(pname.equals("" + fld.getGenericType())) {
+//                if(pname.compare("" + fld.getGenericType())) {
 //                    fld.setAccessible(true);
 //                    Object fldVal;
 //                    try {
@@ -745,6 +745,25 @@ public class Utl {
                 paramName = "p_" + paramName.toLowerCase();
             Object valObj = bean.get(key);
             result.add(Param.builder().name(paramName).value(valObj).build());
+        }
+        return result;
+    }
+
+    public static List<Param> anjsonToParams(String anjson) throws Exception {
+        List<Param> result = new ArrayList<>();
+        if(Strings.isNullOrEmpty(anjson))
+            return result;
+
+        HashMap bioParamsContainer = Jsons.decode(anjson);
+        if(bioParamsContainer.containsKey("bioParams")) {
+            List<HashMap<String, Object>> bioParamsArray = (List)bioParamsContainer.get("bioParams");
+            for (HashMap<String, Object> prm : bioParamsArray) {
+                String paramName = (String)prm.get("name");
+                if (!paramName.toLowerCase().startsWith("p_"))
+                    paramName = "p_" + paramName.toLowerCase();
+                Object valObj = prm.get("value");
+                result.add(Param.builder().name(paramName).value(valObj).build());
+            }
         }
         return result;
     }

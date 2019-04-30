@@ -41,7 +41,7 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
         if (sort != null && sort.size() > 0) {
 
             for (Sort s : sort) {
-                Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true));
+                Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true) || Strings.compare(s.getFieldName(), item.getAttrName(), true));
                 if (fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
                     s.setFieldName(fldDef.getSorter());
             }

@@ -40,7 +40,7 @@ public class FileContentResolverTest {
 //        expected.append("-- SQL comments for select"+System.lineSeparator());
 //        expected.append(System.lineSeparator());
 //        expected.append("        select * from test"+System.lineSeparator());
-//        Assert.assertTrue(test.get("select").equals(expected.toString()));
+//        Assert.assertTrue(test.get("select").compare(expected.toString()));
 //    }
 //    @Test
 //    public void fullTest1() throws IOException {

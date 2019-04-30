@@ -7,7 +7,8 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.SQLActionScalar0;
+import ru.bio4j.ng.database.api.SQLActionScalar1;
 import ru.bio4j.ng.database.api.SQLActionVoid0;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.*;
@@ -16,7 +17,7 @@ import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppService;
 import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.RestParamNames;
-import ru.bio4j.ng.service.types.BioQueryParams;
+import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -144,13 +145,7 @@ public class RestApiAdapter {
         if(usrParam != null)
             user = (User)usrParam.getValue();
 
-        final SQLContext context = module.getSQLContext();
-        final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
-        int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        if(pageSize == 0 || forceAll)
-            return CrudReaderApi.loadAllExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
-        else
-            return CrudReaderApi.loadPageExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
+        return loadPageExt(module, bioCode, params, user, forceAll, beanType, filterAndSorter);
     }
 
     public static <T> List<T> loadPageExt(
@@ -324,25 +319,60 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final BioAppService module,
             final Class<T> clazz,
-            final T defaultValue,
-            final User user) throws Exception {
+            final T defaultValue) throws Exception {
         final List<Param> params = ((BioWrappedRequest)request).getBioQueryParams().bioParams;
+        final User user = ((BioWrappedRequest)request).getUser();
         final SQLContext context = module.getSQLContext();
         final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
-        return CrudWriterApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);
+        return CrudReaderApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);
+    }
+
+    public static <T> T selectScalar(
+            final String bioCode,
+            final Object params,
+            final BioAppService module,
+            final Class<T> clazz,
+            final T defaultValue,
+            final User user) throws Exception {
+        final SQLContext context = module.getSQLContext();
+        final BioSQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
+        return CrudReaderApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);
     }
 
     public static void execBatch(final SQLContext context, final SQLActionVoid0 action, final User user) throws Exception {
         context.execBatch(action, user);
+    }
 
+    public static <T> T execBatch(final SQLContext context, final SQLActionScalar0<T> action, final User user) throws Exception {
+        return context.execBatch(action, user);
+    }
+
+    public static <P, T> T execBatch(final SQLContext context, final SQLActionScalar1<P, T> action, P param, final User user) throws Exception {
+        return context.execBatch(action, param, user);
     }
 
     public static void execLocal(
             final BioSQLDefinition sqlDefinition,
             final Object params,
             final SQLContext context) throws Exception {
-        CrudWriterApi.execSQLLocal(params, context, sqlDefinition);
+        CrudWriterApi.execSQL0(params, context, sqlDefinition);
     }
+
+    public static <T> List<T> loadPage0Ext(
+            final BioSQLDefinition sqlDefinition,
+            final SQLContext context,
+            final Object params,
+            final boolean forceAll,
+            final Class<T> beanType,
+            final FilterAndSorter filterAndSorter) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
+        int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
+        if(pageSize == 0 || forceAll)
+            return CrudReaderApi.loadAll0Ext(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, beanType);
+        else
+            return CrudReaderApi.loadPage0Ext(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, beanType);
+    }
+
 
     public static void execForEach(
             final String bioCode,

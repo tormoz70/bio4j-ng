@@ -3,11 +3,9 @@ package ru.bio4j.ng.database.commons;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.service.api.BioSQLDefinition;
-import ru.bio4j.ng.service.api.Prop;
-import ru.bio4j.ng.commons.utils.ApplyValuesToBeanException;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -23,6 +21,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Утилиты для работы с метаданными СУБД
@@ -103,36 +103,71 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = sqlDefinition.getSelectSqlDef();
-        T r = ctx.execBatch((context) -> {
-            return context.createCursor()
+        return context.createCursor()
                     .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
+    }
+
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+        return ctx.execBatch((context) -> {
+            return processSelectScalar0(params, ctx, sqlDefinition, clazz, defaultValue);
         }, usr);
-        return r;
+    }
+
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
+        return context.createCursor()
+                    .init(context.getCurrentConnection(), sql, null).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
     public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
-        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
-        T r = ctx.execBatch((SQLActionScalar0<T>) (context) -> {
-            return context.createCursor()
-                    .init(context.getCurrentConnection(), sql, null).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
+        return ctx.execBatch((SQLActionScalar0<T>) (context) -> {
+            return processSelectScalar0(params, ctx, sql, clazz, defaultValue);
         }, usr);
-        return r;
     }
 
-    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+    public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) throws Exception {
+        ABean bean = new ABean();
+        for (ru.bio4j.ng.model.transport.jstore.Field field : metaData) {
+            String attrName = field.getAttrName();
+            if (Strings.isNullOrEmpty(attrName))
+                attrName = field.getName();
+            DBField f = reader.getField(field.getName());
+            if (f != null) {
+                Object val = reader.getValue(f.getId());
+                Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
+                Object valTyped = Converter.toType(val, clazz);
+                bean.put(attrName, valTyped);
+            } else
+                bean.put(attrName, null);
+        }
+        return bean;
+    }
+
+    private static String findFieldName(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, String attrName) {
+        for (ru.bio4j.ng.model.transport.jstore.Field fld : metaData){
+            if(Strings.compare(fld.getName(), attrName, true) || Strings.compare(fld.getAttrName(), attrName, true))
+                return fld.getName();
+        }
+        return null;
+    }
+
+    public static <T> T createBeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader, Class<T> clazz) throws Exception {
         if(reader == null)
             throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
         if(clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         T result = clazz.newInstance();
         for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
-            String fldName = fld.getName();
+            String attrName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);
             if(p != null)
-                fldName = p.name();
+                attrName = p.name();
+            String fldName = metaData != null ? findFieldName(metaData, attrName) : attrName;
+            if(Strings.isNullOrEmpty(fldName))
+                fldName = attrName;
             Object valObj = null;
             DBField f = reader.getField(fldName);
             if (f != null)
@@ -144,11 +179,15 @@ public class DbUtils {
                     fld.setAccessible(true);
                     fld.set(result, val);
                 } catch (Exception e) {
-                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+                    throw new ApplyValuesToBeanException(attrName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
                 }
             }
         }
         return result;
+    }
+
+    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+        return createBeanFromReader(null, reader, clazz);
     }
 
     public static List<Param> decodeParams(Object params) throws Exception {
@@ -343,8 +382,18 @@ public class DbUtils {
         }
     }
 
+    public static List<Param> findOUTParams(List<Param> prms) {
+        List<Param> rslt = new ArrayList<>();
+        for (Param p : prms) {
+            if (Arrays.asList(Param.Direction.INOUT, Param.Direction.OUT).indexOf(p.getDirection()) >= 0)
+                rslt.add(p);
+        }
+        return rslt;
+    }
+
     public static void applyParamsToParams(List<Param> src, Object dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
         if(src != null && dst != null) {
+
             if(dst instanceof List) {
                 applyParamsToParams0(src, (List<Param>) dst, normalizeName, addIfNotExists, overwriteTypes);
             } else if(dst instanceof ABean) {
@@ -403,4 +452,82 @@ public class DbUtils {
     public static boolean execSQL(Connection conn, String sql) throws SQLException {
         return execSQL(conn, sql, null);
     }
+
+    private static final String CS_EMPTYCASE = "/*empty*/";
+    private static final String CS_FIND_PARAM = ":\\w+";
+    private static final String CS_CHECKPRMS_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
+
+    private static boolean checkParamsIsEmpty(String sqlPart, List<Param> prms) {
+        boolean isEmpty = true;
+        String prmsList = Regexs.find(sqlPart, CS_CHECKPRMS_REGEX1, Pattern.CASE_INSENSITIVE);
+        if (!Strings.isNullOrEmpty(prmsList)) {
+            String[] prms2check = Strings.split(prmsList, ",");
+            for (String prmName : prms2check) {
+                Param prm = findParamIgnorePrefix(prmName, prms);
+                isEmpty = isEmpty && (prm == null || prm.isEmpty());
+            }
+        } else {
+            Matcher m = Regexs.match(sqlPart, CS_FIND_PARAM, Pattern.CASE_INSENSITIVE);
+            while (m.find()) {
+                String paramName = m.group(0).substring(1);
+                Param prm = findParamIgnorePrefix(paramName, prms);
+                isEmpty = isEmpty && (prm == null || prm.isEmpty());
+            }
+        }
+        return isEmpty;
+    }
+
+    private static final String CS_CUTEMPTY_PLACEHOLDER_BGN = "/*@{cutempty}*/";
+    private static final String CS_CUTEMPTY_PLACEHOLDER_END = "/*{cutempty}@*/";
+    private static String cutEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+        return Strings.findRoundedStr(sql, CS_CUTEMPTY_PLACEHOLDER_BGN, CS_CUTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) throws Exception {
+                boolean isEmpty = checkParamsIsEmpty(found, prms);
+                if(isEmpty)
+                    return CS_EMPTYCASE;
+                return found;
+            }
+        });
+    }
+
+    private static final String CS_CUTNOTEMPTY_PLACEHOLDER_BGN = "/*@{cutnotempty}*/";
+    private static final String CS_CUTNOTEMPTY_PLACEHOLDER_END = "/*{cutnotempty}@*/";
+
+    private static String cutNotEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+        return Strings.findRoundedStr(sql, CS_CUTNOTEMPTY_PLACEHOLDER_BGN, CS_CUTNOTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) throws Exception {
+                boolean isEmpty = checkParamsIsEmpty(found, prms);
+                if(!isEmpty)
+                    return CS_EMPTYCASE;
+                return found;
+            }
+        });
+    }
+
+    private static final String CS_CUTIIF_PLACEHOLDER_BGN = "/*@{cutiif}*/";
+    private static final String CS_CUTIIF_PLACEHOLDER_END = "/*{cutiif}@*/";
+    private static final String CS_CUTIIF_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
+
+    private static String cutIIFConditions(final String sql, final List<Param> prms) throws Exception {
+        return Strings.findRoundedStr(sql, CS_CUTIIF_PLACEHOLDER_BGN, CS_CUTIIF_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
+            @Override
+            public String process(String found) throws Exception {
+                String rslt = found;
+                String js = Regexs.find(rslt, CS_CUTIIF_REGEX1, Pattern.CASE_INSENSITIVE);
+                if(Evals.getInstance().runCondition(js, prms))
+                    rslt = CS_EMPTYCASE;
+                return rslt;
+            }
+        });
+    }
+
+    public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
+        String rslt = cutEmptyFilterConditions( sql, prms);
+        rslt = cutNotEmptyFilterConditions( rslt, prms);
+        //rslt = cutIIFConditions( rslt, prms);
+        return rslt;
+    }
+
 }

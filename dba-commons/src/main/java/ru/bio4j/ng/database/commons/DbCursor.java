@@ -20,10 +20,10 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     private static final Logger LOG = LoggerFactory.getLogger(DbCursor.class);
 
 
-	private boolean isActive = false;
+	protected boolean isActive = false;
 
-	private String sql = null;
-    private SQLReader reader;
+    protected String sql = null;
+    protected SQLReader reader;
 
     public DbCursor() {
         this.setParamSetter(new DbSelectableParamSetter());
@@ -50,7 +50,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
 
     @Override
-	protected void prepareStatement() throws SQLException {
+	protected void prepareStatement() throws Exception {
         this.preparedSQL = this.sql;
         this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
         this.preparedStatement.setQueryTimeout(this.timeout);
@@ -58,7 +58,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
     @Override
     public SQLReader createReader() {
-        return new DbReader();
+        return ThreadContextHolder.instance().getSQLContext().createReader();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
         return this.fetch(null, usr, onrecord);
     }
 
-    private static class ScalarResult<T> {
+    protected static class ScalarResult<T> {
         public T result;
     }
 

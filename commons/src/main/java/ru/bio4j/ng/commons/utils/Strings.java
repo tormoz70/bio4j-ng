@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -238,6 +239,36 @@ public class Strings {
     public static boolean decodeBool(final String value){
 	    String valueNotNull  = isNullOrEmpty(value) ? "0" : value.trim().toLowerCase();
         return Arrays.asList(new String[] {"true", "yes", "t", "y", "1"}).contains(valueNotNull);
+    }
+
+    public static String formatDateTime(final Date value, String format) {
+        SimpleDateFormat dt1 = new SimpleDateFormat(format);
+        return dt1.format(value);
+    }
+
+    public interface IRoundedStrProcessor {
+        String process(String found) throws Exception;
+    }
+
+    public static String findRoundedStr(final String text, final String roundBegin, final String roundEnd, final IRoundedStrProcessor callback) throws Exception {
+        String rslt = text;
+        if(!Strings.isNullOrEmpty(rslt)) {
+            final String tagbgn = roundBegin.toLowerCase();
+            final String tagend = roundEnd.toLowerCase();
+            int from = 0;
+            while (true) {
+                int posbgn = rslt.toLowerCase().indexOf(tagbgn, from);
+                int posend = rslt.toLowerCase().indexOf(tagend, from);
+                if (posbgn == -1) break;
+                String found = rslt.substring(posbgn + tagbgn.length(), posend);
+                String replacement = callback.process(found);
+                if(replacement == null)
+                    replacement = "";
+                rslt = rslt.substring(0, posbgn + tagbgn.length()) + replacement + rslt.substring(posend);
+                from = rslt.toLowerCase().indexOf(tagend, from) + tagend.length();
+            }
+        }
+        return rslt;
     }
 
 }

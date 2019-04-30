@@ -28,10 +28,8 @@ public abstract class DbContextAbstract implements SQLContext {
         this.config = config;
     }
 
-    private static class ThreadContext {
-        public User user;
-        public Connection connection;
-    }
+    protected User user;
+    protected Connection connection;
 
     public User getCurrentUser() {
         return ThreadContextHolder.instance().getCurrentUser();
@@ -49,8 +47,12 @@ public abstract class DbContextAbstract implements SQLContext {
 //        DbContextThreadHolder.setCurrentConnection(conn);
 //    }
 
+    public SQLReader createReader(){
+        return new DbReader();
+    }
+
     private void setCurrentContext(User user, Connection conn) {
-        ThreadContextHolder.instance().setContext(user, conn);
+        ThreadContextHolder.instance().setContext(user, conn, this);
     }
 
     private void closeCurrentContext() {
@@ -171,6 +173,11 @@ public abstract class DbContextAbstract implements SQLContext {
     @Override
     public SQLCursor createCursor(){
         return new DbCursor();
+    }
+
+    @Override
+    public SQLCursor createDynamicCursor(){
+        return new DbDynamicCursor();
     }
 
     @Override

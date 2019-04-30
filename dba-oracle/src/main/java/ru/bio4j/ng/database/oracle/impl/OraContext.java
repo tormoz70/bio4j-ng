@@ -42,5 +42,9 @@ public class OraContext extends DbContextAbstract {
         return "oracle";
     }
 
+    @Override
+    public SQLReader createReader(){
+        return new OraReader();
+    }
 
 }
