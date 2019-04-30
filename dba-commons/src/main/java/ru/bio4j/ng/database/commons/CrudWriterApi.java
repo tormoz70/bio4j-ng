@@ -59,7 +59,7 @@ public class CrudWriterApi {
             for(ABean bean : rows){
                 Object pkvalue = ABeans.extractAttrFromBean(bean, pkFieldName, pkClazz, null);
                 Paramus.setParamValue(prms, RestParamNames.GETROW_PARAM_PKVAL, pkvalue);
-                ABeanPage pg = CrudReaderApi.loadRecordLocal(prms, ctx, cursor);
+                ABeanPage pg = CrudReaderApi.loadRecord0(prms, ctx, cursor);
                 if(pg.getRows().size() > 0)
                     Utl.applyValuesToABeanFromABean(pg.getRows().get(0), bean, true);
             }
@@ -104,7 +104,7 @@ public class CrudWriterApi {
         return affected;
     }
 
-    public static void execSQLLocal(
+    public static void execSQL0(
             final Object params,
             final SQLContext context,
             final BioSQLDefinition cursor) throws Exception {
@@ -126,18 +126,8 @@ public class CrudWriterApi {
             final BioSQLDefinition cursor,
             final User user) throws Exception {
         context.execBatch((ctx) -> {
-            execSQLLocal(params, ctx, cursor);
+            execSQL0(params, ctx, cursor);
         }, user);
-    }
-
-    public static <T> T selectScalar(
-            final Object params,
-            final SQLContext context,
-            final BioSQLDefinition sqlDefinition,
-            final Class<T> clazz,
-            final T defaultValue,
-            final User user) throws Exception {
-        return DbUtils.processSelectScalar(user, params, context, sqlDefinition, clazz, defaultValue);
     }
 
 }

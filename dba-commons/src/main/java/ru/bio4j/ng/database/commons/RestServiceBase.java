@@ -7,10 +7,15 @@ import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.SQLActionScalar0;
+import ru.bio4j.ng.database.api.SQLActionScalar1;
+import ru.bio4j.ng.database.api.SQLActionVoid0;
+import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.BioAppService;
+import ru.bio4j.ng.service.api.BioSQLDefinition;
 import ru.bio4j.ng.service.api.BioSecurityService;
 import ru.bio4j.ng.service.api.FCloudApi;
 import ru.bio4j.ng.model.transport.BioQueryParams;
@@ -284,6 +289,27 @@ public abstract class RestServiceBase {
     protected List<ABean> _save(String bioCode, List<ABean> abeans, HttpServletRequest request) throws Exception {
         BioAppService appService = getAppService();
         return RestApiAdapter.saveBeans(bioCode, request, appService, abeans);
+    }
+
+    protected <T> List<T> _getList0(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, boolean forceAll, Class<T> calzz) throws Exception {
+        BioAppService appService = getAppService();
+        BioSQLDefinition sqldef = appService.getSQLDefinition(bioCode);
+        return RestApiAdapter.loadPage0Ext(sqldef, context, prms, forceAll, calzz, filterAndSorter);
+    }
+
+    protected void _execBatch(final SQLActionVoid0 action, final User user) throws Exception {
+        BioAppService appService = getAppService();
+        RestApiAdapter.execBatch(appService.getSQLContext(), action, user);
+    }
+
+    protected <T> T _execBatch(final SQLActionScalar0<T> action, final User user) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.execBatch(appService.getSQLContext(), action, user);
+    }
+
+    protected <P, T> T _execBatch(final SQLActionScalar1<P, T> action, P param, final User user) throws Exception {
+        BioAppService appService = getAppService();
+        return RestApiAdapter.execBatch(appService.getSQLContext(), action, param, user);
     }
 
 }

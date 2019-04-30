@@ -103,23 +103,29 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = sqlDefinition.getSelectSqlDef();
-        T r = ctx.execBatch((context) -> {
-            return context.createCursor()
+        return context.createCursor()
                     .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
+    }
+
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+        return ctx.execBatch((context) -> {
+            return processSelectScalar0(params, ctx, sqlDefinition, clazz, defaultValue);
         }, usr);
-        return r;
+    }
+
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
+        return context.createCursor()
+                    .init(context.getCurrentConnection(), sql, null).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
     public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
-        final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
-        T r = ctx.execBatch((SQLActionScalar0<T>) (context) -> {
-            return context.createCursor()
-                    .init(context.getCurrentConnection(), sql, null).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
+        return ctx.execBatch((SQLActionScalar0<T>) (context) -> {
+            return processSelectScalar0(params, ctx, sql, clazz, defaultValue);
         }, usr);
-        return r;
     }
 
     public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) throws Exception {
