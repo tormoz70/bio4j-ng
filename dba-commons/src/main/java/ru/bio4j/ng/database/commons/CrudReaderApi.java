@@ -12,8 +12,8 @@ import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.BioSQLDefinition;
-import ru.bio4j.ng.service.api.RestParamNames;
+import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.model.transport.RestParamNames;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class CrudReaderApi {
     private static ABeanPage readStoreData(
             final List<Param> params,
             final SQLContext context,
-            final BioSQLDefinition cursorDef,
+            final SQLDefinition cursorDef,
             final User usr) throws Exception {
         LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
@@ -95,7 +95,7 @@ public class CrudReaderApi {
     public static long calcTotalCount(
             final List<Param> params,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user) throws Exception {
         long result = context.execBatch((ctx) -> {
             SQLCursor c = ctx.createDynamicCursor();
@@ -121,7 +121,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final boolean forceCalcCount) throws Exception {
 
         Connection connTest = context.getCurrentConnection();
@@ -193,7 +193,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final boolean forceCalcCount,
             final User user) throws Exception {
         final ABeanPage result = context.execBatch((ctx) -> {
@@ -212,7 +212,7 @@ public class CrudReaderApi {
      * @return все записи
      * @throws Exception
      */
-    public static ABeanPage loadAll0(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final BioSQLDefinition cursor) throws Exception {
+    public static ABeanPage loadAll0(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor) throws Exception {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
@@ -232,7 +232,7 @@ public class CrudReaderApi {
      * @return все записи
      * @throws Exception
      */
-    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final BioSQLDefinition cursor, User user) throws Exception {
+    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor, User user) throws Exception {
         ABeanPage result = context.execBatch((ctx) -> {
             return loadAll0(params, filter, sort, ctx, cursor);
         }, user);
@@ -240,7 +240,7 @@ public class CrudReaderApi {
     }
 
 
-    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final BioSQLDefinition cursor, final User user) throws Exception {
+    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final SQLDefinition cursor, final User user) throws Exception {
         ABeanPage result = context.execBatch((ctx) -> {
             return loadRecord0(params, ctx, cursor);
         }, user);
@@ -255,7 +255,7 @@ public class CrudReaderApi {
      * @return первую запись
      * @throws Exception
      */
-    public static ABeanPage loadRecord0(final List<Param> params, final SQLContext context, final BioSQLDefinition cursor) throws Exception {
+    public static ABeanPage loadRecord0(final List<Param> params, final SQLContext context, final SQLDefinition cursor) throws Exception {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
@@ -271,7 +271,7 @@ public class CrudReaderApi {
     private static <T> List<T> readStoreDataExt(
             final List<Param> params,
             final SQLContext context,
-            final BioSQLDefinition cursorDef,
+            final SQLDefinition cursorDef,
             final Class<T> beanType) throws Exception {
 
         if (context.getCurrentConnection() == null)
@@ -320,7 +320,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final Class<T> beanType) throws Exception {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
@@ -391,7 +391,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user,
             final Class<T> beanType) throws Exception {
         List<T> result = context.execBatch((ctx) -> {
@@ -417,7 +417,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final Class<T> beanType) throws Exception {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
@@ -446,7 +446,7 @@ public class CrudReaderApi {
             final Filter filter,
             final List<Sort> sort,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user,
             final Class<T> beanType) throws Exception {
         List<T> result = context.execBatch((ctx) -> {
@@ -457,7 +457,7 @@ public class CrudReaderApi {
 
     public static <T> List<T> loadRecordExt(
             final List<Param> params,
-            final SQLContext context, final BioSQLDefinition cursor,
+            final SQLContext context, final SQLDefinition cursor,
             final User user,
             final Class<T> beanType) throws Exception {
         Field pkField = cursor.getSelectSqlDef().findPk();
@@ -474,7 +474,7 @@ public class CrudReaderApi {
     public static StringBuilder loadJson(
             final List<Param> params,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user) throws Exception {
         StringBuilder result = context.execBatch((ctx) -> {
             final StringBuilder r = new StringBuilder();
@@ -495,7 +495,7 @@ public class CrudReaderApi {
     public static <T> T selectScalar0(
             final Object params,
             final SQLContext context,
-            final BioSQLDefinition sqlDefinition,
+            final SQLDefinition sqlDefinition,
             final Class<T> clazz,
             final T defaultValue) throws Exception {
         return DbUtils.processSelectScalar0(params, context, sqlDefinition, clazz, defaultValue);
@@ -504,7 +504,7 @@ public class CrudReaderApi {
     public static <T> T selectScalar(
             final Object params,
             final SQLContext context,
-            final BioSQLDefinition sqlDefinition,
+            final SQLDefinition sqlDefinition,
             final Class<T> clazz,
             final T defaultValue,
             final User user) throws Exception {

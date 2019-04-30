@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.service.api.BioSQLDefinition;
+import ru.bio4j.ng.service.api.SQLDefinition;
 
 
 import java.io.InputStream;
@@ -17,7 +17,7 @@ public class CursorParserTest {
     public void toStringTest() throws Exception {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("rcard.xml");
         Document document = Utl.loadXmlDocument(inputStream);
-        BioSQLDefinition cursor = CursorParser.pars(null, document, "eve.rcard");
+        SQLDefinition cursor = CursorParser.pars(null, document, "eve.rcard");
         String out = cursor.toString();
         System.out.println(out);
     }

@@ -9,7 +9,7 @@ import ru.bio4j.ng.service.api.ConfigProvider;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 
-public class BioServletBase extends HttpServlet {
+public class ServletBase extends HttpServlet {
 
 //    public final static String SCFG_PARAM_NAME_BIODEBUG = "bioDebug";
 //    public final static String SCFG_PARAM_NAME_PUBLIC_AREAS = "publicAreas";
@@ -21,7 +21,7 @@ public class BioServletBase extends HttpServlet {
 //    protected SecurityProvider securityProvider;
     protected ConfigProvider configProvider;
 
-    public BioServletBase() {
+    public ServletBase() {
         LOG = LoggerFactory.getLogger(getClass());
     }
 

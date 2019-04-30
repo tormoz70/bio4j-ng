@@ -11,7 +11,7 @@ import ru.bio4j.ng.service.api.*;
 
 import java.util.*;
 
-public class BioSQLDefinitionImpl implements BioSQLDefinition {
+public class SQLDefinitionImpl implements SQLDefinition {
 
     public String getExportTitle() {
         return exportTitle;
@@ -39,7 +39,7 @@ public class BioSQLDefinitionImpl implements BioSQLDefinition {
 
 
     public static class SQLDefImpl implements SQLDef {
-        private BioSQLDefinition owner;
+        private SQLDefinition owner;
         private final String sql;
         private String preparedSql;
 
@@ -56,7 +56,7 @@ public class BioSQLDefinitionImpl implements BioSQLDefinition {
             return Utl.buildBeanStateInfo(this, this.getClass().getSimpleName(), "  ", "owner");
         }
 
-        public void setOwner(BioSQLDefinition bioSQLDefinition){
+        public void setOwner(SQLDefinition bioSQLDefinition){
             owner = bioSQLDefinition;
         }
         public List<Field> getFields() {
@@ -174,7 +174,7 @@ public class BioSQLDefinitionImpl implements BioSQLDefinition {
 
     private final Map<SQLType, SQLDef> sqlDefs = new HashMap<>();
 
-    public BioSQLDefinitionImpl(String bioCode) {
+    public SQLDefinitionImpl(String bioCode) {
         this.bioCode = bioCode;
     }
 

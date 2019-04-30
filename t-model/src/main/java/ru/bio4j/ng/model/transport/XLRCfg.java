@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.model.transport;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;

@@ -7,18 +7,16 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
-import ru.bio4j.ng.service.api.BioService;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class BioServiceBase<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(BioServiceBase.class);
+public abstract class ServiceBase<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceBase.class);
 
     protected abstract BundleContext bundleContext();
 

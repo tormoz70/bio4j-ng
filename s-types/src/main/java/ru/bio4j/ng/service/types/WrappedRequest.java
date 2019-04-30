@@ -7,10 +7,10 @@ import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.BioAppService;
-import ru.bio4j.ng.service.api.BioHttpParamMap;
-import ru.bio4j.ng.service.api.BioSecurityService;
-import ru.bio4j.ng.service.api.RestParamNames;
+import ru.bio4j.ng.service.api.AppService;
+import ru.bio4j.ng.service.api.HttpParamMap;
+import ru.bio4j.ng.service.api.SecurityService;
+import ru.bio4j.ng.model.transport.RestParamNames;
 
 import java.nio.charset.Charset;
 import java.security.Principal;
@@ -21,7 +21,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-public class BioWrappedRequest extends HttpServletRequestWrapper {
+public class WrappedRequest extends HttpServletRequestWrapper {
 
     private final Map<String, String[]> modParameters;
     private final HashMap<String, String> modHeaders;
@@ -148,9 +148,9 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         StringBuilder sb = new StringBuilder();
 
         ServletContext servletContext = request.getServletContext();
-        BioSecurityService securityService = Utl.getService(servletContext, BioSecurityService.class);
-        BioAppService appService = Utl.getService(servletContext, BioAppService.class);
-        BioHttpParamMap httpParamMap =  appService.getHttpParamMap();
+        SecurityService securityService = Utl.getService(servletContext, SecurityService.class);
+        AppService appService = Utl.getService(servletContext, AppService.class);
+        HttpParamMap httpParamMap =  appService.createHttpParamMap();
 
         String uploadedJson = null;
         if (!isMultypartRequest(request) && !isUrlencodedFormRequest(request)) {
@@ -321,7 +321,7 @@ public class BioWrappedRequest extends HttpServletRequestWrapper {
         return result;
     }
 
-    public BioWrappedRequest(final HttpServletRequest request) throws Exception {
+    public WrappedRequest(final HttpServletRequest request) throws Exception {
         super(request);
         modParameters = new TreeMap<>();
         modHeaders = new HashMap();

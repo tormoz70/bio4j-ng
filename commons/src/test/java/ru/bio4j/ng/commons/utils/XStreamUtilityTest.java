@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.service.api.XLRCfg;
+import ru.bio4j.ng.model.transport.XLRCfg;
 
 import java.util.ArrayList;
 import java.util.List;

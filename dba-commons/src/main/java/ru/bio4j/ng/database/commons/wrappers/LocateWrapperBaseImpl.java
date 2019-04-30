@@ -3,7 +3,7 @@ package ru.bio4j.ng.database.commons.wrappers;
 import ru.bio4j.ng.database.api.LocateWrapper;
 import ru.bio4j.ng.database.api.WrapperInterpreter;
 import ru.bio4j.ng.database.commons.AbstractWrapper;
-import ru.bio4j.ng.service.api.RestParamNames;
+import ru.bio4j.ng.model.transport.RestParamNames;
 
 public class LocateWrapperBaseImpl extends AbstractWrapper implements LocateWrapper {
 

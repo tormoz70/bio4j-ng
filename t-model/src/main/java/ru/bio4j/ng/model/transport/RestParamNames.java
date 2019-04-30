@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.model.transport;
 
 public class RestParamNames {
     public static final String PAGINATION_PARAM_PAGE = "pagination$page";

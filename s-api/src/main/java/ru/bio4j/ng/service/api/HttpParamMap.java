@@ -1,6 +1,6 @@
 package ru.bio4j.ng.service.api;
 
-public interface BioHttpParamMap {
+public interface HttpParamMap {
     String username();
     String password();
 

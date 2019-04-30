@@ -1,24 +1,16 @@
 package ru.bio4j.ng.service.types;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.model.transport.AnConfig;
 import ru.bio4j.ng.service.api.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(AppServiceBase.class);
 
-public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBase<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(BioAppServiceBase.class);
-
-    private void prepareSQL(BioSQLDefinitionImpl sqlDefinition) throws Exception {
+    private void prepareSQL(SQLDefinitionImpl sqlDefinition) throws Exception {
         SQLContext context = this.getSQLContext();
         context.execBatch((ctx) -> {
             UpdelexSQLDef def = sqlDefinition.getUpdateSqlDef();
@@ -42,8 +34,8 @@ public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBa
         }, null);
     }
 
-    public BioSQLDefinitionImpl getSQLDefinition(String bioCode) throws Exception {
-        BioSQLDefinitionImpl cursor = CursorParser.pars(bundleContext(), bioCode);
+    public SQLDefinitionImpl getSQLDefinition(String bioCode) throws Exception {
+        SQLDefinitionImpl cursor = CursorParser.pars(bundleContext(), bioCode);
         if(cursor == null)
             throw new Exception(String.format("Cursor \"%s\" not found in service \"%s\"!", bioCode, this.getClass().getName()));
         prepareSQL(cursor);
@@ -73,8 +65,11 @@ public abstract class BioAppServiceBase<T extends AnConfig> extends BioServiceBa
 
     protected abstract SQLContext createSQLContext() throws Exception;
 
-    public BioHttpParamMap getHttpParamMap() throws Exception {
+    public HttpParamMap createHttpParamMap() throws Exception {
         return null;
     }
 
+    public LoginProcessor createLoginProcessor() {
+        return null;
+    }
 }

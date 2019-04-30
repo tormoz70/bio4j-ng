@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.commons.utils;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.service.api.BioService;
 
-public class BioServiceHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(BioServiceHelper.class);
+public class ServiceHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceHelper.class);
 
     public static <T extends BioService> T lookupService(BundleContext context, Class<T> clazz) throws Exception {
         LOG.debug("Looking for service of type:{}", clazz.getName());

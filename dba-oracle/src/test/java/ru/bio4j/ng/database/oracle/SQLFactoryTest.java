@@ -19,7 +19,7 @@ import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.service.api.XLRCfg;
+import ru.bio4j.ng.model.transport.XLRCfg;
 
 import java.sql.*;
 import java.util.*;

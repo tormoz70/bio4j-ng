@@ -8,13 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
-import ru.bio4j.ng.service.api.BioAppService;
-import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.service.types.CursorParser;
 import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.types.BioServiceBase;
+import ru.bio4j.ng.service.types.ServiceBase;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +25,7 @@ import static ru.bio4j.ng.content.io.FileLoader.buildCode;
 @Component
 @Instantiate
 @Provides(specifications = ContentResolver.class)
-public class ContentResolverImpl extends BioServiceBase implements ContentResolver, FileListener {
+public class ContentResolverImpl extends ServiceBase implements ContentResolver, FileListener {
     private static final Logger LOG = LoggerFactory.getLogger(ContentResolverImpl.class);
 
     private volatile FileWatcher fileWatcher;
@@ -46,8 +43,8 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
     }
 
 
-    private BioSQLDefinition getCursorFromFileSystem(String bioCode) throws Exception {
-        BioSQLDefinition cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
+    private SQLDefinition getCursorFromFileSystem(String bioCode) throws Exception {
+        SQLDefinition cursor = cacheService.get(CacheName.CURSOR, bioCode.toLowerCase());
         if (cursor == null) {
             cursor = CursorParser.pars(configProvider.getConfig().getContentResolverPath(), bioCode);
             cacheService.put(CacheName.CURSOR, bioCode.toLowerCase(), cursor);
@@ -65,8 +62,8 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
 //    }
 
     @Override
-    public BioSQLDefinition getCursor(String moduleKey, String bioCode) throws Exception {
-        BioSQLDefinition cursor = getCursorFromFileSystem(bioCode);
+    public SQLDefinition getCursor(String moduleKey, String bioCode) throws Exception {
+        SQLDefinition cursor = getCursorFromFileSystem(bioCode);
 //        if(cursor == null)
 //            cursor = getCursorFromModule(moduleKey, bioCode, usr);
 
@@ -78,9 +75,9 @@ public class ContentResolverImpl extends BioServiceBase implements ContentResolv
 
 
     @Override
-    public BioSQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
+    public SQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
         String bioCode = bioRequest.getBioCode();
-        BioSQLDefinition cursor = getCursor(moduleKey, bioCode);
+        SQLDefinition cursor = getCursor(moduleKey, bioCode);
 
 //        if(cursor != null)
 //            applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());

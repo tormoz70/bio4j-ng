@@ -4,7 +4,7 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.*;
-import ru.bio4j.ng.service.api.BioSQLDefinition;
+import ru.bio4j.ng.service.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.ABean;
@@ -81,7 +81,7 @@ public class DbUtils {
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static void processExec(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition cursor) throws Exception {
+    public static void processExec(final User usr, final Object params, final SQLContext ctx, final SQLDefinition cursor) throws Exception {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
@@ -92,7 +92,7 @@ public class DbUtils {
         }, usr);
     }
 
-    public static void processSelect(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition cursor, final DelegateSQLFetch action) throws Exception {
+    public static void processSelect(final User usr, final Object params, final SQLContext ctx, final SQLDefinition cursor, final DelegateSQLFetch action) throws Exception {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch((context) -> {
@@ -103,14 +103,14 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = sqlDefinition.getSelectSqlDef();
         return context.createCursor()
                     .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
-    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final BioSQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
         return ctx.execBatch((context) -> {
             return processSelectScalar0(params, ctx, sqlDefinition, clazz, defaultValue);
         }, usr);

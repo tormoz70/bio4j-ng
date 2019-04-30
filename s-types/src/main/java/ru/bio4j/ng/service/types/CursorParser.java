@@ -208,7 +208,7 @@ public class CursorParser {
         }
     }
 
-    private static void addColsFromXml(final BioSQLDefinitionImpl cursor, final Document document) throws Exception {
+    private static void addColsFromXml(final SQLDefinitionImpl cursor, final Document document) throws Exception {
         Element sqlElem = Doms.findElem(document, "/cursor/fields");
         NodeList fieldNodes = sqlElem.getElementsByTagName("field");
         List<Field> fields = cursor.getFields();
@@ -323,8 +323,8 @@ public class CursorParser {
         return null;
     }
 
-    public static BioSQLDefinitionImpl pars(final BundleContext context, final Document document, final String bioCode) throws Exception {
-        BioSQLDefinitionImpl cursor = new BioSQLDefinitionImpl(bioCode);
+    public static SQLDefinitionImpl pars(final BundleContext context, final Document document, final String bioCode) throws Exception {
+        SQLDefinitionImpl cursor = new SQLDefinitionImpl(bioCode);
         Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
         Boolean readOnly = Doms.getAttribute(document.getDocumentElement(), "readOnly", true, Boolean.class);
         cursor.setReadOnly(readOnly);
@@ -342,10 +342,10 @@ public class CursorParser {
                 sql = tryLoadSQL(context, bioCode, sql);
             SQLDef sqlDef;
             if (curType == SQLType.SELECT) {
-                sqlDef = new BioSQLDefinitionImpl.SelectSQLDefImpl(sql);
+                sqlDef = new SQLDefinitionImpl.SelectSQLDefImpl(sql);
                 addDefaultSortFromXml((SelectSQLDef) sqlDef, document);
             } else
-                sqlDef = new BioSQLDefinitionImpl.UpdelexSQLDefImpl(sql);
+                sqlDef = new SQLDefinitionImpl.UpdelexSQLDefImpl(sql);
             cursor.setSqlDef(curType, sqlDef);
 
             addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL
@@ -355,7 +355,7 @@ public class CursorParser {
         return cursor;
     }
 
-    public static BioSQLDefinitionImpl pars(final BundleContext context, final String bioCode) throws Exception {
+    public static SQLDefinitionImpl pars(final BundleContext context, final String bioCode) throws Exception {
         Document document = loadXmlDocumentFromRes(context, bioCode);
         if (document == null)
             throw new Exception(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
@@ -371,9 +371,9 @@ public class CursorParser {
         return Utl.loadXmlDocument(path);
     }
 
-    public static BioSQLDefinitionImpl pars(final String contentRootPath, final String bioCode) throws Exception {
+    public static SQLDefinitionImpl pars(final String contentRootPath, final String bioCode) throws Exception {
         Document document = loadXmlDocumentFromPath(contentRootPath, bioCode);
-        BioSQLDefinitionImpl cursor = new BioSQLDefinitionImpl(bioCode);
+        SQLDefinitionImpl cursor = new SQLDefinitionImpl(bioCode);
         Element exportTitleElem = Doms.findElem(document.getDocumentElement(), "/cursor/exportTitle");
         if (exportTitleElem != null)
             cursor.setExportTitle(exportTitleElem.getTextContent());
@@ -384,9 +384,9 @@ public class CursorParser {
             String sql = tryLoadSQL(contentRootPath, bioCode, sqlElem.getTextContent().trim());
             SQLDef sqlDef;
             if (curType == SQLType.SELECT)
-                sqlDef = new BioSQLDefinitionImpl.SelectSQLDefImpl(sql);
+                sqlDef = new SQLDefinitionImpl.SelectSQLDefImpl(sql);
             else
-                sqlDef = new BioSQLDefinitionImpl.UpdelexSQLDefImpl(sql);
+                sqlDef = new SQLDefinitionImpl.UpdelexSQLDefImpl(sql);
             cursor.setSqlDef(curType, sqlDef);
 
             addParamsFromSQLBody(sqlDef); // добавляем переменные из SQL

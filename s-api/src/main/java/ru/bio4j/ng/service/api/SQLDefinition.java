@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public interface BioSQLDefinition extends Serializable {
+public interface SQLDefinition extends Serializable {
 
     String getExportTitle();
     void setExportTitle(String exportTitle);

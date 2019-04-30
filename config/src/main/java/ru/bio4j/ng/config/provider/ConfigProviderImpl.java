@@ -5,9 +5,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.BioConfig;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.api.BioConfig;
-import ru.bio4j.ng.service.types.BioServiceBase;
+import ru.bio4j.ng.service.types.ServiceBase;
 import ru.bio4j.ng.service.types.ErrorHandler;
 
 import java.util.Dictionary;
@@ -15,7 +15,7 @@ import java.util.Dictionary;
 @Component(managedservice="bio4j.config")
 @Instantiate
 @Provides(specifications = ConfigProvider.class)
-public class ConfigProviderImpl extends BioServiceBase<BioConfig> implements ConfigProvider {
+public class ConfigProviderImpl extends ServiceBase<BioConfig> implements ConfigProvider {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigProviderImpl.class);
 
     @Requires

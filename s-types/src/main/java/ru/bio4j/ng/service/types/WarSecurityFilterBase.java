@@ -2,17 +2,15 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.commons.utils.SrvcUtils;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.BioQueryParams;
-import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.BioSecurityService;
+import ru.bio4j.ng.service.api.SecurityService;
+import ru.bio4j.ng.service.api.LoginProcessor;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -22,7 +20,6 @@ public class WarSecurityFilterBase {
     private Logger LOG;
 
     private boolean bioDebug = false;
-    private Set<String> publicAreas = new HashSet();
     private String errorPage;
 
     private void log_error(String s, Throwable e) {
@@ -39,23 +36,13 @@ public class WarSecurityFilterBase {
         debug(s, null);
     }
 
-    private BioLoginProcessor loginProcessor = new BioLoginProcessor();
-
-    private void initPublicAreas(String publicArea) {
-        publicAreas.clear();
-        if(!Strings.isNullOrEmpty(publicArea))
-            publicAreas.addAll(Arrays.asList(Strings.split(publicArea, ' ', ',', ';')));
-    }
-
     public final static String SCFG_PARAM_NAME_BIODEBUG = "bioDebug";
-    public final static String SCFG_PARAM_NAME_PUBLIC_AREAS = "publicAreas";
 
     public void init(FilterConfig filterConfig) throws ServletException {
         LOG = LoggerFactory.getLogger(this.getClass());
         debug("init...");
         if (filterConfig != null) {
             bioDebug = Strings.compare(filterConfig.getInitParameter(SCFG_PARAM_NAME_BIODEBUG), "true", true);
-            initPublicAreas(filterConfig.getInitParameter(SCFG_PARAM_NAME_PUBLIC_AREAS));
             errorPage = filterConfig.getInitParameter("error_page");
             debug(" Security filter config : {" +
                   "   -- bioDebug : {}\n"+
@@ -65,11 +52,12 @@ public class WarSecurityFilterBase {
         debug("init - done.");
     }
 
-    protected BioSecurityService securityService;
+    private LoginProcessor loginProcessor;
+    protected SecurityService securityService;
     protected void initSecurityHandler(ServletContext servletContext) throws Exception {
         if(securityService == null) {
             try {
-                securityService = Utl.getService(servletContext, BioSecurityService.class);
+                securityService = Utl.getService(servletContext, SecurityService.class);
             } catch (IllegalStateException e) {
                 securityService = null;
             }
@@ -77,19 +65,17 @@ public class WarSecurityFilterBase {
         if (securityService == null) {
             throw new BioError("Security provider not defined!");
         }
-        loginProcessor.setSecurityService(securityService);
+        loginProcessor = securityService.createLoginProcessor();
+        if(loginProcessor == null)
+            loginProcessor = new DefaultLoginProcessor(securityService);
     }
 
-    private boolean detectWeAreInPublicAreas(String bioCode) {
-        return !Strings.isNullOrEmpty(bioCode) && publicAreas.contains(bioCode);
-    }
-
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doSequrityFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
         resp.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        final BioWrappedRequest req = (BioWrappedRequest) request;
+        final WrappedRequest req = (WrappedRequest) request;
         final String servletPath = req.getServletPath();
         final HttpSession session = req.getSession();
 
@@ -98,28 +84,19 @@ public class WarSecurityFilterBase {
             try {
                 debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
                 initSecurityHandler(req.getServletContext());
-                final BioQueryParams qprms = req.getBioQueryParams();
                 String pathInfo = req.getPathInfo();
                 if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
-                    User user = loginProcessor.login(qprms);
-                    ABean result = SrvcUtils.buildSuccess(user);
-                    response.getWriter().append(Jsons.encode(result));
-                } else if ((!Strings.isNullOrEmpty(pathInfo) && !Strings.compare(pathInfo, "/login", false)) && !Strings.isNullOrEmpty(qprms.login)) {
-                    User user = loginProcessor.login(qprms);
-                    req.setUser(user);
-                    chn.doFilter(req, resp);
+                    if(loginProcessor.doLogin(req, resp))
+                        chn.doFilter(req, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
-                    User user = loginProcessor.getUser(qprms);
-                    ABean result = SrvcUtils.buildSuccess(user);
-                    response.getWriter().append(Jsons.encode(result));
+                    if(loginProcessor.doGetUser(req, resp))
+                        chn.doFilter(req, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/logoff", false)) {
-                    loginProcessor.logoff(qprms);
-                    ABean result = SrvcUtils.buildSuccess(null);
-                    response.getWriter().append(Jsons.encode(result));
+                    if(loginProcessor.doLogoff(req, resp))
+                        chn.doFilter(req, resp);
                 } else {
-                    User user = loginProcessor.getUser(qprms);
-                    req.setUser(user);
-                    chn.doFilter(req, resp);
+                    if(loginProcessor.doOthers(req, resp))
+                        chn.doFilter(req, resp);
                 }
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);
@@ -128,6 +105,26 @@ public class WarSecurityFilterBase {
                 log_error("Unexpected error while filtering (Level-1)!", e);
                 ErrorHandler.getInstance().writeError(e, resp);
             }
+        }
+    }
+
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        final HttpServletRequest req = (HttpServletRequest) request;
+        try {
+            WrappedRequest rereq = new WrappedRequest(req);
+            rereq.putHeader("Access-Control-Allow-Origin", "*");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, Authorization");
+            doSequrityFilter(request, response, chain);
+        } catch (Exception ex) {
+            LOG.error(null, ex);
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

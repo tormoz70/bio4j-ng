@@ -8,12 +8,11 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.SQLContext;
+import ru.bio4j.ng.model.transport.FileSpec;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
-import ru.bio4j.ng.service.types.BioAppServiceBase;
-import ru.bio4j.ng.service.types.BioServiceBase;
+import ru.bio4j.ng.service.types.ServiceBase;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +26,7 @@ import java.util.List;
 @Component(managedservice="fcloud-h2registry.config")
 @Instantiate
 @Provides(specifications = FCloudApi.class)
-public class FCloudApiModuleImpl extends BioServiceBase<FCloudConfig> implements FCloudApi {
+public class FCloudApiModuleImpl extends ServiceBase<FCloudConfig> implements FCloudApi {
     private static final Logger LOG = LoggerFactory.getLogger(FCloudApiModuleImpl.class);
 
     @Requires

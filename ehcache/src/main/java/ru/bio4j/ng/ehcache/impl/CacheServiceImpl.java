@@ -8,21 +8,15 @@ import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.ConfigurationFactory;
 import net.sf.ehcache.config.DiskStoreConfiguration;
 import org.apache.felix.ipojo.annotations.*;
-import org.apache.felix.ipojo.handlers.event.Publishes;
 import org.apache.felix.ipojo.handlers.event.Subscriber;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.cm.ConfigurationException;
-import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.ehcache.util.CacheEventListenerWrapper;
 import ru.bio4j.ng.ehcache.util.CacheUtil;
-import ru.bio4j.ng.service.types.BioServiceBase;
-import sun.security.krb5.Config;
+import ru.bio4j.ng.service.types.ServiceBase;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,12 +27,10 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
-
 @Component
 @Instantiate
 @Provides(specifications = CacheService.class)
-public class CacheServiceImpl extends BioServiceBase implements CacheService {
+public class CacheServiceImpl extends ServiceBase implements CacheService {
 	private static Logger LOG = LoggerFactory.getLogger(CacheService.class);
 
     private final static String CACHE_CONFIG_FILE = "ehcache-config.xml";

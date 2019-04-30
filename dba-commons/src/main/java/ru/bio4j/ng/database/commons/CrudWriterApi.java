@@ -8,8 +8,8 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.service.api.BioSQLDefinition;
-import ru.bio4j.ng.service.api.RestParamNames;
+import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.model.transport.RestParamNames;
 import ru.bio4j.ng.service.api.UpdelexSQLDef;
 
 import java.sql.Connection;
@@ -24,7 +24,7 @@ public class CrudWriterApi {
             final List<Param> params,
             final List<ABean> rows,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user) throws Exception {
         UpdelexSQLDef sqlDef = cursor.getUpdateSqlDef();
         if(sqlDef == null)
@@ -75,7 +75,7 @@ public class CrudWriterApi {
             final List<Param> params,
             final List<Object> ids,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user) throws Exception {
         UpdelexSQLDef sqlDef = cursor.getDeleteSqlDef();
         if (sqlDef == null)
@@ -107,7 +107,7 @@ public class CrudWriterApi {
     public static void execSQL0(
             final Object params,
             final SQLContext context,
-            final BioSQLDefinition cursor) throws Exception {
+            final SQLDefinition cursor) throws Exception {
         UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if (sqlDef == null)
             throw new Exception(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
@@ -123,7 +123,7 @@ public class CrudWriterApi {
     public static void execSQL(
             final Object params,
             final SQLContext context,
-            final BioSQLDefinition cursor,
+            final SQLDefinition cursor,
             final User user) throws Exception {
         context.execBatch((ctx) -> {
             execSQL0(params, ctx, cursor);

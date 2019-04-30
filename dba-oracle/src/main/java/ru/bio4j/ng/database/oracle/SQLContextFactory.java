@@ -4,7 +4,7 @@ import ru.bio4j.ng.database.api.SQLConnectionPoolConfig;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
-import ru.bio4j.ng.service.api.SQLContextConfig;
+import ru.bio4j.ng.model.transport.SQLContextConfig;
 
 public class SQLContextFactory {
     public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {

@@ -1,7 +1,5 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.model.transport;
 
-
-import ru.bio4j.ng.model.transport.Prop;
 
 public class BioConfig extends AnConfig {
     @Prop(name = "bio.debug")

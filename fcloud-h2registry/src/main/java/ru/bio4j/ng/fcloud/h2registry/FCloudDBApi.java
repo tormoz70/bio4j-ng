@@ -2,10 +2,9 @@ package ru.bio4j.ng.fcloud.h2registry;
 
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
-import ru.bio4j.ng.service.api.FileSpec;
+import ru.bio4j.ng.model.transport.FileSpec;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
