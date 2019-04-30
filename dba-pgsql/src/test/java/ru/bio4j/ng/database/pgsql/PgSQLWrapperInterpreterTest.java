@@ -10,6 +10,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.io.InputStream;
 
+@Test(enabled = false)
 public class PgSQLWrapperInterpreterTest {
 
 //    @Test(enabled = false)
@@ -32,7 +33,7 @@ public class PgSQLWrapperInterpreterTest {
 //        String sql = filterWrapper.filterToSQL("fff", (Filter)filter);
 //        Assert.assertNotNull(sql);
 //    }
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void filterAndSorterToSQLTest() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter2.json");
         String json = Utl.readStream(inputStream);
@@ -42,7 +43,7 @@ public class PgSQLWrapperInterpreterTest {
         Assert.assertNotNull(sql);
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void filterAndSorterToSQLTest1() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter3.json");
         String json = Utl.readStream(inputStream);
@@ -52,7 +53,7 @@ public class PgSQLWrapperInterpreterTest {
         Assert.assertNotNull(sql);
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void filterAndSorterToSQLTest2() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter4.json");
         String json = Utl.readStream(inputStream);
@@ -62,7 +63,7 @@ public class PgSQLWrapperInterpreterTest {
         Assert.assertNull(sql);
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void filterAndSorterToSQLTest5() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter5.json");
         String json = Utl.readStream(inputStream);

@@ -17,6 +17,7 @@ import ru.bio4j.ng.model.transport.Param;
 import java.util.ArrayList;
 import java.util.List;
 
+@Test(enabled = false)
 public class SQLFactoryTest1 {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest1.class);
     private static final String testDBDriverName = "org.postgresql.Driver";
@@ -59,31 +60,31 @@ public class SQLFactoryTest1 {
 
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testCutDirName() throws Exception {
         String s = PgSQLUtilsImpl.cutDirNames("OUT p_param2 integer");
         Assert.assertEquals(s, "p_param2 integer");
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testCutDirName1() throws Exception {
         String s = PgSQLUtilsImpl.cutDirNames("p_param2 integer");
         Assert.assertEquals(s, "p_param2 integer");
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void extractDirName() throws Exception {
         String s = PgSQLUtilsImpl.extractDirName("OUT p_param2 integer");
         Assert.assertEquals(s, "OUT");
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void extractDirName1() throws Exception {
         String s = PgSQLUtilsImpl.extractDirName("p_param2 integer");
         Assert.assertEquals(s, "IN");
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testParsParams() throws Exception {
         StringBuilder args = new StringBuilder();
         String paramsList = "p_param1 character varying, OUT p_param2 integer";
@@ -95,7 +96,7 @@ public class SQLFactoryTest1 {
         Assert.assertEquals(params.get(1).getType(), MetaType.INTEGER);
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testParsParams1() throws Exception {
         StringBuilder args = new StringBuilder();
         String paramsList = "p_param1 character varying, OUT p_param2 integer";

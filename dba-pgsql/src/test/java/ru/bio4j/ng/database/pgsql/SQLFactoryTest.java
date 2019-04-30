@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Test(enabled = false)
 public class SQLFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest.class);
 //    private static final String testDBDriverName = "oracle.jdbc.driver.OracleDriver";
@@ -101,7 +102,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test
+//    @Test
     public void testCreateSQLConnectionPool() throws Exception {
 //        LOG.debug(Utl.buildBeanStateInfo(context.getStat(), null, null));
         context.execBatch(new SQLActionScalar0<Object>() {
@@ -114,7 +115,7 @@ public class SQLFactoryTest {
 
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandOpenCursor() {
         try {
             Double dummysum = context.execBatch((context) -> {
@@ -138,7 +139,7 @@ public class SQLFactoryTest {
 
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandOpenCursor111() {
         try {
             Double dummysum = context.execBatch((context) -> {
@@ -192,7 +193,7 @@ public class SQLFactoryTest {
 
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecSQL() throws Exception {
         try {
             int leng = context.execBatch((context) -> {
@@ -225,7 +226,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecINOUTSQL() throws Exception {
         try {
             int leng = context.execBatch((context) -> {
@@ -255,7 +256,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecINOUTSQL11() throws Exception {
         try {
             int leng = context.execBatch((context) -> {
@@ -285,7 +286,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testDetectParamsOfSP() throws Exception {
         try {
             long leng = context.execBatch((context) -> {
@@ -313,7 +314,7 @@ public class SQLFactoryTest {
         public Double param4;
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecINOUTSQL1() throws Exception {
         try {
             long leng = context.execBatch((context) -> {
@@ -343,7 +344,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecExtParam() throws Exception {
         try {
             int leng = context.execBatch((context) -> {
@@ -376,7 +377,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testStoredprocMetadata() throws Exception {
 
         try {
@@ -390,7 +391,7 @@ public class SQLFactoryTest {
 
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecError() throws Exception {
         try {
             context.execBatch((SQLActionVoid1<String>) (context, param) -> {
@@ -416,7 +417,7 @@ public class SQLFactoryTest {
         }
     }
     
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandExecSQLAutoCommit() throws Exception {
         try {
             int leng = context.execBatch((context) -> {
@@ -484,7 +485,7 @@ public class SQLFactoryTest {
         }
     }
 
-    @Test(enabled = true)
+//    @Test(enabled = true)
     public void testSQLCommandStoredProcRetCursor() throws Exception {
         try {
             int c = context.execBatch((context) -> {
@@ -534,7 +535,7 @@ public class SQLFactoryTest {
 //        }
 //    }
 
-    @Test
+//    @Test
     public void sqlExceptionExtTest() {
         List<Param> params = new ArrayList<>();
         params.add(Param.builder()
