@@ -100,10 +100,14 @@ public class WarSecurityFilterBase {
                 initSecurityHandler(req.getServletContext());
                 final BioQueryParams qprms = req.getBioQueryParams();
                 String pathInfo = req.getPathInfo();
-                if (!Strings.isNullOrEmpty(qprms.login) || (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false))) {
+                if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
                     User user = loginProcessor.login(qprms);
                     ABean result = SrvcUtils.buildSuccess(user);
                     response.getWriter().append(Jsons.encode(result));
+                } else if ((!Strings.isNullOrEmpty(pathInfo) && !Strings.compare(pathInfo, "/login", false)) && !Strings.isNullOrEmpty(qprms.login)) {
+                    User user = loginProcessor.login(qprms);
+                    req.setUser(user);
+                    chn.doFilter(req, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
                     User user = loginProcessor.getUser(qprms);
                     ABean result = SrvcUtils.buildSuccess(user);
