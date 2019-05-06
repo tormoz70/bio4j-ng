@@ -79,7 +79,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
         final WrappedRequest req = (WrappedRequest)request;
         final BioQueryParams qprms = req.getBioQueryParams();
         User user = null;
-        if (Strings.isNullOrEmpty(req.getBioQueryParams().login))
+        if (!Strings.isNullOrEmpty(qprms.login))
             user = securityService.login(qprms);
         else
             user = securityService.getUser(qprms);

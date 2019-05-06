@@ -1,12 +1,18 @@
 package ru.bio4j.ng.database.commons;
 
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.ABeans;
 import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Strings;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.model.transport.*;
@@ -14,10 +20,13 @@ import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.service.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.RestParamNames;
+import ru.bio4j.ng.service.api.SelectSQLDef;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CrudReaderApi {
     protected final static Logger LOG = LoggerFactory.getLogger(CrudReaderApi.class);
@@ -219,6 +228,118 @@ public class CrudReaderApi {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
         return readStoreData(params, context, cursor, context.getCurrentUser());
+    }
+
+    private static HSSFCellStyle createHeaderStyle(HSSFWorkbook wb) throws Exception {
+        HSSFCellStyle rslt = wb.createCellStyle();
+        HSSFFont headerFont = wb.createFont();
+        headerFont.setFontHeightInPoints((short)12);
+        headerFont.setBold(true);
+        rslt.setFont(headerFont);
+        rslt.setAlignment(HorizontalAlignment.CENTER);
+        rslt.setVerticalAlignment(VerticalAlignment.CENTER);
+        rslt.setBorderBottom(BorderStyle.THIN);
+        rslt.setBorderLeft(BorderStyle.THIN);
+        rslt.setBorderRight(BorderStyle.THIN);
+        rslt.setBorderTop(BorderStyle.THIN);
+        rslt.setLocked(true);
+        rslt.setWrapText(true);
+        return rslt;
+    }
+
+    private static Map<String, HSSFCellStyle> createRowStyle(HSSFWorkbook wb, SelectSQLDef sqlDef) throws Exception {
+        Map<String, HSSFCellStyle> rslt = new HashMap<>();
+        HSSFCellStyle style = wb.createCellStyle();
+        HSSFFont cellFont = wb.createFont();
+        cellFont.setFontHeightInPoints((short) 10);
+        style.setFont(cellFont);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setWrapText(true);
+        rslt.put("RNUM", style);
+        for (Field fld : sqlDef.getFields()) {
+            style = wb.createCellStyle();
+            style.setFont(cellFont);
+            style.setAlignment(HorizontalAlignment.CENTER);
+            HorizontalAlignment ha = Enum.valueOf(HorizontalAlignment.class, fld.getAlign().name().toUpperCase());
+            if(ha != null)
+                style.setAlignment(ha);
+            style.setVerticalAlignment(VerticalAlignment.CENTER);
+            style.setBorderBottom(BorderStyle.THIN);
+            style.setBorderLeft(BorderStyle.THIN);
+            style.setBorderRight(BorderStyle.THIN);
+            style.setBorderTop(BorderStyle.THIN);
+            style.setWrapText(true);
+            rslt.put(fld.getName(), style);
+        }
+        return rslt;
+    }
+
+    private static void addHeader(HSSFSheet ws, SelectSQLDef sqlDef) throws Exception {
+        if(sqlDef != null && sqlDef.getFields()!= null && sqlDef.getFields().size() > 0) {
+            HSSFRow r = ws.createRow(0);
+            int celNum = 0;
+            HSSFCell cellRNUM = r.createCell(celNum);
+            cellRNUM.setCellValue("№ пп");
+            HSSFCellStyle headerStyle = createHeaderStyle(ws.getWorkbook());
+            cellRNUM.setCellStyle(headerStyle);
+            celNum++;
+            for (Field fld : sqlDef.getFields()) {
+                if(fld.getExpEnabled()){
+                    HSSFCell c = r.createCell(celNum);
+                    int colWidth = Converter.toType(fld.getExpWidth(), int.class);
+                    if(colWidth == 0) colWidth = 4700;
+                    ws.setColumnWidth(celNum, colWidth);
+                    c.setCellStyle(headerStyle);
+                    c.setCellValue(Utl.nvl(fld.getTitle(), Utl.nvl(fld.getAttrName(), fld.getName())));
+                    celNum++;
+                }
+            }
+        }
+    }
+
+    private static void addRow(HSSFSheet ws, Map<String, HSSFCellStyle> rowStyles, SelectSQLDef sqlDef, int rowNum, ABean rowData) throws Exception {
+        HSSFRow r = ws.createRow(rowNum);
+        int celNum = 0;
+        HSSFCell cellRNUM = r.createCell(celNum);
+        cellRNUM.setCellValue(rowNum);
+        cellRNUM.setCellStyle(rowStyles.get("RNUM"));
+        celNum++;
+        for (Field fld : sqlDef.getFields()) {
+            if (fld.getExpEnabled()) {
+                HSSFCell c = r.createCell(celNum);
+                c.setCellStyle(rowStyles.get(fld.getName()));
+                c.setCellValue(ABeans.extractAttrFromBean(rowData, Utl.nvl(fld.getAttrName(), fld.getName()), String.class, null));
+                celNum++;
+            }
+        }
+    }
+
+    public static HSSFWorkbook toExcel(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor) throws Exception {
+        Connection connTest = context.getCurrentConnection();
+        if (connTest == null)
+            throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
+        ABeanPage page = readStoreData(params, context, cursor, context.getCurrentUser());
+
+        HSSFWorkbook wb = null;
+        if(page != null && page.getRows() != null && page.getRows().size() > 0) {
+            wb = new HSSFWorkbook();
+            HSSFSheet ws = wb.createSheet();
+            addHeader(ws, cursor.getSelectSqlDef());
+            Map<String, HSSFCellStyle> rowStyles = createRowStyle(wb, cursor.getSelectSqlDef());
+            int rowNum = 1;
+            for (ABean bean : page.getRows()) {
+                addRow(ws, rowStyles, cursor.getSelectSqlDef(), rowNum, bean);
+                rowNum++;
+            }
+        }
+        return wb;
     }
 
     /***

@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.types;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
@@ -169,12 +170,27 @@ public class RestApiAdapter {
         return loadPageExt(module, bioCode, params, forceAll, beanType, null);
     }
 
-    public static <T> List<T> loadPageExt(
-            final AppService module,
+    public static HSSFWorkbook loadToExcel(
             final String bioCode,
-            final Object params,
-            final Class<T> beanType) throws Exception {
-        return loadPageExt(module, bioCode, params, beanType, false);
+            final HttpServletRequest request,
+            final AppService module) throws Exception {
+        final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
+        final List<Param> params = queryParams.bioParams;
+        final SQLContext context = module.getSQLContext();
+        final SQLDefinition sqlDef = module.getSQLDefinition(bioCode);
+        final User user = ((WrappedRequest)request).getUser();
+        return context.execBatch((ctx) -> {
+            FilterAndSorter fs = null;
+            if(!Strings.isNullOrEmpty(queryParams.jsonData))
+                fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+            if(fs == null) {
+                fs = new FilterAndSorter();
+                fs.setSorter(queryParams.sort);
+                fs.setFilter(queryParams.filter);
+            }
+            return CrudReaderApi.toExcel(params, fs.getFilter(), fs.getSorter(), ctx, sqlDef);
+        }, user);
+
     }
 
     public static <T> List<T> loadPageExt(

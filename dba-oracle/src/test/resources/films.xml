@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v11.xsd"
+        multiselection="true">
+    <SQL action="select">
+        <text><![CDATA[
+
+with
+topsel0 as (
+    select a.pu_num,
+           a.tckts,
+           a.summ,
+           a.sess,
+           a.orgs
+      from CUB5$TOP1 a
+       where (
+            (:p_sys_curusr_roles is null)
+            or (:p_sys_curusr_roles in ('5', '6', '8', '25'))
+       )
+)
+select
+        k.name_rus as fname,
+        k.mdistributor as rightholders,
+        a.pu_num as movieId,
+        a.orgs as cinemaCount,
+        trunc(a.summ) as boxOffice,
+        a.tckts as viewers,
+        a.sess as seancesСount,
+        k.genre as genre,
+        k.madein as country,
+        k.flmcategory as category,
+        k.puissued,
+        RAOC_API06.encodeDate(k.puissued) as certRegDate,
+        k.startdate,
+        RAOC_API06.encodeDate(k.startdate) as releaseDate,
+        k.dur_hours * 60 + k.dur_mins as fduration,
+        k.annotxt as description,
+        k.studia as production,
+        k.rntcategory as rentCategory,
+        k.age_restr as ageRestrictions
+from TOPSEL0 a
+    inner join CUB5$KINOSM0 k on k.pu_num = a.pu_num
+
+        ]]></text>
+        <param type="date" name="p_calcFrom"/>
+        <param type="date" name="p_calcTo"/>
+        <param type="date" name="p_releaseFrom"/>
+        <param type="date" name="p_releaseTo"/>
+        <param type="string" name="p_movieId"/>
+        <param type="string" name="p_cinemaName"/>
+        <param type="string" name="p_releaseYear"/>
+        <param type="string" name="p_genre"/>
+        <param type="string" name="p_country"/>
+        <param type="string" name="p_production"/>
+        <param type="string" name="p_ageRestriction"/>
+        <param type="string" name="p_rightholders"/>
+    </SQL>
+    <fields>
+        <field type="string" name="fname" attrName="name" header="Название фильма" expWidth="7700"/>
+        <field type="string" name="rightholders" header="Название Правообладателя" expWidth="7700"/>
+        <field type="string" name="movieId" header="Номер ПУ" pk="true" expWidth="4700" align="center"/>
+        <field type="integer" name="cinemaCount" header="Кол-во кинотеатров" expWidth="3700" align="center"/>
+        <field type="decimal" name="boxOffice" header="Сборы в рублях" expWidth="3700" align="center"/>
+        <field type="integer" name="viewers" header="Зрители" expWidth="3700" align="center"/>
+        <field type="string" name="seancesСount" header="Кол-во сеансов" expWidth="3700" align="center"/>
+        <field type="string" name="genre" header="Жанр" expWidth="3700" align="center"/>
+        <field type="string" name="country" header="Страна" expWidth="3700" align="center"/>
+        <field type="string" name="category" header="Категория" expWidth="3700" align="center"/>
+        <field type="string" name="certRegDate" sorter="puissued" attrName="showCertificateDateRegistration" header="Дата выдачи ПУ" expWidth="3700" align="center"/>
+        <field type="string" name="releaseDate" sorter="startdate" header="Дата релиза" expWidth="3700" align="center"/>
+        <field type="integer" name="fduration" attrName="duration" header="Продолжительность фильма в минутах" expWidth="3700" align="center"/>
+        <field type="string" name="description" header="Описание" expWidth="25700"/>
+        <field type="string" name="production" header="Производство" expWidth="7700" align="center"/>
+        <field type="string" name="rentCategory" attrName="movieRentalCategory" header="Категория проката" expWidth="5700" align="center"/>
+        <field type="string" name="ageRestrictions" header="Возрастное ограничение" expWidth="3700" align="center"/>
+    </fields>
+</cursor>

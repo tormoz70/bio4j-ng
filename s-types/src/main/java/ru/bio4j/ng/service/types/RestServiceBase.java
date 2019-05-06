@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.types;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
@@ -75,6 +76,12 @@ public abstract class RestServiceBase {
         return rslt;
     }
 
+    protected HSSFWorkbook _getExcel(String bioCode, HttpServletRequest request) throws Exception {
+        AppService appService = getAppService();
+        HSSFWorkbook rslt = RestApiAdapter.loadToExcel(bioCode, request, appService);
+        return rslt;
+    }
+
     protected ABeanPage _getList(String bioCode, Object prms, User user, boolean forceAll, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception {
         AppService appService = getAppService();
         ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, user, forceAll, filterAndSorter, forceCalcCount);
@@ -119,7 +126,7 @@ public abstract class RestServiceBase {
 
     protected <T> T _getFirst(String bioCode, Object prms, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
-        List<T> rslt = RestApiAdapter.loadPageExt(appService, bioCode, prms, calzz);
+        List<T> rslt = RestApiAdapter.loadPageExt(appService, bioCode, prms, calzz, true);
         return rslt.size() > 0 ? rslt.get(0) : null;
     }
 

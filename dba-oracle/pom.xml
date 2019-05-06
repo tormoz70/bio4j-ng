@@ -129,6 +129,18 @@
             <scope>test</scope>
         </dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>org.apache.tomcat</groupId>-->
+            <!--<artifactId>tomcat-jdbc</artifactId>-->
+            <!--<version>${tomcat-jdbc.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${org.apache.poi.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 </project>

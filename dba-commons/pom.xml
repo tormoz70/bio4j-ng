@@ -69,6 +69,13 @@
             <!--<artifactId>bio4j-ng-stypes</artifactId>-->
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ext-libs</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>flexjson</artifactId>

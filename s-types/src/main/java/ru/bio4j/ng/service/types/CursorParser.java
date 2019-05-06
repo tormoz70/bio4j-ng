@@ -362,6 +362,13 @@ public class CursorParser {
         return pars(context, document, bioCode);
     }
 
+    public static SQLDefinitionImpl pars(final InputStream stream, final String bioCode) throws Exception {
+        Document document = loadXmlDocumentFromInputStream(stream);
+        if (document == null)
+            throw new Exception(String.format("Ошибка при загрузке информационного объекта %s!", bioCode));
+        return pars(null, document, bioCode);
+    }
+
     private static String buildPath(String path, String bioCode, String extension) {
         return path + File.separator + bioCode.replace(".", File.separator) + extension;
     }
