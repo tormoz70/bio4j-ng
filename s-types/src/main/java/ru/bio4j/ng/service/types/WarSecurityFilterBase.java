@@ -70,33 +70,32 @@ public class WarSecurityFilterBase {
             loginProcessor = new DefaultLoginProcessor(securityService);
     }
 
-    public void doSequrityFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doSequrityFilter(final WrappedRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
         resp.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        final WrappedRequest req = (WrappedRequest) request;
-        final String servletPath = req.getServletPath();
-        final HttpSession session = req.getSession();
+        final String servletPath = request.getServletPath();
+        final HttpSession session = request.getSession();
 
         //GET,POST,PUT,DELETE,PATCH,HEAD
-        if(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD").contains(req.getMethod())) {
+        if(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD").contains(request.getMethod())) {
             try {
-                debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, req);
-                initSecurityHandler(req.getServletContext());
-                String pathInfo = req.getPathInfo();
+                debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, request);
+                initSecurityHandler(request.getServletContext());
+                String pathInfo = request.getPathInfo();
                 if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
-                    if(loginProcessor.doLogin(req, resp))
-                        chn.doFilter(req, resp);
+                    if(loginProcessor.doLogin(request, resp))
+                        chn.doFilter(request, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
-                    if(loginProcessor.doGetUser(req, resp))
-                        chn.doFilter(req, resp);
+                    if(loginProcessor.doGetUser(request, resp))
+                        chn.doFilter(request, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/logoff", false)) {
-                    if(loginProcessor.doLogoff(req, resp))
-                        chn.doFilter(req, resp);
+                    if(loginProcessor.doLogoff(request, resp))
+                        chn.doFilter(request, resp);
                 } else {
-                    if(loginProcessor.doOthers(req, resp))
-                        chn.doFilter(req, resp);
+                    if(loginProcessor.doOthers(request, resp))
+                        chn.doFilter(request, resp);
                 }
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);
@@ -109,16 +108,15 @@ public class WarSecurityFilterBase {
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        final HttpServletRequest req = (HttpServletRequest) request;
         try {
-            WrappedRequest rereq = new WrappedRequest(req);
+            WrappedRequest rereq = new WrappedRequest((HttpServletRequest)request);
             rereq.putHeader("Access-Control-Allow-Origin", "*");
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
             ((HttpServletResponse) response).setHeader("Access-Control-Expose-Headers", "Content-Disposition, X-Suggested-Filename");
-            doSequrityFilter(request, response, chain);
+            doSequrityFilter(rereq, response, chain);
         } catch (Exception ex) {
             LOG.error(null, ex);
             ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
