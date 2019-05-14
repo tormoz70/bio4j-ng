@@ -107,23 +107,32 @@ public class WarSecurityFilterBase {
         }
     }
 
+    public WrappedRequest prepareRequest(final ServletRequest request) throws Exception {
+        WrappedRequest rereq = null;
+        if (request instanceof WrappedRequest)
+            rereq = (WrappedRequest)request;
+        else
+            rereq = new WrappedRequest((HttpServletRequest)request);
+        rereq.putHeader("Access-Control-Allow-Origin", "*");
+        return rereq;
+    }
+
+    public void prepareResponse(final ServletResponse response) {
+        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
+        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
+        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
+        ((HttpServletResponse) response).setHeader("Access-Control-Expose-Headers", "Content-Disposition, X-Suggested-Filename");
+    }
+
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-            WrappedRequest rereq = new WrappedRequest((HttpServletRequest)request);
-            rereq.putHeader("Access-Control-Allow-Origin", "*");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
-            ((HttpServletResponse) response).setHeader("Access-Control-Expose-Headers", "Content-Disposition, X-Suggested-Filename");
+            WrappedRequest rereq = prepareRequest(request);
+            prepareResponse(response);
             doSequrityFilter(rereq, response, chain);
         } catch (Exception ex) {
             LOG.error(null, ex);
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
-            ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
-            ((HttpServletResponse) response).setHeader("Access-Control-Expose-Headers", "Content-Disposition, X-Suggested-Filename");
+            prepareResponse(response);
             ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
