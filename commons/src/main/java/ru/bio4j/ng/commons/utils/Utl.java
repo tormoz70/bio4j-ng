@@ -681,6 +681,22 @@ public class Utl {
             throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
     }
 
+    public static String readFile(String filePath, String encoding) throws Exception {
+        String rslt = null;
+        Path p = Paths.get(filePath);
+        if (Files.exists(p))
+            try (InputStream is = Utl.openFile(filePath)) {
+                rslt = Utl.readStream(is, encoding);
+            }
+        else
+            throw new Exception(String.format("Файл %s не наден!", filePath));
+        return rslt;
+    }
+
+    public static String readFile(String filePath) throws Exception {
+        return readFile(filePath, null);
+    }
+
     public static String generateUUID(){
         UUID uuid = UUID.randomUUID();
         String hex = uuid.toString().replace("-", "").toLowerCase();
