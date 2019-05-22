@@ -17,6 +17,7 @@ public class FileSpec {
     private String extParam;
     private String threadUID;
     private String ownerUserUid;
+    private Long fileId;
 
     public String getFileUUID() {
         return fileUUID;
@@ -128,5 +129,13 @@ public class FileSpec {
 
     public void setUploadType(String uploadType) {
         this.uploadType = uploadType;
+    }
+
+    public long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(long fileId) {
+        this.fileId = fileId;
     }
 }
