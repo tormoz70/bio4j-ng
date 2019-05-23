@@ -131,11 +131,11 @@ public class FileSpec {
         this.uploadType = uploadType;
     }
 
-    public long getFileId() {
+    public Long getFileId() {
         return fileId;
     }
 
-    public void setFileId(long fileId) {
+    public void setFileId(Long fileId) {
         this.fileId = fileId;
     }
 }
