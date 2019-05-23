@@ -34,7 +34,6 @@ public class ConfigProviderImpl extends ServiceBase<BioConfig> implements Config
         return eventAdmin;
     }
 
-//    @Updated
 //    public synchronized void updated() {
 //        LOG.debug("updated() - done.");
 //    }
