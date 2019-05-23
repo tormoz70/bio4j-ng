@@ -8,28 +8,11 @@
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <!--<scm>-->
-        <!--<connection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</connection>-->
-        <!--<developerConnection>scm:git:http://stat-builder:123qwe123@192.168.51.5/ayrat.haliullin/bio4j-ng.git</developerConnection>-->
-        <!--<tag>bio4j-ng-framework-1.4.1</tag>-->
-    <!--</scm>-->
-
     <repositories>
         <repository>
-            <id>fk-public</id>
-            <name>Public Maven Repo</name>
-            <url>http://192.168.70.190:8081/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>fk-3d-party</id>
-            <name>3d Party Maven Repo</name>
-            <url>http://192.168.70.190:8081/repository/3d-party/</url>
+            <id>maven-group</id>
+            <name>Maven Repo Group</name>
+            <url>http://192.168.70.190:8081/repository/maven-group/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -38,40 +21,16 @@
             </snapshots>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>fk-public</id>
-            <name>Public Maven Repo</name>
-            <url>http://192.168.70.190:8081/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>fk-3d-party</id>
-            <name>3d Party Maven Repo</name>
-            <url>http://192.168.70.190:8081/repository/3d-party/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <distributionManagement>
         <repository>
             <id>nexus-deployment</id>
-            <name>Internal Releases</name>
-            <url>http://192.168.70.190:8081/nexus/content/repositories/releases/</url>
+            <name>Releases</name>
+            <url>http://192.168.70.190:8081/repository/fk-releases/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-deployment</id>
-            <name>Internal Releases</name>
-            <url>http://192.168.70.190:8081/nexus/content/repositories/snapshots/</url>
+            <name>Snapshots</name>
+            <url>http://192.168.70.190:8081/repository/fk-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -84,6 +43,22 @@
 
         <!-- Main libs -->
         <!-- Felix -->
+        <felix.shell.verion>1.4.3</felix.shell.verion>
+        <felix.framework.version>5.4.0</felix.framework.version>
+        <felix.eventadmin>1.4.8</felix.eventadmin>
+        <felix.scr.version>2.0.2</felix.scr.version>
+        <felix.obr.version>2.0.8</felix.obr.version>
+        <felix.config.admin.version>1.8.8</felix.config.admin.version>
+        <felix.security.version>2.4.0</felix.security.version>
+        <felix.metatype.version>1.1.2</felix.metatype.version>
+        <felix.shell.remote.verion>1.1.2</felix.shell.remote.verion>
+        <felix.gogo.version>0.12.0</felix.gogo.version>
+        <felix.gogo.command.version>0.16.0</felix.gogo.command.version>
+        <felix.fileinstall.version>3.5.4</felix.fileinstall.version>
+        <ipojo.webconsole.verion>1.7.0</ipojo.webconsole.verion>
+        <org.osgi.enterprise.version>5.0.0</org.osgi.enterprise.version>
+        <jersey-guava.version>2.23</jersey-guava.version>
+
         <!--<felix.shell.verion>1.4.3</felix.shell.verion>-->
         <!--<felix.webconsole.version>4.0.0</felix.webconsole.version>-->
         <!-- OSGi -->
@@ -117,10 +92,13 @@
         <!-- maven plugin -->
         <bundle-plugin-version>2.5.3</bundle-plugin-version>
         <deploy-plugin-version>2.8.2</deploy-plugin-version>
+        <war-plugi-version>2.6</war-plugi-version>
+        <antrun-plugin-version>1.8</antrun-plugin-version>
+        <compiler-plugin-version>3.1</compiler-plugin-version>
+        <dependency-plugin-version>2.7</dependency-plugin-version>
         <!--<assembly-plugin-version>2.4</assembly-plugin-version>-->
         <!--<surefire-plugin-version>2.16</surefire-plugin-version>-->
         <!--<remote-resources-plugin-version>1.2.1</remote-resources-plugin-version>-->
-        <!--<compiler-plugin-version>3.1</compiler-plugin-version>-->
         <!--<release-plugin-version>2.4.1</release-plugin-version>-->
         <war-plugi-version>2.6</war-plugi-version>
         <antrun-plugin-version>1.8</antrun-plugin-version>
@@ -137,6 +115,7 @@
         <ojdbc.version>12.2.0.1</ojdbc.version>
 
         <postgresql-jdbc.version>42.1.4</postgresql-jdbc.version>
+
         <!--<commons-codec.version>1.9</commons-codec.version>-->
         <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
 
@@ -147,6 +126,17 @@
         <org.glassfish.jersey.core.version>2.23</org.glassfish.jersey.core.version>
         <com.fasterxml.jackson.core.version>2.9.7</com.fasterxml.jackson.core.version>
         <org.apache.poi.version>4.1.0</org.apache.poi.version>
+
+        <org.eclipse.jetty.version>9.3.8.v20160314</org.eclipse.jetty.version>
+        <jetty-osgi-servlet-api.version>3.1.0.M3</jetty-osgi-servlet-api.version>
+        <servlet-api.version>3.0.1</servlet-api.version>
+        <org.quartz-scheduler.version>2.3.0</org.quartz-scheduler.version>
+        <org.glassfish.jersey.core.version>2.23</org.glassfish.jersey.core.version>
+        <com.fasterxml.jackson.core.version>2.9.7</com.fasterxml.jackson.core.version>
+        <org.jvnet.mimepull.version>1.9.7</org.jvnet.mimepull.version>
+
+        <jdk.version>jdk1.8.0_181</jdk.version>
+        <bio4j-ng.version>2.0.0-SNAPSHOT</bio4j-ng.version>
 
 	</properties>
 
