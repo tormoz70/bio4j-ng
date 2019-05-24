@@ -1,23 +1,32 @@
 package ru.bio4j.ng.model.transport;
 
 import java.util.Date;
+import java.util.List;
 
 public class FileSpec {
-    private String uploadUID;
-    private String fileUUID;
-    private Date creDatetime;
-    private String fileNameOrig;
-    private int fileSize;
-    private Date fileDatetime;
-    private String md5;
-    private String contentType;
-    private String remoteIpAddress;
-    private String uploadType;
-    private String adesc;
-    private String extParam;
-    private String threadUID;
-    private String ownerUserUid;
-    private Long fileId;
+    private String uploadUID;       // уникальный идентификатор используемый системой на стороне клиента (может быть и null)
+    private String fileUUID;        // уникальный идентификатор в хранилище определяет путь к файлу
+    private Date creDatetime;       // дата/время сохранения в хранилище
+    private Date regDatetime;       // дата/время регистрации в БД
+    private String fileNameOrig;    // оригинальное имя файла
+    private int fileSize;           // размер файла в байтах
+    private Date fileDatetime;      // дата/время последнего изменения файла
+    private String md5;             // md5
+    private String contentType;     // тип контента
+    private String remoteIpAddress; // IP с которого загружен файл
+    private String uploadType;      // тип загрузки (зависит от реализации)
+    private String adesc;           // описание файла (зависит от реализации)
+    private String extParam;        // доп параметры JSON
+    private String threadUID;       // ID потока, который обработал файл (зависит от реализации)
+    private String ownerUserUid;    // UID пользователя, который загрузил файл
+    private Long fileId;            // ID файла в БД (после регистрации в БД)
+    private String parentFileUUID;  // уникальный идентификатор родительского файла в хранилище определяет путь к файлу
+    private String parentFileNameOrig;    // оригинальное имя родительского файла
+    private Long parentFileId;            // ID родительского файла в БД (после регистрации в БД)
+
+    private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
+
+    private List<Exception> applicationErrors; // Ошибки обработки файла (зависит от реализации)
 
     public String getFileUUID() {
         return fileUUID;
@@ -137,5 +146,53 @@ public class FileSpec {
 
     public void setFileId(Long fileId) {
         this.fileId = fileId;
+    }
+
+    public List<FileSpec> getInnerFiles() {
+        return innerFiles;
+    }
+
+    public void setInnerFiles(List<FileSpec> innerFiles) {
+        this.innerFiles = innerFiles;
+    }
+
+    public Date getRegDatetime() {
+        return regDatetime;
+    }
+
+    public void setRegDatetime(Date regDatetime) {
+        this.regDatetime = regDatetime;
+    }
+
+    public List<Exception> getApplicationErrors() {
+        return applicationErrors;
+    }
+
+    public void setApplicationErrors(List<Exception> applicationErrors) {
+        this.applicationErrors = applicationErrors;
+    }
+
+    public String getParentFileUUID() {
+        return parentFileUUID;
+    }
+
+    public void setParentFileUUID(String parentFileUUID) {
+        this.parentFileUUID = parentFileUUID;
+    }
+
+    public String getParentFileNameOrig() {
+        return parentFileNameOrig;
+    }
+
+    public void setParentFileNameOrig(String parentFileNameOrig) {
+        this.parentFileNameOrig = parentFileNameOrig;
+    }
+
+    public Long getParentFileId() {
+        return parentFileId;
+    }
+
+    public void setParentFileId(Long parentFileId) {
+        this.parentFileId = parentFileId;
     }
 }

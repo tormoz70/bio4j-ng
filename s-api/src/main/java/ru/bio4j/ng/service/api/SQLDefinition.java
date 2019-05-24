@@ -36,7 +36,7 @@ public interface SQLDefinition extends Serializable {
 
     SelectSQLDef getSelectSqlDef();
 
-    SQLDef getAfterselectSqlDef();
+    SQLDef getAfterSelectSqlDef();
 
     Collection<SQLDef> sqlDefs();
 

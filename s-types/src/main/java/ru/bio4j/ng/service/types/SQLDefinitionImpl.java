@@ -221,7 +221,7 @@ public class SQLDefinitionImpl implements SQLDefinition {
         return (SelectSQLDef)sqlDefs.get(SQLType.SELECT);
     }
 
-    public SQLDef getAfterselectSqlDef() {
+    public SQLDef getAfterSelectSqlDef() {
         return sqlDefs.get(SQLType.AFTERSELECT);
     }
 
