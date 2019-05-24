@@ -17,7 +17,7 @@ public class FileSpec {
     private String uploadType;      // тип загрузки (зависит от реализации)
     private String adesc;           // описание файла (зависит от реализации)
     private String extParam;        // доп параметры JSON
-    private String threadUID;       // ID потока, который обработал файл (зависит от реализации)
+    private String serviceUID;      // ID сервиса, который обработал/принял файл (зависит от реализации)
     private String ownerUserUid;    // UID пользователя, который загрузил файл
     private Long fileId;            // ID файла в БД (после регистрации в БД)
     private String parentFileUUID;  // уникальный идентификатор родительского файла в хранилище определяет путь к файлу
@@ -92,12 +92,12 @@ public class FileSpec {
         this.uploadUID = uploadUID;
     }
 
-    public String getThreadUID() {
-        return threadUID;
+    public String getServiceUID() {
+        return serviceUID;
     }
 
-    public void setThreadUID(String threadUID) {
-        this.threadUID = threadUID;
+    public void setServiceUID(String serviceUID) {
+        this.serviceUID = serviceUID;
     }
 
     public String getExtParam() {

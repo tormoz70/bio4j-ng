@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioQueryParams;
+import ru.bio4j.ng.service.api.ErrorWriter;
+import ru.bio4j.ng.service.api.SecurityErrorHandler;
 import ru.bio4j.ng.service.api.SecurityService;
 import ru.bio4j.ng.service.api.LoginProcessor;
 
@@ -53,6 +54,7 @@ public class WarSecurityFilterBase {
     }
 
     private LoginProcessor loginProcessor;
+    private SecurityErrorHandler securityErrorHandler;
     protected SecurityService securityService;
     protected void initSecurityHandler(ServletContext servletContext) throws Exception {
         if(securityService == null) {
@@ -68,6 +70,9 @@ public class WarSecurityFilterBase {
         loginProcessor = securityService.createLoginProcessor();
         if(loginProcessor == null)
             loginProcessor = new DefaultLoginProcessor(securityService);
+        securityErrorHandler = securityService.createSecurityErrorHandler();
+        if(securityErrorHandler == null)
+            securityErrorHandler = DefaultSecurityErrorHandler.getInstance();
     }
 
     public void doSequrityFilter(final WrappedRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
@@ -99,10 +104,18 @@ public class WarSecurityFilterBase {
                 }
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);
-                ErrorHandler.getInstance().writeError(e, resp);
+                if(securityErrorHandler.writeError(e, resp)) {
+                    // Ignore login error if securityErrorHandler returns true!
+                    chn.doFilter(request, resp);
+                }
             } catch (Exception e) {
                 log_error("Unexpected error while filtering (Level-1)!", e);
-                ErrorHandler.getInstance().writeError(e, resp);
+                try {
+                    ErrorWriter errorWriter = ErrorWriterType.Std.createImpl();
+                    errorWriter.write(e, resp, false);
+                } catch (Exception ee) {
+                    log_error("Unexpected error while processing unexpected error (Level-2)!", e);
+                }
             }
         }
     }

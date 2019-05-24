@@ -694,7 +694,7 @@ public class Utl {
     }
 
     public static String readFile(String filePath) throws Exception {
-        return readFile(filePath, null);
+        return readFile(filePath, "utf-8");
     }
 
     public static String generateUUID(){

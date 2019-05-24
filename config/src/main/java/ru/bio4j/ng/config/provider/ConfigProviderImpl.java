@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.model.transport.BioConfig;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.ServiceBase;
-import ru.bio4j.ng.service.types.ErrorHandler;
+import ru.bio4j.ng.service.types.DefaultSecurityErrorHandler;
 
 import java.util.Dictionary;
 
@@ -41,7 +41,7 @@ public class ConfigProviderImpl extends ServiceBase<BioConfig> implements Config
     @Updated
     public synchronized void updated(Dictionary conf) throws Exception {
         doOnUpdated(conf);
-        ErrorHandler.getInstance().init(this.getConfig().getErrorHandler(), this.getConfig().isBioDebug());
+        DefaultSecurityErrorHandler.getInstance().init(this.getConfig().getErrorHandler(), this.getConfig().isBioDebug());
     }
 
     @Validate

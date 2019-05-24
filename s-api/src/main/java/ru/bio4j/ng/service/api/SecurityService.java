@@ -10,4 +10,5 @@ public interface SecurityService {
     void logoff(final BioQueryParams qprms) throws Exception;
     Boolean loggedin(final BioQueryParams qprms) throws Exception;
     LoginProcessor createLoginProcessor();
+    SecurityErrorHandler createSecurityErrorHandler();
 }
