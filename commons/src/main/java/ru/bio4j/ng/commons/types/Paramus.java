@@ -143,7 +143,8 @@ public class Paramus implements Closeable {
 
 	public Param remove(String name) {
 		Param rslt = this.getParam(name);
-        get().remove(rslt);
+		if(rslt != null)
+            get().remove(rslt);
 		return rslt;
 	}
 
