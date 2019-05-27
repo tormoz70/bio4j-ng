@@ -506,6 +506,15 @@ public class Paramus implements Closeable {
         return rslt;
     }
 
+    public static Param removeParam(List<Param> params, String paramName) throws Exception {
+	    Param rslt = null;
+        try (Paramus paramus = Paramus.set(params)) {
+            rslt = paramus.getParam(paramName, true);
+            paramus.remove(paramName);
+        }
+        return rslt;
+    }
+
     public static Object paramValue(List<Param> params, String paramName) throws Exception {
         try (Paramus paramus = Paramus.set(params)) {
             return paramus.getParamValue(paramName);
