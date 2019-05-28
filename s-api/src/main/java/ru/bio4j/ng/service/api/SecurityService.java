@@ -11,4 +11,5 @@ public interface SecurityService {
     Boolean loggedin(final BioQueryParams qprms) throws Exception;
     LoginProcessor createLoginProcessor();
     SecurityErrorHandler createSecurityErrorHandler();
+    HttpParamMap getHttpParamMap() throws Exception;
 }

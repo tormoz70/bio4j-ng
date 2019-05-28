@@ -149,8 +149,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
 
         ServletContext servletContext = request.getServletContext();
         SecurityService securityService = Utl.getService(servletContext, SecurityService.class);
-        AppService appService = Utl.getService(servletContext, AppService.class);
-        HttpParamMap httpParamMap =  appService.getHttpParamMap();
+        HttpParamMap httpParamMap =  securityService.getHttpParamMap();
 
         String uploadedJson = null;
         if (!isMultypartRequest(request) && !isUrlencodedFormRequest(request)) {
