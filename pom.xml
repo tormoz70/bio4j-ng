@@ -416,9 +416,9 @@
             </dependency>
 
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-jdbc-osgi</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
 
             <!--<dependency>-->
@@ -435,90 +435,96 @@
                 <!--<version>${project.version}</version>-->
             <!--</dependency>-->
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>ext-libs</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>${project.groupId}</groupId>-->
+<!--                <artifactId>flexjson</artifactId>-->
+<!--                <version>${project.version}</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>ru.bio4j.ng</groupId>
+                <artifactId>flexjson</artifactId>
+                <version>${bio4j-ng.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>flexjson</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-tmodel</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-commons</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-stypes</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-sapi</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-dbapi</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-dba-commons</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-dba-oracle</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-dba-pgsql</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-content-resolver</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-ehcache</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-crudhandler</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-rapi</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-module-provider</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-security-provider</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-ng-sql-context</artifactId>
-                <version>${project.version}</version>
+                <version>${bio4j-ng.version}</version>
             </dependency>
 
         </dependencies>
