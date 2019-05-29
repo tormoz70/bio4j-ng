@@ -547,8 +547,7 @@ public class Utl {
 //    }
 
 
-    public static <T> T getService(ServletContext servletContext, Class<T> serviceInterface) {
-        BundleContext bundleContext = (BundleContext) servletContext.getAttribute("osgi-bundlecontext");
+    public static <T> T getService(BundleContext bundleContext, Class<T> serviceInterface) {
         if (bundleContext == null)
             throw new IllegalStateException("osgi-bundlecontext not registered!");
 
@@ -557,6 +556,14 @@ public class Utl {
             return (T)bundleContext.getService(serviceReference);
         else
             throw new IllegalStateException(String.format("Service %s not registered!", serviceInterface.getName()));
+    }
+
+    public static <T> T getService(ServletContext servletContext, Class<T> serviceInterface) {
+        BundleContext bundleContext = (BundleContext) servletContext.getAttribute("osgi-bundlecontext");
+        if (bundleContext == null)
+            throw new IllegalStateException("osgi-bundlecontext not registered!");
+
+        return getService(bundleContext, serviceInterface);
     }
 
     public static String extractModuleKey(String bioCode) {
