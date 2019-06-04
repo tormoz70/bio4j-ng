@@ -1,5 +1,6 @@
 package ru.bio4j.ng.model.transport;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,10 +24,7 @@ public class FileSpec {
     private String parentFileUUID;  // уникальный идентификатор родительского файла в хранилище определяет путь к файлу
     private String parentFileNameOrig;    // оригинальное имя родительского файла
     private Long parentFileId;            // ID родительского файла в БД (после регистрации в БД)
-
     private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
-
-    private List<Exception> applicationErrors; // Ошибки обработки файла (зависит от реализации)
 
     public String getFileUUID() {
         return fileUUID;
@@ -164,14 +162,6 @@ public class FileSpec {
         this.regDatetime = regDatetime;
     }
 
-    public List<Exception> getApplicationErrors() {
-        return applicationErrors;
-    }
-
-    public void setApplicationErrors(List<Exception> applicationErrors) {
-        this.applicationErrors = applicationErrors;
-    }
-
     public String getParentFileUUID() {
         return parentFileUUID;
     }
@@ -195,4 +185,155 @@ public class FileSpec {
     public void setParentFileId(Long parentFileId) {
         this.parentFileId = parentFileId;
     }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        protected String uploadUID;
+        protected String fileUUID;
+        protected Date regDatetime;
+        protected String fileNameOrig;
+        protected int fileSize;
+        protected Date fileDatetime;
+        protected String md5;
+        protected String contentType;
+        protected String remoteIpAddress;
+        protected String uploadType;
+        protected String adesc;
+        protected String extParam;
+        protected String serviceUID;
+        protected String ownerUserUid;
+        protected Long fileId;
+        protected String parentFileUUID;
+        protected String parentFileNameOrig;
+        protected Long parentFileId;
+        protected List<FileSpec> innerFiles;
+
+        protected Builder(){}
+
+        public Builder fileUUID(String fileUUID) {
+            this.fileUUID = fileUUID;
+            return this;
+        }
+
+        public Builder fileNameOrig(String fileNameOrig) {
+            this.fileNameOrig = fileNameOrig;
+            return this;
+        }
+
+        public Builder fileSize(int fileSize) {
+            this.fileSize = fileSize;
+            return this;
+        }
+
+        public Builder md5(String md5) {
+            this.md5 = md5;
+            return this;
+        }
+
+        public Builder contentType(String contentType) {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder remoteIpAddress(String remoteIpAddress) {
+            this.remoteIpAddress = remoteIpAddress;
+            return this;
+        }
+
+        public Builder adesc(String adesc) {
+            this.adesc = adesc;
+            return this;
+        }
+
+        public Builder uploadUID(String uploadUID) {
+            this.uploadUID = uploadUID;
+            return this;
+        }
+
+        public Builder serviceUID(String serviceUID) {
+            this.serviceUID = serviceUID;
+            return this;
+        }
+
+        public Builder extParam(String extParam) {
+            this.extParam = extParam;
+            return this;
+        }
+
+        public Builder fileDatetime(Date fileDatetime) {
+            this.fileDatetime = fileDatetime;
+            return this;
+        }
+
+        public Builder ownerUserUid(String ownerUserUid) {
+            this.ownerUserUid = ownerUserUid;
+            return this;
+        }
+
+        public Builder uploadType(String uploadType) {
+            this.uploadType = uploadType;
+            return this;
+        }
+
+        public Builder fileId(Long fileId) {
+            this.fileId = fileId;
+            return this;
+        }
+
+        public Builder addInnerFile(FileSpec innerFile) {
+            if(this.innerFiles == null)
+                this.innerFiles = new ArrayList<>();
+            this.innerFiles.add(innerFile);
+            return this;
+        }
+
+        public Builder regDatetime(Date regDatetime) {
+            this.regDatetime = regDatetime;
+            return this;
+        }
+
+        public Builder parentFileUUID(String parentFileUUID) {
+            this.parentFileUUID = parentFileUUID;
+            return this;
+        }
+
+        public Builder parentFileNameOrig(String parentFileNameOrig) {
+            this.parentFileNameOrig = parentFileNameOrig;
+            return this;
+        }
+
+        public Builder parentFileId(Long parentFileId) {
+            this.parentFileId = parentFileId;
+            return this;
+        }
+
+        public <T extends FileSpec> T build(Class<T> clazz) throws Exception {
+            T result = clazz.newInstance();
+            result.setUploadUID(this.uploadUID);
+            result.setFileUUID(fileUUID);
+            result.setCreDatetime(new Date());
+            result.setRegDatetime(regDatetime);
+            result.setFileNameOrig(fileNameOrig);
+            result.setFileSize(fileSize);
+            result.setFileDatetime(fileDatetime);
+            result.setMd5(md5);
+            result.setContentType(contentType);
+            result.setRemoteIpAddress(remoteIpAddress);
+            result.setUploadType(uploadType);
+            result.setAdesc(adesc);
+            result.setExtParam(extParam);
+            result.setServiceUID(serviceUID);
+            result.setOwnerUserUid(ownerUserUid);
+            result.setFileId(fileId);
+            result.setParentFileUUID(parentFileUUID);
+            result.setParentFileNameOrig(parentFileNameOrig);
+            result.setParentFileId(parentFileId);
+            result.setInnerFiles(innerFiles);
+            return result;
+        }
+    }
+
 }

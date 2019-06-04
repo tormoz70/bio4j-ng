@@ -26,7 +26,7 @@ import java.util.List;
 @Component(managedservice="fcloud-h2registry.config")
 @Instantiate
 @Provides(specifications = FCloudApi.class)
-public class FCloudApiModuleImpl extends ServiceBase<FCloudConfig> implements FCloudApi {
+public class FCloudApiModuleImpl extends ServiceBase<FCloudConfig> implements FCloudApi<FileSpec> {
     private static final Logger LOG = LoggerFactory.getLogger(FCloudApiModuleImpl.class);
 
     @Requires
@@ -159,47 +159,29 @@ public class FCloudApiModuleImpl extends ServiceBase<FCloudConfig> implements FC
     }
 
     @Override
-    public FileSpec regFile(
-            final String uploadUID,
-            final String fileName,
-            final InputStream inputStream,
-            final Date fileDatetime,
-            final String contentType,
-            final String remoteHost,
-            final String uploadType,
-            final String uploadExtParam,
-            final String uploadDesc,
-            final User usr
-    ) throws Exception {
+    public void regFile(final FileSpec fileSpec, final InputStream inputStream, final User usr) throws Exception {
         initDatabase();
         Path rootPath = getCloudRootPath();
-        FileSpec file = null;
-        if(!Strings.isNullOrEmpty(fileName)){
-            file = new FileSpec();
-            file.setUploadUID(uploadUID);
-            file.setFileUUID(Utl.generateUUID());
-            file.setFileNameOrig(fileName);
-            StoredFile _tmpFile = storeUploaded2Tmp(inputStream, file.getFileUUID());
+        if(!Strings.isNullOrEmpty(fileSpec.getFileNameOrig())){
+            if(Strings.isNullOrEmpty(fileSpec.getFileUUID()))
+                fileSpec.setFileUUID(Utl.generateUUID());
+            StoredFile _tmpFile = storeUploaded2Tmp(inputStream, fileSpec.getFileUUID());
             String md5 = Utl.md5(_tmpFile.filePath);
-            file.setMd5(md5);
-            file.setFileSize(_tmpFile.fileSize);
-            file.setContentType(contentType);
-            file.setRemoteIpAddress(remoteHost);
-            file.setAdesc(uploadDesc);
-            String _tmpAttrsPath = storeAttrs(file, _tmpFile.filePath);
-            String _storeFilePath = getStorePath(rootPath.toString(), file.getFileUUID());
+            fileSpec.setMd5(md5);
+            fileSpec.setFileSize(_tmpFile.fileSize);
+            String _tmpAttrsPath = storeAttrs(fileSpec, _tmpFile.filePath);
+            String _storeFilePath = getStorePath(rootPath.toString(), fileSpec.getFileUUID());
             moveTmp2Store(Paths.get(_tmpFile.filePath), Paths.get(_storeFilePath));
             String _storeAttrsPath = Utl.fileNameWithoutExt(_storeFilePath) + STORE_ATTRS_EXT;
             moveTmp2Store(Paths.get(_tmpAttrsPath), Paths.get(_storeAttrsPath));
             try {
-                storeFileSpec2db(file, usr);
+                storeFileSpec2db(fileSpec, usr);
             } catch (Exception e) {
                 removeStore(_storeFilePath);
                 removeStore(_storeAttrsPath);
                 throw  e;
             }
         }
-        return file;
     }
 
     @Override

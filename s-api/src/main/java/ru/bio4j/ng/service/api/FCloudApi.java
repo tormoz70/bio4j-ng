@@ -8,26 +8,23 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
-public interface FCloudApi {
-    FileSpec regFile(
-            final String uploadUID,
-            final String fileName,
-            final InputStream inputStream,
-            final Date fileDatetime,
-            final String contentType,
-            final String remoteHost,
-            final String uploadType,
-            final String uploadExtParam,
-            final String uploadDesc,
-            final User usr
-    ) throws Exception;
+public interface FCloudApi<T extends FileSpec> {
 
-    List<FileSpec> getFileList(
+    /**
+     * Register file in FCloud Service
+     * @param fileSpec - file spec
+     * @param inputStream - file
+     * @param usr - user spec
+     * @throws Exception
+     */
+    void regFile(final T fileSpec, final InputStream inputStream, final User usr) throws Exception;
+
+    List<T> getFileList(
             final List<Param> params,
             final User usr
     ) throws Exception;
 
-    FileSpec getFileSpec(
+    T getFileSpec(
             final String fileUid,
             final User usr
     ) throws Exception;
