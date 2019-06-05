@@ -931,6 +931,17 @@ public class Utl {
         return rslt;
     }
 
+    public static Properties loadProperties(InputStream inputStream) throws IOException {
+        Properties prop = new Properties();
+        prop.load(inputStream);
+        return prop;
+    }
+
+    public static Properties loadProperties(String filePath) throws IOException {
+        try (InputStream input = new FileInputStream(filePath)) {
+            return loadProperties(input);
+        }
+    }
 
 }
 

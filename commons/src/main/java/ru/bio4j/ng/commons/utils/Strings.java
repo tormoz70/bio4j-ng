@@ -215,6 +215,11 @@ public class Strings {
         return false;
     }
 
+    public static Boolean containsIgnoreCase(String delimitedList, String delimiter, String soughtFor) {
+	    String[] list = split(delimitedList, delimiter);
+        return containsIgnoreCase(list, soughtFor);
+    }
+
     public static <T> T findIgnoreCase(Map<String, T> map, String soughtFor) {
         for (String current : map.keySet()) {
             if (current.equalsIgnoreCase(soughtFor)) {
@@ -269,6 +274,15 @@ public class Strings {
             }
         }
         return rslt;
+    }
+
+    public static String formatInterval(long durationInMillis) {
+        long millis = durationInMillis % 1000;
+        long seconds = (durationInMillis / 1000) % 60;
+        long minutes = (durationInMillis / (1000 * 60)) % 60;
+        long hours = (durationInMillis / (1000 * 60 * 60)) % 24;
+        long days = (durationInMillis / (1000 * 60 * 60 * 24));
+        return String.format("%d %02d:%02d:%02d.%03d", days, hours, minutes, seconds, millis);
     }
 
 }

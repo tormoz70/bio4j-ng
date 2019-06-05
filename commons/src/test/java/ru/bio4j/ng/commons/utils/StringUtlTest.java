@@ -3,10 +3,8 @@ package ru.bio4j.ng.commons.utils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class StringUtlTest {
 
@@ -145,5 +143,15 @@ public class StringUtlTest {
         String src = "asd ''::text, 0::numeric";
         String pstr = Strings.replace(src, "::", "ddd");
         Assert.assertEquals(pstr, "asd ''dddtext, 0dddnumeric");
+    }
+
+    @Test(enabled = true)
+    public void formatIntervalTest() throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+        Date firstDate = sdf.parse("01.01.2019 12:00:00.000");
+        Date secondDate = sdf.parse("02.01.2019 13:03:51.020");
+        long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+        String r = Strings.formatInterval(diffInMillies);
+        Assert.assertEquals(r, "1 01:03:51.020");
     }
 }
