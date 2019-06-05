@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FileSpec {
+public class FileSpec<T extends FileSpec> {
     private String uploadUID;       // уникальный идентификатор используемый системой на стороне клиента (может быть и null)
     private String fileUUID;        // уникальный идентификатор в хранилище определяет путь к файлу
     private Date creDatetime;       // дата/время сохранения в хранилище
@@ -24,7 +24,7 @@ public class FileSpec {
     private String parentFileUUID;  // уникальный идентификатор родительского файла в хранилище определяет путь к файлу
     private String parentFileNameOrig;    // оригинальное имя родительского файла
     private Long parentFileId;            // ID родительского файла в БД (после регистрации в БД)
-    private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
+    private List<T> innerFiles; // Вложенные файла (зависит от реализации)
 
     public String getFileUUID() {
         return fileUUID;
@@ -146,11 +146,11 @@ public class FileSpec {
         this.fileId = fileId;
     }
 
-    public List<FileSpec> getInnerFiles() {
+    public List<T> getInnerFiles() {
         return innerFiles;
     }
 
-    public void setInnerFiles(List<FileSpec> innerFiles) {
+    public void setInnerFiles(List<T> innerFiles) {
         this.innerFiles = innerFiles;
     }
 
@@ -186,11 +186,11 @@ public class FileSpec {
         this.parentFileId = parentFileId;
     }
 
-    public static Builder newBuilder() {
-        return new Builder();
+    public static <T extends FileSpec> Builder<T> newBuilder() {
+        return new Builder<>();
     }
 
-    public static class Builder {
+    public static class Builder<T extends FileSpec> {
         protected String uploadUID;
         protected String fileUUID;
         protected Date regDatetime;
@@ -209,7 +209,7 @@ public class FileSpec {
         protected String parentFileUUID;
         protected String parentFileNameOrig;
         protected Long parentFileId;
-        protected List<FileSpec> innerFiles;
+        protected List<T> innerFiles;
 
         protected Builder(){}
 
@@ -283,7 +283,7 @@ public class FileSpec {
             return this;
         }
 
-        public Builder addInnerFile(FileSpec innerFile) {
+        public Builder addInnerFile(T innerFile) {
             if(this.innerFiles == null)
                 this.innerFiles = new ArrayList<>();
             this.innerFiles.add(innerFile);
@@ -310,7 +310,7 @@ public class FileSpec {
             return this;
         }
 
-        public <T extends FileSpec> T build(Class<T> clazz) throws Exception {
+        public T build(Class<T> clazz) throws Exception {
             T result = clazz.newInstance();
             result.setUploadUID(this.uploadUID);
             result.setFileUUID(fileUUID);

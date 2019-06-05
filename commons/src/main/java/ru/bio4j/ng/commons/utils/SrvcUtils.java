@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class SrvcUtils {
 
+    public static final String PARAM_STOKEN            = "p_sys_stoken";
     public static final String PARAM_CURUSR_UID        = "p_sys_curusr_uid";
     public static final String PARAM_CURUSR_ORG_UID    = "p_sys_curusr_org_uid";
     public static final String PARAM_CURUSR_ROLES      = "p_sys_curusr_roles";
@@ -22,6 +23,7 @@ public class SrvcUtils {
     public static void applyCurrentUserParams(final User usr, final List<Param> params) {
         if (usr != null) {
             try (Paramus p = Paramus.set(params)) {
+                p.setValue(SrvcUtils.PARAM_STOKEN, usr.getStoken(), Param.Direction.IN, true);
                 p.setValue(SrvcUtils.PARAM_CURUSR_UID, usr.getInnerUid(), Param.Direction.IN, true);
                 p.setValue(SrvcUtils.PARAM_CURUSR_ORG_UID, usr.getOrgId(), Param.Direction.IN, true);
                 p.setValue(SrvcUtils.PARAM_CURUSR_ROLES, usr.getRoles(), Param.Direction.IN, true);
