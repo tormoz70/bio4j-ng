@@ -336,4 +336,18 @@ public class UtlTest {
         Assert.assertEquals(filter.getChildren().get(0).getChildren().get(0).getName(), "or");
         Assert.assertEquals(filter.getChildren().get(0).getChildren().get(1).getName(), "contains");
     }
+
+    @Test
+    public void fileNameWithoutExtTest() throws Exception {
+        String r = Utl.fileNameWithoutExt("e:\\arch\\20171204\\57\\posted000\\ekb_57_20171021_100012002(31fc455a).xml.pattrs");
+        Assert.assertEquals(r,"e:\\arch\\20171204\\57\\posted000\\ekb_57_20171021_100012002(31fc455a).xml");
+    }
+
+    @Test
+    public void readFileTest() throws Exception {
+        long fs = Utl.fileSize("e:\\arch\\20171204\\57\\posted000\\ekb_57_20171021_100012002(31fc455a).xml");
+        Assert.assertEquals(fs, 3601);
+    }
+
+
 }

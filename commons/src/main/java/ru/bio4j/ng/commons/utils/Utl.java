@@ -943,5 +943,15 @@ public class Utl {
         }
     }
 
+    public static long fileSize(String filePath) throws Exception {
+        long rslt = 0;
+        Path p = Paths.get(filePath);
+        if (Files.exists(p))
+            rslt = p.toFile().length();
+        else
+            throw new Exception(String.format("Файл %s не наден!", filePath));
+        return rslt;
+    }
+
 }
 
