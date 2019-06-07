@@ -10,7 +10,7 @@ public class FileSpec<T extends FileSpec> {
     private Date creDatetime;       // дата/время сохранения в хранилище
     private Date regDatetime;       // дата/время регистрации в БД
     private String fileNameOrig;    // оригинальное имя файла
-    private int fileSize;           // размер файла в байтах
+    private long fileSize;          // размер файла в байтах
     private Date fileDatetime;      // дата/время последнего изменения файла
     private String md5;             // md5
     private String contentType;     // тип контента
@@ -42,11 +42,11 @@ public class FileSpec<T extends FileSpec> {
         this.fileNameOrig = fileNameOrig;
     }
 
-    public int getFileSize() {
+    public long getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(int fileSize) {
+    public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
