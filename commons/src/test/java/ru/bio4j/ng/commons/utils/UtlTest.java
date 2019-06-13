@@ -1,10 +1,13 @@
 package ru.bio4j.ng.commons.utils;
 
+import flexjson.ObjectBinder;
+import flexjson.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
+import ru.bio4j.ng.model.transport.FileSpec;
 import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -12,6 +15,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -349,5 +353,29 @@ public class UtlTest {
         Assert.assertEquals(fs, 3601);
     }
 
+    @Test
+    public void JsonsDecodeTest() throws Exception {
+        String json = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("1e1a01b6c2bc4b81b76a08cc16afe951.attrs"));
+        FileSpec fileSpec = Jsons.decode(json, new ObjectFactory(){
+            @Override
+            public Object instantiate(ObjectBinder objectBinder, Object o, Type type, Class aClass) throws Exception {
+                FileSpec rslt = new FileSpec();
+                Utl.applyValuesToBeanFromHashMap((HashMap) o, rslt, null, "innerFiles");
+                Object innerFilesVal = ((HashMap) o).get("innerFiles");
+                if(innerFilesVal != null) {
+                    List<HashMap> innerFiles = (List<HashMap>)innerFilesVal;
+                    rslt.setInnerFiles(new ArrayList<>());
+                    for(HashMap hf : innerFiles){
+                        FileSpec ip = new FileSpec();
+                        Utl.applyValuesToBeanFromHashMap(hf, ip, null, "innerFiles");
+                        rslt.getInnerFiles().add(ip);
+                    }
+                }
+                return rslt;
+            }
+        });
+
+        Assert.assertTrue(fileSpec != null);
+    }
 
 }

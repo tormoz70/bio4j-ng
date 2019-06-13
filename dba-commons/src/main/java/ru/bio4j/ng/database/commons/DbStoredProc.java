@@ -81,7 +81,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
                     setParamsToStatement(); // Применяем параметры
 
-                    LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
+                    LOG.debug("Try to execute (autocommit: {}) : {}", this.preparedStatement.getConnection().getAutoCommit(), getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
                     preparedStatement.execute();
 
                     getParamsFromStatement(); // Вытаскиваем OUT-параметры

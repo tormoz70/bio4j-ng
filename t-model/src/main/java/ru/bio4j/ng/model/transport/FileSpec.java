@@ -6,6 +6,7 @@ import java.util.List;
 
 public class FileSpec<T extends FileSpec> {
     private String uploadUID;       // уникальный идентификатор используемый системой на стороне клиента (может быть и null)
+//    private String fcloudSpace;     // уникальный идентификатор директории в хранилище определяет путь к файлу
     private String fileUUID;        // уникальный идентификатор в хранилище определяет путь к файлу
     private Date creDatetime;       // дата/время сохранения в хранилище
     private Date regDatetime;       // дата/время регистрации в БД
@@ -189,6 +190,14 @@ public class FileSpec<T extends FileSpec> {
     public static <T extends FileSpec> Builder<T> newBuilder() {
         return new Builder<>();
     }
+
+//    public String getFcloudSpace() {
+//        return fcloudSpace;
+//    }
+//
+//    public void setFcloudSpace(String fcloudSpace) {
+//        this.fcloudSpace = fcloudSpace;
+//    }
 
     public static class Builder<T extends FileSpec> {
         protected String uploadUID;

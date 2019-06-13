@@ -40,14 +40,15 @@ public class Utl {
 
     /**
      * Вытаскивает имя вайла из полного пути
+     *
      * @param filePath
      * @return
      */
     public static String fileName(String filePath) {
-        if(isNullOrEmpty(filePath)){
+        if (isNullOrEmpty(filePath)) {
             int p = filePath.lastIndexOf(File.separator);
             if (p >= 0)
-                return filePath.substring(p+1);
+                return filePath.substring(p + 1);
             return filePath;
         }
         return filePath;
@@ -55,6 +56,7 @@ public class Utl {
 
     /**
      * Вытаскивает расширение файла из полного пути
+     *
      * @param fileName
      * @return
      */
@@ -65,19 +67,20 @@ public class Utl {
         int p = fileName.lastIndexOf(File.separator);
 
         if (i > p) {
-            extension = fileName.substring(i+1);
+            extension = fileName.substring(i + 1);
         }
         return extension;
     }
 
     public static String fileNameWithoutExt(String fileName) {
-        if(Strings.isNullOrEmpty(fileName))
+        if (Strings.isNullOrEmpty(fileName))
             return fileName;
         return fileName.replaceFirst("[.][^.]+$", "");
     }
 
     /**
      * Приводит LongToInt, если это возможно
+     *
      * @param l
      * @return
      */
@@ -91,6 +94,7 @@ public class Utl {
 
     /**
      * Читает из потока заданное кол-во байтов и возвращает их в виде массива
+     *
      * @param in
      * @param length
      * @return
@@ -104,27 +108,27 @@ public class Utl {
         return buff;
     }
 
-	/**
-	 * @param in
-	 * @return
-	 * @throws IOException
-	 */
-	public static String readStream(InputStream in, String encoding, boolean addLineSeparator) throws IOException {
-		InputStreamReader is = new InputStreamReader(in, encoding);
-		StringBuilder sb=new StringBuilder();
-		BufferedReader br = new BufferedReader(is);
-		String read = br.readLine();
-		while(read != null) {
-		    sb.append(read);
-		    if(addLineSeparator)
+    /**
+     * @param in
+     * @return
+     * @throws IOException
+     */
+    public static String readStream(InputStream in, String encoding, boolean addLineSeparator) throws IOException {
+        InputStreamReader is = new InputStreamReader(in, encoding);
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = new BufferedReader(is);
+        String read = br.readLine();
+        while (read != null) {
+            sb.append(read);
+            if (addLineSeparator)
                 sb.append(System.lineSeparator());
-		    read=br.readLine();
-		}
-		return sb.toString();
-	}
+            read = br.readLine();
+        }
+        return sb.toString();
+    }
 
     public static String readStream(InputStream in, String encoding) throws IOException {
-	    return readStream(in, encoding, true);
+        return readStream(in, encoding, true);
     }
 
     public static String readStream(InputStream in) throws IOException {
@@ -132,106 +136,108 @@ public class Utl {
     }
 
 
-	/**
-	 * @param clazz
-	 * @param in
-	 * @return
-	 * @throws JAXBException
-	 */
-	public static <T> T unmarshalXml(Class<T> clazz, InputStream in) throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-		Object obj = jaxbUnmarshaller.unmarshal(in);
-		if(obj == null) return null;
-		if(obj.getClass() == clazz)
-			return (T)obj;
-		return null;
-	}
+    /**
+     * @param clazz
+     * @param in
+     * @return
+     * @throws JAXBException
+     */
+    public static <T> T unmarshalXml(Class<T> clazz, InputStream in) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        Object obj = jaxbUnmarshaller.unmarshal(in);
+        if (obj == null) return null;
+        if (obj.getClass() == clazz)
+            return (T) obj;
+        return null;
+    }
 
     /**
      * Checks two classes is assignable
+     *
      * @param clazz1
      * @param clazz2
      * @return boolean
      * @throws
      */
-	public static boolean typesIsAssignable(Class<?> clazz1, Class<?> clazz2) {
-		if((clazz1 == null) && (clazz2 == null)) return true;
-		if(((clazz1 != null) && (clazz2 == null)) || ((clazz1 == null) && (clazz2 != null))) return false;
-		return (clazz1 == clazz2) || clazz1.isAssignableFrom(clazz2) || clazz2.isAssignableFrom(clazz1);
-	}
+    public static boolean typesIsAssignable(Class<?> clazz1, Class<?> clazz2) {
+        if ((clazz1 == null) && (clazz2 == null)) return true;
+        if (((clazz1 != null) && (clazz2 == null)) || ((clazz1 == null) && (clazz2 != null))) return false;
+        return (clazz1 == clazz2) || clazz1.isAssignableFrom(clazz2) || clazz2.isAssignableFrom(clazz1);
+    }
 
     /**
      * Checks two classes is the same
+     *
      * @param clazz1
      * @param clazz2
      * @return boolean
      * @throws
      */
     public static boolean typesIsSame(Class<?> clazz1, Class<?> clazz2) {
-        if((clazz1 == null) || (clazz2 == null)) return true;
-        if(((clazz1 != null) && (clazz2 == null)) || ((clazz1 == null) && (clazz2 != null))) return false;
+        if ((clazz1 == null) || (clazz2 == null)) return true;
+        if (((clazz1 != null) && (clazz2 == null)) || ((clazz1 == null) && (clazz2 != null))) return false;
         return clazz1.getName().equals(clazz2.getName());
     }
 
-	/**
-	 * @param annotationType - Type of annotation to find
-	 * @param clazz - Annotated type
-	 * @return - Annotation object
-	 */
-	public static <T extends Annotation> T findAnnotation(Class<T> annotationType, Class<?> clazz) {
-		for (Annotation annotation : clazz.getDeclaredAnnotations()) {
-			Class<?> atype = annotation.annotationType();
-		    if(typesIsAssignable(atype, annotationType))
-		    	return (T)annotation;
-		}
-		return null;
-	}
+    /**
+     * @param annotationType - Type of annotation to find
+     * @param clazz          - Annotated type
+     * @return - Annotation object
+     */
+    public static <T extends Annotation> T findAnnotation(Class<T> annotationType, Class<?> clazz) {
+        for (Annotation annotation : clazz.getDeclaredAnnotations()) {
+            Class<?> atype = annotation.annotationType();
+            if (typesIsAssignable(atype, annotationType))
+                return (T) annotation;
+        }
+        return null;
+    }
 
     public static <T extends Annotation> T findAnnotation(Class<T> annotationType, Field field) {
         for (Annotation annotation : field.getDeclaredAnnotations()) {
             Class<?> atype = annotation.annotationType();
-            if(typesIsAssignable(atype, annotationType))
-                return (T)annotation;
+            if (typesIsAssignable(atype, annotationType))
+                return (T) annotation;
         }
         return null;
     }
 
 
-	/**
-	 * @param packageName
-	 * @return
-	 */
-	public static String pkg2path(String packageName) {
-		return (isNullOrEmpty(packageName) ? null : "/"+packageName.replace('.', '/')+"/");
-	}
+    /**
+     * @param packageName
+     * @return
+     */
+    public static String pkg2path(String packageName) {
+        return (isNullOrEmpty(packageName) ? null : "/" + packageName.replace('.', '/') + "/");
+    }
 
-	/**
-	 * @param path
-	 * @return
-	 */
-	public static String path2pkg(String path) {
-		if(isNullOrEmpty(path)) return null;
-		String result = path.replace('/', '.');
-		if(result.charAt(0) == '.')
-			result = result.substring(1);
-		if(result.charAt(result.length()-1) == '.')
-			result = result.substring(0, result.length()-1);
-		return result;
-	}
+    /**
+     * @param path
+     * @return
+     */
+    public static String path2pkg(String path) {
+        if (isNullOrEmpty(path)) return null;
+        String result = path.replace('/', '.');
+        if (result.charAt(0) == '.')
+            result = result.substring(1);
+        if (result.charAt(result.length() - 1) == '.')
+            result = result.substring(0, result.length() - 1);
+        return result;
+    }
 
-	/**
-	 * @param path
-	 * @return
-	 */
-	public static String classNameFromPath(String path) {
-		if(isNullOrEmpty(path)) return null;
-		return path.endsWith(".class") ? path2pkg(path.replaceAll("\\.class$", "")) : null;
-	}
+    /**
+     * @param path
+     * @return
+     */
+    public static String classNameFromPath(String path) {
+        if (isNullOrEmpty(path)) return null;
+        return path.endsWith(".class") ? path2pkg(path.replaceAll("\\.class$", "")) : null;
+    }
 
 
     private static void extractAllObjectFields(List<Field> fields, Class<?> type) {
-        for (Field field: type.getDeclaredFields())
+        for (Field field : type.getDeclaredFields())
             fields.add(field);
         if (type.getSuperclass() != null)
             extractAllObjectFields(fields, type.getSuperclass());
@@ -243,7 +249,7 @@ public class Utl {
         return fields;
     }
 
-    public static String fieldValueAsString(Object bean, java.lang.reflect.Field field){
+    public static String fieldValueAsString(Object bean, java.lang.reflect.Field field) {
         Object val;
         try {
             field.setAccessible(true);
@@ -251,14 +257,14 @@ public class Utl {
         } catch (IllegalAccessException ex) {
             val = ex.toString();
         }
-        String valStr = (val instanceof String) ? ((String)val).trim() : null;
-        if(!Strings.isNullOrEmpty(valStr) && valStr.indexOf("\n") >= 0) {
+        String valStr = (val instanceof String) ? ((String) val).trim() : null;
+        if (!Strings.isNullOrEmpty(valStr) && valStr.indexOf("\n") >= 0) {
             return valStr.substring(0, valStr.indexOf("\n")) + "...";
         } else
-            return ""+val;
+            return "" + val;
     }
 
-    public static Object fieldValueAsObject(Object bean, java.lang.reflect.Field field){
+    public static Object fieldValueAsObject(Object bean, java.lang.reflect.Field field) {
         Object val;
         try {
             field.setAccessible(true);
@@ -269,11 +275,11 @@ public class Utl {
         return val;
     }
 
-    public static Object fieldValueAsObject(Object bean, String fieldName){
+    public static Object fieldValueAsObject(Object bean, String fieldName) {
         Object val = null;
-        if(bean != null) {
+        if (bean != null) {
             java.lang.reflect.Field field = findFieldOfBean(bean.getClass(), fieldName);
-            if(field != null) {
+            if (field != null) {
                 try {
                     field.setAccessible(true);
                     val = field.get(bean);
@@ -288,24 +294,24 @@ public class Utl {
 
     private static Boolean checkFilter(String fieldName, String excludeFields) {
         String[] fields2exclude = Strings.split(excludeFields, ";");
-        for(String field2exclude : fields2exclude){
-            if(field2exclude.equalsIgnoreCase(fieldName))
+        for (String field2exclude : fields2exclude) {
+            if (field2exclude.equalsIgnoreCase(fieldName))
                 return false;
         }
         return true;
     }
 
     public static String buildBeanStateInfo(Object bean, String beanName, String tab, String excludeFields) {
-        if(tab == null) tab = "";
-        if(bean == null)
-            return tab + (Strings.isNullOrEmpty(beanName) ? "null" : beanName+" null");
+        if (tab == null) tab = "";
+        if (bean == null)
+            return tab + (Strings.isNullOrEmpty(beanName) ? "null" : beanName + " null");
         final String attrFmt = tab + " - %s : %s;\n";
         StringBuilder out = new StringBuilder();
         Class<?> type = bean.getClass();
         String bnName = isNullOrEmpty(beanName) ? type.getName() : beanName;
         out.append(String.format(tab + "%s {\n", bnName));
-        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
-            if(checkFilter(fld.getName(), excludeFields))
+        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
+            if (checkFilter(fld.getName(), excludeFields))
                 out.append(String.format(attrFmt, fld.getName(), fieldValueAsString(bean, fld)));
         }
         out.append(tab + "}");
@@ -317,11 +323,11 @@ public class Utl {
     }
 
     public static String dictionaryInfo(Dictionary dict, String beanName, String tab) {
-        if(tab == null) tab = "";
+        if (tab == null) tab = "";
         final String attrFmt = tab + " - %s : %s;\n";
         StringBuilder out = new StringBuilder();
         out.append(String.format(tab + "%s {\n", beanName));
-        for (Enumeration e = dict.keys(); e.hasMoreElements();) {
+        for (Enumeration e = dict.keys(); e.hasMoreElements(); ) {
             Object key = e.nextElement();
             Object val = dict.get(key);
             out.append(String.format(attrFmt, key, val));
@@ -332,23 +338,23 @@ public class Utl {
 
     public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
-        if(vals == null)
+        if (vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
-        if(bean == null)
+        if (bean == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
+        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Prop p = findAnnotation(Prop.class, fld);
-            if(p != null)
+            if (p != null)
                 fldName = p.name();
             Object valObj = vals.get(fldName);
-            if(valObj != null){
+            if (valObj != null) {
                 try {
                     Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
                     fld.setAccessible(true);
                     fld.set(bean, val);
-                    if(!result) result = true;
+                    if (!result) result = true;
                 } catch (Exception e) {
                     throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
                 }
@@ -357,52 +363,90 @@ public class Utl {
         return result;
     }
 
-    public static boolean applyValuesToBeanFromABean(ABean vals, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromHashMap(HashMap vals, Object bean, String inclideAttrs, String excludeAttrs) throws ApplyValuesToBeanException {
         boolean result = false;
-        if(vals == null)
+        if (vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
-        if(bean == null)
+        if (bean == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
+        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Prop p = findAnnotation(Prop.class, fld);
-            if(p != null)
+            if (p != null)
                 fldName = p.name();
+
+            boolean skip = !vals.containsKey(fldName) ||
+                    (!Strings.isNullOrEmpty(inclideAttrs) && !Strings.containsIgnoreCase(inclideAttrs, ",", fldName)) ||
+                    (!Strings.isNullOrEmpty(excludeAttrs) && Strings.containsIgnoreCase(excludeAttrs, ",", fldName));
+            if(skip) continue;
+
             Object valObj = vals.get(fldName);
-            if(valObj != null){
+            if (valObj != null) {
                 try {
                     Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
                     fld.setAccessible(true);
                     fld.set(bean, val);
-                    if(!result) result = true;
+                    if (!result) result = true;
                 } catch (Exception e) {
                     throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
                 }
             }
         }
         return result;
+    }
+
+    public static boolean applyValuesToBeanFromHashMap(HashMap vals, Object bean) throws ApplyValuesToBeanException {
+        return applyValuesToBeanFromHashMap(vals, bean, null, null);
+    }
+
+    public static boolean applyValuesToBeanFromABean(ABean vals, Object bean) throws ApplyValuesToBeanException {
+        return applyValuesToBeanFromHashMap(vals, bean);
+//        boolean result = false;
+//        if (vals == null)
+//            throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
+//        if (bean == null)
+//            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
+//        Class<?> type = bean.getClass();
+//        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
+//            String fldName = fld.getName();
+//            Prop p = findAnnotation(Prop.class, fld);
+//            if (p != null)
+//                fldName = p.name();
+//            Object valObj = vals.get(fldName);
+//            if (valObj != null) {
+//                try {
+//                    Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
+//                    fld.setAccessible(true);
+//                    fld.set(bean, val);
+//                    if (!result) result = true;
+//                } catch (Exception e) {
+//                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+//                }
+//            }
+//        }
+//        return result;
     }
 
     public static void applyValuesToABeanFromABean(ABean srcBean, ABean dstBean, boolean addIfNotExists) throws ApplyValuesToBeanException {
         boolean result = false;
-        if(srcBean == null)
+        if (srcBean == null)
             throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
-        if(dstBean == null)
+        if (dstBean == null)
             throw new IllegalArgumentException("Argument \"dstBean\" cannot be null!");
-        for(String key : srcBean.keySet()) {
-            if(dstBean.containsKey(key))
+        for (String key : srcBean.keySet()) {
+            if (dstBean.containsKey(key))
                 dstBean.put(key, srcBean.get(key));
-            else{
-                if(addIfNotExists)
+            else {
+                if (addIfNotExists)
                     dstBean.put(key, srcBean.get(key));
             }
         }
     }
 
     private static Field findFieldOfBean(Class<?> type, String fieldName) {
-        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
-            if(fld.getName().equals(fieldName))
+        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
+            if (fld.getName().equals(fieldName))
                 return fld;
         }
         return null;
@@ -415,8 +459,8 @@ public class Utl {
 //        System.arraycopy(original, 0, copy, 0,
 //                Math.min(original.length, newLength));
 //        return copy;
-        if(original != null && original.getClass().isArray()) {
-            int l = ((Object[])original).length;
+        if (original != null && original.getClass().isArray()) {
+            int l = ((Object[]) original).length;
             Class<?> originalType = original.getClass();
             Object rslt = Array.newInstance(originalType.getComponentType(), l);
             System.arraycopy(original, 0, rslt, 0, l);
@@ -427,23 +471,23 @@ public class Utl {
 
     public static boolean applyValuesToBeanFromBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
-        if(srcBean == null)
+        if (srcBean == null)
             throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
-        if(bean == null)
+        if (bean == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
         Class<?> srcType = srcBean.getClass();
         Class<?> type = bean.getClass();
-        for(java.lang.reflect.Field fld : getAllObjectFields(type)) {
+        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
             String fldName = fld.getName();
             Field srcFld = findFieldOfBean(srcType, fldName);
-            if(srcFld == null)
+            if (srcFld == null)
                 continue;
             try {
                 srcFld.setAccessible(true);
                 Object valObj = srcFld.get(srcBean);
-                if(valObj != null) {
+                if (valObj != null) {
                     Object val;
-                    if(valObj.getClass().isArray()) {
+                    if (valObj.getClass().isArray()) {
                         val = arrayCopyOf(valObj);
                     } else {
                         val = (fld.getType().equals(Object.class) || fld.getType().equals(valObj.getClass())) ? valObj : Converter.toType(valObj, fld.getType());
@@ -468,11 +512,11 @@ public class Utl {
     }
 
     public static <T> T nvl(T a, T b) {
-        return (a == null)?b:a;
+        return (a == null) ? b : a;
     }
 
     public static Object cloneBean(Object bean) throws Exception {
-        if(bean != null && !bean.getClass().isPrimitive()) {
+        if (bean != null && !bean.getClass().isPrimitive()) {
             Class<?> type = bean.getClass();
             Object newBean = type.newInstance();
             applyValuesToBeanFromBean(bean, newBean);
@@ -482,7 +526,7 @@ public class Utl {
     }
 
     public static <T> T cloneBean1(T bean, Class<T> clazz) throws Exception {
-        if(bean != null && !clazz.isPrimitive()) {
+        if (bean != null && !clazz.isPrimitive()) {
             T newBean = clazz.newInstance();
             applyValuesToBeanFromBean(bean, newBean);
             return newBean;
@@ -491,27 +535,28 @@ public class Utl {
     }
 
     public static String preparePath(String path, char pathSeparator) {
-        if(isNullOrEmpty(path))
+        if (isNullOrEmpty(path))
             return null;
         String rslt = path;
-        if(pathSeparator == (char)0)
-            pathSeparator =  File.separatorChar;
+        if (pathSeparator == (char) 0)
+            pathSeparator = File.separatorChar;
         rslt = rslt.replace('\\', pathSeparator);
         rslt = rslt.replace('/', pathSeparator);
         return rslt;
     }
 
     public static String normalizePath(String path, char pathSeparator) {
-        if(isNullOrEmpty(path))
+        if (isNullOrEmpty(path))
             return null;
-        if(pathSeparator == (char)0)
-            pathSeparator =  File.separatorChar;
+        if (pathSeparator == (char) 0)
+            pathSeparator = File.separatorChar;
         String rslt = preparePath(path, pathSeparator);
-        rslt = rslt.endsWith(""+pathSeparator) ? rslt : rslt + pathSeparator;
+        rslt = rslt.endsWith("" + pathSeparator) ? rslt : rslt + pathSeparator;
         return rslt;
     }
+
     public static String normalizePath(String path) {
-        return normalizePath(path, (char)0);
+        return normalizePath(path, (char) 0);
     }
 
     public static String generateTmpFileName(final String tmpPath, final String fileName) {
@@ -552,8 +597,8 @@ public class Utl {
             throw new IllegalStateException("osgi-bundlecontext not registered!");
 
         ServiceReference<T> serviceReference = bundleContext.getServiceReference(serviceInterface);
-        if(serviceReference != null)
-            return (T)bundleContext.getService(serviceReference);
+        if (serviceReference != null)
+            return (T) bundleContext.getService(serviceReference);
         else
             throw new IllegalStateException(String.format("Service %s not registered!", serviceInterface.getName()));
     }
@@ -568,29 +613,31 @@ public class Utl {
 
     public static String extractModuleKey(String bioCode) {
         String[] bioCodeParts = Strings.split(bioCode, "@");
-        if(bioCodeParts.length == 2)
+        if (bioCodeParts.length == 2)
             return bioCodeParts[0];
         return null;
     }
+
     public static String extractBioPath(String bioCode, String pathSeparator) {
         String[] bioCodeParts = Strings.split(bioCode, "@");
-        if(bioCodeParts.length == 2) {
+        if (bioCodeParts.length == 2) {
             String path = pathSeparator + bioCodeParts[1].replace(".", pathSeparator);
             return path;
-        } else if(bioCodeParts.length == 1) {
+        } else if (bioCodeParts.length == 1) {
             return pathSeparator + bioCode.replace(".", pathSeparator);
         }
         return null;
     }
 
     public static final String DEFAULT_BIO_PATH_SEPARATOR = "/";
+
     public static String extractBioPath(String bioCode) {
         return extractBioPath(bioCode, DEFAULT_BIO_PATH_SEPARATOR);
     }
 
     public static String extractBioParentPath(String bioCode, String pathSeparator) {
         String[] bioCodeParts = Strings.split(bioCode, ".");
-        if(bioCodeParts.length > 1) {
+        if (bioCodeParts.length > 1) {
             bioCodeParts = Arrays.copyOf(bioCodeParts, bioCodeParts.length - 1);
             bioCode = Strings.combineArray(bioCodeParts, ".");
             return extractBioPath(bioCode, pathSeparator);
@@ -609,21 +656,22 @@ public class Utl {
         return bytes;
 
     }
+
     public static byte[] toPrimitives(Byte[] oBytes) {
 
         byte[] bytes = new byte[oBytes.length];
-        for(int i = 0; i < oBytes.length; i++){
+        for (int i = 0; i < oBytes.length; i++) {
             bytes[i] = oBytes[i];
         }
         return bytes;
     }
 
     public static Boolean confIsEmpty(Dictionary conf) {
-        if(conf == null || conf.isEmpty())
+        if (conf == null || conf.isEmpty())
             return true;
         int count = 0;
         String componentKey = "component";
-        for (Enumeration e = conf.keys(); e.hasMoreElements();) {
+        for (Enumeration e = conf.keys(); e.hasMoreElements(); ) {
             e.nextElement();
             count++;
         }
@@ -642,7 +690,7 @@ public class Utl {
     public static int storeInputStream(InputStream inputStream, Path path) throws IOException {
         int len = 0;
         Files.createDirectories(path.getParent());
-        try(OutputStream out = new FileOutputStream(new File(path.toString()))) {
+        try (OutputStream out = new FileOutputStream(new File(path.toString()))) {
             int read = 0;
             final byte[] bytes = new byte[1024];
             while ((read = inputStream.read(bytes)) != -1) {
@@ -655,8 +703,8 @@ public class Utl {
 
     public static Path storeBlob(byte[] blob, Path path) throws IOException {
         Files.createDirectories(path.getParent());
-        try(OutputStream out = new FileOutputStream(new File(path.toString()))) {
-                out.write(blob);
+        try (OutputStream out = new FileOutputStream(new File(path.toString()))) {
+            out.write(blob);
         }
         return path;
     }
@@ -675,17 +723,22 @@ public class Utl {
             out.print(text);
         }
     }
+
     public static void storeString(String text, String path) throws IOException {
         storeString(text, path, "utf-8");
     }
 
     public static InputStream openFile(String filePath) throws IOException {
         File file = new File(filePath);
-        if(file.exists()){
+        if (file.exists()) {
             InputStream inputStream = new FileInputStream(file);
             return inputStream;
         } else
             throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
+    }
+
+    public static boolean fileExists(String filePath) {
+        return Files.exists(Paths.get(filePath));
     }
 
     public static String readFile(String filePath, String encoding) throws Exception {
