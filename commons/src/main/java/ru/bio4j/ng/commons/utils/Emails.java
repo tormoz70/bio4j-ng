@@ -15,7 +15,7 @@ public class Emails {
     private static final String SMTP_ENCODING = "UTF-8";
     private static final String SMTP_CONTENT_PLAIN = "text/plain";
 
-    public static void send(String to, String subject, String content, String contentType, String encoding) throws MessagingException {
+    private static void send0(String to, String subject, String content, String contentType, String encoding) throws MessagingException {
         Properties props = new Properties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.host", SMTP_HOST_NAME);
@@ -42,6 +42,15 @@ public class Emails {
         transport.connect();
         transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
         transport.close();
+    }
+
+    private static void send(String to, String subject, String content, String contentType, String encoding) throws MessagingException {
+        String[] toList = Strings.split(to, ",", ";", " ");
+        for (String a : toList) {
+            String toAddr = a.toLowerCase().trim();
+            if(!Strings.isNullOrEmpty(toAddr))
+                send0(toAddr, subject, content, contentType, encoding);
+        }
     }
 
 

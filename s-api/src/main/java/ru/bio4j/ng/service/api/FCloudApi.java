@@ -2,10 +2,12 @@ package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.model.transport.FileSpec;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.SpaceStat;
 import ru.bio4j.ng.model.transport.User;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public interface FCloudApi<T extends FileSpec> {
@@ -33,4 +35,5 @@ public interface FCloudApi<T extends FileSpec> {
 
     void removeFile(final String fileUUID, final User usr) throws Exception;
 
+    HashMap<String, SpaceStat> getSpaceStat();
 }

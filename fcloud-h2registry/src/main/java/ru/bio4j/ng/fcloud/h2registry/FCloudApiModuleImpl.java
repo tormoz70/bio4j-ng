@@ -10,6 +10,7 @@ import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.FileSpec;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.SpaceStat;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.ServiceBase;
@@ -21,6 +22,7 @@ import java.nio.file.*;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
 
 @Component(managedservice="fcloud-h2registry.config")
@@ -217,6 +219,11 @@ public class FCloudApiModuleImpl extends ServiceBase<FCloudConfig> implements FC
         String _storeFilePath = getStorePath(rootPath, fileUUID);
         Utl.deleteFile(_storeFilePath, true);
         removeFileSpecFromDb(fileUUID, usr);
+    }
+
+    @Override
+    public HashMap<String, SpaceStat> getSpaceStat() {
+        return null;
     }
 
 
