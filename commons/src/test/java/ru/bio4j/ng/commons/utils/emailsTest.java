@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
  */
 public class emailsTest {
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSend() throws Exception {
         Emails.sendPlain("ah@fond-kino.ru", "Тестовое сообщение bio4j", "Тестовое сообщение bio4j - ТЕЛО");
         Assert.assertTrue(true);
