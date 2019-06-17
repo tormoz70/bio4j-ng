@@ -147,4 +147,15 @@ public class OraUtilsImpl implements RDBMSUtils {
         return new StoredProgMetadata(newExec, params);
     }
 
+    @Override
+    public String extractStoredProcAppError(Exception e) {
+        Matcher m = Regexs.match(e.getMessage(), "(?<=ORA-2\\d{4}:).+", Pattern.CASE_INSENSITIVE);
+        if(m.find()) {
+            String fnd = m.group();
+            return fnd.trim();
+        }
+        return null;
+    }
+
+
 }

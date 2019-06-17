@@ -63,15 +63,19 @@ public class UtlTest {
         Assert.assertEquals(info, rslt);
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void regexFindTest() {
         String txt = "ORA-20001: Не верное имя или пароль пользователя!\n" +
                 "ORA-06512: на  \"GIVCAPI.GACC\", line 316\n" +
                 "ORA-06512: на  \"GIVCAPI.GACC\", line 331\n" +
                 "ORA-06512: на  line 1";
-        Matcher m = Regexs.match(txt, "(?<=ORA-2\\d{4}:).+(?=\\nORA-\\d{5}:)", Pattern.CASE_INSENSITIVE+Pattern.MULTILINE+Pattern.DOTALL);
-        String fnd = m.group();
-        System.out.println(fnd);
+        System.out.println(txt);
+        System.out.println("-----------------------------------------------------------------------------------------------------------------");
+        Matcher m = Regexs.match(txt, "(?<=ORA-2\\d{4}:).+", Pattern.CASE_INSENSITIVE);
+        if(m.find()) {
+            String fnd = m.group();
+            System.out.println(fnd);
+        }
     }
 
     @Test(enabled = true)

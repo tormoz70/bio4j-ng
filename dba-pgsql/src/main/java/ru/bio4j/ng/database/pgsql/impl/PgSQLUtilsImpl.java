@@ -213,4 +213,9 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
         return new StoredProgMetadata(newExec, params);
     }
 
+    @Override
+    public String extractStoredProcAppError(Exception e) {
+        return null;
+    }
+
 }

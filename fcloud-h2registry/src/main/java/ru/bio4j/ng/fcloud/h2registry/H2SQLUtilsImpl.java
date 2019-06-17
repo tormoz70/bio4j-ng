@@ -212,4 +212,9 @@ public class H2SQLUtilsImpl implements RDBMSUtils {
         return new StoredProgMetadata(newExec, params);
     }
 
+    @Override
+    public String extractStoredProcAppError(Exception c) {
+        return null;
+    }
+
 }

@@ -530,4 +530,8 @@ public class DbUtils {
         return rslt;
     }
 
+    public String extractStoredProcAppError(Exception e) {
+        return rdbmsUtils.extractStoredProcAppError(e);
+    }
+
 }

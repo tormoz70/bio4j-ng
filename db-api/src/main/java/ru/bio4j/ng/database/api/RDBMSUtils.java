@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface RDBMSUtils {
     StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws Exception;
+    String extractStoredProcAppError(Exception c);
 }
