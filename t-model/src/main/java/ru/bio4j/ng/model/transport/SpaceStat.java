@@ -1,6 +1,7 @@
 package ru.bio4j.ng.model.transport;
 
 public class SpaceStat {
+    private String path;
     private long total;
     private long usable;
     private double freePCT;
@@ -27,5 +28,13 @@ public class SpaceStat {
 
     public void setFreePCT(double freePCT) {
         this.freePCT = freePCT;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

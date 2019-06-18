@@ -21,14 +21,20 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
     @Override
     public void write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
         ABean result = null;
+        int resultCode;
         BioError error = BioError.wrap(exception);
-        if(!debugMode) {
-            if (error != null && !(error instanceof BioError.Login))
-                result = buildError(new BioError("На сервере произошла непредвиденная ошибка!"));
-            else
-                result = buildError(error);
-        } else
+//        if(!debugMode) {
+        if (error != null && !(error instanceof BioError.Login)) {
+            resultCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            result = buildError(new BioError("На сервере произошла непредвиденная ошибка!"));
+        } else {
+            resultCode = HttpServletResponse.SC_UNAUTHORIZED;
             result = buildError(error);
+        }
+//        } else {
+//            result = buildError(error);
+//        }
+        response.setStatus(resultCode);
         PrintWriter writer = response.getWriter();
         writer.append(Jsons.encode(result));
     }
