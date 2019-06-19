@@ -140,6 +140,10 @@
         <jdk.version>jdk1.8.0_181</jdk.version>
         <bio4j-ng.version>2.1.0-SNAPSHOT</bio4j-ng.version>
 
+        <log4j.root.level>INFO</log4j.root.level>
+        <log4j.bio4j.package>ru.bio4j.ng</log4j.bio4j.package>
+        <log4j.bio4j.level>DEBUG</log4j.bio4j.level>
+
 	</properties>
 
     <build>
