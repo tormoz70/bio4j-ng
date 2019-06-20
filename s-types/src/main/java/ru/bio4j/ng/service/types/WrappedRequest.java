@@ -322,6 +322,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
 
     public WrappedRequest(final HttpServletRequest request) throws Exception {
         super(request);
+        ServletContextHolder.setServletContext(request.getServletContext());
         modParameters = new TreeMap<>();
         modHeaders = new HashMap();
         bioQueryParams = decodeBioQueryParams((HttpServletRequest)this.getRequest());
