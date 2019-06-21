@@ -29,6 +29,16 @@ import java.util.List;
 public class RestApiAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(RestApiAdapter.class);
 
+    private static List<Param>_extractBioParams(final BioQueryParams queryParams) throws Exception {
+        Paramus.setQueryParamsToBioParams(queryParams);
+        return queryParams.bioParams;
+    }
+
+    private static List<Param>_extractBioParams(final HttpServletRequest request) throws Exception {
+        final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
+        return _extractBioParams(queryParams);
+    }
+
     public static ABeanPage loadPage(
             final AppService module,
             final String bioCode,
@@ -63,7 +73,7 @@ public class RestApiAdapter {
             final AppService module,
             final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
-        final List<Param> params = queryParams.bioParams;
+        final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
@@ -95,7 +105,7 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final AppService module) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
-        final List<Param> params = queryParams.bioParams;
+        final List<Param> params = _extractBioParams(queryParams);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -175,7 +185,7 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final AppService module) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
-        final List<Param> params = queryParams.bioParams;
+        final List<Param> params = _extractBioParams(queryParams);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDef = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -200,7 +210,7 @@ public class RestApiAdapter {
             final Class<T> beanType,
             final boolean forceAll) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
-        final List<Param> params = queryParams.bioParams;
+        final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
@@ -259,7 +269,7 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final AppService module,
             final Object id) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -276,7 +286,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final AppService module) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -289,7 +299,7 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final AppService module,
             final List<ABean> rows) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -301,7 +311,7 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final AppService module,
             final List<Object> ids) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -315,7 +325,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final AppService module) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
@@ -338,7 +348,7 @@ public class RestApiAdapter {
             final AppService module,
             final Class<T> clazz,
             final T defaultValue) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final User user = ((WrappedRequest)request).getUser();
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -396,7 +406,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final AppService module) throws Exception {
-        final List<Param> params = ((WrappedRequest)request).getBioQueryParams().bioParams;
+        final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();

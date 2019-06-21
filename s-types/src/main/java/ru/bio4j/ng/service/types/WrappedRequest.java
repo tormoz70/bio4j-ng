@@ -110,27 +110,6 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         }
         return rslt;
     }
-    private static void setQueryParamsToBioParams(BioQueryParams qprms) throws Exception {
-        if(qprms.bioParams == null)
-            qprms.bioParams = new ArrayList<>();
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGE, qprms.page, MetaType.INTEGER);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGESIZE, qprms.pageSize, MetaType.INTEGER);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_OFFSET, qprms.offset, MetaType.INTEGER);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, qprms.totalCount);
-//        Paramus.setParamValue(qprms.bioParams, RestParamNames.GETROW_PARAM_PKVAL, qprms.id);
-//        Paramus.setParamValue(qprms.bioParams, RestParamNames.RAPI_PARAM_FILEHASHCODE, qprms.fileHashCode);
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.QUERY_PARAM_VALUE, qprms.query);
-        Object location = qprms.location;
-        if (location != null && location instanceof String) {
-            if (((String) location).startsWith("1||"))
-                location = null;
-            if (((String) location).startsWith("0||")) {
-                location = Regexs.find((String) location, "(?<=0\\|\\|)(\\w|\\d|-|\\+)+", Pattern.CASE_INSENSITIVE);
-            }
-            Paramus.setParamValue(qprms.bioParams, RestParamNames.LOCATE_PARAM_PKVAL, location);
-        }
-        Paramus.setParamValue(qprms.bioParams, RestParamNames.LOCATE_PARAM_STARTFROM, qprms.offset);
-    }
 
     private static boolean isMultypartRequest(HttpServletRequest request){
         String contentType = request.getHeader("Content-Type");
@@ -315,7 +294,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
             result.offset = (result.page - 1) * result.pageSize;
 
         extractBioParamsFromQuery(result);
-        setQueryParamsToBioParams(result);
+        Paramus.setQueryParamsToBioParams(result);
 
         return result;
     }

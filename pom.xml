@@ -585,7 +585,7 @@
     </dependencies>
 
     <modules>
-        <module>annot-proc</module>
+<!--        <module>annot-proc</module>-->
         <module>ojdbc8-osgi</module>
         <module>jdbc-osgi</module>
 

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.service.api.AppService;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
@@ -52,8 +53,17 @@ public class RestHelper {
 
             Class<?> appServiceTypesClazz = null;
             try {
-                appServiceTypesClazz = bundleContext.getBundle().loadClass("ru.bio4j.ng.service.api.AppService");
-            } catch (ClassNotFoundException e) {
+                //appServiceTypesClazz = bundleContext.getBundle().loadClass("ru.bio4j.ng.service.api.AppService");
+                Enumeration<?> classes = bundleContext.getBundle().findEntries("/", "*.class", true);
+                //classes.
+                if(classes.hasMoreElements()) {
+                    while (true){
+                        Object cls = classes.nextElement();
+                        LOG.debug(String.format(" --- found Clazz: %s in %s", cls, bundleContext.getBundle().getSymbolicName()));
+                    }
+                }
+                LOG.debug(String.format("Found appServiceTypesClazz: %s", appServiceTypesClazz));
+            } catch (Exception e) {
                 appServiceTypesClazz = null;
             }
             LOG.debug(String.format("Found appServiceTypesClazz: %s", appServiceTypesClazz));
