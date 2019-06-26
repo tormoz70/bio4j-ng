@@ -19,7 +19,7 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
     }
 
     @Override
-    public void write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
+    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
         ABean result = null;
         int resultCode;
         BioError error = BioError.wrap(exception);
@@ -37,5 +37,6 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
         response.setStatus(resultCode);
         PrintWriter writer = response.getWriter();
         writer.append(Jsons.encode(result));
+        return false;
     }
 }

@@ -22,7 +22,7 @@ public class DefaultSecurityErrorHandler implements SecurityErrorHandler {
 
     private Boolean debugMode = false;
     public void init(String type, Boolean debugMode) {
-        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, type);
+        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, type, ErrorWriterType.Skip);
         this.errorWriter = errorWriterType.createImpl();
         this.debugMode = debugMode;
     }
@@ -32,7 +32,7 @@ public class DefaultSecurityErrorHandler implements SecurityErrorHandler {
     }
 
     @Override
-    public boolean writeError(BioError.Login exception, HttpServletResponse response) {
+    public boolean writeError(BioError.Login exception, HttpServletResponse response) throws Exception {
         if(exception instanceof BioError.Login) {
             LOG.error("Authentication error (Level-0)!", exception);
         } else {
@@ -40,12 +40,7 @@ public class DefaultSecurityErrorHandler implements SecurityErrorHandler {
         }
 
         if(errorWriter == null)
-            errorWriter = ErrorWriterType.Std.createImpl();
-        try {
-            errorWriter.write(exception, response, debugMode);
-        } catch(Exception e) {
-            LOG.error("Unexpected error!!!", e);
-        }
-        return false;
+            errorWriter = ErrorWriterType.Skip.createImpl();
+        return errorWriter.write(exception, response, debugMode);
     }
 }

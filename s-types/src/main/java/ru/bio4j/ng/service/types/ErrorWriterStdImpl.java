@@ -15,7 +15,7 @@ public class ErrorWriterStdImpl implements ErrorWriter {
 //5XX Серверные ошибки, не связанные с присылаемыми данными
 
     @Override
-    public void write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
+    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
         if(exception != null) {
             if(exception instanceof BioError.Login.Unauthorized)
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -28,6 +28,6 @@ public class ErrorWriterStdImpl implements ErrorWriter {
             else
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-
+        return false;
     }
 }

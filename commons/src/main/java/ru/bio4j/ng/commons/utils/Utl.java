@@ -180,6 +180,16 @@ public class Utl {
         return clazz1.getName().equals(clazz2.getName());
     }
 
+
+    public static boolean typeHasInterface(Class<?> clazz, Class<?> serviceInterface) {
+        Class[] interfaces = clazz.getInterfaces();
+        for (Class i : interfaces) {
+            if (i.toString().equals(serviceInterface.toString()))
+                return true;
+        }
+        return false;
+    }
+
     /**
      * @param annotationType - Type of annotation to find
      * @param clazz          - Annotated type
@@ -916,7 +926,7 @@ public class Utl {
     }
 
     public static <T extends Enum<T>> T enumValueOf(
-            Class<T> enumeration, String name) {
+            Class<T> enumeration, String name, T defaultVal) {
 
         for (T enumValue : enumeration.getEnumConstants()) {
             if (enumValue.name().equalsIgnoreCase(name)) {
@@ -924,6 +934,8 @@ public class Utl {
             }
         }
 
+        if(defaultVal != null)
+            return defaultVal;
         throw new IllegalArgumentException(String.format(
                 "There is no value with name '%s' in Enum %s",
                 name, enumeration.getName()

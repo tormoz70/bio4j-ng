@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.rmi.ServerError;
+import java.rmi.ServerException;
 import java.util.*;
 
 public class WarSecurityFilterBase {
@@ -75,7 +77,7 @@ public class WarSecurityFilterBase {
             securityErrorHandler = DefaultSecurityErrorHandler.getInstance();
     }
 
-    public void doSequrityFilter(final WrappedRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+    public void doSequrityFilter(final WrappedRequest request, final ServletResponse response, final FilterChain chain) throws Exception {
         final FilterChain chn = chain;
         final HttpServletResponse resp = (HttpServletResponse) response;
         resp.setCharacterEncoding("UTF-8");
@@ -110,12 +112,8 @@ public class WarSecurityFilterBase {
                 }
             } catch (Exception e) {
                 log_error("Unexpected error while filtering (Level-1)!", e);
-                try {
-                    ErrorWriter errorWriter = ErrorWriterType.Std.createImpl();
-                    errorWriter.write(e, resp, false);
-                } catch (Exception ee) {
-                    log_error("Unexpected error while processing unexpected error (Level-2)!", e);
-                }
+                ErrorWriter errorWriter = ErrorWriterType.Skip.createImpl();
+                errorWriter.write(e, resp, false);
             }
         }
     }
@@ -143,10 +141,17 @@ public class WarSecurityFilterBase {
             WrappedRequest rereq = prepareRequest(request);
             prepareResponse(response);
             doSequrityFilter(rereq, response, chain);
+        } catch (IOException ex) {
+            LOG.error(null, ex);
+            throw ex;
+        } catch (ServletException ex) {
+            LOG.error(null, ex);
+            throw ex;
         } catch (Exception ex) {
             LOG.error(null, ex);
-            prepareResponse(response);
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new ServletException(ex);
+//            prepareResponse(response);
+//            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

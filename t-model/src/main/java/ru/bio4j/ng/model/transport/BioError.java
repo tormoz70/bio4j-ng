@@ -1,6 +1,8 @@
 package ru.bio4j.ng.model.transport;
 
-public class BioError extends Exception {
+import javax.servlet.ServletException;
+
+public class BioError extends ServletException {
 
     private int errCode = 6000;
 

@@ -16,6 +16,12 @@ public enum ErrorWriterType {
         public ErrorWriter createImpl() {
             return new ErrorWriterStdImpl();
         }
+    },
+    Skip {
+        @Override
+        public ErrorWriter createImpl() {
+            return new ErrorWriterSkipImpl();
+        }
     };
     public abstract ErrorWriter createImpl();
 }
