@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.bio4j.ng.service.types.ServletContextHolder.getServletContext;
+import static ru.bio4j.ng.commons.utils.ServletContextHolder.getServletContext;
 
 public class DefaultRestHelperMethods implements RestHelperMethods {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestHelperMethods.class);

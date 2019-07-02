@@ -13,14 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DefaultLoginProcessor implements LoginProcessor {
 
-    private final SecurityService securityService;
+    private SecurityService securityService;
 
-    public DefaultLoginProcessor(SecurityService securityService) {
+    public void init(SecurityService securityService) {
         this.securityService = securityService;
     }
 
     /***
-     * обрабатывает запрос "/curusr"
+     * обрабатывает "стандарный" запрос "/curusr"
      * @param request
      * @param response
      * @return true - продолжить обработку запроса, false - прекратить
@@ -38,7 +38,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
     }
 
     /***
-     * обрабатывает запрос "/login"
+     * обрабатывает "стандарный" запрос "/login"
      * @param request
      * @param response
      * @return true - продолжить обработку запроса, false - прекратить
@@ -56,7 +56,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
     }
 
     /***
-     * обрабатывает запрос "/logoff"
+     * обрабатывает "стандарный" запрос "/logoff"
      * @param request
      * @param response
      * @return true - продолжить обработку запроса, false - прекратить
@@ -73,6 +73,13 @@ public class DefaultLoginProcessor implements LoginProcessor {
         return false;
     }
 
+    /***
+     * обрабатывает все остальные запросы
+     * @param request
+     * @param response
+     * @return true - продолжить обработку запроса, false - прекратить
+     * @throws Exception
+     */
     public boolean doOthers(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         if(securityService == null)
             throw new IllegalArgumentException("SecurityHandler not defined!");

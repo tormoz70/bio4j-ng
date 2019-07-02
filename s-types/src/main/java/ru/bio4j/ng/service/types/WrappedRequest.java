@@ -7,15 +7,13 @@ import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.AppService;
+import ru.bio4j.ng.service.api.ConfigProvider;
 import ru.bio4j.ng.service.api.HttpParamMap;
 import ru.bio4j.ng.service.api.SecurityService;
-import ru.bio4j.ng.model.transport.RestParamNames;
 
 import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -127,8 +125,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         StringBuilder sb = new StringBuilder();
 
         ServletContext servletContext = request.getServletContext();
-        SecurityService securityService = Utl.getService(servletContext, SecurityService.class);
-        HttpParamMap httpParamMap =  securityService.getHttpParamMap();
+        HttpParamMap httpParamMap =  RestHelper.getHttpParamMap();
 
         String uploadedJson = null;
         if (!isMultypartRequest(request) && !isUrlencodedFormRequest(request)) {

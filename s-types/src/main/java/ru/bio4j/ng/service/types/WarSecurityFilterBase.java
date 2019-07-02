@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.service.api.ErrorWriter;
-import ru.bio4j.ng.service.api.SecurityErrorHandler;
-import ru.bio4j.ng.service.api.SecurityService;
-import ru.bio4j.ng.service.api.LoginProcessor;
+import ru.bio4j.ng.service.api.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -55,10 +52,22 @@ public class WarSecurityFilterBase {
         debug("init - done.");
     }
 
-    private LoginProcessor loginProcessor;
-    private SecurityErrorHandler securityErrorHandler;
-    protected SecurityService securityService;
+    protected volatile ConfigProvider configProvider;
+    protected volatile SecurityService securityService;
+    protected volatile boolean restHelperEnited = false;
     protected void initSecurityHandler(ServletContext servletContext) throws Exception {
+
+        if(configProvider == null) {
+            try {
+                configProvider = Utl.getService(servletContext, ConfigProvider.class);
+            } catch (IllegalStateException e) {
+                configProvider = null;
+            }
+        }
+        if (configProvider == null) {
+            throw new BioError("Config provider not defined!");
+        }
+
         if(securityService == null) {
             try {
                 securityService = Utl.getService(servletContext, SecurityService.class);
@@ -69,12 +78,14 @@ public class WarSecurityFilterBase {
         if (securityService == null) {
             throw new BioError("Security provider not defined!");
         }
-        loginProcessor = securityService.createLoginProcessor();
-        if(loginProcessor == null)
-            loginProcessor = new DefaultLoginProcessor(securityService);
-        securityErrorHandler = securityService.createSecurityErrorHandler();
-        if(securityErrorHandler == null)
-            securityErrorHandler = DefaultSecurityErrorHandler.getInstance();
+
+
+        if(!restHelperEnited) {
+            RestHelper.getLPInstance().init(securityService);
+            if (RestHelper.getSEHInstance() instanceof DefaultSecurityErrorHandler)
+                ((DefaultSecurityErrorHandler) RestHelper.getSEHInstance()).init(configProvider.getConfig());
+            restHelperEnited = true;
+        }
     }
 
     public void doSequrityFilter(final WrappedRequest request, final ServletResponse response, final FilterChain chain) throws Exception {
@@ -92,21 +103,22 @@ public class WarSecurityFilterBase {
                 initSecurityHandler(request.getServletContext());
                 String pathInfo = request.getPathInfo();
                 if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
-                    if(loginProcessor.doLogin(request, resp))
+                    if(RestHelper.getLPInstance().doLogin(request, resp))
                         chn.doFilter(request, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
-                    if(loginProcessor.doGetUser(request, resp))
+                    if(RestHelper.getLPInstance().doGetUser(request, resp))
                         chn.doFilter(request, resp);
                 } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/logoff", false)) {
-                    if(loginProcessor.doLogoff(request, resp))
+                    if(RestHelper.getLPInstance().doLogoff(request, resp))
                         chn.doFilter(request, resp);
                 } else {
-                    if(loginProcessor.doOthers(request, resp))
+                    if(RestHelper.getLPInstance().doOthers(request, resp))
                         chn.doFilter(request, resp);
                 }
             } catch (BioError.Login e) {
                 log_error("Authentication error (Level-0)!", e);
-                if(securityErrorHandler.writeError(e, resp)) {
+
+                if(RestHelper.getSEHInstance().writeError(e, resp)) {
                     // Ignore login error if securityErrorHandler returns true!
                     chn.doFilter(request, resp);
                 }

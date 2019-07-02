@@ -67,11 +67,4 @@ public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> 
 
     protected abstract SQLContext createSQLContext() throws Exception;
 
-    public HttpParamMap createHttpParamMap() throws Exception {
-        return null;
-    }
-
-    public LoginProcessor createLoginProcessor() {
-        return null;
-    }
 }

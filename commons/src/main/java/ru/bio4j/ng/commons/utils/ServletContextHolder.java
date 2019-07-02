@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.commons.utils;
 
 import javax.servlet.ServletContext;
 
