@@ -382,4 +382,18 @@ public class UtlTest {
         Assert.assertTrue(fileSpec != null);
     }
 
+    @Test
+    public void readwritefileTest() throws IOException {
+        String fname = "d:/test-list-store.lst";
+        List<String> lst1 = new ArrayList<>();
+        lst1.add("фыв");
+        lst1.add("fdgh");
+        lst1.add("123");
+        Utl.storeListToFile(lst1, fname);
+        List<String> lst2 = Utl.readFileAsList(fname);
+        Assert.assertEquals(lst1.get(0), lst2.get(0));
+        Assert.assertEquals(lst1.get(1), lst2.get(1));
+        Assert.assertEquals(lst1.get(2), lst2.get(2));
+    }
+
 }

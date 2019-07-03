@@ -25,6 +25,8 @@ import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -768,6 +770,39 @@ public class Utl {
 
     public static String readFile(String filePath) throws Exception {
         return readFile(filePath, "utf-8");
+    }
+
+    public static List<String> readFileAsList(String filePath, String encoding) throws IOException {
+        List<String> rslt = new ArrayList<>();
+        Path path = Paths.get(filePath);
+        if(Files.exists(path)) {
+            Charset charset = Charset.forName(encoding);
+            try (BufferedReader br = Files.newBufferedReader(path, charset)) {
+                String line = br.readLine();
+                while (line != null) {
+                    rslt.add(line);
+                    line = br.readLine();
+                }
+            }
+        }
+        return rslt;
+    }
+
+    public static List<String> readFileAsList(String filePath) throws IOException {
+        return readFileAsList(filePath, StandardCharsets.UTF_8.displayName());
+    }
+
+    public static void storeListToFile(List<String> list, String filePath, String encoding) throws IOException {
+        Path path = Paths.get(filePath);
+        Charset charset = Charset.forName(encoding);
+        try (BufferedWriter bw = Files.newBufferedWriter(path, charset)) {
+            for(String line : list)
+                bw.write(line + System.lineSeparator());
+        }
+    }
+
+    public static void storeListToFile(List<String> list, String filePath) throws IOException {
+        storeListToFile(list, filePath, StandardCharsets.UTF_8.displayName());
     }
 
     public static String generateUUID(){
