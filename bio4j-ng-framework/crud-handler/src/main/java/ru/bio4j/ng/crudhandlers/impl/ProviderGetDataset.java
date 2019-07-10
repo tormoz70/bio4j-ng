@@ -2,11 +2,13 @@ package ru.bio4j.ng.crudhandlers.impl;
 
 import org.slf4j.Logger;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.service.api.BioCursor;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.model.transport.ABeanPage;
 import ru.bio4j.ng.model.transport.jstore.*;
+import ru.bio4j.ng.service.api.RestParamNames;
 import ru.bio4j.ng.service.types.BioQueryParams;
 import ru.bio4j.ng.service.types.BioRespBuilder;
 import ru.bio4j.ng.service.types.BioWrappedRequest;
@@ -26,6 +28,10 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
     private static BioRespBuilder.DataBuilder processCursorAsSelectableWithPagging(final BioRequestJStoreGetDataSet request, final SQLContext ctx, final BioCursor cursor, final boolean forceCalcCount, final Logger LOG) throws Exception {
         LOG.debug("Try open Cursor \"{}\" as MultiPage!!!", cursor.getBioCode());
 
+        Paramus.setParamValue(request.getBioParams(), RestParamNames.PAGINATION_PARAM_PAGE, request.getPage());
+        Paramus.setParamValue(request.getBioParams(), RestParamNames.PAGINATION_PARAM_OFFSET, request.getOffset());
+        Paramus.setParamValue(request.getBioParams(), RestParamNames.PAGINATION_PARAM_PAGESIZE, request.getLimit());
+
         ABeanPage beanPage = CrudReaderApi.loadPage(request.getBioParams(), request.getFilter(), request.getSort(), ctx, cursor, forceCalcCount, request.getUser());
 
         final BioRespBuilder.DataBuilder result = BioRespBuilder.dataBuilder().exception(null);
@@ -33,14 +39,15 @@ public class ProviderGetDataset extends ProviderAn<BioRequestJStoreGetDataSet> {
 
         StoreData data = StoreDataFactory.storeData();
         data.setStoreId(request.getStoreId());
-        data.setOffset(request.getOffset());
-        data.setPageSize(request.getLimit());
-        data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
+        //data.setOffset(request.getOffset());
+        //data.setPageSize(request.getLimit());
+        //data.setPage((int)Math.floor(data.getOffset() / data.getPageSize()) + 1);
         data.setStoreId(request.getStoreId());
         data.setPageSize(request.getLimit());
 
         data.setOffset(beanPage.getPaginationOffset());
         data.setPage(beanPage.getPaginationPage());
+        data.setPageSize(beanPage.getPaginationCount());
         data.setResults(beanPage.getTotalCount());
         fillData(beanPage, data, LOG);
 
