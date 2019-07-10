@@ -122,18 +122,21 @@ public class DefaultJettyAtJettyHomeHelper {
             Util.setProperty(properties, OSGiServerConstants.JETTY_HOME, jettyHomeDir.getAbsolutePath());
         } else if (jettyHomeBundleSysProp != null) {
             jettyHomeBundleSysProp = Util.resolvePropertyValue(jettyHomeBundleSysProp);
-            LOG.debug("Lets find the jetty.home.bundle named " + jettyHomeBundleSysProp + "...");
+            if(LOG.isDebugEnabled())
+                LOG.debug("Lets find the jetty.home.bundle named " + jettyHomeBundleSysProp + "...");
             for (Bundle b : bundleContext.getBundles()) {
                 if (b.getState() == Bundle.UNINSTALLED)
                     continue;
 
                 if (b.getSymbolicName().equals(jettyHomeBundleSysProp)) {
                     jettyHomeBundle = b;
-                    LOG.debug(" ... bundle named " + b.getSymbolicName() + " - is jettyHomeBundle! Yeaaaa!");
+                    if(LOG.isDebugEnabled())
+                        LOG.debug(" ... bundle named " + b.getSymbolicName() + " - is jettyHomeBundle! Yeaaaa!");
                     break;
-                } else
-                    LOG.debug(" ... bundle named " + b.getSymbolicName() + " - is not jettyHomeBundle!");
-
+                } else {
+                    if (LOG.isDebugEnabled())
+                        LOG.debug(" ... bundle named " + b.getSymbolicName() + " - is not jettyHomeBundle!");
+                }
             }
             if (jettyHomeBundle == null) {
                 LOG.warn("Unable to find the jetty.home.bundle named " + jettyHomeBundleSysProp);

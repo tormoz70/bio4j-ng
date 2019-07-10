@@ -56,9 +56,11 @@ public abstract class ServiceBase<T extends AnConfig> {
         service.schedule(new Runnable() {
             @Override
             public void run() {
-                LOG.debug("Sending event [{}] for service \"{}\"...", configUpdatedEventName, this.getClass().getName());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Sending event [{}] for service \"{}\"...", configUpdatedEventName, this.getClass().getName());
                 getEventAdmin().postEvent(new Event(configUpdatedEventName, new HashMap<String, Object>()));
-                LOG.debug("Event [{}] for service \"{}\" sent.", configUpdatedEventName, this.getClass().getName());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Event [{}] for service \"{}\" sent.", configUpdatedEventName, this.getClass().getName());
             }
         }, 1, TimeUnit.SECONDS);
 

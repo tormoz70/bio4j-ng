@@ -108,7 +108,8 @@ public class OSGiWebInfConfiguration extends WebInfConfiguration
            
             for (Bundle bundle : bundles)
             {
-                LOG.debug("Checking bundle {}:{}", bundle.getBundleId(), bundle.getSymbolicName());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Checking bundle {}:{}", bundle.getBundleId(), bundle.getSymbolicName());
                 if (pattern != null)
                 {
                     // if bundle symbolic name matches the pattern

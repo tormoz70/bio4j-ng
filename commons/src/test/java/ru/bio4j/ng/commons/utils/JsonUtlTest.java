@@ -79,14 +79,17 @@ public class JsonUtlTest {
                 "],"+
                 "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-h2registry\",\"offset\":0,\"pageSize\":26}";
         BioRequestJStoreGetDataSet request = Jsons.decode(requestBody, BioRequestJStoreGetDataSet.class);
-        LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
+        if(LOG.isDebugEnabled())
+            LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
         Date expectedDateTime = Types.parse("1970.03.02T18:43:56.000+0300", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
-        LOG.debug("expectedDateTime: {}", expectedDateTime);
+        if(LOG.isDebugEnabled())
+            LOG.debug("expectedDateTime: {}", expectedDateTime);
 
         TimeZone timeZone = TimeZone.getDefault();
         int offset = timeZone.getOffset(expectedDateTime.getTime());
-        LOG.debug("TimeZone: {}, offset: {}", timeZone.getDisplayName(), offset/1000/3600);
+        if(LOG.isDebugEnabled())
+            LOG.debug("TimeZone: {}, offset: {}", timeZone.getDisplayName(), offset/1000/3600);
 
         try(Paramus p = Paramus.set(request.getBioParams())){
             Assert.assertEquals(p.getParam("param1").getValue(), "123");
@@ -99,17 +102,21 @@ public class JsonUtlTest {
     // -Duser.timezone=GMT+3
     @Test(enabled = true)
     public void bdecode2() throws Exception {
-        LOG.debug("test:");
+        if(LOG.isDebugEnabled())
+            LOG.debug("test:");
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy.MM.dd'T'HH:mm:ss.SSS");
 //        format1.setTimeZone(TimeZone.getTimeZone("GMT+03:00"));
         Date d = format1.parse("1970.03.02T18:43:56.555");
-        LOG.debug("d:{}", d);
+        if(LOG.isDebugEnabled())
+            LOG.debug("d:{}", d);
         Calendar c1 = Calendar.getInstance();
         c1.setTime(d);
-        LOG.debug("c1:{}, {}", c1.getTime(), c1.getTimeZone());
+        if(LOG.isDebugEnabled())
+            LOG.debug("c1:{}, {}", c1.getTime(), c1.getTimeZone());
         Calendar c2 = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
         c2.setTime(d);
-        LOG.debug("c2:{}, {}", c2.getTime(), c2.getTimeZone());
+        if(LOG.isDebugEnabled())
+            LOG.debug("c2:{}, {}", c2.getTime(), c2.getTimeZone());
     }
 
     @Test(enabled = true)

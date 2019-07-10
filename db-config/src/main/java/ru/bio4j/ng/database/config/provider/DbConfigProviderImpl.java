@@ -40,16 +40,20 @@ public class DbConfigProviderImpl extends ServiceBase<SQLContextConfig> implemen
 
     @Validate
     public void start() throws Exception {
-        LOG.debug("Starting...");
+        if(LOG.isDebugEnabled())
+            LOG.debug("Starting...");
         this.ready = true;
-        LOG.debug("Started");
+        if(LOG.isDebugEnabled())
+            LOG.debug("Started");
     }
 
     @Invalidate
     public void stop() throws Exception {
-        LOG.debug("Stoping...");
+        if(LOG.isDebugEnabled())
+            LOG.debug("Stoping...");
         this.ready = false;
-        LOG.debug("Stoped.");
+        if(LOG.isDebugEnabled())
+            LOG.debug("Stoped.");
     }
 
 }

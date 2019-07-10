@@ -130,7 +130,8 @@ public class SQLFactoryTest {
                         });
                 return var.dummy;
             }, null);
-            LOG.debug("dummysum: " + dummysum);
+            if(LOG.isDebugEnabled())
+                LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 101.0);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -160,7 +161,8 @@ public class SQLFactoryTest {
                         });
                 return var.dummy;
             }, null);
-            LOG.debug("dummysum: " + dummysum);
+            if(LOG.isDebugEnabled())
+                LOG.debug("dummysum: " + dummysum);
             Assert.assertEquals(dummysum, 0.0);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -198,7 +200,8 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch((context) -> {
                 int leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
                 String storedProgName = "test_stored_prop";
@@ -218,7 +221,8 @@ public class SQLFactoryTest {
                 context.getCurrentConnection().rollback();
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -231,7 +235,8 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch((context) -> {
                 int leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
                 List<Param> prms;
@@ -248,7 +253,8 @@ public class SQLFactoryTest {
                 context.getCurrentConnection().rollback();
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -261,7 +267,8 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch((context) -> {
                 int leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
                 List<Param> prms;
@@ -278,7 +285,8 @@ public class SQLFactoryTest {
                 context.getCurrentConnection().rollback();
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -291,15 +299,18 @@ public class SQLFactoryTest {
         try {
             long leng = context.execBatch((context) -> {
                 long leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 PgSQLUtilsImpl utl = new PgSQLUtilsImpl();
                 StoredProgMetadata md = utl.detectStoredProcParamsAuto("test_stored_inout", context.getCurrentConnection(), null);
-                LOG.debug("md: " + md);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("md: " + md);
                 leng1 = md.getParamDeclaration().size();
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 4);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -319,7 +330,8 @@ public class SQLFactoryTest {
         try {
             long leng = context.execBatch((context) -> {
                 long leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
 
@@ -336,7 +348,8 @@ public class SQLFactoryTest {
                 context.getCurrentConnection().rollback();
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -349,7 +362,8 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch((context) -> {
                 int leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
                 String storedProgName = "test_stored_prop";
@@ -369,7 +383,8 @@ public class SQLFactoryTest {
                 context.getCurrentConnection().rollback();
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (SQLException ex) {
             LOG.error("Error!", ex);
@@ -395,7 +410,8 @@ public class SQLFactoryTest {
     public void testSQLCommandExecError() throws Exception {
         try {
             context.execBatch((SQLActionVoid1<String>) (context, param) -> {
-                LOG.debug("conn: " + context.getCurrentConnection() + "; param: " + param);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection() + "; param: " + param);
 
                 SQLStoredProc cmd = context.createStoredProc();
                 String storedProgName = "test_stored_error";
@@ -422,7 +438,8 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch((context) -> {
                 int leng1 = 0;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
                 String storedProgName = "test_stored_prop";
@@ -441,7 +458,8 @@ public class SQLFactoryTest {
                 }
                 return leng1;
             }, null);
-            LOG.debug("leng: " + leng);
+            if(LOG.isDebugEnabled())
+                LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
         } catch (Exception ex) {
             LOG.error("Error!", ex);
@@ -478,7 +496,8 @@ public class SQLFactoryTest {
             }, params, null);
             role = getParamValue(params, int.class, "v_role_id");
             org_id = getParamValue(params, int.class, "v_org_id");
-            LOG.debug(String.format("Login: OK; role: %d; org_id: %d", role, org_id));
+            if(LOG.isDebugEnabled())
+                LOG.debug(String.format("Login: OK; role: %d; org_id: %d", role, org_id));
             Assert.assertEquals(role, 6);
         } catch (SQLException ex) {
             LOG.error("Error!!!", ex);
@@ -490,7 +509,8 @@ public class SQLFactoryTest {
         try {
             int c = context.execBatch((context) -> {
                 ResultSet resultSet = null;
-                LOG.debug("conn: " + context.getCurrentConnection());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("conn: " + context.getCurrentConnection());
 
                 SQLStoredProc cmd = context.createStoredProc();
                 String storedProgName = "test_stored_cursor";
@@ -507,7 +527,8 @@ public class SQLFactoryTest {
                     resultSet = paramus.getParamValue("p_param2", ResultSet.class);
                     if(resultSet.next()) {
                         String userName = resultSet.getString("ROLNAME");
-                        LOG.debug("userName: " + userName);
+                        if(LOG.isDebugEnabled())
+                            LOG.debug("userName: " + userName);
                         Assert.assertTrue(Arrays.asList("PG_SIGNAL_BACKEND", "PG_MONITOR").contains(userName.toUpperCase()));
                     }
                 }
@@ -552,7 +573,8 @@ public class SQLFactoryTest {
         SQLException e = new SQLException("QWE-TEST");
         SQLExceptionExt r = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
         String msg = r.getMessage();
-        LOG.debug(msg);
+        if(LOG.isDebugEnabled())
+            LOG.debug(msg);
     }
 
     @Test(enabled = false)
@@ -567,7 +589,8 @@ public class SQLFactoryTest {
                         });
                 return 0;
             }, null);
-            LOG.debug("dummy: " + dummy);
+            if(LOG.isDebugEnabled())
+                LOG.debug("dummy: " + dummy);
             Assert.assertEquals(dummy, new Integer(0));
         } catch (Exception ex) {
             LOG.error("Error!", ex);

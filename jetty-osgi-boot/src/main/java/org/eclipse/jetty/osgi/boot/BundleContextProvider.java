@@ -96,7 +96,8 @@ public class BundleContextProvider extends AbstractContextProvider implements Bu
         //If the bundle defines a Web-ContextPath then its probably a webapp and the BundleWebAppProvider should deploy it
         if ((String)bundle.getHeaders().get(OSGiWebappConstants.RFC66_WEB_CONTEXTPATH) != null)
         {
-            if (LOG.isDebugEnabled()) LOG.debug("BundleContextProvider ignoring bundle {} with {} set", bundle.getSymbolicName(), OSGiWebappConstants.RFC66_WEB_CONTEXTPATH);
+            if (LOG.isDebugEnabled())
+                LOG.debug("BundleContextProvider ignoring bundle {} with {} set", bundle.getSymbolicName(), OSGiWebappConstants.RFC66_WEB_CONTEXTPATH);
             return false;
         }
         

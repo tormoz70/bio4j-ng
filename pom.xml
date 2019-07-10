@@ -137,6 +137,9 @@
 
         <javax.mail.version>1.6.2</javax.mail.version>
 
+        <rabbitmq-client.verion>1.3.0</rabbitmq-client.verion>
+        <amqp-client.verion>5.7.2</amqp-client.verion>
+
         <jdk.version>jdk1.8.0_181</jdk.version>
         <bio4j-ng.version>2.1.0-SNAPSHOT</bio4j-ng.version>
 
@@ -441,6 +444,20 @@
                 <version>${tomcat-jdbc.version}</version>
             </dependency>
 
+            <!--rabbitmq-->
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${amqp-client.verion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>rabbitmq-client</artifactId>
+                <version>${rabbitmq-client.verion}</version>
+            </dependency>
+
+            <!--bio4j-->
             <dependency>
                 <groupId>ru.bio4j.ng</groupId>
                 <artifactId>bio4j-jdbc-osgi</artifactId>

@@ -28,7 +28,7 @@ public class WarSecurityFilterBase {
     }
 
     private void debug(String s, Object... objects) {
-        if(LOG != null)
+        if(LOG != null && LOG.isDebugEnabled())
             LOG.debug(s, objects);
     }
 

@@ -62,17 +62,18 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
 
                 setParamsToStatement(); // Применяем параметры
 
+            if(LOG.isDebugEnabled())
                 LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
-                try (ResultSet result = this.preparedStatement.executeQuery()) {
-                    this.isActive = true;
-                    while (this.reader.next(result)) {
-                        rslt = true;
-                        if (onrecord != null) {
-                            if (!onrecord.callback(this.reader))
-                                break;
-                        }
+            try (ResultSet result = this.preparedStatement.executeQuery()) {
+                this.isActive = true;
+                while (this.reader.next(result)) {
+                    rslt = true;
+                    if (onrecord != null) {
+                        if (!onrecord.callback(this.reader))
+                            break;
                     }
                 }
+            }
 
 //            } catch (Exception e) {
 //                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);

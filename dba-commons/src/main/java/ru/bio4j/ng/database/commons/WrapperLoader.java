@@ -39,7 +39,8 @@ public class WrapperLoader {
                 map.put(WrapQueryType.valueOf(name.toUpperCase()), n.getTextContent());
             }
         }
-        LOG.debug("loaded {} queries for cursor.wrapper", map.size());
+        if(LOG.isDebugEnabled())
+            LOG.debug("loaded {} queries for cursor.wrapper", map.size());
         return unmodifiableMap(map);
     }
 }

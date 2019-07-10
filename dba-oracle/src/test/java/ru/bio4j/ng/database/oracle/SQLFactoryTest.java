@@ -24,6 +24,9 @@ import ru.bio4j.ng.model.transport.XLRCfg;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class SQLFactoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SQLFactoryTest.class);
@@ -68,6 +71,8 @@ public class SQLFactoryTest {
                 sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_ret_cursor.sql"));
                 DbUtils.execSQL(context.getCurrentConnection(), sql);
                 sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_with_inout.sql"));
+                DbUtils.execSQL(context.getCurrentConnection(), sql);
+                sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_long.sql"));
                 DbUtils.execSQL(context.getCurrentConnection(), sql);
 
                 sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("ddl_cre_prog_storeclob.sql"));
@@ -199,6 +204,43 @@ public class SQLFactoryTest {
             LOG.error("Error!", ex);
             Assert.fail();
         }
+    }
+
+    public void execSQLCommandExecSQLLong() throws Exception {
+        context.execBatch(new SQLActionVoid0 () {
+            @Override
+            public void exec(SQLContext context) throws Exception {
+
+                SQLStoredProc cmd = context.createStoredProc();
+                String storedProgName = "test_stored_long";
+                try(Paramus paramus = Paramus.set(new ArrayList<Param>())) {
+                    paramus.add("p_param1", "FTW")
+                            .add(Param.builder()
+                                    .name("p_param2")
+                                    .type(MetaType.INTEGER)
+                                    .direction(Param.Direction.OUT)
+                                    .build());
+                    cmd.init(context.getCurrentConnection(), storedProgName);
+                    cmd.execSQL(paramus.get(), context.getCurrentUser());
+                }
+            }
+        }, null);
+    }
+
+    @Test(enabled = true)
+    public void testSQLCommandExecSQLLong() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(3);;
+        List<Future> futures = new ArrayList<>();
+        for(int i=0; i<4; i++) {
+            Future future = executor.submit(() -> {
+                while (true)
+                    execSQLCommandExecSQLLong();
+            });
+            futures.add(future);
+        }
+        for(Future<?> future : futures)
+            future.get();
+
     }
 
     @Test(enabled = true)

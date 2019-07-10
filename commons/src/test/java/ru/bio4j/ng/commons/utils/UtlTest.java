@@ -25,7 +25,8 @@ public class UtlTest {
 
     @Test
     public void getClassNamesFromPackageTest() {
-        LOG.debug("Debug logger test!");
+        if(LOG.isDebugEnabled())
+            LOG.debug("Debug logger test!");
     //	  ArrayList<String> clss = getClassNamesFromPackage("");
     //	  Assert.
     }

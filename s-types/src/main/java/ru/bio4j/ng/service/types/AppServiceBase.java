@@ -44,8 +44,8 @@ public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> 
         return cursor;
     }
 
-    private SQLContext sqlContext = null;
-    private boolean localSQLContextIsInited = false;
+    private volatile SQLContext sqlContext = null;
+    private volatile boolean localSQLContextIsInited = false;
     protected synchronized void initSqlContext() throws Exception {
         if(sqlContext == null && !localSQLContextIsInited) {
             LOG.debug("Start initSqlContext for service \"{}\"...", this.getClass().getName());

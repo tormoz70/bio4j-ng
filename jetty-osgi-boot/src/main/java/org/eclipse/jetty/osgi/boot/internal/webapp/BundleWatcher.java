@@ -109,7 +109,8 @@ public class BundleWatcher implements BundleTrackerCustomizer
                     try
                     {
                         Object object = super.addingService(reference);
-                        LOG.debug("Default Jetty Server registered {}", reference);
+                        if(LOG.isDebugEnabled())
+                            LOG.debug("Default Jetty Server registered {}", reference);
                         _defaultServerReady = true;
                         openBundleTracker();
                         return object;

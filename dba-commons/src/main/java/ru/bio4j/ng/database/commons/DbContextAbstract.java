@@ -35,17 +35,9 @@ public abstract class DbContextAbstract implements SQLContext {
         return ThreadContextHolder.instance().getCurrentUser();
     }
 
-//    private void setCurrentUser(User user) {
-//        DbContextThreadHolder.setCurrentUser(user);
-//    }
-
     public Connection getCurrentConnection() {
         return ThreadContextHolder.instance().getCurrentConnection();
     }
-
-//    private void setCurrentConnection(Connection conn) {
-//        DbContextThreadHolder.setCurrentConnection(conn);
-//    }
 
     public SQLReader createReader(){
         return new DbReader();
@@ -70,46 +62,67 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     protected void doAfterConnect(SQLConnectionConnectedEvent.Attributes attrs) throws SQLException {
-        if(this.innerAfterEvents.size() > 0) {
-            for(SQLConnectionConnectedEvent e : this.innerAfterEvents)
+        if (this.innerAfterEvents.size() > 0) {
+            for (SQLConnectionConnectedEvent e : this.innerAfterEvents)
                 e.handle(this, attrs);
         }
-        if(this.afterEvents.size() > 0) {
-            for(SQLConnectionConnectedEvent e : this.afterEvents)
+        if (this.afterEvents.size() > 0) {
+            for (SQLConnectionConnectedEvent e : this.afterEvents)
                 e.handle(this, attrs);
         }
     }
 
     protected static final int CONNECTION_TRY_COUNT = 3;
     protected static final long CONNECTION_AFTER_FAIL_PAUSE = 15L; // secs
-//    protected Connection getConnection(String userName, String password) throws SQLException {
     protected Connection getConnection(User user) throws SQLException {
-        LOG.debug("Getting connection from pool...");
+        if(LOG.isDebugEnabled())
+            LOG.debug("Getting connection from pool...");
         Connection conn = null;
         int connectionPass = 0;
         while(connectionPass < CONNECTION_TRY_COUNT) {
             connectionPass++;
-            conn = this.cpool.getConnection();
-            //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
-            if (conn.isClosed() || !conn.isValid(5)) {
-                LOG.debug("Connection is not valid or closed...");
+            try {
+                conn = this.cpool.getConnection();
+            } catch(Exception e) {
                 conn = null;
-                ((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
-                LOG.debug("Waiting {} secs before next try connect to database...", CONNECTION_AFTER_FAIL_PAUSE);
+                LOG.error(String.format("Error on get connection from pool (attempt - %d)! Pause before next attempt - %d secs...", connectionPass, CONNECTION_AFTER_FAIL_PAUSE), e);
+            }
+            //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
+            if (conn == null || conn.isClosed() || !conn.isValid(5)) {
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Connection is null or not valid or closed...");
+                if(conn != null) {
+                    try {
+                        conn.rollback();
+                        conn.close();
+                    } catch (Exception e) {
+                    }
+                    conn = null;
+                }
+                //((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Waiting {} secs before next try connect to database...", CONNECTION_AFTER_FAIL_PAUSE);
                 try {
                     Thread.sleep(CONNECTION_AFTER_FAIL_PAUSE * 1000);
                 } catch (InterruptedException e) {}
             } else {
-                LOG.debug("Connection is ok...");
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Connection is ok...");
                 break;
             }
         }
 
         if(conn == null)
-            LOG.debug("All trying of connecting to database ({}) failed...", CONNECTION_TRY_COUNT);
+            LOG.error("All trying of connecting to database ({}) failed...", CONNECTION_TRY_COUNT);
 
-        this.doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn, user));
-        return conn;
+        try {
+            doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn, user));
+            return conn;
+        } catch(Exception e) {
+            if(conn != null) conn.close();
+            LOG.error(String.format("Unexpected error on execute doAfterConnect event! Message: %s", e.getMessage()), e);
+            throw e;
+        }
     }
 
 

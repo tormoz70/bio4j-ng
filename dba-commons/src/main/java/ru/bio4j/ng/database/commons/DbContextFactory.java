@@ -9,10 +9,11 @@ import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
 
 public class DbContextFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(DbContextAbstract.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DbContextFactory.class);
 
     public static <T extends DbContextAbstract> SQLContext createApache(SQLConnectionPoolConfig config, Class<T> clazz) throws Exception {
-        LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
+        if(LOG.isDebugEnabled())
+            LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
         final PoolProperties properties = new PoolProperties();
         properties.setMaxActive(config.getMaxPoolSize());
         properties.setMaxIdle(config.getMaxPoolSize());

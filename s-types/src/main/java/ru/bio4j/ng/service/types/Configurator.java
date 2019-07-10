@@ -22,24 +22,29 @@ public class Configurator<T> {
     }
 
     public void update(Dictionary conf) throws ConfigurationException {
-        LOG.debug("About updating config to {}...", beanType);
+        if(LOG.isDebugEnabled())
+            LOG.debug("About updating config to {}...", beanType);
         // Здесь получаем конфигурацию
         if(configBean == null) {
             try {
-                LOG.debug("Bean instance is null creating new {}...", beanType);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Bean instance is null creating new {}...", beanType);
                 configBean = (T)beanType.newInstance();
-                LOG.debug("New bean instance of {} is created.", beanType);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("New bean instance of {} is created.", beanType);
             } catch (Exception e) {
                 throw new ConfigurationException("*", String.format("Error on create new instance of bean (%s)! Message: %s", beanType, e.getMessage()));
             }
         }
         try {
             updated = Utl.applyValuesToBeanFromDict(conf, configBean);
-            LOG.debug("Config {} updated with:\n{}", beanType.getCanonicalName(),  Utl.buildBeanStateInfo(configBean, null, "\t"));
+            if(LOG.isDebugEnabled())
+                LOG.debug("Config {} updated with:\n{}", beanType.getCanonicalName(),  Utl.buildBeanStateInfo(configBean, null, "\t"));
         } catch (ApplyValuesToBeanException e) {
             throw new ConfigurationException(e.getField(), e.getMessage());
         }
-        LOG.debug("Appling config dictionary to {} done.", beanType);
+        if(LOG.isDebugEnabled())
+            LOG.debug("Appling config dictionary to {} done.", beanType);
 
     }
 

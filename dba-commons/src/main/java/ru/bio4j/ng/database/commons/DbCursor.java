@@ -86,7 +86,8 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
                 setParamsToStatement(); // Применяем параметры
 
-                LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
                 try (ResultSet result = this.preparedStatement.executeQuery()) {
                     this.isActive = true;
                     while (this.reader.next(result)) {

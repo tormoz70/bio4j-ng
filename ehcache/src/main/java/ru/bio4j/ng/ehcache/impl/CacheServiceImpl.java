@@ -218,13 +218,16 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
 
     private volatile Configuration serviceConfiguration;
     private void createCacheConfiguration() throws Exception {
-        LOG.debug("Attempting to find cache configuration");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Attempting to find cache configuration");
         InputStream configIn = getClass().getClassLoader().getResourceAsStream(CACHE_CONFIG_FILE);
         if (configIn == null) {
-            LOG.debug("Could not find configuration content for cache service");
+			if(LOG.isDebugEnabled())
+				LOG.debug("Could not find configuration content for cache service");
             throw new IllegalArgumentException("Could not find cache config content");
         }
-        LOG.debug("Attempting to create new cache service");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Attempting to create new cache service");
         serviceConfiguration = ConfigurationFactory.parseConfiguration(configIn);
         serviceConfiguration.diskStore(createDiskStoreConfiguration());
     }
@@ -236,7 +239,8 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
         String cachePath = configProvider.getConfig().getCachePersistentPath();
         final Path cachePathPath = Paths.get(cachePath);
         Files.createDirectories(cachePathPath);
-        LOG.debug("Cache persistent path is {}", cachePath);
+		if(LOG.isDebugEnabled())
+			LOG.debug("Cache persistent path is {}", cachePath);
         DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
         diskStoreConfiguration.setPath(cachePath);
         return diskStoreConfiguration;
@@ -245,36 +249,43 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
     private CacheManager cacheManager;
     @Validate
     public void doStart() throws Exception {
-        LOG.debug("Starting...");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Starting...");
 
         if(!configProvider.configIsReady()) {
-            LOG.info("Config is not redy! Waiting...");
+			if(LOG.isDebugEnabled())
+				LOG.info("Config is not redy! Waiting...");
             return;
         }
 
         try {
-            LOG.debug("Config is not null. Loading CacheConfiguration...");
+			if(LOG.isDebugEnabled())
+				LOG.debug("Config is not null. Loading CacheConfiguration...");
             createCacheConfiguration();
             this.cacheManager = CacheManager.create(serviceConfiguration);
             this.ready = true;
         } catch (Exception e) {
             LOG.error("Error on configuring Ehcache!", e);
         }
-        LOG.debug("Started.");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Started.");
     }
 
     @Invalidate
     public void doStop() throws Exception {
-        LOG.debug("Stoping...");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Stoping...");
         this.ready = false;
-        LOG.debug("Stoped.");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Stoped.");
     }
 
     @Subscriber(
             name="ehcache.subscriber",
             topics="bio-config-updated")
     public void receive(Event e) throws Exception {
-        LOG.debug("Config updated event recived!!!");
+		if(LOG.isDebugEnabled())
+			LOG.debug("Config updated event recived!!!");
         doStop();
         doStart();
     }

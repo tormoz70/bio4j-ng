@@ -25,7 +25,7 @@ public class ThreadContextHolder {
 
     private final ThreadLocal<Stack<DbThreadContext>> context = new ThreadLocal<>();
 
-    public void setContext(User user, Connection connection, SQLContext sqlContext){
+    public synchronized void setContext(User user, Connection connection, SQLContext sqlContext){
         if(context.get() == null)
             context.set(new Stack<>());
         DbThreadContext newContext = new DbThreadContext();
@@ -35,7 +35,7 @@ public class ThreadContextHolder {
         context.get().push(newContext);
     }
 
-    private void checkContext() {
+    private synchronized void checkContext() {
         if(context.get() == null)
             throw new IllegalArgumentException("Call set() method to set context first!");
     }
@@ -55,7 +55,7 @@ public class ThreadContextHolder {
         return context.get().peek().sqlContext;
     }
 
-    public void close(){
+    public synchronized void close(){
         checkContext();
         context.get().pop();
     }

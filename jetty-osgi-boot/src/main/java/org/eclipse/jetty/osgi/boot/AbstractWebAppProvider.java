@@ -68,12 +68,14 @@ public abstract class AbstractWebAppProvider extends AbstractLifeCycle implement
         {
             Loader.loadClass(AbstractWebAppProvider.class,"org.eclipse.jetty.annotations.AnnotationConfiguration");
             result = true;
-            LOG.debug("Annotation support detected");
+            if(LOG.isDebugEnabled())
+                LOG.debug("Annotation support detected");
         }
         catch (ClassNotFoundException e)
         {
             result = false;
-            LOG.debug("No annotation support detected");
+            if(LOG.isDebugEnabled())
+                LOG.debug("No annotation support detected");
         }
 
         return result;
@@ -85,18 +87,16 @@ public abstract class AbstractWebAppProvider extends AbstractLifeCycle implement
      * 
      * @return true if the jetty-jndi.jar is present, false otherwise
      */
-    private static boolean jndiAvailable()
-    {
-        try
-        {
+    private static boolean jndiAvailable() {
+        try {
             Loader.loadClass(AbstractWebAppProvider.class, "org.eclipse.jetty.plus.jndi.Resource");
             Loader.loadClass(AbstractWebAppProvider.class, "org.eclipse.jetty.plus.webapp.EnvConfiguration");
-            LOG.debug("JNDI support detected");
+            if (LOG.isDebugEnabled())
+                LOG.debug("JNDI support detected");
             return true;
-        }
-        catch (ClassNotFoundException e)
-        {
-            LOG.debug("No JNDI support detected");
+        } catch (ClassNotFoundException e) {
+            if (LOG.isDebugEnabled())
+                LOG.debug("No JNDI support detected");
             return false;
         }
     }
@@ -226,10 +226,8 @@ public abstract class AbstractWebAppProvider extends AbstractLifeCycle implement
                         : new File(overrideBundleInstallLocation));
             
             if (LOG.isDebugEnabled())
-            {
                 LOG.debug("Bundle location is {}, install location: {}", _bundle.getLocation(), bundleInstallLocation);
-            }
-            
+
             URL url = null;
             Resource rootResource = Resource.newResource(BundleFileLocatorHelperFactory.getFactory().getHelper().getLocalURL(bundleInstallLocation.toURI().toURL()));
             //try and make sure the rootResource is useable - if its a jar then make it a jar file url
@@ -390,7 +388,8 @@ public abstract class AbstractWebAppProvider extends AbstractLifeCycle implement
                 File f = BundleFileLocatorHelperFactory.getFactory().getHelper().getBundleInstallLocation(bs[0]);
                 if (paths.length() > 0) paths.append(", ");
                 paths.append(f.toURI().toURL().toString());
-                LOG.debug("getPathsToRequiredBundles: bundle path=" + bs[0].getLocation() + " uri=" + f.toURI());
+                if(LOG.isDebugEnabled())
+                    LOG.debug("getPathsToRequiredBundles: bundle path=" + bs[0].getLocation() + " uri=" + f.toURI());
             }
 
             return paths.toString();
@@ -404,7 +403,8 @@ public abstract class AbstractWebAppProvider extends AbstractLifeCycle implement
             if (_webApp == null) return;
 
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            LOG.debug("Context classloader = " + cl);
+            if(LOG.isDebugEnabled())
+                LOG.debug("Context classloader = " + cl);
             try
             {
                

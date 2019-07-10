@@ -61,7 +61,8 @@ public class CrudReaderApi {
             final SQLContext context,
             final SQLDefinition cursorDef,
             final User usr) throws Exception {
-        LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
+        if(LOG.isDebugEnabled())
+            LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         ABeanPage result = new ABeanPage();
         final int paginationPagesize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         result.setTotalCount(Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, int.class, 0));
@@ -77,7 +78,8 @@ public class CrudReaderApi {
                 .fetch(prms, usr, rs -> {
                     if(rs.isFirstRow()) {
                         long estimatedTime = System.currentTimeMillis() - startTime;
-                        LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
+                        if(LOG.isDebugEnabled())
+                            LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
                     }
                     ABean bean = DbUtils.createABeanFromReader(result.getMetadata(), rs);
                     result.getRows().add(bean);
@@ -85,7 +87,8 @@ public class CrudReaderApi {
                         return false;
                     return true;
                 });
-        LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.getRows().size());
+        if(LOG.isDebugEnabled())
+            LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.getRows().size());
         result.setPaginationCount(result.getRows().size());
         int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         result.setPaginationPage(pageSize > 0 ? (int)Math.floor(result.getPaginationOffset() / pageSize) + 1 : 0);
@@ -163,21 +166,25 @@ public class CrudReaderApi {
             totalCount = calcTotalCount(params, context, cursor, context.getCurrentUser());
         if(paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
             factOffset = (int)Math.floor(totalCount / paginationPagesize) * paginationPagesize;
-            LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
+            if(LOG.isDebugEnabled())
+                LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
         long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
         if(location != null) {
-            LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
+            if(LOG.isDebugEnabled())
+                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
             int locatedPos = context.createDynamicCursor()
                     .init(context.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
                     .scalar(params, context.getCurrentUser(), int.class, -1);
             if(locatedPos >= 0){
                 locFactOffset = calcOffset(locatedPos, paginationPagesize);
-                LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cursor.getBioCode(), location, locatedPos, locFactOffset);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cursor.getBioCode(), location, locatedPos, locFactOffset);
             } else {
-                LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cursor.getBioCode(), location);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cursor.getBioCode(), location);
             }
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
@@ -398,7 +405,8 @@ public class CrudReaderApi {
         if (context.getCurrentConnection() == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursorDef.getBioCode()));
 
-        LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
+        if(LOG.isDebugEnabled())
+            LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
         List<T> result = new ArrayList<>();
 
         long startTime = System.currentTimeMillis();
@@ -408,7 +416,8 @@ public class CrudReaderApi {
                 .fetch(prms, context.getCurrentUser(), rs -> {
                     if (rs.isFirstRow()) {
                         long estimatedTime = System.currentTimeMillis() - startTime;
-                        LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
+                        if(LOG.isDebugEnabled())
+                            LOG.debug("Cursor \"{}\" opened in {} secs!!!", cursorDef.getBioCode(), Double.toString(estimatedTime / 1000));
                     }
                     T bean;
                     if(beanType == ABean.class)
@@ -420,7 +429,8 @@ public class CrudReaderApi {
                         return false;
                     return true;
                 });
-        LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.size());
+        if(LOG.isDebugEnabled())
+            LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.size());
         return result;
     }
 
@@ -472,21 +482,25 @@ public class CrudReaderApi {
         if (paginationOffset == (Sqls.UNKNOWN_RECS_TOTAL - paginationPagesize + 1)) {
             totalCount = calcTotalCount(params, context, cursor, context.getCurrentUser());
             factOffset = (int) Math.floor(totalCount / paginationPagesize) * paginationPagesize;
-            LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
+            if(LOG.isDebugEnabled())
+                LOG.debug("Count of records of cursor \"{}\" - {}!!!", cursor.getBioCode(), totalCount);
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, factOffset);
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, totalCount);
         long locFactOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, long.class, 0L);
         if (location != null) {
-            LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
+            if(LOG.isDebugEnabled())
+                LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
             int locatedPos = context.createDynamicCursor()
                     .init(context.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
                     .scalar(params, context.getCurrentUser(), int.class, -1);
             if (locatedPos >= 0) {
                 locFactOffset = calcOffset(locatedPos, paginationPagesize);
-                LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cursor.getBioCode(), location, locatedPos, locFactOffset);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Cursor \"{}\" successfully located to [{}] record by pk. Position: [{}], New offset: [{}].", cursor.getBioCode(), location, locatedPos, locFactOffset);
             } else {
-                LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cursor.getBioCode(), location);
+                if(LOG.isDebugEnabled())
+                    LOG.debug("Cursor \"{}\" failed location to [{}] record by pk!!!", cursor.getBioCode(), location);
             }
         }
         Paramus.setParamValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, locFactOffset);
