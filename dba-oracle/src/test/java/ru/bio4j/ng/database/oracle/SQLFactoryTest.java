@@ -227,7 +227,7 @@ public class SQLFactoryTest {
         }, null);
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSQLCommandExecSQLLong() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(3);;
         List<Future> futures = new ArrayList<>();

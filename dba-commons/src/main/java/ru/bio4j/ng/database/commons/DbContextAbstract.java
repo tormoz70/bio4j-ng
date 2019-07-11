@@ -72,57 +72,45 @@ public abstract class DbContextAbstract implements SQLContext {
         }
     }
 
-    protected static final int CONNECTION_TRY_COUNT = 3;
-    protected static final long CONNECTION_AFTER_FAIL_PAUSE = 15L; // secs
-    protected Connection getConnection(User user) throws SQLException {
+
+    private void forceCloseConnection(Connection conn){
+        if (conn != null) {
+            try {
+                conn.rollback();
+                conn.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    protected synchronized Connection getConnection(User user) throws SQLException {
         if(LOG.isDebugEnabled())
             LOG.debug("Getting connection from pool...");
-        Connection conn = null;
-        int connectionPass = 0;
-        while(connectionPass < CONNECTION_TRY_COUNT) {
-            connectionPass++;
+        Connection conn = this.cpool.getConnection();
+        if(conn.isClosed()) {
+            forceCloseConnection(conn);
+            LOG.error("Connection is closed!");
+            throw new SQLException("Connection is closed!");
+        }
+        if(!conn.isValid(5)) {
+            forceCloseConnection(conn);
+            LOG.error("Connection is not valid!");
+            throw new SQLException("Connection is not valid!");
+        }
+
+        if(conn != null) {
             try {
-                conn = this.cpool.getConnection();
-            } catch(Exception e) {
-                conn = null;
-                LOG.error(String.format("Error on get connection from pool (attempt - %d)! Pause before next attempt - %d secs...", connectionPass, CONNECTION_AFTER_FAIL_PAUSE), e);
-            }
-            //conn.setHoldability(ResultSet.CLOSE_CURSORS_AT_COMMIT);
-            if (conn == null || conn.isClosed() || !conn.isValid(5)) {
-                if(LOG.isDebugEnabled())
-                    LOG.debug("Connection is null or not valid or closed...");
-                if(conn != null) {
-                    try {
-                        conn.rollback();
-                        conn.close();
-                    } catch (Exception e) {
-                    }
-                    conn = null;
-                }
-                //((org.apache.tomcat.jdbc.pool.DataSource) this.cpool).close(true);
-                if(LOG.isDebugEnabled())
-                    LOG.debug("Waiting {} secs before next try connect to database...", CONNECTION_AFTER_FAIL_PAUSE);
-                try {
-                    Thread.sleep(CONNECTION_AFTER_FAIL_PAUSE * 1000);
-                } catch (InterruptedException e) {}
-            } else {
+                doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn, user));
                 if(LOG.isDebugEnabled())
                     LOG.debug("Connection is ok...");
-                break;
+                return conn;
+            } catch (Exception e) {
+                forceCloseConnection(conn);
+                LOG.error(String.format("Unexpected error on execute doAfterConnect event! Message: %s", e.getMessage()), e);
+                throw e;
             }
         }
-
-        if(conn == null)
-            LOG.error("All trying of connecting to database ({}) failed...", CONNECTION_TRY_COUNT);
-
-        try {
-            doAfterConnect(SQLConnectionConnectedEvent.Attributes.build(conn, user));
-            return conn;
-        } catch(Exception e) {
-            if(conn != null) conn.close();
-            LOG.error(String.format("Unexpected error on execute doAfterConnect event! Message: %s", e.getMessage()), e);
-            throw e;
-        }
+        return null;
     }
 
 
