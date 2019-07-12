@@ -45,9 +45,10 @@ public class Amqs {
     }
 
 
-    public static QueueingConsumer createConsumer(final Connection conn, final String exchangeName, final String exchangeType, final String queueName, final String routingKey) throws IOException, TimeoutException {
+    public static QueueingConsumer createConsumer(final Connection conn, final String exchangeName, final String queueName, final String routingKey) throws IOException, TimeoutException {
         Channel channel = conn.createChannel();
-        boolean durable = true;
+        final boolean durable = true;
+        final String exchangeType = "topic";
         channel.exchangeDeclare(exchangeName, exchangeType, durable);
         channel.queueDeclare(queueName, durable, false, false, null);
         channel.queueBind(queueName, exchangeName, routingKey);
