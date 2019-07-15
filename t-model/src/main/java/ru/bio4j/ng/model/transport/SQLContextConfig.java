@@ -16,16 +16,42 @@ public class SQLContextConfig extends AnConfig {
     @Prop(name = "context.connection.pwd")
     private String dbConnectionPwd;
     @Prop(name = "context.min.pool.size")
-    private int minPoolSize = 2;
+    private String minPoolSize = "2";
     @Prop(name = "context.max.pool.size")
-    private int maxPoolSize = 10;
+    private String maxPoolSize = "10";
+
+    @Prop(name = "context.min.idle")
+    private String minIdle;
+    @Prop(name = "context.max.idle")
+    private String maxIdle;
+
     @Prop(name = "context.connection.wait.timeout")
-    private int connectionWaitTimeout = 5;
+    private String connectionWaitTimeout = "5";
     @Prop(name = "context.initial.pool.size")
-    private int initialPoolSize = 5;
+    private String initialPoolSize;
     @Prop(name = "context.current.schema")
     private String currentSchema = null;
 
+    @Prop(name = "context.pool.removeAbandoned")
+    private String removeAbandoned = "true";
+    @Prop(name = "context.pool.removeAbandonedTimeout")
+    private String removeAbandonedTimeout = "60";
+    @Prop(name = "context.pool.logAbandoned")
+    private String logAbandoned = "false";
+    @Prop(name = "context.pool.defaultAutoCommit")
+    private String defaultAutoCommit = "false";
+    @Prop(name = "context.pool.testOnBorrow")
+    private String testOnBorrow = "false";
+    @Prop(name = "context.pool.validationInterval")
+    private String validationInterval = "35000";
+    @Prop(name = "context.pool.validationQuery")
+    private String validationQuery = null;
+    @Prop(name = "context.pool.commitOnReturn")
+    private String commitOnReturn = "true";
+    @Prop(name = "context.pool.timeBetweenEvictionRunsMillis")
+    private String timeBetweenEvictionRunsMillis = null;
+    @Prop(name = "context.pool.minEvictableIdleTimeMillis")
+    private String minEvictableIdleTimeMillis = null;
 
     public String getDbConnectionUrl() {
         return dbConnectionUrl;
@@ -39,19 +65,19 @@ public class SQLContextConfig extends AnConfig {
         return dbConnectionPwd;
     }
 
-    public int getMinPoolSize() {
+    public String  getMinPoolSize() {
         return minPoolSize;
     }
 
-    public int getMaxPoolSize() {
+    public String  getMaxPoolSize() {
         return maxPoolSize;
     }
 
-    public int getConnectionWaitTimeout() {
+    public String  getConnectionWaitTimeout() {
         return connectionWaitTimeout;
     }
 
-    public int getInitialPoolSize() {
+    public String  getInitialPoolSize() {
         return initialPoolSize;
     }
 
@@ -71,19 +97,19 @@ public class SQLContextConfig extends AnConfig {
         this.dbConnectionPwd = dbConnectionPwd;
     }
 
-    public void setMinPoolSize(int minPoolSize) {
+    public void setMinPoolSize(String  minPoolSize) {
         this.minPoolSize = minPoolSize;
     }
 
-    public void setMaxPoolSize(int maxPoolSize) {
+    public void setMaxPoolSize(String  maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
-    public void setConnectionWaitTimeout(int connectionWaitTimeout) {
+    public void setConnectionWaitTimeout(String  connectionWaitTimeout) {
         this.connectionWaitTimeout = connectionWaitTimeout;
     }
 
-    public void setInitialPoolSize(int initialPoolSize) {
+    public void setInitialPoolSize(String  initialPoolSize) {
         this.initialPoolSize = initialPoolSize;
     }
 
@@ -105,5 +131,101 @@ public class SQLContextConfig extends AnConfig {
 
     public void setDriverName(String driverName) {
         this.driverName = driverName;
+    }
+
+    public String getMinIdle() {
+        return minIdle;
+    }
+
+    public void setMinIdle(String minIdle) {
+        this.minIdle = minIdle;
+    }
+
+    public String getMaxIdle() {
+        return maxIdle;
+    }
+
+    public void setMaxIdle(String maxIdle) {
+        this.maxIdle = maxIdle;
+    }
+
+    public String getRemoveAbandoned() {
+        return removeAbandoned;
+    }
+
+    public void setRemoveAbandoned(String removeAbandoned) {
+        this.removeAbandoned = removeAbandoned;
+    }
+
+    public String getRemoveAbandonedTimeout() {
+        return removeAbandonedTimeout;
+    }
+
+    public void setRemoveAbandonedTimeout(String removeAbandonedTimeout) {
+        this.removeAbandonedTimeout = removeAbandonedTimeout;
+    }
+
+    public String getLogAbandoned() {
+        return logAbandoned;
+    }
+
+    public void setLogAbandoned(String logAbandoned) {
+        this.logAbandoned = logAbandoned;
+    }
+
+    public String getDefaultAutoCommit() {
+        return defaultAutoCommit;
+    }
+
+    public void setDefaultAutoCommit(String defaultAutoCommit) {
+        this.defaultAutoCommit = defaultAutoCommit;
+    }
+
+    public String getTestOnBorrow() {
+        return testOnBorrow;
+    }
+
+    public void setTestOnBorrow(String testOnBorrow) {
+        this.testOnBorrow = testOnBorrow;
+    }
+
+    public String getValidationInterval() {
+        return validationInterval;
+    }
+
+    public void setValidationInterval(String validationInterval) {
+        this.validationInterval = validationInterval;
+    }
+
+    public String getValidationQuery() {
+        return validationQuery;
+    }
+
+    public void setValidationQuery(String validationQuery) {
+        this.validationQuery = validationQuery;
+    }
+
+    public String getCommitOnReturn() {
+        return commitOnReturn;
+    }
+
+    public void setCommitOnReturn(String commitOnReturn) {
+        this.commitOnReturn = commitOnReturn;
+    }
+
+    public String getTimeBetweenEvictionRunsMillis() {
+        return timeBetweenEvictionRunsMillis;
+    }
+
+    public void setTimeBetweenEvictionRunsMillis(String timeBetweenEvictionRunsMillis) {
+        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    }
+
+    public String getMinEvictableIdleTimeMillis() {
+        return minEvictableIdleTimeMillis;
+    }
+
+    public void setMinEvictableIdleTimeMillis(String minEvictableIdleTimeMillis) {
+        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
     }
 }

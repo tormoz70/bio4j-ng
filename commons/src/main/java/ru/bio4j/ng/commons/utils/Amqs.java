@@ -45,20 +45,35 @@ public class Amqs {
     }
 
 
-    public static QueueingConsumer createConsumer(final Connection conn, final String exchangeName, final String queueName, final String routingKey) throws IOException, TimeoutException {
-        Channel channel = conn.createChannel();
-        final boolean durable = true;
-        final String exchangeType = "topic";
-        channel.exchangeDeclare(exchangeName, exchangeType, durable);
-        channel.queueDeclare(queueName, durable, false, false, null);
-        channel.queueBind(queueName, exchangeName, routingKey);
-        QueueingConsumer consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, false, consumer);
-        return consumer;
-    }
+//    public static Consumer createConsumer(final Connection conn, final String exchangeName, final String queueName, final String routingKey) throws IOException, TimeoutException {
+//        Channel channel = conn.createChannel();
+//        final boolean durable = true;
+//        final String exchangeType = "topic";
+//        channel.exchangeDeclare(exchangeName, exchangeType, durable);
+//        channel.queueDeclare(queueName, durable, false, false, null);
+//        channel.queueBind(queueName, exchangeName, routingKey);
+//        Consumer consumer = channel.;
+//        channel.basicConsume(queueName, false, consumer);
+//        return consumer;
+//    }
+//
+//    public static QueueingConsumer.Delivery getNextMessage(QueueingConsumer consumer) throws InterruptedException {
+//        return consumer.nextDelivery();
+//    }
 
-    public static QueueingConsumer.Delivery getNextMessage(QueueingConsumer consumer) throws InterruptedException {
-        return consumer.nextDelivery();
+    public static String getMessage(final Connection conn, final String exchangeName, final String queueName, final String routingKey, boolean requeue) throws IOException, TimeoutException {
+        try(Channel channel = conn.createChannel()) {
+            final boolean autoAck = !requeue;
+            final boolean durable = true;
+            final String exchangeType = "topic";
+            channel.exchangeDeclare(exchangeName, exchangeType, durable);
+            channel.queueDeclare(queueName, durable, false, false, null);
+            channel.queueBind(queueName, exchangeName, routingKey);
+            GetResponse response = channel.basicGet(queueName, autoAck);
+            if (response != null)
+                return new String(response.getBody());
+            return null;
+        }
     }
 
 }

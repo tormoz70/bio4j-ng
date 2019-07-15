@@ -1,7 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
 import com.rabbitmq.client.Connection;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -18,10 +17,17 @@ public class amqsTest {
         try(Connection conn = Amqs.createConnection(
                 "mustang.rmq.cloudamqp.com", "iwacygav", "4K8knDCFH2YHrLHfw1zvF3T2ps0O8x_j", "iwacygav", 5672
         )) {
-            for (int i=1; i<21; i++) {
-                String messageBody = ("test " + i);
-                Amqs.postMessage(conn, "ekb-exchange", "packet-to-process", messageBody);
-            }
+            Amqs.postMessage(conn, "ekb-exchange", "packet-to-process", "test-msg");
+        }
+    }
+
+    @Test(enabled = false)
+    public void testGetNext() throws Exception {
+        try(Connection conn = Amqs.createConnection(
+                "mustang.rmq.cloudamqp.com", "iwacygav", "4K8knDCFH2YHrLHfw1zvF3T2ps0O8x_j", "iwacygav", 5672
+        )) {
+            String msg = Amqs.getMessage(conn, "ekb-exchange", "ekb-packets-to-process", "packet-to-process", false);
+            System.out.println(msg);
         }
     }
 

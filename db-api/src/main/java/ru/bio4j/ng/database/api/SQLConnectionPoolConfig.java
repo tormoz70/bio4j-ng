@@ -2,67 +2,131 @@ package ru.bio4j.ng.database.api;
 
 public class SQLConnectionPoolConfig {
 
-    public String getPoolName() {
-        return poolName;
-    }
-
-    public void setPoolName(String poolName) {
-        this.poolName = poolName;
-    }
-
     public static class Builder {
         private String poolName;
         private String dbDriverName;
         private String dbConnectionUrl;
         private String dbConnectionUsr;
         private String dbConnectionPwd;
-        private int minPoolSize;
-        private int maxPoolSize;
-        private int connectionWaitTimeout;
-        private int initialPoolSize;
-        private String currentSchema = null;
+        private String minPoolSize;
+        private String maxPoolSize;
+        private String maxIdle;
+        private String minIdle;
+        private String connectionWaitTimeout;
+        private String initialPoolSize;
+        private String currentSchema;
 
-        public Builder poolName(String poolName) {
-            this.poolName = poolName;
+        private String removeAbandoned;
+        private String removeAbandonedTimeout;
+        private String logAbandoned;
+        private String defaultAutoCommit;
+        private String testOnBorrow;
+        private String validationInterval;
+        private String validationQuery;
+        private String commitOnReturn;
+        private String timeBetweenEvictionRunsMillis;
+        private String minEvictableIdleTimeMillis;
+
+        public Builder poolName(String value) {
+            poolName = value;
             return this;
         }
-        public Builder dbDriverName(String dbDriverName) {
-            this.dbDriverName = dbDriverName;
+        public Builder dbDriverName(String value) {
+            dbDriverName = value;
             return this;
         }
 
         public Builder dbConnectionUrl(String value) {
-            this.dbConnectionUrl = value;
+            dbConnectionUrl = value;
             return this;
         }
 
         public Builder dbConnectionUsr (String value) {
-            this.dbConnectionUsr = value;
+            dbConnectionUsr = value;
             return this;
         }
         public Builder dbConnectionPwd (String value) {
-            this.dbConnectionPwd = value;
+            dbConnectionPwd = value;
             return this;
         }
-        public Builder minPoolSize (int value) {
-            this.minPoolSize = value;
+        public Builder minPoolSize (String value) {
+            minPoolSize = value;
             return this;
         }
-        public Builder maxPoolSize (int value) {
-            this.maxPoolSize = value;
+        public Builder maxPoolSize (String value) {
+            maxPoolSize = value;
             return this;
         }
-        public Builder connectionWaitTimeout (int value) {
-            this.connectionWaitTimeout = value;
+        public Builder connectionWaitTimeout (String value) {
+            connectionWaitTimeout = value;
             return this;
         }
-        public Builder initialPoolSize (int value) {
-            this.initialPoolSize = value;
+        public Builder initialPoolSize (String value) {
+            initialPoolSize = value;
             return this;
         }
 
         public Builder currentSchema (String value) {
-            this.currentSchema = value;
+            currentSchema = value;
+            return this;
+        }
+
+        public Builder removeAbandoned(String value) {
+            removeAbandoned = value;
+            return this;
+        }
+
+        public Builder removeAbandonedTimeout(String value) {
+            removeAbandonedTimeout = value;
+            return this;
+        }
+
+        public Builder logAbandoned(String value) {
+            logAbandoned = value;
+            return this;
+        }
+
+        public Builder defaultAutoCommit(String value) {
+            defaultAutoCommit = value;
+            return this;
+        }
+
+        public Builder testOnBorrow(String value) {
+            testOnBorrow = value;
+            return this;
+        }
+
+        public Builder validationInterval(String value) {
+            validationInterval = value;
+            return this;
+        }
+
+        public Builder validationQuery(String value) {
+            validationQuery = value;
+            return this;
+        }
+
+        public Builder commitOnReturn(String value) {
+            commitOnReturn = value;
+            return this;
+        }
+
+        public Builder timeBetweenEvictionRunsMillis(String value) {
+            timeBetweenEvictionRunsMillis = value;
+            return this;
+        }
+
+        public Builder minEvictableIdleTimeMillis(String value) {
+            minEvictableIdleTimeMillis = value;
+            return this;
+        }
+
+        public Builder maxIdle(String value) {
+            maxIdle = value;
+            return this;
+        }
+        public Builder minIdle(String value) {
+            minIdle = value;
             return this;
         }
 
@@ -70,46 +134,7 @@ public class SQLConnectionPoolConfig {
             return new SQLConnectionPoolConfig(this);
         }
 
-        private String getDbConnectionUrl() {
-            return dbConnectionUrl;
-        }
 
-        public String getDbConnectionUsr() {
-            return dbConnectionUsr;
-        }
-
-        public String getDbConnectionPwd() {
-            return dbConnectionPwd;
-        }
-
-        public int getMinPoolSize() {
-            return minPoolSize;
-        }
-
-        public int getMaxPoolSize() {
-            return maxPoolSize;
-        }
-
-        public int getConnectionWaitTimeout() {
-            return connectionWaitTimeout;
-        }
-
-        public int getInitialPoolSize() {
-            return initialPoolSize;
-        }
-
-
-        public String getCurrentSchema() {
-            return currentSchema;
-        }
-
-        public String getDbDriverName() {
-            return dbDriverName;
-        }
-
-        public String getPoolName() {
-            return poolName;
-        }
     }
 
     public static Builder builder() {
@@ -121,23 +146,49 @@ public class SQLConnectionPoolConfig {
     private String dbConnectionUrl;
     private String dbConnectionUsr;
     private String dbConnectionPwd;
-    private int minPoolSize = 2;
-    private int maxPoolSize = 10;
-    private int connectionWaitTimeout = 5;
-    private int initialPoolSize = 5;
-    private String currentSchema = null;
+    private String minPoolSize;
+    private String maxPoolSize;
+    private String maxIdle;
+    private String minIdle;
+    private String connectionWaitTimeout;
+    private String initialPoolSize;
+    private String currentSchema;
+
+    private String removeAbandoned;
+    private String removeAbandonedTimeout;
+    private String logAbandoned;
+    private String defaultAutoCommit;
+    private String testOnBorrow;
+    private String validationInterval;
+    private String validationQuery;
+    private String commitOnReturn;
+    private String timeBetweenEvictionRunsMillis;
+    private String minEvictableIdleTimeMillis;
 
     private SQLConnectionPoolConfig(Builder builder) {
-        this.poolName = builder.getPoolName();
-        this.dbDriverName = builder.getDbDriverName();
-        this.dbConnectionUrl = builder.getDbConnectionUrl();
-        this.dbConnectionUsr = builder.getDbConnectionUsr();
-        this.dbConnectionPwd = builder.getDbConnectionPwd();
-        this.minPoolSize = builder.getMinPoolSize();
-        this.maxPoolSize = builder.getMaxPoolSize();
-        this.connectionWaitTimeout = builder.getConnectionWaitTimeout();
-        this.initialPoolSize = builder.getInitialPoolSize();
-        this.currentSchema = builder.getCurrentSchema();
+        this.poolName = builder.poolName;
+        this.dbDriverName = builder.dbDriverName;
+        this.dbConnectionUrl = builder.dbConnectionUrl;
+        this.dbConnectionUsr = builder.dbConnectionUsr;
+        this.dbConnectionPwd = builder.dbConnectionPwd;
+        this.minPoolSize = builder.minPoolSize;
+        this.maxPoolSize = builder.maxPoolSize;
+        this.minIdle = builder.minIdle;
+        this.maxIdle = builder.maxIdle;
+        this.connectionWaitTimeout = builder.connectionWaitTimeout;
+        this.initialPoolSize = builder.initialPoolSize;
+        this.currentSchema = builder.currentSchema;
+        this.removeAbandoned = builder.removeAbandoned;
+        this.removeAbandonedTimeout = builder.removeAbandonedTimeout;
+        this.logAbandoned = builder.logAbandoned;
+        this.defaultAutoCommit = builder.defaultAutoCommit;
+        this.testOnBorrow = builder.testOnBorrow;
+        this.validationInterval = builder.validationInterval;
+        this.validationQuery = builder.validationQuery;
+        this.commitOnReturn = builder.commitOnReturn;
+        this.timeBetweenEvictionRunsMillis = builder.timeBetweenEvictionRunsMillis;
+        this.minEvictableIdleTimeMillis = builder.minEvictableIdleTimeMillis;
+
     }
 
     public String getDbDriverName() {
@@ -156,19 +207,27 @@ public class SQLConnectionPoolConfig {
         return dbConnectionPwd;
     }
 
-    public int getMinPoolSize() {
+    public String getMinPoolSize() {
         return minPoolSize;
     }
 
-    public int getMaxPoolSize() {
+    public String getMaxPoolSize() {
         return maxPoolSize;
     }
 
-    public int getConnectionWaitTimeout() {
+    public String getMaxIdle() {
+        return maxIdle;
+    }
+
+    public String getMinIdle() {
+        return minIdle;
+    }
+
+    public String getConnectionWaitTimeout() {
         return connectionWaitTimeout;
     }
 
-    public int getInitialPoolSize() {
+    public String getInitialPoolSize() {
         return initialPoolSize;
     }
 
@@ -176,40 +235,53 @@ public class SQLConnectionPoolConfig {
         return currentSchema;
     }
 
-    public void setDbConnectionUrl(String dbConnectionUrl) {
-        this.dbConnectionUrl = dbConnectionUrl;
+    public String getPoolName() {
+        return poolName;
     }
 
-    public void setDbConnectionUsr(String dbConnectionUsr) {
-        this.dbConnectionUsr = dbConnectionUsr;
+    public void setPoolName(String poolName) {
+        this.poolName = poolName;
     }
 
-    public void setDbConnectionPwd(String dbConnectionPwd) {
-        this.dbConnectionPwd = dbConnectionPwd;
+    public String getRemoveAbandoned() {
+        return removeAbandoned;
     }
 
-    public void setMinPoolSize(int minPoolSize) {
-        this.minPoolSize = minPoolSize;
+    public String getRemoveAbandonedTimeout() {
+        return removeAbandonedTimeout;
     }
 
-    public void setMaxPoolSize(int maxPoolSize) {
-        this.maxPoolSize = maxPoolSize;
+    public String getLogAbandoned() {
+        return logAbandoned;
     }
 
-    public void setConnectionWaitTimeout(int connectionWaitTimeout) {
-        this.connectionWaitTimeout = connectionWaitTimeout;
+    public String getDefaultAutoCommit() {
+        return defaultAutoCommit;
     }
 
-    public void setInitialPoolSize(int initialPoolSize) {
-        this.initialPoolSize = initialPoolSize;
+    public String getTestOnBorrow() {
+        return testOnBorrow;
     }
 
-    public void setCurrentSchema(String currentSchema) {
-        this.currentSchema = currentSchema;
+    public String getValidationInterval() {
+        return validationInterval;
     }
 
-    public void setDbDriverName(String dbDriverName) {
-        this.dbDriverName = dbDriverName;
+    public String getValidationQuery() {
+        return validationQuery;
     }
+
+    public String getCommitOnReturn() {
+        return commitOnReturn;
+    }
+
+    public String getTimeBetweenEvictionRunsMillis() {
+        return timeBetweenEvictionRunsMillis;
+    }
+
+    public String getMinEvictableIdleTimeMillis() {
+        return minEvictableIdleTimeMillis;
+    }
+
 
 }

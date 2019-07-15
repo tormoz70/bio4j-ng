@@ -69,11 +69,11 @@
             <artifactId>amqp-client</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>rabbitmq-client</artifactId>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.rabbitmq</groupId>-->
+<!--            <artifactId>rabbitmq-client</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
 
 
         <dependency>
