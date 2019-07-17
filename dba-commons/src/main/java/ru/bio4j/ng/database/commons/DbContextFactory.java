@@ -43,6 +43,9 @@ public class DbContextFactory {
         properties.setUrl(config.getDbConnectionUrl());
         properties.setUsername(config.getDbConnectionUsr());
         properties.setPassword(config.getDbConnectionPwd());
+        properties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
+                        + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
+                        + "org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer");
         DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(properties);
         Constructor<T> constructor = clazz.getConstructor(DataSource.class, SQLConnectionPoolConfig.class);
         return constructor.newInstance(new Object[]{dataSource, config});
