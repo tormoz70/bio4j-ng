@@ -128,22 +128,35 @@ public class DbUtils {
         }, usr);
     }
 
-    public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) throws Exception {
+    public static ABean createABeanFromReader0(SQLReader reader) throws Exception {
         ABean bean = new ABean();
-        for (ru.bio4j.ng.model.transport.jstore.Field field : metaData) {
-            String attrName = field.getAttrName();
-            if (Strings.isNullOrEmpty(attrName))
-                attrName = field.getName();
-            DBField f = reader.getField(field.getName());
-            if (f != null) {
-                Object val = reader.getValue(f.getId());
-                Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
-                Object valTyped = Converter.toType(val, clazz);
-                bean.put(attrName, valTyped);
-            } else
-                bean.put(attrName, null);
+        for (DBField dbField : reader.getFields()) {
+            String attrName = dbField.getName();
+            Object val = reader.getValue(dbField.getId());
+            bean.put(attrName, val);
         }
         return bean;
+    }
+
+    public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) throws Exception {
+        if(metaData != null && metaData.size() > 0) {
+            ABean bean = new ABean();
+            for (ru.bio4j.ng.model.transport.jstore.Field field : metaData) {
+                String attrName = field.getAttrName();
+                if (Strings.isNullOrEmpty(attrName))
+                    attrName = field.getName();
+                DBField f = reader.getField(field.getName());
+                if (f != null) {
+                    Object val = reader.getValue(f.getId());
+                    Class<?> clazz = MetaTypeConverter.write(field.getMetaType());
+                    Object valTyped = Converter.toType(val, clazz);
+                    bean.put(attrName, valTyped);
+                } else
+                    bean.put(attrName, null);
+            }
+            return bean;
+        }
+        return createABeanFromReader0(reader);
     }
 
     private static String findFieldName(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, String attrName) {

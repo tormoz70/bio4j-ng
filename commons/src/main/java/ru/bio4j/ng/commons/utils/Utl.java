@@ -348,6 +348,20 @@ public class Utl {
         return out.toString();
     }
 
+    public static String propertyInfo(Hashtable hashtable, String beanName, String tab) {
+        if (tab == null) tab = "";
+        final String attrFmt = tab + " - %s : %s;\n";
+        StringBuilder out = new StringBuilder();
+        out.append(String.format(tab + "%s {\n", beanName));
+        for (Enumeration e = hashtable.keys(); e.hasMoreElements(); ) {
+            Object key = e.nextElement();
+            Object val = hashtable.get(key);
+            out.append(String.format(attrFmt, key, val));
+        }
+        out.append(tab + "}");
+        return out.toString();
+    }
+
     public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
         boolean result = false;
         if (vals == null)
