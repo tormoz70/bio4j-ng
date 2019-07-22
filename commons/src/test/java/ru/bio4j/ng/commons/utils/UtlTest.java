@@ -19,6 +19,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class UtlTest {
     private final static Logger LOG = LoggerFactory.getLogger(UtlTest.class);
@@ -397,4 +398,27 @@ public class UtlTest {
         Assert.assertEquals(lst1.get(2), lst2.get(2));
     }
 
+    @Test
+    public void load1() {
+        int[] rslt = new int[] {0,0,0};
+        double[] prob = new double[] {.4,.1,.5};
+        for(int i=0; i<100000; i++){
+            int indx = Utl.generateIndxByProb(prob);
+            rslt[indx]++;
+        }
+        int summ =  Arrays.stream(rslt).sum();
+        double[] probResult = new double[rslt.length];
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < probResult.length; i++) {
+            probResult[i] = new Double(rslt[i]) / new Double(summ);
+            if(i>0)
+                sb.append(";");
+            sb.append(""+probResult[i]);
+        }
+        sb.append("]");
+        System.out.println(sb.toString());
+    }
+
 }
+

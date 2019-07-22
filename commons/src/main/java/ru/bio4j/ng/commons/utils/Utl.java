@@ -1070,5 +1070,19 @@ public class Utl {
         return rslt;
     }
 
+    public static int generateIndxByProb(double[] prob) {
+        double indxD = Math.random();
+        int indxI = 0;
+        double curLow = 0;
+        for(int i=0; i<prob.length; i++){
+            curLow += prob[i];
+            if(indxD >= curLow - prob[i] && indxD < curLow) {
+                indxI = i;
+                break;
+            }
+        }
+        return indxI;
+    }
+
 }
 
