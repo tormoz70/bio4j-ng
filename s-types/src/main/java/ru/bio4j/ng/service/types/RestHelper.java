@@ -8,7 +8,7 @@ import ru.bio4j.ng.service.api.LoginProcessor;
 import ru.bio4j.ng.service.api.SecurityErrorHandler;
 
 public class RestHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(RestServiceBase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestHelper.class);
 
     private RestHelper() { /* hidden constructor */ }
 

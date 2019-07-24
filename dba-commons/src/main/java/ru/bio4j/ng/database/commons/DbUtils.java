@@ -133,7 +133,7 @@ public class DbUtils {
         for (DBField dbField : reader.getFields()) {
             String attrName = dbField.getName();
             Object val = reader.getValue(dbField.getId());
-            bean.put(attrName, val);
+            bean.put(attrName.toLowerCase(), val);
         }
         return bean;
     }

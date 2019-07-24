@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.types;
 
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.ServletContextHolder;
 import ru.bio4j.ng.commons.utils.SrvcUtils;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.ABean;
@@ -91,6 +92,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
         else
             user = securityService.getUser(qprms);
         req.setUser(user);
+        ServletContextHolder.setCurrentUser(user);
         return true;
     }
 

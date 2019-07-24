@@ -10,6 +10,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.AppService;
 import ru.bio4j.ng.service.api.FCloudApi;
+import ru.bio4j.ng.service.api.SQLDefinition;
 import ru.bio4j.ng.service.api.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,20 +21,22 @@ public interface RestHelperMethods {
     SecurityService getSecurityService();
     FCloudApi getFCloudApi();
 
-    ABeanPage getList(String bioCode, HttpServletRequest request, boolean forceAll) throws Exception;
     ABeanPage getList(String bioCode, HttpServletRequest request) throws Exception;
+    ABeanPage getListAll(String bioCode, HttpServletRequest request) throws Exception;
     HSSFWorkbook getExcel(String bioCode, HttpServletRequest request) throws Exception;
-    ABeanPage getList(String bioCode, Object prms, User user, boolean forceAll, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception;
-    ABeanPage getList(String bioCode, Object prms, User user, boolean forceAll) throws Exception;
+    ABeanPage getList(String bioCode, Object prms, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception;
+    ABeanPage getListAll(String bioCode, Object prms, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception;
+    ABeanPage getList(String bioCode, Object prms) throws Exception;
+    ABeanPage getListAll(String bioCode, Object prms) throws Exception;
     <T> List<T> getList(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception;
-    <T> List<T> getList(String bioCode, HttpServletRequest request, Class<T> calzz, boolean forceAll) throws Exception;
-    <T> List<T> getList(String bioCode, Object prms, Class<T> calzz, boolean forceAll) throws Exception;
+    <T> List<T> getListAll(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception;
     <T> List<T> getList(String bioCode, Object prms, Class<T> calzz) throws Exception;
+    <T> List<T> getListAll(String bioCode, Object prms, Class<T> calzz) throws Exception;
     <T> T getFirst(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception;
     <T> T getFirst(String bioCode, Object prms, Class<T> calzz) throws Exception;
     ABean getFirst(String bioCode, HttpServletRequest request) throws Exception;
     <T> T getScalar(final String bioCode, final HttpServletRequest request, final Class<T> calzz, final T defaultValue) throws Exception;
-    <T> T getScalar(final String bioCode, final Object params, Class<T> calzz, T defaultValue, User user) throws Exception;
+    <T> T getScalar(final String bioCode, final Object params, Class<T> calzz, T defaultValue) throws Exception;
     String getJson(String bioCode, HttpServletRequest request) throws Exception;
     ABean getTotalCount(String bioCode, HttpServletRequest request) throws Exception;
     StoreMetadata getMetadataOld(String bioCode) throws Exception;
@@ -51,13 +54,16 @@ public interface RestHelperMethods {
     void setBeanToRequest(ABean bean, HttpServletRequest request) throws Exception;
     <T> T getBioParamFromRequest(String paramName, HttpServletRequest request, Class<T> paramType, T defaultValue) throws Exception;
     <T> T getBioParamFromRequest(String paramName, HttpServletRequest request, Class<T> paramType) throws Exception;
+    boolean bioParamExistsInRequest(String paramName, HttpServletRequest request) throws Exception;
     ABean delete(String bioCode, List<Object> ids, HttpServletRequest request) throws Exception;
     void exec(String bioCode, HttpServletRequest request) throws Exception;
-    void exec(String bioCode, Object params, User user) throws Exception;
+    void exec(String bioCode, Object params) throws Exception;
+    void execLocal(SQLContext context, SQLDefinition sqlDefinition, Object params) throws Exception;
     <T> T selectScalar(final String bioCode, final HttpServletRequest request, final Class<T> clazz, final T defaultValue) throws Exception;
     List<ABean> save(String bioCode, List<ABean> abeans, HttpServletRequest request) throws Exception;
-    <T> List<T> getList0(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, boolean forceAll, Class<T> calzz) throws Exception;
-    void execBatch(final SQLActionVoid0 action, final User user) throws Exception;
-    <T> T execBatch(final SQLActionScalar0<T> action, final User user) throws Exception;
-    <P, T> T execBatch(final SQLActionScalar1<P, T> action, P param, final User user) throws Exception;
+    <T> List<T> getList0(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, Class<T> calzz) throws Exception;
+    <T> List<T> getList0All(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, Class<T> calzz) throws Exception;
+    void execBatch(final SQLActionVoid0 action) throws Exception;
+    <T> T execBatch(final SQLActionScalar0<T> action) throws Exception;
+    <P, T> T execBatch(final SQLActionScalar1<P, T> action, P param) throws Exception;
 }

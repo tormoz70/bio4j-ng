@@ -356,6 +356,11 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         return getBioQueryParam(paramName, paramType, null);
     }
 
+    public boolean bioQueryParamExists(String paramName) throws Exception {
+        final BioQueryParams queryParams = this.getBioQueryParams();
+        return !Paramus.paramIsEmpty(queryParams.bioParams, paramName);
+    }
+
     /**
      * get the Header names
      */

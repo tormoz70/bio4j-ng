@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.ServletContextHolder;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLActionScalar0;
@@ -24,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.bio4j.ng.commons.utils.ServletContextHolder.getServletContext;
 
 public class DefaultRestHelperMethods implements RestHelperMethods {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestHelperMethods.class);
@@ -33,7 +33,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
     public AppService getAppService() {
         synchronized (this) {
             if(appService == null)
-                appService = Utl.getService(getServletContext(), RestHelper.getAppTypes().getAppServiceClass());
+                appService = Utl.getService(ServletContextHolder.getServletContext(), RestHelper.getAppTypes().getAppServiceClass());
         }
         return appService;
     }
@@ -42,7 +42,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
     public SecurityService getSecurityService() {
         synchronized (this) {
             if (securityService == null)
-                securityService = Utl.getService(getServletContext(), RestHelper.getAppTypes().getSecurityServiceClass());
+                securityService = Utl.getService(ServletContextHolder.getServletContext(), RestHelper.getAppTypes().getSecurityServiceClass());
         }
         return securityService;
     }
@@ -51,18 +51,20 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
     public FCloudApi getFCloudApi() {
         synchronized (this) {
             if (fCloudApi == null)
-                fCloudApi = Utl.getService(getServletContext(), RestHelper.getAppTypes().getFCloudApiClass());
+                fCloudApi = Utl.getService(ServletContextHolder.getServletContext(), RestHelper.getAppTypes().getFCloudApiClass());
         }
         return fCloudApi;
     }
 
-    public ABeanPage getList(String bioCode, HttpServletRequest request, boolean forceAll) throws Exception {
+    @Override
+    public ABeanPage getListAll(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
-        ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, appService, forceAll);
+        ABeanPage rslt = RestApiAdapter.loadAll(bioCode, request, appService);
         rslt.setMetadata(null);
         return rslt;
     }
 
+    @Override
     public ABeanPage getList(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, appService);
@@ -70,109 +72,143 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return rslt;
     }
 
+    @Override
     public HSSFWorkbook getExcel(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         HSSFWorkbook rslt = RestApiAdapter.loadToExcel(bioCode, request, appService);
         return rslt;
     }
 
-    public ABeanPage getList(String bioCode, Object prms, User user, boolean forceAll, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception {
+    @Override
+    public ABeanPage getList(String bioCode, Object prms, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception {
         AppService appService = getAppService();
-        ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, user, forceAll, filterAndSorter, forceCalcCount);
+        ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, ServletContextHolder.getCurrentUser(), filterAndSorter, forceCalcCount);
         rslt.setMetadata(null);
         return rslt;
     }
 
-
-    public ABeanPage getList(String bioCode, Object prms, User user, boolean forceAll) throws Exception {
+    @Override
+    public ABeanPage getListAll(String bioCode, Object prms, FilterAndSorter filterAndSorter, boolean forceCalcCount) throws Exception {
         AppService appService = getAppService();
-        ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, user, forceAll);
+        ABeanPage rslt = RestApiAdapter.loadAll(appService, bioCode, prms, ServletContextHolder.getCurrentUser(), filterAndSorter, forceCalcCount);
         rslt.setMetadata(null);
         return rslt;
     }
 
+    @Override
+    public ABeanPage getList(String bioCode, Object prms) throws Exception {
+        AppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadPage(appService, bioCode, prms, ServletContextHolder.getCurrentUser());
+        rslt.setMetadata(null);
+        return rslt;
+    }
+    @Override
+    public ABeanPage getListAll(String bioCode, Object prms) throws Exception {
+        AppService appService = getAppService();
+        ABeanPage rslt = RestApiAdapter.loadAll(appService, bioCode, prms, ServletContextHolder.getCurrentUser());
+        rslt.setMetadata(null);
+        return rslt;
+    }
+
+    @Override
     public <T> List<T> getList(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
         List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, appService, calzz);
         return rslt;
     }
-
-    public <T> List<T> getList(String bioCode, HttpServletRequest request, Class<T> calzz, boolean forceAll) throws Exception {
+    @Override
+    public <T> List<T> getListAll(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
-        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, appService, calzz, forceAll);
+        List<T> rslt = RestApiAdapter.loadAllExt(bioCode, request, appService, calzz);
         return rslt;
     }
 
-    public <T> List<T> getList(String bioCode, Object prms, Class<T> calzz, boolean forceAll) throws Exception {
-        AppService appService = getAppService();
-        return RestApiAdapter.loadPageExt(appService, bioCode, prms, calzz, forceAll);
-    }
-
+    @Override
     public <T> List<T> getList(String bioCode, Object prms, Class<T> calzz) throws Exception {
-        return getList(bioCode, prms, calzz, false);
+        AppService appService = getAppService();
+        return RestApiAdapter.loadPageExt(appService, bioCode, prms, calzz);
     }
 
+
+    @Override
+    public <T> List<T> getListAll(String bioCode, Object prms, Class<T> calzz) throws Exception {
+        AppService appService = getAppService();
+        return RestApiAdapter.loadAllExt(appService, bioCode, prms, calzz);
+    }
+
+    @Override
     public <T> T getFirst(String bioCode, HttpServletRequest request, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
-        List<T> rslt = RestApiAdapter.loadPageExt(bioCode, request, appService, calzz, true);
+        List<T> rslt = RestApiAdapter.loadAllExt(bioCode, request, appService, calzz);
         return rslt.size() > 0 ? rslt.get(0) : null;
     }
 
+    @Override
     public <T> T getFirst(String bioCode, Object prms, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
-        List<T> rslt = RestApiAdapter.loadPageExt(appService, bioCode, prms, calzz, true);
+        List<T> rslt = RestApiAdapter.loadAllExt(appService, bioCode, prms, calzz);
         return rslt.size() > 0 ? rslt.get(0) : null;
     }
 
+    @Override
     public ABean getFirst(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         ABeanPage rslt = RestApiAdapter.loadPage(bioCode, request, appService);
         return rslt.getRows().size() > 0 ? rslt.getRows().get(0) : null;
     }
 
+    @Override
     public <T> T getScalar(final String bioCode, final HttpServletRequest request, final Class<T> calzz, final T defaultValue) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.selectScalar(bioCode, request, appService, calzz, defaultValue);
     }
 
-    public <T> T getScalar(final String bioCode, final Object params, Class<T> calzz, T defaultValue, User user) throws Exception {
+    @Override
+    public <T> T getScalar(final String bioCode, final Object params, Class<T> calzz, T defaultValue) throws Exception {
         AppService appService = getAppService();
-        return RestApiAdapter.selectScalar(bioCode, params, appService, calzz, defaultValue, user);
+        return RestApiAdapter.selectScalar(bioCode, params, appService, calzz, defaultValue, ServletContextHolder.getCurrentUser());
     }
 
+    @Override
     public String getJson(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         StringBuilder rslt = RestApiAdapter.loadJson(bioCode, request, appService);
         return rslt.toString();
     }
 
+    @Override
     public ABean getTotalCount(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         ABean rslt = RestApiAdapter.calcTotalCount(bioCode, request, appService);
         return rslt;
     }
 
+    @Override
     public StoreMetadata getMetadataOld(String bioCode) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.getMetadataOld(bioCode, appService);
     }
 
+    @Override
     public ABean getMetadata(String bioCode) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.getMetadata(bioCode, appService);
     }
 
+    @Override
     public ABean getSingle(String bioCode, Object id, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.loadBean(bioCode, request, appService, id);
     }
 
+    @Override
     public ABean getSuccess() {
         ABean rslt = new ABean();
         rslt.put("success", true);
         return rslt;
     }
 
+    @Override
     public List<ABean> exctarctBean(HttpServletRequest request) throws Exception {
         List<ABean> abeans = null;
         String abeanJson = null;
@@ -185,6 +221,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return abeans;
     }
 
+    @Override
     public <T> T exctarctBean(HttpServletRequest request, Class<T> clazz) throws Exception {
         T bean = null;
         String abeanJson = null;
@@ -197,6 +234,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return bean;
     }
 
+    @Override
     public ABean setBean(ABean bean, String attrName, Object attrValue, Class<?> attrType) throws Exception {
         if(bean == null)
             bean = new ABean();
@@ -207,6 +245,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return bean;
     }
 
+    @Override
     public List<Param> setBeanToBioParams(ABean bean, List<Param> params) throws Exception {
         if(params == null)
             params = new ArrayList<>();
@@ -217,6 +256,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return params;
     }
 
+    @Override
     public <T> List<T> parsIdsTyped(String ids, Class<T> clazz) throws Exception {
         List<T> rslt = new ArrayList<>();
         String[] idsArrayOrig = Strings.split(ids, ",", ";", " ");
@@ -226,6 +266,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return rslt;
     }
 
+    @Override
     public List<Object> parsIds(String ids, Class<?> clazz) throws Exception {
         List<Object> rslt = new ArrayList<>();
         String[] idsArrayOrig = Strings.split(ids, ",", ";", " ");
@@ -235,11 +276,13 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         return rslt;
     }
 
+    @Override
     public void setBioParamToRequest(String paramName, Object paramValue, HttpServletRequest request) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         Paramus.setParamValue(queryParams.bioParams, paramName, paramValue);
     }
 
+    @Override
     public void setSorterToRequest(String fieldName, Sort.Direction direction, HttpServletRequest request) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         if(queryParams.sort == null)
@@ -253,63 +296,92 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         }
     }
 
+    @Override
     public void setBeanToRequest(ABean bean, HttpServletRequest request) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         setBeanToBioParams(bean, queryParams.bioParams);
     }
 
+    @Override
+    public boolean bioParamExistsInRequest(String paramName, HttpServletRequest request) throws Exception {
+        return ((WrappedRequest)request).bioQueryParamExists(paramName);
+    }
+
+    @Override
     public <T> T getBioParamFromRequest(String paramName, HttpServletRequest request, Class<T> paramType, T defaultValue) throws Exception {
         return ((WrappedRequest)request).getBioQueryParam(paramName, paramType, defaultValue);
     }
 
+    @Override
     public <T> T getBioParamFromRequest(String paramName, HttpServletRequest request, Class<T> paramType) throws Exception {
         return  getBioParamFromRequest(paramName, request, paramType, null);
     }
 
+    @Override
     public ABean delete(String bioCode, List<Object> ids, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.deleteBeans(bioCode, request, appService, ids);
     }
 
+    @Override
     public void exec(String bioCode, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         RestApiAdapter.exec(bioCode, request, appService);
     }
 
-    public void exec(String bioCode, Object params, User user) throws Exception {
+    @Override
+    public void exec(String bioCode, Object params) throws Exception {
         AppService appService = getAppService();
-        RestApiAdapter.exec(bioCode, params, appService, user);
+        RestApiAdapter.exec(bioCode, params, appService, ServletContextHolder.getCurrentUser());
     }
 
+    @Override
+    public void execLocal(SQLContext context, SQLDefinition sqlDefinition, Object params) throws Exception {
+        AppService appService = getAppService();
+        RestApiAdapter.execLocal(sqlDefinition, params, context);
+    }
+
+    @Override
     public <T> T selectScalar(final String bioCode, final HttpServletRequest request, final Class<T> clazz, final T defaultValue) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.selectScalar(bioCode, request, appService, clazz, defaultValue, ((WrappedRequest) request).getUser());
     }
 
+    @Override
     public List<ABean> save(String bioCode, List<ABean> abeans, HttpServletRequest request) throws Exception {
         AppService appService = getAppService();
         return RestApiAdapter.saveBeans(bioCode, request, appService, abeans);
     }
 
-    public <T> List<T> getList0(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, boolean forceAll, Class<T> calzz) throws Exception {
+    @Override
+    public <T> List<T> getList0(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
         SQLDefinition sqldef = appService.getSQLDefinition(bioCode);
-        return RestApiAdapter.loadPage0Ext(sqldef, context, prms, forceAll, calzz, filterAndSorter);
+        return RestApiAdapter.loadPage0Ext(sqldef, context, prms, calzz, filterAndSorter);
     }
 
-    public void execBatch(final SQLActionVoid0 action, final User user) throws Exception {
+    @Override
+    public <T> List<T> getList0All(SQLContext context, String bioCode, FilterAndSorter filterAndSorter, Object prms, Class<T> calzz) throws Exception {
         AppService appService = getAppService();
-        RestApiAdapter.execBatch(appService.getSQLContext(), action, user);
+        SQLDefinition sqldef = appService.getSQLDefinition(bioCode);
+        return RestApiAdapter.loadAll0Ext(sqldef, context, prms, calzz, filterAndSorter);
+    }
+    @Override
+    public void execBatch(final SQLActionVoid0 action) throws Exception {
+        AppService appService = getAppService();
+        RestApiAdapter.execBatch(appService.getSQLContext(), action, ServletContextHolder.getCurrentUser());
     }
 
-    public <T> T execBatch(final SQLActionScalar0<T> action, final User user) throws Exception {
+    @Override
+    public <T> T execBatch(final SQLActionScalar0<T> action) throws Exception {
         AppService appService = getAppService();
-        return RestApiAdapter.execBatch(appService.getSQLContext(), action, user);
+        return RestApiAdapter.execBatch(appService.getSQLContext(), action, ServletContextHolder.getCurrentUser());
     }
 
-    public <P, T> T execBatch(final SQLActionScalar1<P, T> action, P param, final User user) throws Exception {
+    @Override
+    public <P, T> T execBatch(final SQLActionScalar1<P, T> action, P param) throws Exception {
         AppService appService = getAppService();
-        return RestApiAdapter.execBatch(appService.getSQLContext(), action, param, user);
+        return RestApiAdapter.execBatch(appService.getSQLContext(), action, param, ServletContextHolder.getCurrentUser());
     }
 
 }

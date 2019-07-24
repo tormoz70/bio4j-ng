@@ -44,7 +44,6 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final User user,
-            final boolean forceAll,
             final FilterAndSorter filterAndSorter,
             final boolean forceCalcCount
             ) throws Exception {
@@ -52,26 +51,44 @@ public class RestApiAdapter {
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        if(pageSize == 0 || forceAll)
+        if(pageSize == 0)
             return CrudReaderApi.loadAll(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user);
         else
             return CrudReaderApi.loadPage(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, forceCalcCount, user);
+    }
+    public static ABeanPage loadAll(
+            final AppService module,
+            final String bioCode,
+            final Object params,
+            final User user,
+            final FilterAndSorter filterAndSorter,
+            final boolean forceCalcCount
+    ) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
+        final SQLContext context = module.getSQLContext();
+        final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
+        return CrudReaderApi.loadAll(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user);
     }
 
     public static ABeanPage loadPage(
             final AppService module,
             final String bioCode,
             final Object params,
-            final User user,
-            final boolean forceAll) throws Exception {
-        return loadPage(module, bioCode, params, user, forceAll, null, false);
+            final User user) throws Exception {
+        return loadPage(module, bioCode, params, user, null, false);
+    }
+    public static ABeanPage loadAll(
+            final AppService module,
+            final String bioCode,
+            final Object params,
+            final User user) throws Exception {
+        return loadAll(module, bioCode, params, user, null, false);
     }
 
     public static ABeanPage loadPage(
             final String bioCode,
             final HttpServletRequest request,
-            final AppService module,
-            final boolean forceAll) throws Exception {
+            final AppService module) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
@@ -89,15 +106,30 @@ public class RestApiAdapter {
             fs.setFilter(queryParams.filter);
         }
         boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
-        return loadPage(module, bioCode, params, user, forceAll, fs, forceCalcCount);
+        return loadPage(module, bioCode, params, user, fs, forceCalcCount);
     }
-
-
-    public static ABeanPage loadPage(
+    public static ABeanPage loadAll(
             final String bioCode,
             final HttpServletRequest request,
             final AppService module) throws Exception {
-        return loadPage(bioCode, request, module, false);
+        final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
+        final List<Param> params = _extractBioParams(queryParams);
+        final User user = ((WrappedRequest)request).getUser();
+        FilterAndSorter fs = null;
+        if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
+            try {
+                fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+            } catch (Exception e) {
+                LOG.error(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
+            }
+        }
+        if(fs == null) {
+            fs = new FilterAndSorter();
+            fs.setSorter(queryParams.sort);
+            fs.setFilter(queryParams.filter);
+        }
+        boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
+        return loadAll(module, bioCode, params, user, fs, forceCalcCount);
     }
 
     public static ABean calcTotalCount(
@@ -132,24 +164,34 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final User user,
-            final boolean forceAll,
             final Class<T> beanType,
             final FilterAndSorter filterAndSorter) throws Exception {
         final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        if(pageSize == 0 || forceAll)
+        if(pageSize == 0)
             return CrudReaderApi.loadAllExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
         else
             return CrudReaderApi.loadPageExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
+    }
+    public static <T> List<T> loadAllExt(
+            final AppService module,
+            final String bioCode,
+            final Object params,
+            final User user,
+            final Class<T> beanType,
+            final FilterAndSorter filterAndSorter) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
+        final SQLContext context = module.getSQLContext();
+        final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
+        return CrudReaderApi.loadAllExt(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, user, beanType);
     }
 
     public static <T> List<T> loadPageExt(
             final AppService module,
             final String bioCode,
             final Object params,
-            final boolean forceAll,
             final Class<T> beanType,
             final FilterAndSorter filterAndSorter) throws Exception {
         final List<Param> prms = DbUtils.decodeParams(params);
@@ -158,7 +200,21 @@ public class RestApiAdapter {
         if(usrParam != null)
             user = (User)usrParam.getValue();
 
-        return loadPageExt(module, bioCode, params, user, forceAll, beanType, filterAndSorter);
+        return loadPageExt(module, bioCode, params, user, beanType, filterAndSorter);
+    }
+    public static <T> List<T> loadAllExt(
+            final AppService module,
+            final String bioCode,
+            final Object params,
+            final Class<T> beanType,
+            final FilterAndSorter filterAndSorter) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
+        User user = null;
+        Param usrParam  = Paramus.getParam(prms, "p_userbean");
+        if(usrParam != null)
+            user = (User)usrParam.getValue();
+
+        return loadAllExt(module, bioCode, params, user, beanType, filterAndSorter);
     }
 
     public static <T> List<T> loadPageExt(
@@ -166,18 +222,31 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final User user,
-            final Class<T> beanType,
-            final boolean forceAll) throws Exception {
-        return loadPageExt(module, bioCode, params, user, forceAll, beanType, null);
+            final Class<T> beanType) throws Exception {
+        return loadPageExt(module, bioCode, params, user, beanType, null);
+    }
+    public static <T> List<T> loadAllExt(
+            final AppService module,
+            final String bioCode,
+            final Object params,
+            final User user,
+            final Class<T> beanType) throws Exception {
+        return loadAllExt(module, bioCode, params, user, beanType, null);
     }
 
     public static <T> List<T> loadPageExt(
             final AppService module,
             final String bioCode,
             final Object params,
-            final Class<T> beanType,
-            final boolean forceAll) throws Exception {
-        return loadPageExt(module, bioCode, params, forceAll, beanType, null);
+            final Class<T> beanType) throws Exception {
+        return loadPageExt(module, bioCode, params, beanType, null);
+    }
+    public static <T> List<T> loadAllExt(
+            final AppService module,
+            final String bioCode,
+            final Object params,
+            final Class<T> beanType) throws Exception {
+        return loadAllExt(module, bioCode, params, beanType, null);
     }
 
     public static HSSFWorkbook loadToExcel(
@@ -207,8 +276,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final AppService module,
-            final Class<T> beanType,
-            final boolean forceAll) throws Exception {
+            final Class<T> beanType) throws Exception {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
@@ -220,14 +288,25 @@ public class RestApiAdapter {
             fs.setSorter(queryParams.sort);
             fs.setFilter(queryParams.filter);
         }
-        return loadPageExt(module, bioCode, params, user, forceAll, beanType, fs);
+        return loadPageExt(module, bioCode, params, user, beanType, fs);
     }
-    public static <T> List<T> loadPageExt(
+    public static <T> List<T> loadAllExt(
             final String bioCode,
             final HttpServletRequest request,
             final AppService module,
             final Class<T> beanType) throws Exception {
-        return loadPageExt(bioCode, request, module, beanType, false);
+        final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
+        final List<Param> params = _extractBioParams(queryParams);
+        final User user = ((WrappedRequest)request).getUser();
+        FilterAndSorter fs = null;
+        if(!Strings.isNullOrEmpty(queryParams.jsonData))
+            fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+        if(fs == null) {
+            fs = new FilterAndSorter();
+            fs.setSorter(queryParams.sort);
+            fs.setFilter(queryParams.filter);
+        }
+        return loadAllExt(module, bioCode, params, user, beanType, fs);
     }
 
     public static ABean getMetadata(
@@ -390,15 +469,23 @@ public class RestApiAdapter {
             final SQLDefinition sqlDefinition,
             final SQLContext context,
             final Object params,
-            final boolean forceAll,
             final Class<T> beanType,
             final FilterAndSorter filterAndSorter) throws Exception {
         final List<Param> prms = DbUtils.decodeParams(params);
         int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        if(pageSize == 0 || forceAll)
+        if(pageSize == 0)
             return CrudReaderApi.loadAll0Ext(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, beanType);
         else
             return CrudReaderApi.loadPage0Ext(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, beanType);
+    }
+    public static <T> List<T> loadAll0Ext(
+            final SQLDefinition sqlDefinition,
+            final SQLContext context,
+            final Object params,
+            final Class<T> beanType,
+            final FilterAndSorter filterAndSorter) throws Exception {
+        final List<Param> prms = DbUtils.decodeParams(params);
+        return CrudReaderApi.loadAll0Ext(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, beanType);
     }
 
 
