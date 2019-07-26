@@ -11,22 +11,17 @@ import java.util.Date;
 
 public class H2ApiTest {
 
-    private User usr;
+    FCloudDBApi<FileSpec> fCloudDBApi = FCloudDBApi.getInstance().initTableType(FileSpec.class);
 
     @BeforeTest
     public void initTests() {
-        usr = new User();
-        usr.setRemoteClient("tester-client");
-        usr.setInnerUid("tester-user-uid");
-        usr.setOrgId("tester-user-org-uid");
-        usr.setLogin("tester-user-login");
     }
 
     @Test(priority = 0)
     public void getConnectionTest() throws Exception {
         Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
-        FCloudDBApi.dropDB(conn, "fcloud");
-        FCloudDBApi.initDB(conn, "fcloud");
+        fCloudDBApi.dropDB(conn);
+        fCloudDBApi.initDB(conn);
     }
 
     @Test(priority = 1, enabled = true)
@@ -45,21 +40,21 @@ public class H2ApiTest {
         fileSpec.setUploadUID("test-file-upload-uid");
         fileSpec.setAdesc("test");
 
-        FileSpec rslt = FCloudDBApi.storeFileSpec(conn, fileSpec, usr);
-        Assert.assertEquals(rslt.getOwnerUserUid(), usr.getInnerUid());
+        fCloudDBApi.storeFileSpec(conn, fileSpec);
+        Assert.assertTrue(true);
     }
 
     @Test(priority = 2, enabled = true)
     public void readFileDescTest() throws Exception {
         Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
-        FileSpec fileSpec = FCloudDBApi.readFileSpec(conn, "test-file-uid", usr);
+        FileSpec fileSpec = fCloudDBApi.readFileSpec(conn, "test-file-uid");
         Assert.assertEquals(fileSpec.getFileNameOrig(), "test-file-name");
     }
 
     @Test(priority = 3, enabled = true)
     public void removeFileDescTest() throws Exception {
         Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
-        FCloudDBApi.removeFileSpec(conn, "test-file-uid", usr);
+        fCloudDBApi.removeFileSpec(conn, "test-file-uid");
     }
 
 }

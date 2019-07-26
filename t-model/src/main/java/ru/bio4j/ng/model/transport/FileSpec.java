@@ -4,28 +4,46 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FileSpec<T extends FileSpec> {
+public class FileSpec {
+    @DbToLower
+    @DbCaseInsensitive
     private String uploadUID;       // уникальный идентификатор используемый системой на стороне клиента (может быть и null)
-//    private String fcloudSpace;     // уникальный идентификатор директории в хранилище определяет путь к файлу
+    @DbToLower
+    @DbCaseInsensitive
     private String fileUUID;        // уникальный идентификатор в хранилище определяет путь к файлу
     private Date creDatetime;       // дата/время сохранения в хранилище
     private Date regDatetime;       // дата/время регистрации в БД
+    @DbToLower
+    @DbCaseInsensitive
     private String fileNameOrig;    // оригинальное имя файла
     private long fileSize;          // размер файла в байтах
     private Date fileDatetime;      // дата/время последнего изменения файла
+    @DbToLower
+    @DbCaseInsensitive
     private String md5;             // md5
+    @DbToLower
+    @DbCaseInsensitive
     private String contentType;     // тип контента
     private String remoteIpAddress; // IP с которого загружен файл
     private String uploadType;      // тип загрузки (зависит от реализации)
     private String adesc;           // описание файла (зависит от реализации)
     private String extParam;        // доп параметры JSON
+    @DbToLower
+    @DbCaseInsensitive
     private String serviceUID;      // ID сервиса, который обработал/принял файл (зависит от реализации)
+    @DbToLower
+    @DbCaseInsensitive
     private String ownerUserUid;    // UID пользователя, который загрузил файл
     private Long fileId;            // ID файла в БД (после регистрации в БД)
+    @DbToLower
+    @DbCaseInsensitive
     private String parentFileUUID;  // уникальный идентификатор родительского файла в хранилище определяет путь к файлу
+    @DbToLower
+    @DbCaseInsensitive
     private String parentFileNameOrig;    // оригинальное имя родительского файла
     private Long parentFileId;            // ID родительского файла в БД (после регистрации в БД)
-    private List<T> innerFiles; // Вложенные файла (зависит от реализации)
+    @DbSkip
+    private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
 
     public String getFileUUID() {
         return fileUUID;
@@ -147,11 +165,11 @@ public class FileSpec<T extends FileSpec> {
         this.fileId = fileId;
     }
 
-    public List<T> getInnerFiles() {
+    public List<FileSpec> getInnerFiles() {
         return innerFiles;
     }
 
-    public void setInnerFiles(List<T> innerFiles) {
+    public void setInnerFiles(List<FileSpec> innerFiles) {
         this.innerFiles = innerFiles;
     }
 
@@ -187,8 +205,8 @@ public class FileSpec<T extends FileSpec> {
         this.parentFileId = parentFileId;
     }
 
-    public static <T extends FileSpec> Builder<T> newBuilder() {
-        return new Builder<>();
+    public static <T extends FileSpec> Builder newBuilder() {
+        return new Builder();
     }
 
 //    public String getFcloudSpace() {
@@ -199,7 +217,7 @@ public class FileSpec<T extends FileSpec> {
 //        this.fcloudSpace = fcloudSpace;
 //    }
 
-    public static class Builder<T extends FileSpec> {
+    public static class Builder {
         protected String uploadUID;
         protected String fileUUID;
         protected Date regDatetime;
@@ -218,7 +236,7 @@ public class FileSpec<T extends FileSpec> {
         protected String parentFileUUID;
         protected String parentFileNameOrig;
         protected Long parentFileId;
-        protected List<T> innerFiles;
+        protected List<FileSpec> innerFiles;
 
         protected Builder(){}
 
@@ -292,7 +310,7 @@ public class FileSpec<T extends FileSpec> {
             return this;
         }
 
-        public Builder addInnerFile(T innerFile) {
+        public Builder addInnerFile(FileSpec innerFile) {
             if(this.innerFiles == null)
                 this.innerFiles = new ArrayList<>();
             this.innerFiles.add(innerFile);
@@ -319,8 +337,8 @@ public class FileSpec<T extends FileSpec> {
             return this;
         }
 
-        public T build(Class<T> clazz) throws Exception {
-            T result = clazz.newInstance();
+        public FileSpec build() throws Exception {
+            FileSpec result = new FileSpec();
             result.setUploadUID(this.uploadUID);
             result.setFileUUID(fileUUID);
             result.setCreDatetime(new Date());

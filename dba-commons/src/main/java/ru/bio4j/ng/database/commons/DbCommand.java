@@ -8,6 +8,7 @@ import ru.bio4j.ng.commons.types.DelegateAction1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
@@ -109,17 +110,21 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
 
     protected static String getSQL2Execute(String sql, List<Param> params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{DbCommand.Params(before exec): ");
-        sb.append(Paramus.paramsAsString(params));
-        sb.append("}");
+        if(params != null) {
+            sb.append("{DbCommand.Params(before exec): ");
+            sb.append(Paramus.paramsAsString(params));
+            sb.append("}");
+        }
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
     protected static String getSQL2Execute(String sql, String params) {
         StringBuilder sb = new StringBuilder();
-        sb.append("{DbCommand.Params(before exec): {\n");
-        sb.append(params);
-        sb.append("}}");
+        if(!Strings.isNullOrEmpty(params)) {
+            sb.append("{DbCommand.Params(before exec): {\n");
+            sb.append(params);
+            sb.append("}}");
+        }
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 

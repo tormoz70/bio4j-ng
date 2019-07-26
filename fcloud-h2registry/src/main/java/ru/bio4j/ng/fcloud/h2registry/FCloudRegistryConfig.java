@@ -3,36 +3,16 @@ package ru.bio4j.ng.fcloud.h2registry;
 import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.model.transport.SQLContextConfig;
 
-public class FCloudConfig extends SQLContextConfig {
-    @Prop(name = "fcloud.root.path")
-    private String cloudRootPath = null;
+public class FCloudRegistryConfig extends SQLContextConfig {
 
-    @Prop(name = "fcloud.tmp.path")
-    private String cloudTmpPath = null;
-
-    @Prop(name = "fcloud.db.connection.url")
+    @Prop(name = "fcloud.registry.connection.url")
     private String dbConnectionUrl = null;
-    @Prop(name = "fcloud.db.connection.username")
+    @Prop(name = "fcloud.registry.connection.username")
     private String dbConnectionUsername = null;
-    @Prop(name = "fcloud.db.connection.password")
+    @Prop(name = "fcloud.registry.connection.password")
     private String dbConnectionPassword = null;
 
 
-    public String getCloudRootPath() {
-        return cloudRootPath;
-    }
-
-    public void setCloudRootPath(String cloudRootPath) {
-        this.cloudRootPath = cloudRootPath;
-    }
-
-    public String getCloudTmpPath() {
-        return cloudTmpPath;
-    }
-
-    public void setCloudTmpPath(String cloudTmpPath) {
-        this.cloudTmpPath = cloudTmpPath;
-    }
 
     @Override
     public String getDbConnectionUrl() {

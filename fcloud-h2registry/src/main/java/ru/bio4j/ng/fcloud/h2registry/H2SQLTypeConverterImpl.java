@@ -31,7 +31,7 @@ public class H2SQLTypeConverterImpl extends SqlTypeConverterImpl {
     public int read (Class<?> type, int stringSize, boolean isCallableStatment) {
         if (type == ResultSet.class)
             return Types.OTHER;
-         else
+        else
             return this.read0(type, stringSize, isCallableStatment);
     }
 
