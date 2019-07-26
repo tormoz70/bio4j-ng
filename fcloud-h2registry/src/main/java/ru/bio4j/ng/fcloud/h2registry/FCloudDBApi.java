@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class FCloudDBApi<T> {
+public class FCloudDBApi {
     private static final Logger LOG = LoggerFactory.getLogger(FCloudDBApi.class);
 
     private FCloudDBApi() { /* hidden constructor */ }
@@ -38,12 +38,6 @@ public class FCloudDBApi<T> {
     private static final String CS_FILEUUID_FLDNAME = "FILEUUID";
     private static final String CS_PARENTFILEUUID_FLDNAME = "PARENTFILEUUID";
     private static final String CS_TABLENAME = "FILEREGISTRY";
-    private Class<T> tableType = null;
-    public synchronized FCloudDBApi<T> initTableType(Class<T> tableType) {
-        if(this.tableType == null)
-            this.tableType = tableType;
-        return this;
-    }
 
     public static String encodeType(MetaType metaType) {
         if(metaType == MetaType.UNDEFINED || metaType == MetaType.STRING)
@@ -71,7 +65,7 @@ public class FCloudDBApi<T> {
         sb.append(String.format("CREATE TABLE IF NOT EXISTS %s(\n", CS_TABLENAME));
         boolean fileUUIDDefined = false;
         boolean parentFileUUIDDefined = false;
-        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(tableType)) {
+        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(FileSpec.class)) {
             String fldName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);
             boolean caseInsensitive = Utl.findAnnotation(DbCaseInsensitive.class, fld) != null;
@@ -85,21 +79,21 @@ public class FCloudDBApi<T> {
             sb.append(String.format("  %s  %s,\n", fldName.toUpperCase(), fldType.toUpperCase()));
         }
         if(!fileUUIDDefined)
-            throw new Exception(String.format("Field %s not defined in type %s!", CS_FILEUUID_FLDNAME, tableType.getCanonicalName()));
+            throw new Exception(String.format("Field %s not defined in type %s!", CS_FILEUUID_FLDNAME, FileSpec.class.getCanonicalName()));
         if(!parentFileUUIDDefined)
-            throw new Exception(String.format("Field %s not defined in type %s!", CS_PARENTFILEUUID_FLDNAME, tableType.getCanonicalName()));
+            throw new Exception(String.format("Field %s not defined in type %s!", CS_PARENTFILEUUID_FLDNAME, FileSpec.class.getCanonicalName()));
 
         sb.append(String.format("  CONSTRAINT PK_%s PRIMARY KEY (%s)\n", CS_TABLENAME, CS_FILEUUID_FLDNAME));
         sb.append(String.format(")", CS_FILEUUID_FLDNAME));
         H2Api.getInstance().execSql(conn, sb.toString(), null);
     }
 
-    public void storeFileSpec(final Connection conn, final T obj) throws Exception {
+    public void storeFileSpec(final Connection conn, final FileSpec obj) throws Exception {
         StringBuilder fieldssb = new StringBuilder();
         StringBuilder varssb = new StringBuilder();
         //sb.append(String.format("INSERT INTO %s(\n", tableName.toUpperCase()));
         List<Param> prms = new ArrayList<>();
-        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(tableType)) {
+        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(FileSpec.class)) {
             boolean skip = Utl.findAnnotation(DbSkip.class, fld) != null;
             if(!skip) {
                 String fldName = fld.getName();
@@ -122,6 +116,13 @@ public class FCloudDBApi<T> {
         }
         String sql = String.format("INSERT INTO %s(%s)\n VALUES(%s)", CS_TABLENAME, fieldssb, varssb);
         H2Api.getInstance().execSql(conn, sql, prms);
+
+        if(obj.getInnerFiles()!= null && obj.getInnerFiles().size() > 0){
+            for (FileSpec child : obj.getInnerFiles()) {
+
+            }
+        }
+
     }
 
     private static <T> T getColumnValue(final ResultSet resultSet, final String columnName, Class<T> type) throws Exception {
@@ -137,9 +138,9 @@ public class FCloudDBApi<T> {
     }
 
 
-    private T restoreFileSpec(final ResultSet resultSet) throws Exception {
-        T rslt = tableType.newInstance();
-        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(tableType)) {
+    private FileSpec restoreFileSpec(final ResultSet resultSet) throws Exception {
+        FileSpec rslt = new FileSpec();
+        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(FileSpec.class)) {
             boolean skip = Utl.findAnnotation(DbSkip.class, fld) != null;
             if(!skip) {
                 String fldName = fld.getName();
@@ -154,10 +155,10 @@ public class FCloudDBApi<T> {
         return rslt;
     }
 
-    public T readFileSpec(final Connection conn, final String fileUid) throws Exception {
-        T rslt = null;
+    public FileSpec readFileSpec(final Connection conn, final String fileUid) throws Exception {
+        FileSpec rslt = null;
         StringBuilder fieldssb = new StringBuilder();
-        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(tableType)) {
+        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(FileSpec.class)) {
             boolean skip = Utl.findAnnotation(DbSkip.class, fld) != null;
             if(!skip) {
                 String fldName = fld.getName();
@@ -178,9 +179,11 @@ public class FCloudDBApi<T> {
         //load children
         sql = String.format("SELECT %s FROM %s \n WHERE %s = :%s", fieldssb, CS_TABLENAME, CS_PARENTFILEUUID_FLDNAME, CS_FILEUUID_FLDNAME);
         try (ResultSet resultSet = H2Api.getInstance().openSql(conn, sql, prms)) {
-            T child;
+            FileSpec child;
+            rslt.setInnerFiles(new ArrayList());
             while(resultSet.next()) {
                 child = restoreFileSpec(resultSet);
+                rslt.getInnerFiles().add(child);
             }
         }
 

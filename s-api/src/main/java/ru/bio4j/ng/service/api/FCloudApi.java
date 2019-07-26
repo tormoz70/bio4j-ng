@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public interface FCloudApi<T extends FileSpec> {
+public interface FCloudApi {
 
     /**
      * Register file in FCloud Service
@@ -19,14 +19,14 @@ public interface FCloudApi<T extends FileSpec> {
      * @param usr - user spec
      * @throws Exception
      */
-    void regFile(final T fileSpec, final InputStream inputStream, final User usr) throws Exception;
+    void regFile(final FileSpec fileSpec, final InputStream inputStream, final User usr) throws Exception;
 
-    List<T> getFileList(
+    List<FileSpec> getFileList(
             final List<Param> params,
             final User usr
     ) throws Exception;
 
-    T getFileSpec(
+    FileSpec getFileSpec(
             final String fileUid,
             final User usr
     ) throws Exception;
@@ -36,4 +36,7 @@ public interface FCloudApi<T extends FileSpec> {
     void removeFile(final String fileUUID, final User usr) throws Exception;
 
     HashMap<String, SpaceStat> getSpaceStat();
+
+    String getServiceUID();
+
 }

@@ -5,29 +5,19 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Jsons;
-import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.FileSpec;
-import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.SpaceStat;
-import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.ServiceBase;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.*;
 import java.sql.Connection;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
 
 @Component(managedservice="fcloud.registry.config")
 @Instantiate
-@Provides(specifications = FCloudApi.class)
-public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implements FCloudRegistry<FileSpec> {
+@Provides(specifications = FCloudRegistry.class)
+public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implements FCloudRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(FCloudRegistryImpl.class);
 
     @Requires
@@ -62,11 +52,10 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
     }
 
     private volatile boolean databaseInited = false;
-    private volatile FCloudDBApi<FileSpec> fCloudDBApi = null;
+    private volatile FCloudDBApi fCloudDBApi = null;
     private synchronized void initDatabase() throws Exception {
         if(!databaseInited) {
             fCloudDBApi = FCloudDBApi.getInstance();
-            fCloudDBApi.initTableType(FileSpec.class);
             LOG.debug("About to init FCLOUDREG database...");
             dbConnectionUrl = this.getConfig().getDbConnectionUrl();
             LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionUrl = %s", dbConnectionUrl));

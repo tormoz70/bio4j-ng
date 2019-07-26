@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class H2ApiTest {
 
-    FCloudDBApi<FileSpec> fCloudDBApi = FCloudDBApi.getInstance().initTableType(FileSpec.class);
+    FCloudDBApi fCloudDBApi = FCloudDBApi.getInstance();
 
     @BeforeTest
     public void initTests() {

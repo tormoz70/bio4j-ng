@@ -1,5 +1,8 @@
 package ru.bio4j.ng.model.transport;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import flexjson.JSON;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,8 +45,22 @@ public class FileSpec {
     @DbCaseInsensitive
     private String parentFileNameOrig;    // оригинальное имя родительского файла
     private Long parentFileId;            // ID родительского файла в БД (после регистрации в БД)
+
     @DbSkip
     private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
+
+    @JSON(include = false)
+    @JsonIgnore
+    @DbSkip
+    private Exception error;
+
+    public Exception getError() {
+        return error;
+    }
+
+    public void setError(Exception error) {
+        this.error = error;
+    }
 
     public String getFileUUID() {
         return fileUUID;
@@ -237,6 +254,7 @@ public class FileSpec {
         protected String parentFileNameOrig;
         protected Long parentFileId;
         protected List<FileSpec> innerFiles;
+        protected Exception error;
 
         protected Builder(){}
 
@@ -317,6 +335,11 @@ public class FileSpec {
             return this;
         }
 
+        public Builder error(Exception error) {
+            this.error = error;
+            return this;
+        }
+
         public Builder regDatetime(Date regDatetime) {
             this.regDatetime = regDatetime;
             return this;
@@ -359,6 +382,7 @@ public class FileSpec {
             result.setParentFileNameOrig(parentFileNameOrig);
             result.setParentFileId(parentFileId);
             result.setInnerFiles(innerFiles);
+            result.setError(error);
             return result;
         }
     }
