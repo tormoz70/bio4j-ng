@@ -86,20 +86,23 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
 
     private void storeFileSpec2db(final FileSpec fileSpec) throws Exception {
         initDatabase();
-        Connection conn = getDbConnection();
-        fCloudDBApi.storeFileSpec(conn, fileSpec);
+        try(Connection conn = getDbConnection()) {
+            fCloudDBApi.storeFileSpec(conn, fileSpec);
+        }
     }
 
     private void removeFileSpecFromDb(final String fileUUID) throws Exception {
         initDatabase();
-        Connection conn = getDbConnection();
-        fCloudDBApi.removeFileSpec(conn, fileUUID);
+        try(Connection conn = getDbConnection()) {
+            fCloudDBApi.removeFileSpec(conn, fileUUID);
+        }
     }
 
     private FileSpec readFileSpecFromDb(final String fileUUID) throws Exception {
         initDatabase();
-        Connection conn = getDbConnection();
-        return fCloudDBApi.readFileSpec(conn, fileUUID);
+        try(Connection conn = getDbConnection()) {
+            return fCloudDBApi.readFileSpec(conn, fileUUID);
+        }
     }
 
     @Override
@@ -109,7 +112,7 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
 
     @Override
     public FileSpec getFileSpec(final String fileUid) throws Exception {
-        return null;
+        return readFileSpecFromDb(fileUid);
     }
 
     @Override

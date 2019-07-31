@@ -160,7 +160,7 @@ public class FCloudDBApi {
         StringBuilder fieldssb = new StringBuilder();
         for (java.lang.reflect.Field fld : Utl.getAllObjectFields(FileSpec.class)) {
             boolean skip = Utl.findAnnotation(DbSkip.class, fld) != null;
-            if(!skip) {
+            if (!skip) {
                 String fldName = fld.getName();
                 Prop p = Utl.findAnnotation(Prop.class, fld);
                 if (p != null)
@@ -177,13 +177,15 @@ public class FCloudDBApi {
             }
         }
         //load children
-        sql = String.format("SELECT %s FROM %s \n WHERE %s = :%s", fieldssb, CS_TABLENAME, CS_PARENTFILEUUID_FLDNAME, CS_FILEUUID_FLDNAME);
-        try (ResultSet resultSet = H2Api.getInstance().openSql(conn, sql, prms)) {
-            FileSpec child;
-            rslt.setInnerFiles(new ArrayList());
-            while(resultSet.next()) {
-                child = restoreFileSpec(resultSet);
-                rslt.getInnerFiles().add(child);
+        if (rslt != null) {
+            sql = String.format("SELECT %s FROM %s \n WHERE %s = :%s", fieldssb, CS_TABLENAME, CS_PARENTFILEUUID_FLDNAME, CS_FILEUUID_FLDNAME);
+            try (ResultSet resultSet = H2Api.getInstance().openSql(conn, sql, prms)) {
+                FileSpec child;
+                rslt.setInnerFiles(new ArrayList());
+                while (resultSet.next()) {
+                    child = restoreFileSpec(resultSet);
+                    rslt.getInnerFiles().add(child);
+                }
             }
         }
 

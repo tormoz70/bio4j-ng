@@ -46,6 +46,10 @@ public class FileSpec {
     private String parentFileNameOrig;    // оригинальное имя родительского файла
     private Long parentFileId;            // ID родительского файла в БД (после регистрации в БД)
 
+    @DbToLower
+    @DbCaseInsensitive
+    private String fullStorePath;       // Полный путь, куда сохранен файл
+
     @DbSkip
     private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
 
@@ -224,6 +228,14 @@ public class FileSpec {
 
     public static <T extends FileSpec> Builder newBuilder() {
         return new Builder();
+    }
+
+    public String getFullStorePath() {
+        return fullStorePath;
+    }
+
+    public void setFullStorePath(String fullStorePath) {
+        this.fullStorePath = fullStorePath;
     }
 
 //    public String getFcloudSpace() {

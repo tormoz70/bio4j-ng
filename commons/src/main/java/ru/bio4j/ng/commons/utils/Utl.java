@@ -765,6 +765,9 @@ public class Utl {
         } else
             throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
     }
+    public static InputStream openFile(Path filePath) throws IOException {
+        return openFile(filePath.toString());
+    }
 
     public static boolean fileExists(String filePath) {
         return Files.exists(Paths.get(filePath));

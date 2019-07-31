@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.exts.XStreamUtility;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.database.commons.DbContextFactory;
-import ru.bio4j.ng.model.transport.Prop;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import org.slf4j.Logger;
@@ -16,10 +16,7 @@ import org.testng.annotations.Test;
 import ru.bio4j.ng.database.commons.DbUtils;
 import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.model.transport.XLRCfg;
 
 import java.sql.*;
 import java.util.*;
@@ -948,5 +945,69 @@ public class SQLFactoryTest {
         Assert.assertEquals(rslt, "qwe");
     }
 
+
+    @Test(enabled = true)
+    public void testSQLCommandOpenCursor888() throws Exception {
+
+        SQLContext context = DbContextFactory.createApache(
+                SQLConnectionPoolConfig.builder()
+                        .poolName("TEST-CONN-POOL-123")
+                        .dbDriverName(testDBDriverName)
+                        .dbConnectionUrl(testDBUrl)
+                        .dbConnectionUsr("GIVCADMIN")
+                        .dbConnectionPwd("j12")
+                        .build(),
+                OraContext.class);
+
+        final User usr = new User();
+        usr.setOrgId("1009686");
+        usr.setRoles("21");
+        usr.setGrants("151,152");
+
+        int rrr = context.execBatch((ctx) -> {
+
+            String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("888.sql"));
+
+            List<Param> params = new ArrayList<>();
+
+/*
+	   1-rlocale(in)(VARCHAR)..............................[null];
+	   2-currid(in)(DECIMAL)...............................[null];
+	   3-id(in)(VARCHAR)...................................[null];
+	   4-datestart(in)(VARCHAR)............................"2019.07.07";
+	   5-dateend(in)(VARCHAR).............................."2019.08.02";
+	   6-p_sys_curusr_org_uid(in)(VARCHAR)................."1009686";
+	   7-p_sys_curusr_roles(in)(VARCHAR)..................."21";
+	   8-p_sys_curusr_grants(in)(VARCHAR).................."151,152";
+	   9-query$value(in)(VARCHAR)..........................[null];
+	  10-pagination$offset(in)(DECIMAL)....................[0];
+	  11-pagination$limit(in)(DECIMAL).....................[50];
+	 */
+
+//            Paramus.setParamValue(params, "rlocale", null);
+//            Paramus.setParamValue(params, "currid", null);
+//            Paramus.setParamValue(params, "id", null);
+            Paramus.setParamValue(params, "datestart", "2019.07.07");
+            Paramus.setParamValue(params, "dateend", "2019.08.02");
+            Paramus.setParamValue(params, "p_sys_curusr_org_uid", "1009686");
+            Paramus.setParamValue(params, "p_sys_curusr_roles", "21");
+            Paramus.setParamValue(params, "p_sys_curusr_grants", "151,152");
+//            Paramus.setParamValue(params, "query$value", null);
+            Paramus.setParamValue(params, "pagination$offset", 0);
+            Paramus.setParamValue(params, "pagination$limit", 50);
+
+
+            Var var = new Var();
+            ctx.createCursor()
+                    .init(ctx.getCurrentConnection(), sql, params)
+                    .fetch(ctx.getCurrentUser(), rs->{
+                        var.iummy++;
+                        return true;
+                    });
+            return var.iummy;
+
+        }, null);
+        Assert.assertNotEquals(rrr, 0);
+    }
 
 }

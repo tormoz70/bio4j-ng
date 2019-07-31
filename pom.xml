@@ -569,6 +569,11 @@
                 <artifactId>bio4j-ng-sql-context</artifactId>
                 <version>${bio4j-ng.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ru.bio4j.ng</groupId>
+                <artifactId>bio4j-ng-fcloud-h2registry</artifactId>
+                <version>${bio4j-ng.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
