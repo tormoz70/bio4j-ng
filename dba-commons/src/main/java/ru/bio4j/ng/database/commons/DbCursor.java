@@ -3,6 +3,7 @@ package ru.bio4j.ng.database.commons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
+import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
@@ -31,23 +32,38 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
 	@Override
-	public SQLCursor init(Connection conn, String sql, List<Param> params, int timeout) throws Exception {
-        if(Strings.isNullOrEmpty(sql))
-            throw new IllegalArgumentException("Parameter \"sql\" cannon be empty!!!");
-        this.sql = sql;
-		return super.init(conn, params, timeout);
+	public SQLCursor init(Connection conn, SelectSQLDef sqlDef, int timeout) throws Exception {
+        if(sqlDef == null)
+            throw new IllegalArgumentException("Parameter \"sqlDef\" cannon be null!!!");
+        if(Strings.isNullOrEmpty(sqlDef.getPreparedSql()))
+            throw new IllegalArgumentException("Parameter \"sqlDef.getPreparedSql()\" cannon be empty!!!");
+        this.sql = sqlDef.getPreparedSql();
+		return super.init(conn, sqlDef, timeout);
 	}
 
     @Override
-    public SQLCursor init(Connection conn, String sql, List<Param> params) throws Exception {
-        return this.init(conn, sql, params, 60);
+    public SQLCursor init(Connection conn, SelectSQLDef sqlDef) throws Exception {
+        return this.init(conn, sqlDef, 60);
+    }
+
+    @Override
+    public SQLCursor init(Connection conn, String sql, int timeout) throws Exception {
+        if(Strings.isNullOrEmpty(sql))
+            throw new IllegalArgumentException("Parameter \"sql\" cannon be empty!!!");
+        this.sql = sql;
+        return super.init(conn, null, timeout);
+    }
+
+    @Override
+    public SQLCursor init(final Connection conn, final String sql, final List<Param> paramDeclaration) throws Exception {
+        this.params = Paramus.clone(paramDeclaration);
+        return this.init(conn, sql, 60);
     }
 
     @Override
     public SQLCursor init(Connection conn, String sql) throws Exception {
-        return this.init(conn, sql, null, 60);
+        return this.init(conn, sql, 60);
     }
-
 
     @Override
 	protected void prepareStatement() throws Exception {

@@ -8,9 +8,9 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLStoredProc;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.RestParamNames;
-import ru.bio4j.ng.service.api.UpdelexSQLDef;
+import ru.bio4j.ng.database.api.UpdelexSQLDef;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class CrudWriterApi {
         context.execBatch((ctx) -> {
             SQLStoredProc cmd = ctx.createStoredProc();
             try {
-                cmd.init(ctx.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+                cmd.init(ctx.getCurrentConnection(), sqlDef);
                 List<Param> prms = new ArrayList<>();
                 for (ABean row : rows) {
                     prms.clear();
@@ -84,7 +84,7 @@ public class CrudWriterApi {
             int r = 0;
             SQLStoredProc cmd = ctx.createStoredProc();
             try {
-                cmd.init(ctx.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+                cmd.init(ctx.getCurrentConnection(), sqlDef);
                 for (Object id : ids) {
                     Param prm = Paramus.getParam(cmd.getParams(), RestParamNames.DELETE_PARAM_PKVAL);
                     if (prm == null)
@@ -116,7 +116,7 @@ public class CrudWriterApi {
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         SQLStoredProc cmd = context.createStoredProc();
-        cmd.init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration());
+        cmd.init(context.getCurrentConnection(), sqlDef);
         cmd.execSQL(params, context.getCurrentUser());
     }
 

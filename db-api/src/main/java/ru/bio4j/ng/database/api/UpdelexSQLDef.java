@@ -1,4 +1,6 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.database.api;
+
+import ru.bio4j.ng.database.api.SQLDef;
 
 public interface UpdelexSQLDef extends SQLDef {
     String getSignature();

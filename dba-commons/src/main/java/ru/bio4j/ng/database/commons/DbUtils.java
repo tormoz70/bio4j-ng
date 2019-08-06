@@ -4,7 +4,7 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.*;
-import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.ABean;
@@ -12,8 +12,8 @@ import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.model.transport.jstore.StoreRow;
-import ru.bio4j.ng.service.api.SelectSQLDef;
-import ru.bio4j.ng.service.api.UpdelexSQLDef;
+import ru.bio4j.ng.database.api.SelectSQLDef;
+import ru.bio4j.ng.database.api.UpdelexSQLDef;
 
 import java.lang.reflect.Field;
 import java.sql.CallableStatement;
@@ -97,7 +97,7 @@ public class DbUtils {
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch((context) -> {
             context.createCursor()
-                    .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration())
+                    .init(context.getCurrentConnection(), sqlDef)
                     .fetch(prms, context.getCurrentUser(), action);
             return 0;
         }, usr);
@@ -107,7 +107,7 @@ public class DbUtils {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = sqlDefinition.getSelectSqlDef();
         return context.createCursor()
-                    .init(context.getCurrentConnection(), sqlDef.getPreparedSql(), sqlDef.getParamDeclaration()).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
+                    .init(context.getCurrentConnection(), sqlDef).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
     public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
@@ -119,7 +119,7 @@ public class DbUtils {
     public static <T> T processSelectScalar0(final Object params, final SQLContext context, final String sql, Class<T> clazz, T defaultValue) throws Exception {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         return context.createCursor()
-                    .init(context.getCurrentConnection(), sql, null).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
+                    .init(context.getCurrentConnection(), sql).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
     public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {

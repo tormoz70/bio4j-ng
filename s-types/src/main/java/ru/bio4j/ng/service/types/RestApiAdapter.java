@@ -19,7 +19,7 @@ import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.AppService;
-import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.RestParamNames;
 import ru.bio4j.ng.model.transport.BioQueryParams;
 

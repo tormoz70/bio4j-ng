@@ -2,12 +2,9 @@ package ru.bio4j.ng.database.commons;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.types.DelegateAction1;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.SQLCommandAfterEvent;
-import ru.bio4j.ng.database.api.SQLStoredProc;
-import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.commons.utils.SrvcUtils;
@@ -27,18 +24,25 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     private String storedProcName;
 
 	@Override
-	public SQLStoredProc init(Connection conn, String storedProcName, Object params, int timeout) throws Exception {
-        this.storedProcName = storedProcName;
-        List<Param> prms = DbUtils.decodeParams(params);
-        return super.init(conn, prms, timeout);
+	public SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef, int timeout) throws Exception {
+	    if(sqlDef != null)
+            this.storedProcName = sqlDef.getPreparedSql();
+        return super.init(conn, sqlDef, timeout);
 	}
     @Override
-    public SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception {
-        return this.init(conn, storedProcName, params, 60);
+    public SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef) throws Exception {
+        return this.init(conn, sqlDef, 60);
     }
     @Override
     public SQLStoredProc init(Connection conn, String storedProcName) throws Exception {
-        return this.init(conn, storedProcName, null, 60);
+        this.storedProcName = storedProcName;
+        return this.init(conn, null, 60);
+    }
+
+    @Override
+    public SQLStoredProc init(Connection conn, String storedProcName, List<Param> paramDeclaration) throws Exception {
+        this.params = Paramus.clone(paramDeclaration);
+        return this.init(conn, storedProcName);
     }
 
     @Override

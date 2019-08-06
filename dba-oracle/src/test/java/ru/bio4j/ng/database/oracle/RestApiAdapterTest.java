@@ -10,7 +10,7 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
 import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
-import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.types.CursorParser;
 
 import java.io.FileOutputStream;

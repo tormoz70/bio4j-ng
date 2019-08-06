@@ -10,7 +10,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.AppService;
 import ru.bio4j.ng.service.api.FCloudApi;
-import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.api.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;

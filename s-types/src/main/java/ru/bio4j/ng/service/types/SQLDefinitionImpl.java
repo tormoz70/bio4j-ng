@@ -4,10 +4,10 @@ import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.service.api.*;
 
 import java.util.*;
 

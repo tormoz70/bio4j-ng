@@ -450,6 +450,8 @@ public class Paramus implements Closeable {
 	}
 
     public static List<Param> clone(List<Param> params) throws Exception {
+	    if(params == null)
+	        return null;
         List<Param> rslt = new ArrayList<>();
         for(Param p : params)
             rslt.add((Param) Utl.cloneBean(p));

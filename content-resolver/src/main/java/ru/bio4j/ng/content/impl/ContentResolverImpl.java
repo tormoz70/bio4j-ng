@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.types.CursorParser;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.service.api.*;

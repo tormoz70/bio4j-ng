@@ -8,8 +8,10 @@ import java.sql.ResultSet;
 import java.util.List;
 
 public interface SQLCursor extends SQLCommand {
-    SQLCursor init(final Connection conn, final String sql, final List<Param> prms, final int timeout) throws Exception;
-    SQLCursor init(final Connection conn, final String sql, final List<Param> prms) throws Exception;
+    SQLCursor init(final Connection conn, final SelectSQLDef sqlDef, final int timeout) throws Exception;
+    SQLCursor init(final Connection conn, final SelectSQLDef sqlDef) throws Exception;
+    SQLCursor init(final Connection conn, final String sql, final int timeout) throws Exception;
+    SQLCursor init(final Connection conn, final String sql, final List<Param> paramDeclaration) throws Exception;
     SQLCursor init(final Connection conn, final String sql) throws Exception;
 
     String getSQL();

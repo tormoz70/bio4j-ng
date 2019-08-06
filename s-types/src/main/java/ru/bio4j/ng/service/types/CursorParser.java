@@ -16,9 +16,9 @@ import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
-import ru.bio4j.ng.service.api.SQLDef;
-import ru.bio4j.ng.service.api.SQLType;
-import ru.bio4j.ng.service.api.SelectSQLDef;
+import ru.bio4j.ng.database.api.SQLDef;
+import ru.bio4j.ng.database.api.SQLType;
+import ru.bio4j.ng.database.api.SelectSQLDef;
 
 import java.io.File;
 import java.io.InputStream;

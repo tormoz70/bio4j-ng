@@ -1,5 +1,6 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.database.api.SQLDef;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.util.List;

@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.api;
 
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.BioRequest;
 
 public interface ContentResolver {

@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.api;
+package ru.bio4j.ng.database.api;
 
 public enum WrapMode {
     NONE((byte)0), FILTER((byte)1), SORT((byte)2), PAGINATION((byte)4), ALL((byte)7);

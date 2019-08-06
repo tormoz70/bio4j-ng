@@ -18,9 +18,9 @@ import ru.bio4j.ng.database.api.SQLCursor;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.service.api.SQLDefinition;
+import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.RestParamNames;
-import ru.bio4j.ng.service.api.SelectSQLDef;
+import ru.bio4j.ng.database.api.SelectSQLDef;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class CrudReaderApi {
 
         List<Param> prms = params;
         context.createDynamicCursor()
-                .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
+                .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef())
                 .fetch(prms, usr, rs -> {
                     if(rs.isFirstRow()) {
                         long estimatedTime = System.currentTimeMillis() - startTime;
@@ -111,7 +111,7 @@ public class CrudReaderApi {
             final User user) throws Exception {
         long result = context.execBatch((ctx) -> {
             SQLCursor c = ctx.createDynamicCursor();
-            c.init(ctx.getCurrentConnection(), cursor.getSelectSqlDef().getTotalsSql(), cursor.getSelectSqlDef().getParamDeclaration());
+            c.init(ctx.getCurrentConnection(), cursor.getSelectSqlDef());
             return c.scalar(params, user, long.class, 0L);
         }, user);
         return result;
@@ -176,7 +176,7 @@ public class CrudReaderApi {
             if(LOG.isDebugEnabled())
                 LOG.debug("Try locate cursor \"{}\" to [{}] record by pk!!!", cursor.getBioCode(), location);
             int locatedPos = context.createDynamicCursor()
-                    .init(context.getCurrentConnection(), cursor.getSelectSqlDef().getLocateSql(), cursor.getSelectSqlDef().getParamDeclaration())
+                    .init(context.getCurrentConnection(), cursor.getSelectSqlDef())
                     .scalar(params, context.getCurrentUser(), int.class, -1);
             if(locatedPos >= 0){
                 locFactOffset = calcOffset(locatedPos, paginationPagesize);
@@ -412,7 +412,7 @@ public class CrudReaderApi {
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
         context.createDynamicCursor()
-                .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef().getPreparedSql(), cursorDef.getSelectSqlDef().getParamDeclaration())
+                .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef())
                 .fetch(prms, context.getCurrentUser(), rs -> {
                     if (rs.isFirstRow()) {
                         long estimatedTime = System.currentTimeMillis() - startTime;

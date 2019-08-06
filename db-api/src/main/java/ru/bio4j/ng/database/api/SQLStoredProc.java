@@ -1,8 +1,10 @@
 package ru.bio4j.ng.database.api;
 
+import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.User;
 
 import java.sql.Connection;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,12 +14,12 @@ import java.sql.Connection;
  * To change this template use File | Settings | File Templates.
  */
 public interface SQLStoredProc extends SQLCommand {
-    SQLStoredProc init(Connection conn, String storedProcName, Object params, int timeout) throws Exception;
-    SQLStoredProc init(Connection conn, String storedProcName, Object params) throws Exception;
-    SQLStoredProc init(Connection conn, String storedProcName) throws Exception;
-//    SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef) throws Exception;
-    void execSQL(Object params, User usr, boolean stayOpened) throws Exception;
-    void execSQL(Object params, User usr) throws Exception;
-    void execSQL(User usr) throws Exception;
+    SQLStoredProc init(final Connection conn, final UpdelexSQLDef sqlDef, final int timeout) throws Exception;
+    SQLStoredProc init(final Connection conn, final UpdelexSQLDef sqlDef) throws Exception;
+    SQLStoredProc init(final Connection conn, final String storedProcName, final List<Param> paramDeclaration) throws Exception;
+    SQLStoredProc init(final Connection conn, final String storedProcName) throws Exception;
+    void execSQL(final Object params, final User usr, final boolean stayOpened) throws Exception;
+    void execSQL(final Object params, final User usr) throws Exception;
+    void execSQL(final User usr) throws Exception;
     void close() throws Exception;
 }

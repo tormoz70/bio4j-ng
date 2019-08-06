@@ -4,10 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.api.UpdelexSQLDef;
 import ru.bio4j.ng.model.transport.AnConfig;
-import ru.bio4j.ng.service.api.*;
-
-import java.io.InputStream;
 
 public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AppServiceBase.class);

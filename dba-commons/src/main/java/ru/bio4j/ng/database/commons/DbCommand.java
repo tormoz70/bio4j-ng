@@ -4,14 +4,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.bio4j.ng.commons.types.DelegateAction1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.database.api.SQLDef;
 
 /**
  * Базовый класс
@@ -19,7 +18,7 @@ import ru.bio4j.ng.model.transport.Param;
 public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     private static final Logger LOG = LoggerFactory.getLogger(DbCommand.class);
 
-	protected List<Param> params = null;
+    protected List<Param> params = null;
     protected int timeout = 60;
     protected Connection connection = null;
     protected SQLNamedParametersStatement preparedStatement = null;
@@ -66,23 +65,24 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
             this.paramGetter.getParamsFromStatement(this.preparedStatement, this.params);
     }
 
-    public void setParamSetter(SQLParamSetter paramSetter) {
+    protected void setParamSetter(SQLParamSetter paramSetter) {
         this.paramSetter = paramSetter;
     }
 
-    public void setParamGetter(SQLParamGetter paramGetter) {
+    protected void setParamGetter(SQLParamGetter paramGetter) {
         this.paramGetter = paramGetter;
     }
 
-	public T init(Connection conn, List<Param> params, int timeout) throws Exception {
+	public T init(Connection conn, SQLDef sqlDef, int timeout) throws Exception {
 		this.connection = conn;
 		this.timeout = timeout;
-		this.params = params;
+		if(sqlDef != null)
+            this.params = Paramus.clone(sqlDef.getParamDeclaration());
         this.prepareStatement();
 		return (T)this;
 	}
-    public T init(Connection conn, List<Param> params) throws Exception {
-        return this.init(conn, params, 60);
+    public T init(Connection conn, SQLDef sqlDef) throws Exception {
+        return this.init(conn, sqlDef, 60);
     }
 
 	protected abstract void prepareStatement() throws Exception;
