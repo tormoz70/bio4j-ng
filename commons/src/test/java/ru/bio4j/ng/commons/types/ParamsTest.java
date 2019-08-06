@@ -3,6 +3,7 @@ package ru.bio4j.ng.commons.types;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.collections.KeyValue;
 import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
@@ -10,9 +11,7 @@ import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ParamsTest {
 
@@ -323,5 +322,16 @@ public class ParamsTest {
         Assert.assertTrue(Paramus.indexOf(testParams2, "p2") == 1);
         Assert.assertTrue(Paramus.paramValueAsString(testParams2, "p2").equals("v2"));
     }
+
+	@Test(enabled = true)
+	public void creParamsTest() throws Exception {
+		List<Param> testParams = Paramus.createParams(new HashMap<String, Object>(){{ put("1", 1); }});
+		Assert.assertEquals(testParams.get(0).getValue(), 1);
+
+		testParams = Paramus.createParams("1", 1, "2", 123.5, "3", "qwe");
+		Assert.assertEquals(Paramus.paramValue(testParams, "1"), 1);
+		Assert.assertEquals(Paramus.paramValue(testParams, "2"), 123.5);
+		Assert.assertEquals(Paramus.paramValue(testParams, "3"), "qwe");
+	}
 
 }

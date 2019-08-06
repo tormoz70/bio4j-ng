@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import ru.bio4j.ng.commons.collections.KeyValue;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
@@ -221,6 +222,34 @@ public class Paramus implements Closeable {
             List<Param> toKill = new ArrayList<>();
             for (Param pp : params) {
                 Param local = this.getParam(pp.getName());
+                if(local != null) {
+                    if(replaceIfExists){
+                        this.add(pp, true);
+                    }else {
+                        local.setValue(pp.getValue());
+                        local.setInnerObject(pp.getInnerObject());
+                        MetaType ppType = pp.getType() != null ? pp.getType() : MetaType.UNDEFINED;
+                        if (ppType != MetaType.UNDEFINED)
+                            local.setType(ppType);
+                        Param.Direction ppDirection = pp.getDirection() != null ? pp.getDirection() : Param.Direction.UNDEFINED;
+                        if (ppDirection != Param.Direction.UNDEFINED)
+                            local.setDirection(ppDirection);
+                    }
+                } else {
+                    if(!applyOnlyExists)
+                        this.add(pp.export(), false);
+                }
+            }
+        }
+        return this;
+    }
+
+    public Paramus apply(HashMap<String, Object> params, boolean applyOnlyExists, boolean replaceIfExists) {
+        if ((params != null) && (params != this.get())) {
+            List<Param> toKill = new ArrayList<>();
+            for (String key : params.keySet()) {
+                Param pp = Param.builder().name(key).value(params.get(key)).build();
+                Param local = this.getParam(key);
                 if(local != null) {
                     if(replaceIfExists){
                         this.add(pp, true);
@@ -458,6 +487,47 @@ public class Paramus implements Closeable {
 	    return rslt;
     }
 
+    public static List<Param> createParams() {
+	    return new ArrayList<>();
+    }
+
+    public static List<Param> createParams(HashMap<String, Object> params) throws Exception {
+        List<Param> rslt = createParams();
+        Paramus.applyParams(rslt, params, false, true);
+        return rslt;
+    }
+
+    public static List<Param> createParams(KeyValue<String, Object> ... params) throws Exception {
+        List<Param> rslt = createParams();
+        for(KeyValue<String, Object> kv : params)
+            Paramus.setParamValue(rslt, kv.getLeft(), kv.getRight());
+        return rslt;
+    }
+
+    private static List<Param> _createParams(List<String> keys, List<Object> vals) throws Exception {
+        List<Param> rslt = createParams();
+        Object val;
+        for(int i=0; i<keys.size(); i++) {
+            val = null;
+            if (i >= 0 && i < vals.size())
+                val = vals.get(i);
+            Paramus.setParamValue(rslt, keys.get(i), val);
+        }
+        return rslt;
+    }
+
+    public static List<Param> createParams(Object ... params) throws Exception {
+        List<String> keys = new ArrayList<>();
+        List<Object> vals = new ArrayList<>();
+        for(int i=0; i<params.length; i++) {
+            if(i % 2 == 0)
+                keys.add((String)params[i]);
+            else
+                vals.add(params[i]);
+        }
+        return _createParams(keys, vals);
+    }
+
     public <T> T getParamValue(String paramName, Class<T> type, boolean silent) throws ConvertValueException {
         Param param = this.getParam(paramName, true);
         if (param != null)
@@ -594,6 +664,12 @@ public class Paramus implements Closeable {
     }
 
     public static void applyParams(List<Param> params, List<Param> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
+        try (Paramus paramus = Paramus.set(params)) {
+            paramus.apply(paramsFrom, applyOnlyExists, replaceIfExists);
+        }
+    }
+
+    public static void applyParams(List<Param> params, HashMap<String, Object> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.apply(paramsFrom, applyOnlyExists, replaceIfExists);
         }
