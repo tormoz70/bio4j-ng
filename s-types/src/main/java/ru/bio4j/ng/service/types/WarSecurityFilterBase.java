@@ -137,6 +137,7 @@ public class WarSecurityFilterBase {
         else
             rereq = new WrappedRequest((HttpServletRequest)request);
         rereq.putHeader("Access-Control-Allow-Origin", "*");
+        rereq.putHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
         return rereq;
     }
 
