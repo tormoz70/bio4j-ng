@@ -497,13 +497,6 @@ public class Paramus implements Closeable {
         return rslt;
     }
 
-    public static List<Param> createParams(KeyValue<String, Object> ... params) throws Exception {
-        List<Param> rslt = createParams();
-        for(KeyValue<String, Object> kv : params)
-            Paramus.setParamValue(rslt, kv.getLeft(), kv.getRight());
-        return rslt;
-    }
-
     private static List<Param> _createParams(List<String> keys, List<Object> vals) throws Exception {
         List<Param> rslt = createParams();
         Object val;
