@@ -8,6 +8,7 @@ import ru.bio4j.ng.database.commons.AbstractWrapper;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWrapper {
@@ -39,7 +40,7 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
 
     public String wrap(String sql, List<Sort> sort, List<Field> fields) throws Exception {
         if (sort != null && sort.size() > 0) {
-
+            List<Sort> notFound = new ArrayList<>();
             for (Sort s : sort) {
                 Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true) || Strings.compare(s.getFieldName(), item.getAttrName(), true));
                 if (fldDef != null) {
@@ -47,8 +48,11 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
                         s.setFieldName(fldDef.getSorter());
                     else
                         s.setFieldName(fldDef.getName());
-                }
+                } else
+                    notFound.add(s);
             }
+            for(Sort s : notFound)
+                sort.remove(s);
 
             String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
             return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql);
