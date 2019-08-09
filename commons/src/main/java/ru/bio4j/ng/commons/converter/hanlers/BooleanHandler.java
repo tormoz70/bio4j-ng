@@ -22,8 +22,9 @@ public class BooleanHandler extends TypeHandlerBase implements TypeHandler<Boole
 
     @Override
     public Boolean read(Object value, Class<?> targetType) throws ConvertValueException {
-        if (value == null)
-            return false;
+        if (value == null) {
+            return targetType.isPrimitive() ? false : null;
+        }
         value = Types.wrapPrimitive(value);
         Class<?> valType = (value == null) ? null : value.getClass();
 

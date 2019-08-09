@@ -267,4 +267,17 @@ public class ConverterTest {
         }
     }
 
+    @Test
+    public void ConvertNumber2Boolean2() throws Exception {
+        Boolean actual = Converter.toType(null, Boolean.class);
+        Boolean expected = null;
+        Assert.assertEquals(actual, expected);
+    }
+    @Test
+    public void ConvertNumber2Boolean3() throws Exception {
+        Boolean actual = Converter.toType(null, boolean.class);
+        Boolean expected = false;
+        Assert.assertEquals(actual, expected);
+    }
+
 }

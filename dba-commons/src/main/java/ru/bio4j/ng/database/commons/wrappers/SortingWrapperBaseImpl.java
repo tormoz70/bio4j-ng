@@ -42,8 +42,12 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
 
             for (Sort s : sort) {
                 Field fldDef = Lists.first(fields, item -> Strings.compare(s.getFieldName(), item.getName(), true) || Strings.compare(s.getFieldName(), item.getAttrName(), true));
-                if (fldDef != null && !Strings.isNullOrEmpty(fldDef.getSorter()))
-                    s.setFieldName(fldDef.getSorter());
+                if (fldDef != null) {
+                    if (!Strings.isNullOrEmpty(fldDef.getSorter()))
+                        s.setFieldName(fldDef.getSorter());
+                    else
+                        s.setFieldName(fldDef.getName());
+                }
             }
 
             String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
