@@ -9,6 +9,14 @@ package ru.bio4j.ng.model.transport.jstore;
 //@XStreamAlias("sort")
 public class Sort {
 
+    public enum NullsPosition {
+        NULLLAST, NULLFIRST, DEFAULT;
+
+        public int getCode() {
+            return ordinal();
+        }
+    }
+
     public enum Direction {
         ASC, DESC;
 
@@ -20,7 +28,9 @@ public class Sort {
 //    @XStreamAsAttribute
     private String fieldName;
 //    @XStreamAsAttribute
-    private Direction direction;
+    private Direction direction = Direction.ASC;
+
+    private NullsPosition nullsPosition = NullsPosition.NULLLAST;
 
     public String getFieldName() {
         return fieldName;
@@ -36,6 +46,14 @@ public class Sort {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public NullsPosition getNullsPosition() {
+        return nullsPosition;
+    }
+
+    public void setNullsPosition(NullsPosition nullsPosition) {
+        this.nullsPosition = nullsPosition;
     }
 
 }

@@ -91,13 +91,18 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
     public String sortToSQL(String alias, List<Sort> sort) throws Exception {
         if(sort != null) {
             StringBuilder result = new StringBuilder();
-            char comma; String fieldName; Sort.Direction direction;
+            char comma; String fieldName; Sort.Direction direction; String nullsPos = null;
             for (Sort s : sort){
                 comma = (result.length() == 0) ? ' ' : ',';
                 fieldName = s.getFieldName();
                 direction = s.getDirection();
+                nullsPos = "NULLS LAST";
+                if(s.getNullsPosition() == Sort.NullsPosition.DEFAULT)
+                    nullsPos = null;
+                if(s.getNullsPosition() == Sort.NullsPosition.NULLFIRST)
+                    nullsPos = "NULLS FIRST";
                 if(!Strings.isNullOrEmpty(fieldName))
-                    result.append(String.format("%s %s.%s %s NULLS LAST", comma, alias, fieldName.toUpperCase(), direction.toString()));
+                    result.append(String.format("%s %s.%s %s %s", comma, alias, fieldName.toUpperCase(), direction.toString(), nullsPos));
             }
             return result.toString();
         }
