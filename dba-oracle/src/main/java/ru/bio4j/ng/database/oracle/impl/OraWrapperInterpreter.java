@@ -98,7 +98,7 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
                 direction = s.getDirection();
                 nullsPos = "NULLS LAST";
                 if(s.getNullsPosition() == Sort.NullsPosition.DEFAULT)
-                    nullsPos = null;
+                    nullsPos = "";
                 if(s.getNullsPosition() == Sort.NullsPosition.NULLFIRST)
                     nullsPos = "NULLS FIRST";
                 if(!Strings.isNullOrEmpty(fieldName))
