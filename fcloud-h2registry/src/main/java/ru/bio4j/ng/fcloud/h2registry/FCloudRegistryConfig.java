@@ -5,6 +5,9 @@ import ru.bio4j.ng.model.transport.SQLContextConfig;
 
 public class FCloudRegistryConfig extends SQLContextConfig {
 
+    @Prop(name = "fcloud.registry.server.port")
+    private String serverPort = null;
+
     @Prop(name = "fcloud.registry.connection.url")
     private String dbConnectionUrl = null;
     @Prop(name = "fcloud.registry.connection.username")
@@ -38,5 +41,13 @@ public class FCloudRegistryConfig extends SQLContextConfig {
 
     public void setDbConnectionPassword(String dbConnectionPassword) {
         this.dbConnectionPassword = dbConnectionPassword;
+    }
+
+    public String getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(String serverPort) {
+        this.serverPort = serverPort;
     }
 }

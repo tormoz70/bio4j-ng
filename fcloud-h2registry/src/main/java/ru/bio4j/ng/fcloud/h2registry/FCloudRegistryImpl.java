@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.model.transport.FileSpec;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.ServiceBase;
@@ -55,6 +56,10 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
     private volatile FCloudDBApi fCloudDBApi = null;
     private synchronized void initDatabase() throws Exception {
         if(!databaseInited) {
+            LOG.debug(String.format("Starting FCLOUDREG database server(port: %s)...", this.getConfig().getServerPort()));
+            H2Api.getInstance().startServer(this.getConfig().getServerPort());
+            LOG.debug(String.format("FCLOUDREG database server(port: %s) started!", H2Api.getInstance().getActualTcpPort()));
+
             fCloudDBApi = FCloudDBApi.getInstance();
             LOG.debug("About to init FCLOUDREG database...");
             dbConnectionUrl = this.getConfig().getDbConnectionUrl();
