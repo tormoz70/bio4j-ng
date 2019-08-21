@@ -38,17 +38,13 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
         return bundleContext;
     }
 
-    private String dbConnectionUrl;
-    private String dbConnectionUsername;
-    private String dbConnectionPassword;
 
     private Connection getDbConnection() throws Exception {
-        return H2Api.getInstance().getConnection(dbConnectionUrl, dbConnectionUsername, dbConnectionPassword);
+        return H2Api.getInstance().getLocalConnection();
     }
 
-    private static void initDbDirectory(final String dbConnUrl) throws Exception {
-        String dbPathStr = dbConnUrl.substring("jdbc:h2:".length());
-        Path dbPath = new File(dbPathStr).toPath().toAbsolutePath();
+    private static void initDbDirectory(final String databasePath) throws Exception {
+        Path dbPath = new File(databasePath).toPath().toAbsolutePath();
         Files.createDirectories(dbPath.getParent());
     }
 
@@ -56,24 +52,24 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
     private volatile FCloudDBApi fCloudDBApi = null;
     private synchronized void initDatabase() throws Exception {
         if(!databaseInited) {
-            LOG.debug(String.format("Starting FCLOUDREG database server(port: %s)...", this.getConfig().getServerPort()));
-            H2Api.getInstance().startServer(this.getConfig().getServerPort());
-            LOG.debug(String.format("FCLOUDREG database server(port: %s) started!", H2Api.getInstance().getActualTcpPort()));
+            String serverPort = this.getConfig().getServerPort();
+            String databasePath = this.getConfig().getDatabasePath();
+            String usrName = this.getConfig().getUsername();
+            String passwd = this.getConfig().getPassword();
+            if(LOG.isDebugEnabled())LOG.debug(String.format("Init FCLOUDREG database path(%s)...", databasePath));
+            initDbDirectory(databasePath);
+            if(LOG.isDebugEnabled())LOG.debug(String.format("FCLOUDREG database path(%s) inited!", databasePath));
+            if(LOG.isDebugEnabled())LOG.debug(String.format("Starting FCLOUDREG database server(port: %s, path: %s, login: %s/%s)...", serverPort, databasePath, usrName, passwd));
+            H2Api.getInstance().startServer(serverPort, databasePath, usrName, passwd);
+            if(LOG.isDebugEnabled())LOG.debug(String.format("FCLOUDREG database server(port: %s) started!", H2Api.getInstance().getActualTcpPort()));
 
             fCloudDBApi = FCloudDBApi.getInstance();
-            LOG.debug("About to init FCLOUDREG database...");
-            dbConnectionUrl = this.getConfig().getDbConnectionUrl();
-            LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionUrl = %s", dbConnectionUrl));
-            initDbDirectory(dbConnectionUrl);
-            LOG.debug(String.format("About to init FCLOUDREG database: initDbDirectory - %s", "done"));
-            dbConnectionUsername = this.getConfig().getDbConnectionUsername();
-            dbConnectionPassword = this.getConfig().getDbConnectionPassword();
-            LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionUsername = %s", dbConnectionUsername));
-            LOG.debug(String.format("About to init FCLOUDREG database: dbConnectionPassword = %s", dbConnectionPassword));
+            if(LOG.isDebugEnabled())LOG.debug("Connecting to FCLOUDREG database...");
             Connection conn = getDbConnection();
-            LOG.debug(String.format("About to init FCLOUDREG database: Connection - %s", "opened"));
+            if(LOG.isDebugEnabled())LOG.debug(String.format("FCLOUDREG database: Connection - %s", "opened", H2Api.getInstance().getActualUrl()));
+            if(LOG.isDebugEnabled())LOG.debug("Init FCLOUDREG database...");
             fCloudDBApi.initDB(conn);
-            LOG.debug("FCLOUDREG database inited!");
+            if(LOG.isDebugEnabled())LOG.debug("FCLOUDREG database inited!");
             databaseInited = true;
         }
     }

@@ -1,6 +1,7 @@
 package ru.bio4j.ng.fcloud.h2registry;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.model.transport.User;
@@ -14,19 +15,22 @@ public class H2ApiTest {
     FCloudDBApi fCloudDBApi = FCloudDBApi.getInstance();
 
     @BeforeTest
-    public void initTests() {
+    public void initTests() throws Exception {
+        H2Api.getInstance().startServer("9089", "d:/tmp/ekb-uploader/fcloud-registry", "sa", "sa");
     }
 
-    @Test(priority = 0)
-    public void getConnectionTest() throws Exception {
-        Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
+    @AfterTest
+    public void deinitTests() throws Exception {
+        H2Api.getInstance().shutdownServer();
+    }
+
+
+    @Test(enabled = true)
+    public void conn5() throws Exception {
+        Connection conn = H2Api.getInstance().getLocalConnection();
+
         fCloudDBApi.dropDB(conn);
         fCloudDBApi.initDB(conn);
-    }
-
-    @Test(priority = 1, enabled = true)
-    public void storeFileDescTest() throws Exception {
-        Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
 
         FileSpec fileSpec = new FileSpec();
         fileSpec.setFileUUID("test-file-uid");
@@ -42,19 +46,8 @@ public class H2ApiTest {
 
         fCloudDBApi.storeFileSpec(conn, fileSpec);
         Assert.assertTrue(true);
+        //Thread.sleep(30_000);
     }
 
-    @Test(priority = 2, enabled = true)
-    public void readFileDescTest() throws Exception {
-        Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
-        FileSpec fileSpec = fCloudDBApi.readFileSpec(conn, "test-file-uid");
-        Assert.assertEquals(fileSpec.getFileNameOrig(), "test-file-name");
-    }
-
-    @Test(priority = 3, enabled = true)
-    public void removeFileDescTest() throws Exception {
-        Connection conn = H2Api.getInstance().getConnection("jdbc:h2:d:/test", "sa", "sa");
-        fCloudDBApi.removeFileSpec(conn, "test-file-uid");
-    }
 
 }

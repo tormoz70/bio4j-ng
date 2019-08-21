@@ -27,14 +27,26 @@ public class H2Api {
 
     private String actualTcpPort = null;
     private String tcpPort = null;
+    private String databasePath = null;
+    private String usrName = null;
+    private String passwd = null;
     private Server server;
+    private String actualUrl = null;
 
-    public synchronized void startServer(String port) throws SQLException {
+    public synchronized void startServer(String port, String databasePath, String usrName, String passwd) throws SQLException {
         if(server == null) {
             if (!Strings.isNullOrEmpty(port)) {
                 tcpPort = port;
-                server = Server.createTcpServer("tcpPort", tcpPort).start();
+                final String[] args = new String[] {
+                        "-tcp",
+                        "-tcpPort", tcpPort,
+                        "-tcpAllowOthers",
+                };
+                server = Server.createTcpServer(args).start();
                 actualTcpPort = "" + server.getPort();
+                this.databasePath = databasePath;
+                this.usrName = usrName;
+                this.passwd = passwd;
             }
         }
     }
@@ -43,14 +55,19 @@ public class H2Api {
         return actualTcpPort;
     }
 
-    public synchronized void shutdownServer() throws SQLException {
-        if(server != null)
-            Server.shutdownTcpServer(String.format("tcp://localhost:%d", actualTcpPort), "", true, true);
+    public String getActualUrl() {
+        return actualUrl;
     }
 
-    public Connection getConnection(final String url, final String usrName, final String passwd) throws Exception {
+    public synchronized void shutdownServer() throws SQLException {
+        if(server != null)
+            Server.shutdownTcpServer(String.format("tcp://localhost:%s", actualTcpPort), "", true, true);
+    }
+
+    public Connection getLocalConnection() throws Exception {
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setURL(url); //("jdbc:h2:˜/test");
+        actualUrl = String.format("jdbc:h2:tcp://localhost:%s/%s", tcpPort, databasePath);
+        ds.setURL(actualUrl); //("jdbc:h2:˜/test");
         ds.setUser(usrName); //("sa");
         ds.setPassword(passwd); //("sa");
         return ds.getConnection();

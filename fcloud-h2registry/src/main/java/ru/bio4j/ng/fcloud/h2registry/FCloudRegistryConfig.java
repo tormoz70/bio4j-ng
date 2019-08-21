@@ -1,47 +1,20 @@
 package ru.bio4j.ng.fcloud.h2registry;
 
+import ru.bio4j.ng.model.transport.AnConfig;
 import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.model.transport.SQLContextConfig;
 
-public class FCloudRegistryConfig extends SQLContextConfig {
+public class FCloudRegistryConfig extends AnConfig {
 
     @Prop(name = "fcloud.registry.server.port")
     private String serverPort = null;
+    @Prop(name = "fcloud.registry.database.path")
+    private String databasePath = null;
+    @Prop(name = "fcloud.registry.database.username")
+    private String username = null;
+    @Prop(name = "fcloud.registry.database.password")
+    private String password = null;
 
-    @Prop(name = "fcloud.registry.connection.url")
-    private String dbConnectionUrl = null;
-    @Prop(name = "fcloud.registry.connection.username")
-    private String dbConnectionUsername = null;
-    @Prop(name = "fcloud.registry.connection.password")
-    private String dbConnectionPassword = null;
-
-
-
-    @Override
-    public String getDbConnectionUrl() {
-        return dbConnectionUrl;
-    }
-
-    @Override
-    public void setDbConnectionUrl(String dbConnectionUrl) {
-        this.dbConnectionUrl = dbConnectionUrl;
-    }
-
-    public String getDbConnectionUsername() {
-        return dbConnectionUsername;
-    }
-
-    public void setDbConnectionUsername(String dbConnectionUsername) {
-        this.dbConnectionUsername = dbConnectionUsername;
-    }
-
-    public String getDbConnectionPassword() {
-        return dbConnectionPassword;
-    }
-
-    public void setDbConnectionPassword(String dbConnectionPassword) {
-        this.dbConnectionPassword = dbConnectionPassword;
-    }
 
     public String getServerPort() {
         return serverPort;
@@ -49,5 +22,29 @@ public class FCloudRegistryConfig extends SQLContextConfig {
 
     public void setServerPort(String serverPort) {
         this.serverPort = serverPort;
+    }
+
+    public String getDatabasePath() {
+        return databasePath;
+    }
+
+    public void setDatabasePath(String databasePath) {
+        this.databasePath = databasePath;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
