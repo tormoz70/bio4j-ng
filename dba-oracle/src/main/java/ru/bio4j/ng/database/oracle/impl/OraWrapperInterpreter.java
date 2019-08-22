@@ -102,7 +102,7 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
                 if(s.getNullsPosition() == Sort.NullsPosition.NULLFIRST)
                     nullsPos = "NULLS FIRST";
                 if(!Strings.isNullOrEmpty(fieldName))
-                    result.append(String.format("%s %s.%s %s %s", comma, alias, fieldName.toUpperCase(), direction.toString(), nullsPos));
+                    result.append(String.format("%s NLSSORT(%s.%s, 'NLS_SORT=RUSSIAN') %s %s", comma, alias, fieldName.toUpperCase(), direction.toString(), nullsPos));
             }
             return result.toString();
         }
