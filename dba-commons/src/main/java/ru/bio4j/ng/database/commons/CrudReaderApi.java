@@ -466,7 +466,10 @@ public class CrudReaderApi {
 
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
+        List<Sort> localSort = sort != null ? sort : new ArrayList<>();
+        if(localSort.size() == 0)
+            localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), localSort, cursor.getSelectSqlDef().getFields()));
         if (location != null) {
             Field pkField = cursor.getSelectSqlDef().findPk();
             if (pkField == null)
