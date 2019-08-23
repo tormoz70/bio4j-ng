@@ -5,6 +5,7 @@ import ru.bio4j.ng.commons.converter.DateParseException;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.WrapperInterpreter;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.*;
 
@@ -110,7 +111,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String filterToSQL(String alias, Filter filter) throws Exception {
+    public String filterToSQL(String alias, Filter filter, List<Field> fields) throws Exception {
         if(filter != null && !filter.getChildren().isEmpty()) {
             Expression e = filter.getChildren().get(0);
             return _filterToSQL(alias, e);
@@ -119,7 +120,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String sortToSQL(String alias, List<Sort> sort) throws Exception {
+    public String sortToSQL(String alias, List<Sort> sort, List<Field> fields) throws Exception {
         if(sort != null) {
             StringBuilder result = new StringBuilder();
             char comma; String fieldName; Sort.Direction direction;

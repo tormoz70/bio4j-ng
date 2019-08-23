@@ -39,7 +39,7 @@ public class PgSQLWrapperInterpreterTest {
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
-        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
     }
 
@@ -49,7 +49,7 @@ public class PgSQLWrapperInterpreterTest {
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
-        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
     }
 
@@ -59,7 +59,7 @@ public class PgSQLWrapperInterpreterTest {
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
-        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNull(sql);
     }
 
@@ -69,7 +69,7 @@ public class PgSQLWrapperInterpreterTest {
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
-        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         System.out.println(sql);
         Assert.assertNotNull(sql);
     }

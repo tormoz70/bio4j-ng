@@ -3,6 +3,8 @@ package ru.bio4j.ng.database.oracle.impl;
 
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.WrapperInterpreter;
+import ru.bio4j.ng.model.transport.MetaType;
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.*;
 
@@ -79,7 +81,7 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String filterToSQL(String alias, Filter filter) throws Exception {
+    public String filterToSQL(String alias, Filter filter, List<Field> fields) throws Exception {
         if(filter != null && !filter.getChildren().isEmpty()) {
             Expression e = filter.getChildren().get(0);
             return _filterToSQL(alias, e);
@@ -88,21 +90,28 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String sortToSQL(String alias, List<Sort> sort) throws Exception {
+    public String sortToSQL(String alias, List<Sort> sort, List<Field> fields) throws Exception {
         if(sort != null) {
             StringBuilder result = new StringBuilder();
-            char comma; String fieldName; Sort.Direction direction; String nullsPos = null;
+            char comma; Sort.Direction direction; String nullsPos = null;
             for (Sort s : sort){
                 comma = (result.length() == 0) ? ' ' : ',';
-                fieldName = s.getFieldName();
+                final String fieldName = s.getFieldName();
                 direction = s.getDirection();
                 nullsPos = "NULLS LAST";
                 if(s.getNullsPosition() == Sort.NullsPosition.DEFAULT)
                     nullsPos = "";
                 if(s.getNullsPosition() == Sort.NullsPosition.NULLFIRST)
                     nullsPos = "NULLS FIRST";
-                if(!Strings.isNullOrEmpty(fieldName))
-                    result.append(String.format("%s NLSSORT(%s.%s, 'NLS_SORT=RUSSIAN') %s %s", comma, alias, fieldName.toUpperCase(), direction.toString(), nullsPos));
+                if(!Strings.isNullOrEmpty(fieldName)) {
+                    Field field = null;
+                    if(fields != null)
+                        field = fields.stream().filter(f -> Strings.compare(f.getName(), fieldName, true)).findAny().orElse(null);
+                    if(field != null && field.getMetaType() == MetaType.STRING)
+                        result.append(String.format("%s NLSSORT(%s.%s, 'NLS_SORT=RUSSIAN') %s %s", comma, alias, fieldName.toUpperCase(), direction.toString(), nullsPos));
+                    else
+                        result.append(String.format("%s %s.%s %s %s", comma, alias, fieldName.toUpperCase(), direction.toString(), nullsPos));
+                }
             }
             return result.toString();
         }

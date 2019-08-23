@@ -1,6 +1,7 @@
 package ru.bio4j.ng.database.api;
 
 
+import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 
@@ -17,6 +18,6 @@ public interface WrapperInterpreter {
      * @param filter
      * @return
      */
-    String filterToSQL(String alias, Filter filter) throws Exception ;
-    String sortToSQL(String alias, List<Sort> sort) throws Exception ;
+    String filterToSQL(String alias, Filter filter, List<Field> fields) throws Exception ;
+    String sortToSQL(String alias, List<Sort> sort, List<Field> fields) throws Exception ;
 }

@@ -38,7 +38,7 @@ public class OraWrapperInterpreterTest {
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
         OraWrapperInterpreter filterWrapper = new OraWrapperInterpreter();
-        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
     }
 
@@ -48,7 +48,7 @@ public class OraWrapperInterpreterTest {
         String json = Utl.readStream(inputStream);
         FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
         OraWrapperInterpreter filterWrapper = new OraWrapperInterpreter();
-        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter());
+        String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
     }
 

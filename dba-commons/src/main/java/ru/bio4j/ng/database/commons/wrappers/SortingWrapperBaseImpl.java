@@ -57,7 +57,7 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
             for(Sort s : notFound)
                 sort.remove(s);
 
-            String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort);
+            String orderbySql = wrapperInterpreter.sortToSQL("srtng$wrpr", sort, fields);
             return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(orderbySql) ? "" : " ORDER BY " + orderbySql);
         }
         return sql;

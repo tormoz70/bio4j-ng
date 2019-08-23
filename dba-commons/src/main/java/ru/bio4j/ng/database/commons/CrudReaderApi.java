@@ -147,7 +147,7 @@ public class CrudReaderApi {
         final String paginationTotalcountStr = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, String.class, null);
         final int paginationTotalcount = Strings.isNullOrEmpty(paginationTotalcountStr) ? Sqls.UNKNOWN_RECS_TOTAL : Converter.toType(paginationTotalcountStr, int.class);
 
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
@@ -235,7 +235,7 @@ public class CrudReaderApi {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
             localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
@@ -336,7 +336,7 @@ public class CrudReaderApi {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
             localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
@@ -473,7 +473,7 @@ public class CrudReaderApi {
         final String paginationTotalcountStr = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_TOTALCOUNT, String.class, null);
         final int paginationTotalcount = Strings.isNullOrEmpty(paginationTotalcountStr) ? Sqls.UNKNOWN_RECS_TOTAL : Converter.toType(paginationTotalcountStr, int.class);
 
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
@@ -570,7 +570,7 @@ public class CrudReaderApi {
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
             localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
