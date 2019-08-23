@@ -149,7 +149,10 @@ public class CrudReaderApi {
 
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
+        List<Sort> localSort = sort != null ? sort : new ArrayList<>();
+        if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
+            localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), localSort, cursor.getSelectSqlDef().getFields()));
         if(location != null) {
             Field pkField = cursor.getSelectSqlDef().findPk();
             if(pkField == null)
@@ -233,7 +236,10 @@ public class CrudReaderApi {
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
+        List<Sort> localSort = sort != null ? sort : new ArrayList<>();
+        if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
+            localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), localSort, cursor.getSelectSqlDef().getFields()));
         return readStoreData(params, context, cursor, context.getCurrentUser());
     }
 
@@ -331,7 +337,10 @@ public class CrudReaderApi {
         if (connTest == null)
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
+        List<Sort> localSort = sort != null ? sort : new ArrayList<>();
+        if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
+            localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), localSort, cursor.getSelectSqlDef().getFields()));
         ABeanPage page = readStoreData(params, context, cursor, context.getCurrentUser());
 
         HSSFWorkbook wb = null;
@@ -467,7 +476,7 @@ public class CrudReaderApi {
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
         cursor.getSelectSqlDef().setTotalsSql(context.getWrappers().getTotalsWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
-        if(localSort.size() == 0)
+        if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
             localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), localSort, cursor.getSelectSqlDef().getFields()));
         if (location != null) {
@@ -562,7 +571,10 @@ public class CrudReaderApi {
             throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter));
-        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), sort, cursor.getSelectSqlDef().getFields()));
+        List<Sort> localSort = sort != null ? sort : new ArrayList<>();
+        if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
+            localSort.addAll(cursor.getSelectSqlDef().getDefaultSort());
+        cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getSortingWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), localSort, cursor.getSelectSqlDef().getFields()));
         return readStoreDataExt(params, context, cursor, beanType);
     }
 
