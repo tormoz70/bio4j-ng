@@ -30,6 +30,15 @@ public class Strings {
 		return (str == null) || (str.length() == 0);
 	}
 
+	public static String getFirst(String list, String delimiter, String orElse){
+        String rsltStr = isNullOrEmpty(list) ? null : Arrays.stream(split(list, delimiter)).findFirst().get();
+        return isNullOrEmpty(rsltStr) ? orElse : rsltStr;
+    }
+
+    public static String getFirst(String list, String delimiter){
+        return getFirst(list, delimiter, null);
+    }
+
 	/**
 	 * Добавляет к строке подстроку через разделитель
 	 * @param line - строка к которой надо добавить
@@ -227,6 +236,15 @@ public class Strings {
             }
         }
         return null;
+    }
+
+    public static Boolean containsCommonItems(String delimitedList1, String delimitedList2, String delimiter) {
+        String[] list2 = split(delimitedList2, delimiter);
+        for(String item2 : list2) {
+            if (containsIgnoreCase(delimitedList1, delimiter, item2))
+                return true;
+        }
+        return false;
     }
 
     public static String loadFileFromRes(final BundleContext context, final String fileName) throws Exception {

@@ -420,5 +420,52 @@ public class UtlTest {
         System.out.println(sb.toString());
     }
 
+    @Test
+    public void first() {
+        String roles = "112,234,356";
+        long role = Long.parseLong(Strings.getFirst(roles, ",", "0"));
+        Assert.assertEquals(role, 112);
+        roles = "112";
+        role = Long.parseLong(Strings.getFirst(roles, ",", "0"));
+        Assert.assertEquals(role, 112);
+        roles = "";
+        role = Long.parseLong(Strings.getFirst(roles, ",", "0"));
+        Assert.assertEquals(role, 0);
+        roles = null;
+        role = Long.parseLong(Strings.getFirst(roles, ",", "0"));
+        Assert.assertEquals(role, 0);
+    }
+
+    @Test
+    public void common() {
+        String roles1 = "23,36,112";
+        String roles2 = "112,234,356";
+        Assert.assertTrue(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = "23,36,11";
+        roles2 = "112,234,356";
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = "23,36,11,";
+        roles2 = "112,234,356,";
+        Assert.assertTrue(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = "";
+        roles2 = "112,234,356";
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = "112,234,356";
+        roles2 = "";
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = null;
+        roles2 = "112,234,356";
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = "112,234,356";
+        roles2 = null;
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = "";
+        roles2 = "";
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+        roles1 = null;
+        roles2 = null;
+        Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
+    }
+
 }
 
