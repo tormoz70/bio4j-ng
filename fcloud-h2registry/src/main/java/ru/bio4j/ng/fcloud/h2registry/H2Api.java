@@ -32,6 +32,7 @@ public class H2Api {
     private String passwd = null;
     private Server server;
     private String actualUrl = null;
+    private JdbcDataSource dataSource = null;
 
     public synchronized void startServer(String port, String databasePath, String usrName, String passwd) throws SQLException {
         if(server == null) {
@@ -47,6 +48,11 @@ public class H2Api {
                 this.databasePath = databasePath;
                 this.usrName = usrName;
                 this.passwd = passwd;
+                dataSource = new JdbcDataSource();
+                actualUrl = String.format("jdbc:h2:tcp://localhost:%s/%s", tcpPort, databasePath);
+                dataSource.setURL(actualUrl); //("jdbc:h2:˜/test");
+                dataSource.setUser(usrName); //("sa");
+                dataSource.setPassword(passwd); //("sa");
             }
         }
     }
@@ -65,12 +71,7 @@ public class H2Api {
     }
 
     public Connection getLocalConnection() throws Exception {
-        JdbcDataSource ds = new JdbcDataSource();
-        actualUrl = String.format("jdbc:h2:tcp://localhost:%s/%s", tcpPort, databasePath);
-        ds.setURL(actualUrl); //("jdbc:h2:˜/test");
-        ds.setUser(usrName); //("sa");
-        ds.setPassword(passwd); //("sa");
-        return ds.getConnection();
+        return dataSource.getConnection();
     }
 
     private static String getSQL2Execute(String sql, List<Param> params) {
