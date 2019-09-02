@@ -14,6 +14,8 @@ public class FCloudRegistryConfig extends AnConfig {
     private String username = null;
     @Prop(name = "fcloud.registry.database.password")
     private String password = null;
+    @Prop(name = "fcloud.registry.database.poolSize")
+    private int poolSize = 5;
 
 
     public String getServerPort() {
@@ -46,5 +48,13 @@ public class FCloudRegistryConfig extends AnConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    public void setPoolSize(int poolSize) {
+        this.poolSize = poolSize;
     }
 }

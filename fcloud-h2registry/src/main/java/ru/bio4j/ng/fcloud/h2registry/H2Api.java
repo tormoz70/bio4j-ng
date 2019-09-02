@@ -1,5 +1,6 @@
 package ru.bio4j.ng.fcloud.h2registry;
 
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2.tools.Server;
 import org.slf4j.Logger;
@@ -32,9 +33,9 @@ public class H2Api {
     private String passwd = null;
     private Server server;
     private String actualUrl = null;
-    private JdbcDataSource dataSource = null;
+    private JdbcConnectionPool connectionPool = null;
 
-    public synchronized void startServer(String port, String databasePath, String usrName, String passwd) throws SQLException {
+    public synchronized void startServer(String port, String databasePath, String usrName, String passwd, int poolSize) throws SQLException {
         if(server == null) {
             if (!Strings.isNullOrEmpty(port)) {
                 tcpPort = port;
@@ -48,13 +49,19 @@ public class H2Api {
                 this.databasePath = databasePath;
                 this.usrName = usrName;
                 this.passwd = passwd;
-                dataSource = new JdbcDataSource();
+                JdbcDataSource dataSource = new JdbcDataSource();
                 actualUrl = String.format("jdbc:h2:tcp://localhost:%s/%s", tcpPort, databasePath);
                 dataSource.setURL(actualUrl); //("jdbc:h2:˜/test");
                 dataSource.setUser(usrName); //("sa");
                 dataSource.setPassword(passwd); //("sa");
+                connectionPool = JdbcConnectionPool.create(dataSource);
+                connectionPool.setLoginTimeout(20);
+                connectionPool.setMaxConnections(poolSize);
             }
         }
+    }
+    public synchronized void startServer(String port, String databasePath, String usrName, String passwd) throws SQLException {
+        startServer(port, databasePath, usrName, passwd, 5);
     }
 
     public String getActualTcpPort() {
@@ -71,7 +78,7 @@ public class H2Api {
     }
 
     public Connection getLocalConnection() throws Exception {
-        return dataSource.getConnection();
+        return connectionPool.getConnection();
     }
 
     private static String getSQL2Execute(String sql, List<Param> params) {

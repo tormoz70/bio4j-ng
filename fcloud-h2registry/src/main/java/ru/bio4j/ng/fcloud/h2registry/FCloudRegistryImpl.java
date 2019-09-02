@@ -56,11 +56,12 @@ public class FCloudRegistryImpl extends ServiceBase<FCloudRegistryConfig> implem
             String databasePath = this.getConfig().getDatabasePath();
             String usrName = this.getConfig().getUsername();
             String passwd = this.getConfig().getPassword();
+            int poolSize = this.getConfig().getPoolSize();
             if(LOG.isDebugEnabled())LOG.debug(String.format("Init FCLOUDREG database path(%s)...", databasePath));
             initDbDirectory(databasePath);
             if(LOG.isDebugEnabled())LOG.debug(String.format("FCLOUDREG database path(%s) inited!", databasePath));
-            if(LOG.isDebugEnabled())LOG.debug(String.format("Starting FCLOUDREG database server(port: %s, path: %s, login: %s/%s)...", serverPort, databasePath, usrName, passwd));
-            H2Api.getInstance().startServer(serverPort, databasePath, usrName, passwd);
+            if(LOG.isDebugEnabled())LOG.debug(String.format("Starting FCLOUDREG database server(port: %s, path: %s, login: %s/%s, poolSize: %d)...", serverPort, databasePath, usrName, passwd, poolSize));
+            H2Api.getInstance().startServer(serverPort, databasePath, usrName, passwd, poolSize);
             if(LOG.isDebugEnabled())LOG.debug(String.format("FCLOUDREG database server(port: %s) started!", H2Api.getInstance().getActualTcpPort()));
 
             fCloudDBApi = FCloudDBApi.getInstance();
