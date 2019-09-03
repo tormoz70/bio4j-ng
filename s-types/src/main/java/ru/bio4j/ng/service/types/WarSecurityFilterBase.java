@@ -155,13 +155,13 @@ public class WarSecurityFilterBase {
             prepareResponse(response);
             doSequrityFilter(rereq, response, chain);
         } catch (IOException ex) {
-            LOG.error(null, ex);
+            if(LOG.isDebugEnabled())LOG.error(null, ex);
             throw ex;
         } catch (ServletException ex) {
-            LOG.error(null, ex);
+            if(LOG.isDebugEnabled())LOG.error(null, ex);
             throw ex;
         } catch (Exception ex) {
-            LOG.error(null, ex);
+            if(LOG.isDebugEnabled())LOG.error(null, ex);
             throw new ServletException(ex);
 //            prepareResponse(response);
 //            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

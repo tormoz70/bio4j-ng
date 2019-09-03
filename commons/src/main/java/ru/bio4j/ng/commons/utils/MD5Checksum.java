@@ -26,7 +26,7 @@ public class MD5Checksum {
     /*
      * Calculate checksum of a File using MD5 algorithm
      */
-    public static String checkSum(String path){
+    public static String checkSum(String path) throws IOException, NoSuchAlgorithmException {
         String checksum = null;
         try {
             FileInputStream fis = new FileInputStream(path);
@@ -41,9 +41,11 @@ public class MD5Checksum {
             byte[] hash = md.digest();
             checksum = new BigInteger(1, hash).toString(16); //don't use this, truncates leading zero
         } catch (IOException ex) {
-            LOG.error(null, ex);
+            if(LOG.isDebugEnabled())LOG.error(null, ex);
+            throw ex;
         } catch (NoSuchAlgorithmException ex) {
-            LOG.error(null, ex);
+            if(LOG.isDebugEnabled())LOG.error(null, ex);
+            throw ex;
         }
 
         return checksum;

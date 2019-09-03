@@ -89,12 +89,12 @@ public abstract class DbContextAbstract implements SQLContext {
         Connection conn = this.cpool.getConnection();
         if(conn.isClosed()) {
             forceCloseConnection(conn);
-            LOG.error("Connection is closed!");
+            if(LOG.isDebugEnabled())LOG.error("Connection is closed!");
             throw new SQLException("Connection is closed!");
         }
         if(!conn.isValid(5)) {
             forceCloseConnection(conn);
-            LOG.error("Connection is not valid!");
+            if(LOG.isDebugEnabled())LOG.error("Connection is not valid!");
             throw new SQLException("Connection is not valid!");
         }
 
@@ -106,7 +106,7 @@ public abstract class DbContextAbstract implements SQLContext {
                 return conn;
             } catch (Exception e) {
                 forceCloseConnection(conn);
-                LOG.error(String.format("Unexpected error on execute doAfterConnect event! Message: %s", e.getMessage()), e);
+                if(LOG.isDebugEnabled())LOG.error(String.format("Unexpected error on execute doAfterConnect event! Message: %s", e.getMessage()), e);
                 throw e;
             }
         }

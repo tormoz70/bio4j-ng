@@ -97,7 +97,7 @@ public class RestApiAdapter {
             try {
                 fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
             } catch (Exception e) {
-                LOG.error(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
+                if(LOG.isDebugEnabled())LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
             }
         }
         if(fs == null) {
@@ -120,7 +120,7 @@ public class RestApiAdapter {
             try {
                 fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
             } catch (Exception e) {
-                LOG.error(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
+                if(LOG.isDebugEnabled())LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
             }
         }
         if(fs == null) {

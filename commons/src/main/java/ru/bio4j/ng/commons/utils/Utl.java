@@ -1026,7 +1026,7 @@ public class Utl {
             rslt.add(rootAnd);
             return rslt;
         } catch (Exception e) {
-            LOG.error("Error parsing simple filter \"{}\". Msg: {}", simpleFilter, e.getMessage());
+            if(LOG.isDebugEnabled())LOG.error("Error parsing simple filter \"{}\". Msg: {}", simpleFilter, e.getMessage());
             return null;
         }
     }
@@ -1046,7 +1046,7 @@ public class Utl {
                     return null;
             }
         } catch (Exception e) {
-            LOG.error("Error parsing simple sort \"{}\". Msg: {}", simpleSort, e.getMessage());
+            if(LOG.isDebugEnabled())LOG.error("Error parsing simple sort \"{}\". Msg: {}", simpleSort, e.getMessage());
         }
         return rslt;
     }
