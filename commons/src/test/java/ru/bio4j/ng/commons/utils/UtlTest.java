@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.converter.DateTimeParser;
+import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.FileSpec;
 import ru.bio4j.ng.model.transport.Prop;
 import ru.bio4j.ng.model.transport.Param;
@@ -467,5 +468,27 @@ public class UtlTest {
         Assert.assertFalse(Strings.containsCommonItems(roles1, roles2, ","));
     }
 
+    @Test
+    public void testABeans() throws Exception {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("mkres.json");
+        String json = Utl.readStream(inputStream);
+        ABean aBean = Jsons.decodeABean(json);
+        int act = ABeans.extractAttrFromBean(aBean, "pageInfo/count", int.class, 0);
+        Assert.assertEquals(act, 10);
+    }
+
+
+    @Test
+    public void testABeans0() throws Exception {
+        Assert.assertEquals(ABeans.getNextPathItem("qwe/asd/rty"), "qwe");
+        Assert.assertEquals(ABeans.getNextPathItem("qwe/asd"), "qwe");
+        Assert.assertEquals(ABeans.getNextPathItem("rty"), "rty");
+    }
+    @Test
+    public void testABeans1() throws Exception {
+        Assert.assertEquals(ABeans.cutNextPathItem("qwe/asd/rty"), "asd/rty");
+        Assert.assertEquals(ABeans.cutNextPathItem("asd/rty"), "rty");
+        Assert.assertEquals(ABeans.cutNextPathItem("rty"), null);
+    }
 }
 
