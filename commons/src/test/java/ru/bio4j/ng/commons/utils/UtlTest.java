@@ -474,7 +474,7 @@ public class UtlTest {
         String json = Utl.readStream(inputStream);
         ABean aBean = Jsons.decodeABean(json);
         int act = ABeans.extractAttrFromBean(aBean, "pageInfo/count", int.class, 0);
-        Assert.assertEquals(act, 10);
+        Assert.assertEquals(act, 100);
     }
 
 

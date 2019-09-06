@@ -9,6 +9,7 @@ import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.AppService;
+import ru.bio4j.ng.service.api.CacheService;
 import ru.bio4j.ng.service.api.FCloudApi;
 import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.api.SecurityService;
@@ -20,6 +21,7 @@ public interface RestHelperMethods {
     AppService getAppService();
     SecurityService getSecurityService();
     FCloudApi getFCloudApi();
+    CacheService getCacheService();
 
     ABeanPage getList(String bioCode, HttpServletRequest request) throws Exception;
     ABeanPage getListAll(String bioCode, HttpServletRequest request) throws Exception;

@@ -58,7 +58,7 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
 	@Override
 	public <Key extends Serializable, T extends Serializable> void put(CacheName cacheName, Key key, T value, boolean notifyListeners) {
 		checkForNull(key, value);
-		LOG.trace("Attempting to put object {} into cache with key {}", key, value);
+		LOG.trace("Attempting to put object {} into cache with key {}", value, key);
 		Cache cache = getCache(cacheName);
 		cache.put(new Element(key, value), !notifyListeners);
 	}
@@ -172,8 +172,9 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
 	}
 	
 	private Cache getCache(CacheName cacheName) throws IllegalArgumentException, IllegalStateException {
-        if(cacheManager == null)
-            throw new IllegalStateException("CacheManager is not inited!!!");
+		initCach();
+		if(cacheManager == null)
+			throw new IllegalStateException("CacheManager is not inited!!!");
 		Cache cache = cacheManager.getCache(cacheName.cacheName());
 		if (cache == null) {
 			throw new IllegalArgumentException("Unknown cache " + cacheName.cacheName());
@@ -217,7 +218,7 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
 	}
 
     private volatile Configuration serviceConfiguration;
-    private void createCacheConfiguration() throws Exception {
+    private void createCacheConfiguration() {
 		if(LOG.isDebugEnabled())
 			LOG.debug("Attempting to find cache configuration");
         InputStream configIn = getClass().getClassLoader().getResourceAsStream(CACHE_CONFIG_FILE);
@@ -229,7 +230,14 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
 		if(LOG.isDebugEnabled())
 			LOG.debug("Attempting to create new cache service");
         serviceConfiguration = ConfigurationFactory.parseConfiguration(configIn);
-        serviceConfiguration.diskStore(createDiskStoreConfiguration());
+		DiskStoreConfiguration cfg = null;
+		try{
+			cfg = createDiskStoreConfiguration();
+		} catch(IOException e) {
+			LOG.error("Failed to create Configuration!", e);
+		}
+		if(cfg != null)
+        	serviceConfiguration.diskStore(cfg);
     }
 
     @Requires
@@ -247,26 +255,32 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
     }
 
     private CacheManager cacheManager;
+	private volatile boolean cacheManagerInited = false;
+    private synchronized void initCach() {
+    	if(!cacheManagerInited) {
+			if (!configProvider.configIsReady()) {
+				LOG.info("Config is not redy! Waiting...");
+				return;
+			}
+			if (LOG.isDebugEnabled())
+				LOG.debug("Config is not null. Loading CacheConfiguration...");
+			//createCacheConfiguration();
+//			cacheManager = CacheManager.create(serviceConfiguration);
+			InputStream configIn = getClass().getClassLoader().getResourceAsStream(CACHE_CONFIG_FILE);
+			cacheManager = CacheManager.create(configIn);
+			cacheManagerInited = true;
+		}
+	}
+
+
     @Validate
     public void doStart() throws Exception {
 		if(LOG.isDebugEnabled())
 			LOG.debug("Starting...");
 
-        if(!configProvider.configIsReady()) {
-			if(LOG.isDebugEnabled())
-				LOG.info("Config is not redy! Waiting...");
-            return;
-        }
+		initCach();
 
-        try {
-			if(LOG.isDebugEnabled())
-				LOG.debug("Config is not null. Loading CacheConfiguration...");
-            createCacheConfiguration();
-            this.cacheManager = CacheManager.create(serviceConfiguration);
-            this.ready = true;
-        } catch (Exception e) {
-            LOG.error("Error on configuring Ehcache!", e);
-        }
+		this.ready = true;
 		if(LOG.isDebugEnabled())
 			LOG.debug("Started.");
     }
@@ -275,6 +289,8 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
     public void doStop() throws Exception {
 		if(LOG.isDebugEnabled())
 			LOG.debug("Stoping...");
+		if(this.cacheManager != null)
+			this.cacheManager.shutdown();
         this.ready = false;
 		if(LOG.isDebugEnabled())
 			LOG.debug("Stoped.");

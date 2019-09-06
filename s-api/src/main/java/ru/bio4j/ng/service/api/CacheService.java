@@ -1,5 +1,6 @@
 package ru.bio4j.ng.service.api;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 

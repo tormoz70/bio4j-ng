@@ -17,6 +17,7 @@ import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.StoreMetadata;
 import ru.bio4j.ng.service.api.AppService;
+import ru.bio4j.ng.service.api.CacheService;
 import ru.bio4j.ng.service.api.FCloudApi;
 import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.api.SecurityService;
@@ -28,6 +29,15 @@ import java.util.List;
 
 public class DefaultRestHelperMethods implements RestHelperMethods {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestHelperMethods.class);
+
+    private CacheService cacheService;
+    public CacheService getCacheService() {
+        synchronized (this) {
+            if(cacheService == null)
+                cacheService = Utl.getService(ServletContextHolder.getServletContext(), RestHelper.getAppTypes().getCacheServiceClass());
+        }
+        return cacheService;
+    }
 
     private AppService appService;
     public AppService getAppService() {

@@ -1,7 +1,8 @@
 package ru.bio4j.ng.service.api;
 
 public enum CacheName {
-    CURSOR("bio-cursor");
+	CURSOR("cursor"),
+    QUERY("query");
 
 	private final String cacheName;
 
