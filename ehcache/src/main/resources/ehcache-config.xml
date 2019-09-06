@@ -19,7 +19,7 @@
 
     <cache eternal="false" name="query"
            maxElementsInMemory="1000000"
-           timeToIdleSeconds="300" timeToLiveSeconds="1800"
+           timeToIdleSeconds="900" timeToLiveSeconds="2400"
            overflowToDisk="false"
            diskPersistent="false"
            memoryStoreEvictionPolicy="LRU"
