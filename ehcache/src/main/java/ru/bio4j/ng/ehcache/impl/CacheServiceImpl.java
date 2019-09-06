@@ -264,10 +264,10 @@ public class CacheServiceImpl extends ServiceBase implements CacheService {
 			}
 			if (LOG.isDebugEnabled())
 				LOG.debug("Config is not null. Loading CacheConfiguration...");
-			//createCacheConfiguration();
-//			cacheManager = CacheManager.create(serviceConfiguration);
-			InputStream configIn = getClass().getClassLoader().getResourceAsStream(CACHE_CONFIG_FILE);
-			cacheManager = CacheManager.create(configIn);
+			createCacheConfiguration();
+			cacheManager = CacheManager.create(serviceConfiguration);
+			//InputStream configIn = getClass().getClassLoader().getResourceAsStream(CACHE_CONFIG_FILE);
+			//cacheManager = CacheManager.create(configIn);
 			cacheManagerInited = true;
 		}
 	}

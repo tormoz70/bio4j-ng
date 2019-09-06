@@ -21,6 +21,9 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
+                        <Export-Package>
+                            net.sf.ehcache.*;version="${ehcache.version}"
+                        </Export-Package>
                         <Import-Package>!org.hibernate.*,!sun.misc,*</Import-Package>
                         <Embed-Dependency>ehcache-core</Embed-Dependency>
                     </instructions>
