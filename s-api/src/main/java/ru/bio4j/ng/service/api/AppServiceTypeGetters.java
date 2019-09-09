@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.service.api.AppService;
 import ru.bio4j.ng.service.api.CacheService;

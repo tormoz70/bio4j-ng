@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.service.api;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import ru.bio4j.ng.database.api.SQLActionScalar0;

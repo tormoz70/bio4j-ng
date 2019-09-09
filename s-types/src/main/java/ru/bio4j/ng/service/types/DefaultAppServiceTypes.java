@@ -1,9 +1,6 @@
 package ru.bio4j.ng.service.types;
 
-import ru.bio4j.ng.service.api.AppService;
-import ru.bio4j.ng.service.api.CacheService;
-import ru.bio4j.ng.service.api.FCloudApi;
-import ru.bio4j.ng.service.api.SecurityService;
+import ru.bio4j.ng.service.api.*;
 
 public class DefaultAppServiceTypes implements AppServiceTypeGetters {
 
