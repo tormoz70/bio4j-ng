@@ -1,5 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import flexjson.JSON;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.MetaType;
@@ -10,6 +11,7 @@ public class TBox {
     private MetaType type = MetaType.UNDEFINED;
 	private String name;
 	@JSON(overrideName = "crd")
+	@JsonProperty("crd")
 	private Date created;
 	private Double volume;
 	private TPacket[] packets;

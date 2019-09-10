@@ -19,40 +19,41 @@ public class HttpSimpleClient {
 
     private static final int CONNECTION_TIMEOUT_MS = 300 * 1000; // 300 secs.
     public HttpResponse requestPost(String url, String loginOrSToken, String json, String forwardIP, String forwardClient) throws Exception {
+        String body;
+        String login = null;
+        String stoken = null;
         if(!Strings.isNullOrEmpty(loginOrSToken)) {
-            String body = null;
-            String login = null;
-            String stoken = null;
             LoginRec loginRec = Utl.parsLogin(loginOrSToken);
-            if(Strings.isNullOrEmpty(loginRec.getUsername()) || Strings.isNullOrEmpty(loginRec.getPassword()))
+            if (Strings.isNullOrEmpty(loginRec.getUsername()) || Strings.isNullOrEmpty(loginRec.getPassword()))
                 stoken = loginOrSToken;
             else
                 login = loginOrSToken;
-            HttpPost request = new HttpPost(url);
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
-                    .setConnectTimeout(CONNECTION_TIMEOUT_MS)
-                    .setSocketTimeout(CONNECTION_TIMEOUT_MS)
-                    .build();
-            request.setConfig(requestConfig);
-            request.setHeader("X-ForwardIP", forwardIP);
-            request.setHeader("X-ForwardClient", forwardClient);
-            request.setHeader("Content-Type", "application/json");
-            if(!Strings.isNullOrEmpty(stoken)) {
-                request.setHeader("X-SToken", stoken);
-                body = json;
-            } else {
-                ABean bean = new ABean();
-                bean.put("login", login);
-                body = Jsons.encode(bean);
-            }
-            if(!Strings.isNullOrEmpty(body)) {
-                HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
-                request.setEntity(entity);
-            }
-            return client.execute(request);
         }
-        return null;
+        HttpPost request = new HttpPost(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
+                .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+                .setSocketTimeout(CONNECTION_TIMEOUT_MS)
+                .build();
+        request.setConfig(requestConfig);
+        request.setHeader("X-ForwardIP", forwardIP);
+        request.setHeader("X-ForwardClient", forwardClient);
+        request.setHeader("Content-Type", "application/json");
+        if(!Strings.isNullOrEmpty(stoken))
+            request.setHeader("X-SToken", stoken);
+
+        if(!Strings.isNullOrEmpty(login)) {
+            ABean bean = new ABean();
+            bean.put("login", login);
+            body = Jsons.encode(bean);
+        } else {
+            body = json;
+        }
+        if(!Strings.isNullOrEmpty(body)) {
+            HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
+            request.setEntity(entity);
+        }
+        return client.execute(request);
     }
 
     public HttpResponse requestGet(String url, String stoken, String forwardIP, String forwardClient) throws Exception {

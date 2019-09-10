@@ -3,7 +3,6 @@ package ru.bio4j.ng.model.transport;
 import flexjson.JSON;
 
 import java.security.Principal;
-import java.util.List;
 
 public class User implements Principal {
 

@@ -1,6 +1,4 @@
-package ru.bio4j.ng.service.types;
-
-import ru.bio4j.ng.model.transport.User;
+package ru.bio4j.ng.model.transport;
 
 public class SsoResponse {
     public User user;

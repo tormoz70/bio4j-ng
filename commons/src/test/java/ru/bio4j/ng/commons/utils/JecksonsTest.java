@@ -1,5 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -16,8 +17,9 @@ import ru.bio4j.ng.model.transport.jstore.StoreRow;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class JsonUtlTest {
-    private static final Logger LOG = LoggerFactory.getLogger(JsonUtlTest.class);
+@Test
+public class JecksonsTest {
+    private static final Logger LOG = LoggerFactory.getLogger(JecksonsTest.class);
 
 	private final TBox testBox = new TBox();
 
@@ -45,16 +47,16 @@ public class JsonUtlTest {
         TBox testBox = new TBox();
         testBox.setName("Test-Box");
 		String expected =
-		 "{\"crd\":null,\"err\":null,\"ex\":null,\"name\":\"Test-Box\",\"packets\":null,\"type\":\"undefined\",\"volume\":null}";
-		String testJson = Jsons.encode(testBox);
+		 "{\"type\":\"UNDEFINED\",\"name\":\"Test-Box\",\"volume\":null,\"packets\":null,\"ex\":null,\"err\":null,\"crd\":null}";
+		String testJson = Jecksons.getInstance().encode(testBox);
 		System.out.println(testJson);
-		Assert.assertEquals(expected, testJson);
+		Assert.assertEquals(testJson, expected);
 	}
 
 	@Test(enabled = true)
 	public void bdecode() throws Exception {
-		String testJson = Jsons.encode(this.testBox);
-		TBox restored = Jsons.decode(testJson, TBox.class);
+		String testJson = Jecksons.getInstance().encode(this.testBox);
+		TBox restored = Jecksons.getInstance().decode(testJson, TBox.class);
 		System.out.println("restored: " + restored);
 		Assert.assertEquals(this.testBox.getName(), restored.getName());
 		Assert.assertEquals(this.testBox.getCreated(), restored.getCreated());
@@ -78,13 +80,16 @@ public class JsonUtlTest {
                                "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.000+0300\"}"+
                 "],"+
                 "\"bioModuleKey\":\"ekbp\",\"bioCode\":\"cabinet.film-h2registry\",\"offset\":0,\"pageSize\":26}";
-        BioRequestJStoreGetDataSet request = Jsons.decode(requestBody, BioRequestJStoreGetDataSet.class);
+        Jecksons.getInstance().setDefaultDateTimeFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        BioRequestJStoreGetDataSet request = Jecksons.getInstance().decode(requestBody, BioRequestJStoreGetDataSet.class);
         if(LOG.isDebugEnabled())
             LOG.debug(Utl.buildBeanStateInfo(request, "Request", "  "));
 
         Date expectedDateTime = Types.parse("1970.03.02T18:43:56.000+0300", "yyyy.MM.dd'T'HH:mm:ss.SSSZ");
         if(LOG.isDebugEnabled())
             LOG.debug("expectedDateTime: {}", expectedDateTime);
+
+        String expectedDateTimeStr = Jecksons.getInstance().encode(expectedDateTime);
 
         TimeZone timeZone = TimeZone.getDefault();
         int offset = timeZone.getOffset(expectedDateTime.getTime());
@@ -95,7 +100,7 @@ public class JsonUtlTest {
             Assert.assertEquals(p.getParam("param1").getValue(), "123");
             Assert.assertEquals(p.getParam("param2").getValue(), null);
             Assert.assertEquals(p.getParam("param3").getValue(), 123);
-            Assert.assertEquals(p.getParam("param4").getValue(), expectedDateTime);
+            Assert.assertEquals(p.getParam("param4").getValue(), Strings.trim(expectedDateTimeStr, "\""));
         }
     }
 
@@ -122,20 +127,20 @@ public class JsonUtlTest {
     @Test(enabled = true)
     public void bdecode3() throws Exception {
         String json = "{\"bioModuleKey\":\"\",\"bioCode\":\"cabinet.film-h2registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[{\"fieldName\":\"property\",\"direction\":\"ASC\"}]}";
-        BioRequestJStoreGetDataSet rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
+        BioRequestJStoreGetDataSet rq = Jecksons.getInstance().decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
         json = "{\"bioModuleKey\":\"\",\"bioCode\":\"cabinet.film-h2registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":[]}";
-        rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
+        rq = Jecksons.getInstance().decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
         json = "{\"bioModuleKey\":\"\",\"bioCode\":\"cabinet.film-h2registry\",\"bioParams\":[{\"name\":\"prm1\",\"value\":\"qwe\"},{\"name\":\"prm2\",\"value\":\"asd\"}],\"offset\":0,\"pageSize\":25,\"sort\":null}";
-        rq = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
+        rq = Jecksons.getInstance().decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertNotNull(rq);
     }
 
     @Test(enabled = true)
     public void bdecode4() throws Exception {
         String json = "{\"bioCode\":\"cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":{}}]}";
-        BioRequest bioRequest = Jsons.decode(json, BioRequestJStoreGetDataSet.class);
+        BioRequest bioRequest = Jecksons.getInstance().decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertEquals("org_id", bioRequest.getBioParams().get(0).getName());
         Assert.assertNull(bioRequest.getBioParams().get(0).getValue());
     }
@@ -143,7 +148,7 @@ public class JsonUtlTest {
     private static final String tstPost = "{\"bioCode\":\"cabinet.org-sroom-list\",\"bioParams\":[{\"name\":\"id_org\",\"value\":305}],\"modified\":[{\"changeType\":\"update\",\"class\":\"ru.bio4j.ng.model.transport.jstore.StoreRow\",\"values\":[533,305,\"1111\",100]}]}";
     @Test(enabled = true)
     public void bdecode5() throws Exception {
-        BioRequest bioRequest = Jsons.decode(tstPost, BioRequestJStorePost.class);
+        BioRequest bioRequest = Jecksons.getInstance().decode(tstPost, BioRequestJStorePost.class);
         Assert.assertEquals("id_org", bioRequest.getBioParams().get(0).getName());
         Assert.assertEquals(305, bioRequest.getBioParams().get(0).getValue());
     }
@@ -164,7 +169,7 @@ public class JsonUtlTest {
         rows.add(row);
         data.setRows(rows);
 
-        String json = Jsons.encode(data);
+        String json = Jecksons.getInstance().encode(data);
 
         StoreData dataRe = Jsons.decode(json, StoreData.class);
 
@@ -181,14 +186,14 @@ public class JsonUtlTest {
             "}";
     @Test(enabled = true)
     public void bdecode7() throws Exception {
-        List<ABean> dummy = Jsons.decodeABeans(tstPost7);
+        List<ABean> dummy = Jecksons.getInstance().decodeABeans(tstPost7);
         Assert.assertEquals(dummy.size(), 1);
         Assert.assertEquals(dummy.get(0).get("tdictId"), 7);
     }
 
     @Test(enabled = true)
     public void bdecode71() throws Exception {
-        ABean dummy = Jsons.decodeABean(tstPost7);
+        ABean dummy = Jecksons.getInstance().decodeABean(tstPost7);
         Assert.assertEquals(dummy.get("tdictId"), 7);
     }
 
@@ -209,7 +214,7 @@ public class JsonUtlTest {
             "    }]\n";
     @Test(enabled = true)
     public void bdecode8() throws Exception {
-        List<ABean> dummy = Jsons.decodeABeans(tstPost8);
+        List<ABean> dummy = Jecksons.getInstance().decode(tstPost8, new TypeReference<List<ABean>>(){});
         Assert.assertEquals(dummy.size(), 2);
         Assert.assertEquals(dummy.get(1).get("tdict_id"), 27);
     }

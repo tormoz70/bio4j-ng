@@ -1,9 +1,5 @@
 package ru.bio4j.ng.commons.utils;
 
-//import flexjson.*;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import sun.org.mozilla.javascript.internal.json.JsonParser;
-
 import flexjson.*;
 import flexjson.transformer.AbstractTransformer;
 import ru.bio4j.ng.model.transport.ABean;
@@ -14,6 +10,7 @@ import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.model.transport.jstore.filter.FilterBuilder;
+import ru.bio4j.ng.service.api.RestHelperMethods;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
@@ -21,7 +18,19 @@ import java.util.*;
 
 public class Jsons1 {
 
-    public static class ExceptionTransformer extends AbstractTransformer {
+    private Jsons1() { /* hidden constructor */ }
+    public static Jsons1 getInstance() {
+        return SingletonContainer.INSTANCE;
+    }
+
+    private static class SingletonContainer {
+        public static final Jsons1 INSTANCE;
+        static {
+            INSTANCE = new Jsons1();
+        }
+    }
+
+    private static class ExceptionTransformer extends AbstractTransformer {
 
         public void transform(Object value) {
             JSONContext context = getContext();
@@ -33,7 +42,7 @@ public class Jsons1 {
 
     }
 
-    public static class MetaTypeTransformer extends AbstractTransformer {
+    private static class MetaTypeTransformer extends AbstractTransformer {
 
         public void transform(Object value) {
             JSONContext context = getContext();
@@ -43,17 +52,17 @@ public class Jsons1 {
 
     }
 
-	public static String encode(Object object) {
-		JSONSerializer serializer = new JSONSerializer();
-		return serializer
+    public String encode(Object object) {
+        JSONSerializer serializer = new JSONSerializer();
+        return serializer
                 .exclude("class")
-				.transform(new DateTimeBioTransformer(), Date.class)
-				.transform(new ExceptionTransformer(), Exception.class)
-                .transform(new MetaTypeTransformer(), MetaType.class)
-				.deepSerialize(object);
-	}
+                .transform(new DateTimeBioTransformer(), Date.class)
+                .transform(new Jsons.ExceptionTransformer(), Exception.class)
+                .transform(new Jsons.MetaTypeTransformer(), MetaType.class)
+                .deepSerialize(object);
+    }
 
-    private static <T> JSONDeserializer<T> createDeserializer(T target) {
+    private <T> JSONDeserializer<T> createDeserializer(T target) {
         return new JSONDeserializer<T>()
                 .use(Date.class, new ObjectFactory() {
                     @Override
@@ -108,61 +117,61 @@ public class Jsons1 {
                 });
 
     }
-    private static <T> JSONDeserializer<T> createDeserializer() {
+    private <T> JSONDeserializer<T> createDeserializer() {
         return createDeserializer(null);
     }
 
-    public static <T> T decode(String json, T target) throws Exception {
+    public <T> T decode(String json, T target) throws Exception {
         return createDeserializer(target).deserializeInto(json, target);
     }
 
-	public static <T> T decode(String json, Class<T> targetClass) throws Exception {
+    public <T> T decode(String json, Class<T> targetClass) throws Exception {
         if(targetClass == null)
             throw new IllegalAccessException("Parameter targetClass cannot be null!");
         T newResult = null;
         newResult = targetClass.newInstance();
-		return decode(json, newResult);
-	}
+        return decode(json, newResult);
+    }
 
-    public static <T> T decode(String json, ObjectFactory factory) throws Exception {
+    public <T> T decode(String json, ObjectFactory factory) throws Exception {
         JSONDeserializer<T> d = createDeserializer();
         return d.deserialize(json, factory);
     }
 
-    public static HashMap<String, Object> decode(String json) throws Exception {
+    public HashMap<String, Object> decode(String json) throws Exception {
         HashMap<String, Object> rslt = (HashMap<String, Object>) new JSONDeserializer<>().deserialize(json);
         return rslt;
     }
 
-    public static class ABeanWrapper{
+    private static class ABeanWrapper{
         public ABean abean;
     }
-    public static class ABeansWrapper{
+    private static class ABeansWrapper{
         public List<ABean> abeans;
     }
-    public static List<ABean> decodeABeans(String json) throws Exception {
+    public List<ABean> decodeABeans(String json) throws Exception {
         if(json.trim().startsWith("[")) {
             json = String.format("{\"abeans\":%s}", json);
-            ABeansWrapper dummy1 = decode(json, ABeansWrapper.class);
+            Jsons.ABeansWrapper dummy1 = decode(json, Jsons.ABeansWrapper.class);
             if (dummy1.abeans != null)
                 return dummy1.abeans;
         }
         json = String.format("{\"abean\":%s}", json);
-        ABeanWrapper dummy2 = decode(json, ABeanWrapper.class);
+        Jsons.ABeanWrapper dummy2 = decode(json, Jsons.ABeanWrapper.class);
         if(dummy2.abean != null)
             return Arrays.asList(dummy2.abean);
         return new ArrayList<>();
     }
 
-    public static ABean decodeABean(String json) throws Exception {
+    public ABean decodeABean(String json) throws Exception {
         json = String.format("{\"abean\":%s}", json);
-        ABeanWrapper dummy2 = decode(json, ABeanWrapper.class);
+        Jsons.ABeanWrapper dummy2 = decode(json, Jsons.ABeanWrapper.class);
         if(dummy2.abean != null)
             return dummy2.abean;
         return null;
     }
 
-    private static List<Expression> parsExprationLevel(HashMap<String, Object> map) {
+    private List<Expression> parsExprationLevel(HashMap<String, Object> map) {
         List<Expression> expressions = new ArrayList<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if(entry.getKey().equalsIgnoreCase("and")) {
@@ -271,7 +280,7 @@ public class Jsons1 {
         return expressions;
     }
 
-    private static List<Sort> parsSorter(HashMap<String, Object> map) {
+    private List<Sort> parsSorter(HashMap<String, Object> map) {
         List<Sort> sorter = new ArrayList<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             Sort s = new Sort();
@@ -282,14 +291,7 @@ public class Jsons1 {
         return sorter;
     }
 
-//    public static Filter decodeFilter(String json) throws Exception {
-//        HashMap<String, Object> filterJsonObj = (HashMap<String, Object>)new JSONDeserializer<>().deserialize(json);
-//        Filter filter = new Filter();
-//        filter.add(parsExprationLevel(filterJsonObj).get(0));
-//        return filter;
-//    }
-
-    public static FilterAndSorter decodeFilterAndSorter(String json) throws Exception {
+    public FilterAndSorter decodeFilterAndSorter(String json) throws Exception {
         HashMap<String, Object> filterAndSorterJsonObj = (HashMap<String, Object>)new JSONDeserializer<>().deserialize(json);
         FilterAndSorter filterAndSorter = new FilterAndSorter();
         filterAndSorter.setFilter(new Filter());
