@@ -2,6 +2,7 @@ package ru.bio4j.ng.database.oracle;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.oracle.impl.OraWrapperInterpreter;
@@ -36,7 +37,7 @@ public class OraWrapperInterpreterTest {
     public void filterAndSorterToSQLTest() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter2.json");
         String json = Utl.readStream(inputStream);
-        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        FilterAndSorter fs = Jecksons.getInstance().decodeFilterAndSorter(json);
         OraWrapperInterpreter filterWrapper = new OraWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
@@ -46,7 +47,7 @@ public class OraWrapperInterpreterTest {
     public void filterAndSorterToSQLTest1() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter3.json");
         String json = Utl.readStream(inputStream);
-        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        FilterAndSorter fs = Jecksons.getInstance().decodeFilterAndSorter(json);
         OraWrapperInterpreter filterWrapper = new OraWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
