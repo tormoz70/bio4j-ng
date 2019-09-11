@@ -87,11 +87,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>flexjson</artifactId>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>${project.groupId}</groupId>-->
+<!--            <artifactId>flexjson</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>${project.groupId}</groupId>

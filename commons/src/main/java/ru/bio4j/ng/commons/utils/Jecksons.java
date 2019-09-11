@@ -1,5 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
@@ -12,12 +13,8 @@ import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.model.transport.jstore.filter.FilterBuilder;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -62,6 +59,7 @@ public class Jecksons {
             SimpleModule simpleModule = new SimpleModule();
             simpleModule.addDeserializer(Param.class, new ParamJsonDateDeserializer());
             simpleModule.addDeserializer(MetaType.class, new MetaTypeJsonDateDeserializer());
+            simpleModule.setMixInAnnotation(Exception.class, MixInException.class);
             objectMapper.registerModule(simpleModule);
         }
         return objectMapper;
@@ -221,23 +219,41 @@ public class Jecksons {
 //        return filter;
 //    }
 
+    public Expression decodeFilter(String json) throws Exception {
+        HashMap<String, Object> filterJsonObj = decodeABean(json);
+        return parsExprationLevel(filterJsonObj).get(0);
+    }
+
     public FilterAndSorter decodeFilterAndSorter(String json) throws Exception {
         HashMap<String, Object> filterAndSorterJsonObj = decodeABean(json);
         FilterAndSorter filterAndSorter = new FilterAndSorter();
         filterAndSorter.setFilter(new Filter());
-
-        for (Map.Entry<String, Object> entry : filterAndSorterJsonObj.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase("filter")) {
-                Expression e = parsExprationLevel((HashMap<String, Object>)entry.getValue()).get(0);
-                filterAndSorter.getFilter().add(e);
+        if(filterAndSorterJsonObj.containsKey("filter") || filterAndSorterJsonObj.containsKey("sorter"))
+            for (Map.Entry<String, Object> entry : filterAndSorterJsonObj.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase("filter")) {
+                    Expression e = parsExprationLevel((HashMap<String, Object>)entry.getValue()).get(0);
+                    filterAndSorter.getFilter().add(e);
+                }
+                if (entry.getKey().equalsIgnoreCase("sorter")) {
+                    filterAndSorter.setSorter(parsSorter((HashMap<String, Object>)entry.getValue()));
+                }
             }
-            if (entry.getKey().equalsIgnoreCase("sorter")) {
-                filterAndSorter.setSorter(parsSorter((HashMap<String, Object>)entry.getValue()));
-            }
-        }
         return filterAndSorter;
     }
+    // ******************** MixIn ***************************************************************************************************************
+    abstract class MixInException {
+        @JsonIgnore
+        abstract StackTraceElement[] getStackTrace();
+        @JsonIgnore
+        abstract Throwable getCause();
+        @JsonIgnore
+        abstract String getLocalizedMessage();
+        @JsonIgnore
+        abstract Throwable[] getSuppressed();
 
+        @JsonIgnore
+        abstract Throwable getRootCause();
+    }
     // ******************** Deserializers ***************************************************************************************************************
     public static class ParamJsonDateDeserializer extends JsonDeserializer<Param> {
 

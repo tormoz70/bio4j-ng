@@ -1,7 +1,7 @@
 package ru.bio4j.ng.commons.utils;
 
-import flexjson.ObjectBinder;
-import flexjson.ObjectFactory;
+//import flexjson.ObjectBinder;
+//import flexjson.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -363,24 +363,26 @@ public class UtlTest {
     @Test
     public void JsonsDecodeTest() throws Exception {
         String json = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("1e1a01b6c2bc4b81b76a08cc16afe951.attrs"));
-        FileSpec fileSpec = Jsons.decode(json, new ObjectFactory(){
-            @Override
-            public Object instantiate(ObjectBinder objectBinder, Object o, Type type, Class aClass) throws Exception {
-                FileSpec rslt = new FileSpec();
-                Utl.applyValuesToBeanFromHashMap((HashMap) o, rslt, null, "innerFiles");
-                Object innerFilesVal = ((HashMap) o).get("innerFiles");
-                if(innerFilesVal != null) {
-                    List<HashMap> innerFiles = (List<HashMap>)innerFilesVal;
-                    rslt.setInnerFiles(new ArrayList<>());
-                    for(HashMap hf : innerFiles){
-                        FileSpec ip = new FileSpec();
-                        Utl.applyValuesToBeanFromHashMap(hf, ip, null, "innerFiles");
-                        rslt.getInnerFiles().add(ip);
-                    }
-                }
-                return rslt;
-            }
-        });
+//        FileSpec fileSpec = Jsons.decode(json, new ObjectFactory(){
+//            @Override
+//            public Object instantiate(ObjectBinder objectBinder, Object o, Type type, Class aClass) throws Exception {
+//                FileSpec rslt = new FileSpec();
+//                Utl.applyValuesToBeanFromHashMap((HashMap) o, rslt, null, "innerFiles");
+//                Object innerFilesVal = ((HashMap) o).get("innerFiles");
+//                if(innerFilesVal != null) {
+//                    List<HashMap> innerFiles = (List<HashMap>)innerFilesVal;
+//                    rslt.setInnerFiles(new ArrayList<>());
+//                    for(HashMap hf : innerFiles){
+//                        FileSpec ip = new FileSpec();
+//                        Utl.applyValuesToBeanFromHashMap(hf, ip, null, "innerFiles");
+//                        rslt.getInnerFiles().add(ip);
+//                    }
+//                }
+//                return rslt;
+//            }
+//        });
+
+        FileSpec fileSpec = Jecksons.getInstance().decode(json, FileSpec.class);
 
         Assert.assertTrue(fileSpec != null);
     }
@@ -472,7 +474,7 @@ public class UtlTest {
     public void testABeans() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("mkres.json");
         String json = Utl.readStream(inputStream);
-        ABean aBean = Jsons.decodeABean(json);
+        ABean aBean = Jecksons.getInstance().decodeABean(json);
         int act = ABeans.extractAttrFromBean(aBean, "pageInfo/count", int.class, 0);
         Assert.assertEquals(act, 100);
     }

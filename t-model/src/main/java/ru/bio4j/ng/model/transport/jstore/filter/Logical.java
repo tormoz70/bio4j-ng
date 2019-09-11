@@ -9,7 +9,7 @@ import java.util.List;
  * Элемент фильтра
  */
 
-public class Logical extends AbstractExpression {
+public class Logical extends Expression {
 
     public Logical() {
         super();

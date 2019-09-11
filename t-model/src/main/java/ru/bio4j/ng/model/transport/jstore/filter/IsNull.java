@@ -8,7 +8,7 @@ import java.util.List;
  * Элемент фильтра
  */
 
-public class IsNull extends AbstractExpression {
+public class IsNull extends Expression {
 
     private final String column;
 

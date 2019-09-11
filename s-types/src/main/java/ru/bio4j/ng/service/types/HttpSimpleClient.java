@@ -8,7 +8,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import ru.bio4j.ng.commons.utils.Jsons;
+//import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.LoginRec;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -45,7 +46,7 @@ public class HttpSimpleClient {
         if(!Strings.isNullOrEmpty(login)) {
             ABean bean = new ABean();
             bean.put("login", login);
-            body = Jsons.encode(bean);
+            body = Jecksons.getInstance().encode(bean);
         } else {
             body = json;
         }

@@ -2,7 +2,8 @@ package ru.bio4j.ng.database.pgsql;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.commons.utils.Jsons;
+//import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLWrapperInterpreter;
 import ru.bio4j.ng.model.transport.FilterAndSorter;
@@ -37,7 +38,7 @@ public class PgSQLWrapperInterpreterTest {
     public void filterAndSorterToSQLTest() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter2.json");
         String json = Utl.readStream(inputStream);
-        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        FilterAndSorter fs = Jecksons.getInstance().decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
@@ -47,7 +48,7 @@ public class PgSQLWrapperInterpreterTest {
     public void filterAndSorterToSQLTest1() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter3.json");
         String json = Utl.readStream(inputStream);
-        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        FilterAndSorter fs = Jecksons.getInstance().decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNotNull(sql);
@@ -57,7 +58,7 @@ public class PgSQLWrapperInterpreterTest {
     public void filterAndSorterToSQLTest2() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter4.json");
         String json = Utl.readStream(inputStream);
-        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        FilterAndSorter fs = Jecksons.getInstance().decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         Assert.assertNull(sql);
@@ -67,7 +68,7 @@ public class PgSQLWrapperInterpreterTest {
     public void filterAndSorterToSQLTest5() throws Exception {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("filter5.json");
         String json = Utl.readStream(inputStream);
-        FilterAndSorter fs = Jsons.decodeFilterAndSorter(json);
+        FilterAndSorter fs = Jecksons.getInstance().decodeFilterAndSorter(json);
         PgSQLWrapperInterpreter filterWrapper = new PgSQLWrapperInterpreter();
         String sql = filterWrapper.filterToSQL("fff", (Filter)fs.getFilter(), null);
         System.out.println(sql);

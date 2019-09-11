@@ -1,53 +1,71 @@
 package ru.bio4j.ng.model.transport.jstore.filter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * Фильтр...
- * Ну так вот например:
- *      and(
- *          eq(f1, 1),
- *          or(eq(r, 1), eq(r, 2))
- *      )
- *    это значит: (f1=1) and ((r=1) or (r=2))
- */
-public interface Expression {
+public abstract class Expression {
 
-    /**
-     * Имя которое идентифицирует выражение в текстовом представлении (Например OR)
-     */
-    public String getName();
+    protected final List<Expression> children;
 
-    /**
-     * @title Получение списка аргументов
-     * @return Список аргументов
-     */
-    List<Expression> getChildren();
+    public Expression() {
+        children = new ArrayList<>();
+    }
 
-    /**
-     * Добавить аргумент для логических выражений (для построения в runtime)
-     * @param expression
-     * @return
-     */
-    Expression add(Expression expression);
+    public Expression(Expression ... expressions) {
+        this();
+        if(!this.children.isEmpty()) {
+            this.children.clear();
+        }
+        for(Expression e : expressions)
+            this.children.add(e);
+    }
 
-    Expression addAll(List<Expression> expressions);
+    public List<Expression> getChildren() {
+        return Collections.unmodifiableList(this.children);
+    }
 
-    /**
-     * Не учитывать регистр при сравнении строк (для операции сравнения)
-     * @return
-     */
-    boolean ignoreCase();
+    public Expression add(Expression expression) {
+        this.children.add(expression);
+        return this;
+    }
 
-    /**
-     * Имя поля в операции сравнения
-     * @return
-     */
-    String getColumn();
+    public Expression addAll(List<Expression> expressions) {
+        this.children.addAll(expressions);
+        return this;
+    }
 
-    /**
-     * Сравниваемое значение в операции сравнения
-     * @return
-     */
-    Object getValue();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Logical)) return false;
+
+        return false;
+
+    }
+
+    // вернет or,not и пр
+    private final String selfName = getClass().getSimpleName().toLowerCase();
+
+    public String getName() {
+        return selfName;
+    }
+
+    public Object getValue() {
+        return null;
+    }
+
+    public boolean ignoreCase() {
+        return false;
+    }
+
+    public String getColumn() {
+        return null;
+    }
+
+    @Override
+    public int hashCode() {
+        return children != null ? children.hashCode() : 0;
+    }
+
 }

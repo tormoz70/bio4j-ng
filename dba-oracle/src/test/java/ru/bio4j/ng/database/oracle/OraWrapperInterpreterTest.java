@@ -3,7 +3,6 @@ package ru.bio4j.ng.database.oracle;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.commons.utils.Jecksons;
-import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.oracle.impl.OraWrapperInterpreter;
 import ru.bio4j.ng.model.transport.FilterAndSorter;

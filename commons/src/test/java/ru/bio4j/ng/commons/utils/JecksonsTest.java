@@ -57,6 +57,12 @@ public class JecksonsTest {
 	@Test(enabled = true)
 	public void bdecode() throws Exception {
 		String testJson = Jecksons.getInstance().encode(this.testBox);
+        Assert.assertTrue(testJson.indexOf("stackTrace") == -1);
+        Assert.assertTrue(testJson.indexOf("cause") == -1);
+        Assert.assertTrue(testJson.indexOf("rootCause") == -1);
+        Assert.assertTrue(testJson.indexOf("localizedMessage") == -1);
+        Assert.assertTrue(testJson.indexOf("suppressed") == -1);
+
 		TBox restored = Jecksons.getInstance().decode(testJson, TBox.class);
 		System.out.println("restored: " + restored);
 		Assert.assertEquals(this.testBox.getName(), restored.getName());

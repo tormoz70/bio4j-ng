@@ -1,6 +1,8 @@
 package ru.bio4j.ng.model.transport;
 
-import flexjson.JSON;
+//import flexjson.JSON;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.security.Principal;
 
@@ -118,7 +120,8 @@ public class User implements Principal {
         this.remoteIP = remoteIP;
     }
 
-    @JSON(include = false)
+//    @JSON(include = false)
+    @JsonIgnore
     public String getInnerUid() {
         return innerUid;
     }

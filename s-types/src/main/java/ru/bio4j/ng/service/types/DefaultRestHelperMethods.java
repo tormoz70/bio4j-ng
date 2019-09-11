@@ -5,7 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Jsons;
+//import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.ServletContextHolder;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
@@ -221,7 +222,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         String abeanJson = null;
         try {
             abeanJson = ((WrappedRequest)request).getBioQueryParams().jsonData;
-            abeans = Jsons.decodeABeans(abeanJson);
+            abeans = Jecksons.getInstance().decodeABeans(abeanJson);
         } catch (Exception e) {
             throw new Exception(String.format("Cannot decode json to bean: %s", abeanJson));
         }
@@ -234,7 +235,7 @@ public class DefaultRestHelperMethods implements RestHelperMethods {
         String abeanJson = null;
         try {
             abeanJson = ((WrappedRequest)request).getBioQueryParams().jsonData;
-            bean = Jsons.decode(abeanJson, clazz);
+            bean = Jecksons.getInstance().decode(abeanJson, clazz);
         } catch (Exception e) {
             throw new Exception(String.format("Cannot decode json to bean(%s): %s", clazz.getCanonicalName(), abeanJson));
         }

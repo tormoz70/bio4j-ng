@@ -8,7 +8,7 @@ import java.util.List;
  * Элемент фильтра
  */
 
-public class Compare extends AbstractExpression {
+public class Compare extends Expression {
 
     private final String column;
     private final Object value;

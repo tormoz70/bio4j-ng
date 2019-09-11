@@ -1,7 +1,7 @@
 package ru.bio4j.ng.model.transport;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import flexjson.JSON;
+//import flexjson.JSON;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,7 +53,7 @@ public class FileSpec {
     @DbSkip
     private List<FileSpec> innerFiles; // Вложенные файла (зависит от реализации)
 
-    @JSON(include = false)
+//    @JSON(include = false)
     @JsonIgnore
     @DbSkip
     private Exception error;

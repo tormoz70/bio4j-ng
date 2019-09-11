@@ -1,6 +1,6 @@
 package ru.bio4j.ng.commons.converter.hanlers;
 
-import flexjson.factories.BigDecimalFactory;
+//import flexjson.factories.BigDecimalFactory;
 import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.TypeHandler;
 import ru.bio4j.ng.commons.converter.TypeHandlerBase;

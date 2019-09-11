@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.types;
 
-import ru.bio4j.ng.commons.utils.Jsons;
+//import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
@@ -36,7 +37,7 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
 //        }
         response.setStatus(resultCode);
         PrintWriter writer = response.getWriter();
-        writer.append(Jsons.encode(result));
+        writer.append(Jecksons.getInstance().encode(result));
         return false;
     }
 }

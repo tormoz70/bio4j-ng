@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
-import ru.bio4j.ng.commons.utils.Jsons;
+//import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.SQLActionScalar0;
 import ru.bio4j.ng.database.api.SQLActionScalar1;
@@ -95,7 +96,7 @@ public class RestApiAdapter {
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
             try {
-                fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
             } catch (Exception e) {
                 if(LOG.isDebugEnabled())LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
             }
@@ -118,7 +119,7 @@ public class RestApiAdapter {
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
             try {
-                fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
             } catch (Exception e) {
                 if(LOG.isDebugEnabled())LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
             }
@@ -144,7 +145,7 @@ public class RestApiAdapter {
         int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+            fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
         if(fs == null) {
             fs = new FilterAndSorter();
             fs.setSorter(queryParams.sort);
@@ -261,7 +262,7 @@ public class RestApiAdapter {
         return context.execBatch((ctx) -> {
             FilterAndSorter fs = null;
             if(!Strings.isNullOrEmpty(queryParams.jsonData))
-                fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
             if(fs == null) {
                 fs = new FilterAndSorter();
                 fs.setSorter(queryParams.sort);
@@ -282,7 +283,7 @@ public class RestApiAdapter {
         final User user = ((WrappedRequest)request).getUser();
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+            fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
         if(fs == null) {
             fs = new FilterAndSorter();
             fs.setSorter(queryParams.sort);
@@ -300,7 +301,7 @@ public class RestApiAdapter {
         final User user = ((WrappedRequest)request).getUser();
         FilterAndSorter fs = null;
         if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jsons.decodeFilterAndSorter(queryParams.jsonData);
+            fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
         if(fs == null) {
             fs = new FilterAndSorter();
             fs.setSorter(queryParams.sort);

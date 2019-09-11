@@ -315,7 +315,7 @@ public class Paramus implements Closeable {
 			if ((prm.getValue() != null) && (prm.getValue().getClass() == String.class))
 				val = paramValueAsString(prm);
 			else {
-				val = Jsons.encode(prm.getValue());
+				val = Jecksons.getInstance().encode(prm.getValue());
 			}
 			rslt.put(prm.getName(), val);
 		}
@@ -345,7 +345,7 @@ public class Paramus implements Closeable {
 	}
 
 	public String encode() throws Exception {
-		return Jsons.encode(this);
+		return Jecksons.getInstance().encode(this);
 	}
 
 //	public static List<Param> decode(String jsonString) throws Exception {

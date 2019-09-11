@@ -1,6 +1,7 @@
 package ru.bio4j.ng.service.types;
 
-import ru.bio4j.ng.commons.utils.Jsons;
+//import ru.bio4j.ng.commons.utils.Jsons;
+import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.ServletContextHolder;
 import ru.bio4j.ng.commons.utils.SrvcUtils;
 import ru.bio4j.ng.commons.utils.Strings;
@@ -34,7 +35,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
         final BioQueryParams qprms = req.getBioQueryParams();
         User user = securityService.getUser(qprms);
         ABean result = SrvcUtils.buildSuccess(user);
-        response.getWriter().append(Jsons.encode(result));
+        response.getWriter().append(Jecksons.getInstance().encode(result));
         return false;
     }
 
@@ -52,7 +53,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
         final BioQueryParams qprms = req.getBioQueryParams();
         User user = securityService.login(qprms);
         ABean result = SrvcUtils.buildSuccess(user);
-        response.getWriter().append(Jsons.encode(result));
+        response.getWriter().append(Jecksons.getInstance().encode(result));
         return false;
     }
 
@@ -70,7 +71,7 @@ public class DefaultLoginProcessor implements LoginProcessor {
         final BioQueryParams qprms = req.getBioQueryParams();
         securityService.logoff(qprms);
         ABean result = SrvcUtils.buildSuccess(null);
-        response.getWriter().append(Jsons.encode(result));
+        response.getWriter().append(Jecksons.getInstance().encode(result));
         return false;
     }
 

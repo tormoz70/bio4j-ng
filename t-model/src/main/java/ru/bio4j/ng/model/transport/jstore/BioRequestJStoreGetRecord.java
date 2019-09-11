@@ -1,9 +1,6 @@
 package ru.bio4j.ng.model.transport.jstore;
 
 import ru.bio4j.ng.model.transport.BioRequest;
-import ru.bio4j.ng.model.transport.jstore.filter.Expression;
-
-import java.util.List;
 
 /**
  * Запрос на получение данных в JStoreClient

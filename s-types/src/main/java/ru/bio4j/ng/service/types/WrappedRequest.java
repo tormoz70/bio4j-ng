@@ -236,7 +236,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         if(Strings.isNullOrEmpty(result.login) && !Strings.isNullOrEmpty(result.jsonData)) {
             ABean obj = null;
             try {
-                obj = Jsons.decodeABean(result.jsonData);
+                obj = Jecksons.getInstance().decodeABean(result.jsonData);
             } catch (Exception e) {
             }
             if (obj != null && obj.containsKey("login"))
@@ -253,7 +253,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         if((result.sort == null || result.filter == null) && !Strings.isNullOrEmpty(result.jsonData)) {
             SortAndFilterObj obj = null;
             try {
-                obj = Jsons.decode(result.jsonData, SortAndFilterObj.class);
+                obj = Jecksons.getInstance().decode(result.jsonData, SortAndFilterObj.class);
             } catch (Exception e) {
             }
             if (obj != null && result.sort == null)
@@ -268,11 +268,11 @@ public class WrappedRequest extends HttpServletRequestWrapper {
             result.filter = Utl.restoreSimpleFilter(result.filterOrig);
         }
         if(result.sort == null && !Strings.isNullOrEmpty(result.sortOrig)) {
-            SortAndFilterObj obj = Jsons.decode("{ \"sort\":" + result.sortOrig + " }", SortAndFilterObj.class);
+            SortAndFilterObj obj = Jecksons.getInstance().decode("{ \"sort\":" + result.sortOrig + " }", SortAndFilterObj.class);
             result.sort = obj.sort;
         }
         if(result.filter == null && !Strings.isNullOrEmpty(result.filterOrig)) {
-            result.filter = Jsons.decode(result.filterOrig, Filter.class);
+            result.filter = Jecksons.getInstance().decode(result.filterOrig, Filter.class);
         }
 
 

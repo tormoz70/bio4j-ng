@@ -488,11 +488,11 @@
 <!--                <artifactId>flexjson</artifactId>-->
 <!--                <version>${project.version}</version>-->
 <!--            </dependency>-->
-            <dependency>
-                <groupId>ru.bio4j.ng</groupId>
-                <artifactId>flexjson</artifactId>
-                <version>${bio4j-ng.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>ru.bio4j.ng</groupId>-->
+<!--                <artifactId>flexjson</artifactId>-->
+<!--                <version>${bio4j-ng.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>ru.bio4j.ng</groupId>
@@ -630,7 +630,7 @@
         <!-- Common services -->
         <module>ext-libs</module>
         <module>jetty-osgi-boot</module>
-        <module>flexjson</module>
+<!--        <module>flexjson</module>-->
         <module>XStreamExts</module>
         <module>marc4j</module>
         <module>t-model</module>
