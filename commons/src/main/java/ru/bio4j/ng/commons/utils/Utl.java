@@ -428,33 +428,9 @@ public class Utl {
 
     public static boolean applyValuesToBeanFromABean(ABean vals, Object bean) throws ApplyValuesToBeanException {
         return applyValuesToBeanFromHashMap(vals, bean);
-//        boolean result = false;
-//        if (vals == null)
-//            throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
-//        if (bean == null)
-//            throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
-//        Class<?> type = bean.getClass();
-//        for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
-//            String fldName = fld.getName();
-//            Prop p = findAnnotation(Prop.class, fld);
-//            if (p != null)
-//                fldName = p.name();
-//            Object valObj = vals.get(fldName);
-//            if (valObj != null) {
-//                try {
-//                    Object val = (fld.getType() == Object.class) ? valObj : Converter.toType(valObj, fld.getType());
-//                    fld.setAccessible(true);
-//                    fld.set(bean, val);
-//                    if (!result) result = true;
-//                } catch (Exception e) {
-//                    throw new ApplyValuesToBeanException(fldName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
-//                }
-//            }
-//        }
-//        return result;
     }
 
-    public static void applyValuesToABeanFromABean(ABean srcBean, ABean dstBean, boolean addIfNotExists) throws ApplyValuesToBeanException {
+    public static void applyValuesToABeanFromABean(ABean srcBean, ABean dstBean, boolean addIfNotExists) {
         boolean result = false;
         if (srcBean == null)
             throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
@@ -466,6 +442,22 @@ public class Utl {
             else {
                 if (addIfNotExists)
                     dstBean.put(key, srcBean.get(key));
+            }
+        }
+    }
+
+    public static void applyValuesToABeanFromMap(Map vals, ABean dstBean, boolean addIfNotExists) {
+        boolean result = false;
+        if (vals == null)
+            throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
+        if (dstBean == null)
+            throw new IllegalArgumentException("Argument \"dstBean\" cannot be null!");
+        for (Object key : vals.keySet()) {
+            if (dstBean.containsKey(key))
+                dstBean.put(key.toString(), vals.get(key));
+            else {
+                if (addIfNotExists)
+                    dstBean.put(key.toString(), vals.get(key));
             }
         }
     }
@@ -895,7 +887,7 @@ public class Utl {
         if(Strings.isNullOrEmpty(anjson))
             return result;
 
-        HashMap bioParamsContainer = Jsons.decode(anjson);
+        ABean bioParamsContainer = Jecksons.getInstance().decodeABean(anjson);
         if(bioParamsContainer.containsKey("bioParams")) {
             List<HashMap<String, Object>> bioParamsArray = (List)bioParamsContainer.get("bioParams");
             for (HashMap<String, Object> prm : bioParamsArray) {

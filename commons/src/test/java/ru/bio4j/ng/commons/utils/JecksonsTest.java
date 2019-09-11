@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.converter.DateTimeParser;
 import ru.bio4j.ng.commons.converter.Types;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.model.transport.*;
@@ -75,7 +76,7 @@ public class JecksonsTest {
     public void bdecode1() throws Exception {
         final String requestBody = "{"+
                 "\"bioParams\":[{\"name\":\"param1\",\"value\":\"123\"},"+
-                               "{\"name\":\"param2\",\"value\":null},"+
+                               "{\"name\":\"param2\",\"value\":null, \"type\":\"string\"},"+
                                "{\"name\":\"param3\",\"value\":123},"+
                                "{\"name\":\"param4\",\"value\":\"1970-03-02T18:43:56.000+0300\"}"+
                 "],"+
@@ -99,8 +100,10 @@ public class JecksonsTest {
         try(Paramus p = Paramus.set(request.getBioParams())){
             Assert.assertEquals(p.getParam("param1").getValue(), "123");
             Assert.assertEquals(p.getParam("param2").getValue(), null);
+            Assert.assertEquals(p.getParam("param2").getType(), MetaType.STRING);
             Assert.assertEquals(p.getParam("param3").getValue(), 123);
-            Assert.assertEquals(p.getParam("param4").getValue(), Strings.trim(expectedDateTimeStr, "\""));
+            Object dateTime = p.getParam("param4").getValue();
+            Assert.assertEquals(dateTime, expectedDateTime);
         }
     }
 
@@ -139,7 +142,7 @@ public class JecksonsTest {
 
     @Test(enabled = true)
     public void bdecode4() throws Exception {
-        String json = "{\"bioCode\":\"cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":{}}]}";
+        String json = "{\"bioCode\":\"cabinet.get-org\",\"bioParams\":[{\"name\":\"org_id\",\"value\":null}]}";
         BioRequest bioRequest = Jecksons.getInstance().decode(json, BioRequestJStoreGetDataSet.class);
         Assert.assertEquals("org_id", bioRequest.getBioParams().get(0).getName());
         Assert.assertNull(bioRequest.getBioParams().get(0).getValue());
@@ -171,7 +174,7 @@ public class JecksonsTest {
 
         String json = Jecksons.getInstance().encode(data);
 
-        StoreData dataRe = Jsons.decode(json, StoreData.class);
+        StoreData dataRe = Jecksons.getInstance().decode(json, StoreData.class);
 
         Assert.assertNotNull(dataRe);
 
@@ -186,6 +189,7 @@ public class JecksonsTest {
             "}";
     @Test(enabled = true)
     public void bdecode7() throws Exception {
+        //List<ABean> dummy = Jsons1.getInstance().decodeABeans(tstPost7);
         List<ABean> dummy = Jecksons.getInstance().decodeABeans(tstPost7);
         Assert.assertEquals(dummy.size(), 1);
         Assert.assertEquals(dummy.get(0).get("tdictId"), 7);
@@ -214,23 +218,47 @@ public class JecksonsTest {
             "    }]\n";
     @Test(enabled = true)
     public void bdecode8() throws Exception {
-        List<ABean> dummy = Jecksons.getInstance().decode(tstPost8, new TypeReference<List<ABean>>(){});
+        //List<ABean> dummy = Jecksons.getInstance().decodeABeans(tstPost8);
+        //List<Map<String, Object>> dummy = Jecksons.getInstance().decode(tstPost8, new TypeReference<List<Map<String, Object>>>() {});
+        List<ABean> dummy = Jecksons.getInstance().decodeABeans(tstPost8);
+
         Assert.assertEquals(dummy.size(), 2);
         Assert.assertEquals(dummy.get(1).get("tdict_id"), 27);
     }
 
+    private static final String tstPost9 = "{" +
+            "\"trtr1\":{\n" +
+            "        \"loocaption\": \"item-finance-type - Вид финансирования\",\n" +
+            "        \"aname\": \"Вид финансирования\",\n" +
+            "        \"adesc\": null,\n" +
+            "        \"acode\": \"item-finance-type\",\n" +
+            "        \"tdict_id\": 7,\n" +
+            "        \"seld\":[1,2,3]\n" +
+            "    },\n" +
+            "\"trtr2\":{\n" +
+            "        \"loocaption\": \"geoframe - Географические рамки\",\n" +
+            "        \"aname\": \"Географические рамки\",\n" +
+            "        \"adesc\": null,\n" +
+            "        \"acode\": \"geoframe\",\n" +
+            "        \"tdict_id\": 27,\n" +
+            "        \"seld\":[1,2,3]\n" +
+            "    }\n" +
+            "}";
     @Test(enabled = true)
     public void bdecode9() throws Exception {
-        List<ABean> dummy = Jsons.decodeABeans("{seld:[1,2,3]}");
+        //List<ABean> dummy = Jsons.decodeABeans("{seld:[1,2,3]}");
+        //Map<String, Object> dummy = Jecksons.getInstance().decode(tstPost9, new TypeReference<Map<String, Object>>() {});
+        //ABean dummy = Jecksons.getInstance().decodeABean(tstPost9);
+        List<ABean> dummy = Jecksons.getInstance().decodeABeans(tstPost9);
         Assert.assertEquals(dummy.size(), 1);
     }
 
     @Test(enabled = true)
     public void bdecode10() throws Exception {
         TBox dummy = new TBox();
-        dummy.setCreated(new Date());
-        String json = Jsons.encode(dummy);
-        Assert.assertEquals(json.substring(1, 6), "\"crd\"");
+        dummy.setCreated(DateTimeParser.getInstance().pars("2019-09-11T15:43:02"));
+        String json = Jecksons.getInstance().encode(dummy);
+        Assert.assertTrue(json.endsWith("2019-09-11T15:43:02\"}"));
     }
 
     private static final String cs_json0001 = "{\"storeId\":\"PrjsInProd\",\"bioParams\":[{\"name\":\"p_company_id\",\"value\":34}],\"totalCount\":999999999,\"offset\":0,\"limit\":-1,\"sort\":null,\"superclass\":{\"superclass\":{\"superclass\":{\"defaultConfig\":{},\"config\":{},\"$className\":\"Ext.Base\",\"isInstance\":true,\"$configPrefixed\":true,\"$configStrict\":true,\"isConfiguring\":false,\"isFirstInstance\":false,\"destroyed\":false,\"clearPropertiesOnDestroy\":true,\"clearPrototypeOnDestroy\":false,\"$links\":null},\"defaultConfig\":{},\"config\":{},\"$configPrefixed\":false,\"rqt\":\"\",\"bioCode\":\"\",\"$className\":\"Bio.request.Request\"},\"defaultConfig\":{},\"config\":{},\"$className\":\"Bio.request.store.Request\"},\"defaultConfig\":{},\"config\":{},\"pageSize\":0,\"$className\":\"Bio.request.store.GetDataSet\",\"$configPrefixed\":false,\"rqt\":\"\",\"bioCode\":\"\",\"isInstance\":true,\"$configStrict\":true,\"isConfiguring\":false,\"isFirstInstance\":false,\"destroyed\":false,\"clearPropertiesOnDestroy\":true,\"clearPrototypeOnDestroy\":false,\"$links\":null}";
