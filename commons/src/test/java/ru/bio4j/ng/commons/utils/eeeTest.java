@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.utils;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.model.transport.ABean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -124,6 +125,24 @@ public class eeeTest {
                 "    ";
         String sql1 = Sqls.deleteNonSQLSubstringsInSQL(sql);
         Assert.assertTrue(true);
+    }
+
+    public void tryRuntimeException() {
+        try {
+            ABean bean = Jecksons.getInstance().decodeABean("{\"dummy\": 1,}");
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test(enabled = false)
+    public void testRuntimeException() {
+        tryRuntimeException();
+    }
+
+    @Test(enabled = true)
+    public void testException() throws Exception {
+        ABean bean = Jecksons.getInstance().decodeABean("{\"dummy\": 1,}");
     }
 
 }

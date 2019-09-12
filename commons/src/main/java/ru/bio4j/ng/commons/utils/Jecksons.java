@@ -51,6 +51,7 @@ public class Jecksons {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true);
             if (!Strings.isNullOrEmpty(defaultDateTimeFormat)) {
                 DateFormat df = new SimpleDateFormat(defaultDateTimeFormat);
                 objectMapper.setDateFormat(df);
