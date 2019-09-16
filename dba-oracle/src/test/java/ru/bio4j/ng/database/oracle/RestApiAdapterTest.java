@@ -14,6 +14,7 @@ import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.types.CursorParser;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 @Test
 public class RestApiAdapterTest {
@@ -102,9 +103,12 @@ public class RestApiAdapterTest {
 
             SQLDefinition cursor = CursorParser.pars(Thread.currentThread().getContextClassLoader().getResourceAsStream("films.xml"), "films");
             HSSFWorkbook wb = CrudReaderApi.toExcel(null, null, null, context, cursor);
-            FileOutputStream out = new FileOutputStream("d:\\test.xls");
-            wb.write(out);
-
+            try {
+                FileOutputStream out = new FileOutputStream("d:\\test.xls");
+                wb.write(out);
+            } catch(IOException e) {
+                throw new RuntimeException(e);
+            }
         }, null);
         Assert.assertEquals("qwe", "qwe");
     }

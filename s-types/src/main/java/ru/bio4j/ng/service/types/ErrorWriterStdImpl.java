@@ -4,6 +4,7 @@ import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.service.api.ErrorWriter;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class ErrorWriterStdImpl implements ErrorWriter {
 
@@ -15,19 +16,23 @@ public class ErrorWriterStdImpl implements ErrorWriter {
 //5XX Серверные ошибки, не связанные с присылаемыми данными
 
     @Override
-    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
-        if(exception != null) {
-            if(exception instanceof BioError.Login.Unauthorized)
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            else if(exception instanceof BioError.Login.Forbidden)
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            else if(exception instanceof BioError.BadRequestType)
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            else if(exception instanceof BioError.MethodNotAllowed)
-                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            else
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) {
+        try {
+            if (exception != null) {
+                if (exception instanceof BioError.Login.Unauthorized)
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                else if (exception instanceof BioError.Login.Forbidden)
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                else if (exception instanceof BioError.BadRequestType)
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                else if (exception instanceof BioError.MethodNotAllowed)
+                    response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                else
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            return false;
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
-        return false;
     }
 }

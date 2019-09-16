@@ -7,6 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface RDBMSUtils {
-    StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws Exception;
+    StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride);
     String extractStoredProcAppError(Exception c);
 }

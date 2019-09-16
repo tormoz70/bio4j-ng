@@ -3,12 +3,8 @@ package ru.bio4j.ng.commons.types;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import ru.bio4j.ng.commons.collections.KeyValue;
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.jstore.BioRequestJStoreGetDataSet;
-import ru.bio4j.ng.model.transport.jstore.Sort;
 
 import java.text.SimpleDateFormat;
 import java.util.*;

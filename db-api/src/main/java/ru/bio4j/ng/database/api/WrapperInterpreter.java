@@ -18,6 +18,6 @@ public interface WrapperInterpreter {
      * @param filter
      * @return
      */
-    String filterToSQL(String alias, Filter filter, List<Field> fields) throws Exception ;
-    String sortToSQL(String alias, List<Sort> sort, List<Field> fields) throws Exception ;
+    String filterToSQL(String alias, Filter filter, List<Field> fields);
+    String sortToSQL(String alias, List<Sort> sort, List<Field> fields);
 }

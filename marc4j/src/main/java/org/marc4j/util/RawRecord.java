@@ -169,7 +169,7 @@ public class RawRecord {
         try {
             recordStr = new String(rawRecordData, "ISO-8859-1");
         } catch (final UnsupportedEncodingException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         int offset = Integer.parseInt(recordStr.substring(12, 17));
         if (offset == 99999 || recordStr.charAt(offset - 1) != Constants.FT) {

@@ -18,12 +18,12 @@ public class DbCallableParamGetter implements SQLParamGetter {
 //        this.owner = owner;
 //    }
 
-    public void getParamsFromStatement(SQLNamedParametersStatement statment, List<Param> params) throws SQLException {
+    public void getParamsFromStatement(SQLNamedParametersStatement statment, List<Param> params) {
 //        CallableStatement callable = (command.getStatement() instanceof CallableStatement) ? (CallableStatement)command.getStatement() : null;
 //        SQLNamedParametersStatement callable = command.getStatement();
         if(params != null && params.size() > 0) {
             if (statment == null)
-                throw new SQLException("Parameter [statement] mast be instance of CallableStatement!");
+                throw new SQLExceptionExt("Parameter [statement] mast be instance of CallableStatement!");
             for (Param param : params) {
                 if (Utl.arrayContains(new Param.Direction[]{Param.Direction.INOUT, Param.Direction.OUT}, param.getDirection())) {
                     String paramName = param.getName();

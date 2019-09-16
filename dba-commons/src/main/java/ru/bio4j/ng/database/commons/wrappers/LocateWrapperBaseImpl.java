@@ -18,7 +18,7 @@ public class LocateWrapperBaseImpl extends AbstractWrapper implements LocateWrap
         this.template = template;
     }
 
-    public String wrap(String sql, String pkFieldName) throws Exception {
+    public String wrap(String sql, String pkFieldName) {
 //        Field pkCol = sqlDef.findPk();
 //        if(pkCol == null)
 //            throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", sqlDef.getBioCode()));

@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.XStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 public class XStreamUtility {
 
@@ -18,21 +19,25 @@ public class XStreamUtility {
         return instance;
     }
 
-    public <T> void toXml(T obj, OutputStream stream, String encoding) throws Exception {
-        String headLine = String.format("<?xml version=\"1.0\" encoding=\"%s\"?>", encoding);
-        if(obj != null) {
-            xstream.processAnnotations(obj.getClass());
-            final PrintStream printStream = new PrintStream(stream, true, encoding);
-            printStream.print(headLine);
-            xstream.toXML(obj, stream);
+    public <T> void toXml(T obj, OutputStream stream, String encoding) {
+        try {
+            String headLine = String.format("<?xml version=\"1.0\" encoding=\"%s\"?>", encoding);
+            if (obj != null) {
+                xstream.processAnnotations(obj.getClass());
+                final PrintStream printStream = new PrintStream(stream, true, encoding);
+                printStream.print(headLine);
+                xstream.toXML(obj, stream);
+            }
+        }catch(UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public <T> void toXml(T obj, OutputStream stream) throws Exception {
+    public <T> void toXml(T obj, OutputStream stream) {
         toXml(obj, stream, "utf-8");
     }
 
-    public String toXml(Object obj, String encoding) throws Exception {
+    public String toXml(Object obj, String encoding) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         toXml(obj, output, encoding);
         return output.toString();

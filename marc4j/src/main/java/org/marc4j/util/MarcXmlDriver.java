@@ -155,7 +155,7 @@ public class MarcXmlDriver {
         try {
             in = new FileInputStream(input);
         } catch (final FileNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         MarcStreamReader reader = null;
         if (encoding != null) {
@@ -169,7 +169,7 @@ public class MarcXmlDriver {
             try {
                 out = new FileOutputStream(output);
             } catch (final FileNotFoundException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else {
             out = System.out;
@@ -189,7 +189,7 @@ public class MarcXmlDriver {
                 try {
                     outputWriter = new OutputStreamWriter(out, "UTF8");
                 } catch (final UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
                 outputWriter = new BufferedWriter(outputWriter);
             } else {

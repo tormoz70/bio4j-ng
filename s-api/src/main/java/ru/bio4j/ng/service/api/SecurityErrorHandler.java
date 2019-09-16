@@ -12,5 +12,5 @@ public interface SecurityErrorHandler {
      * @return если вернуть true, то будет продолжена обработка запроса, иначе выход
      * @throws Exception
      */
-    boolean writeError(BioError.Login exception, HttpServletResponse response) throws Exception;
+    boolean writeError(BioError.Login exception, HttpServletResponse response);
 }

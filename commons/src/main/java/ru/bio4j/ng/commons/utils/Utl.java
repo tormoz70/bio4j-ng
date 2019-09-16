@@ -102,12 +102,16 @@ public class Utl {
      * @return
      * @throws IOException
      */
-    public static byte[] readStream(InputStream in, int length) throws IOException {
-        if (length > (Integer.MAX_VALUE - 5))
-            throw new IllegalArgumentException("Parameter \"length\" too big!");
-        byte[] buff = new byte[Utl.safeLongToInt(length)];
-        int readed = in.read(buff);
-        return buff;
+    public static byte[] readStream(InputStream in, int length) {
+        try {
+            if (length > (Integer.MAX_VALUE - 5))
+                throw new IllegalArgumentException("Parameter \"length\" too big!");
+            byte[] buff = new byte[Utl.safeLongToInt(length)];
+            int readed = in.read(buff);
+            return buff;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -115,25 +119,29 @@ public class Utl {
      * @return
      * @throws IOException
      */
-    public static String readStream(InputStream in, String encoding, boolean addLineSeparator) throws IOException {
-        InputStreamReader is = new InputStreamReader(in, encoding);
-        StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(is);
-        String read = br.readLine();
-        while (read != null) {
-            sb.append(read);
-            if (addLineSeparator)
-                sb.append(System.lineSeparator());
-            read = br.readLine();
+    public static String readStream(InputStream in, String encoding, boolean addLineSeparator) {
+        try {
+            InputStreamReader is = new InputStreamReader(in, encoding);
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(is);
+            String read = br.readLine();
+            while (read != null) {
+                sb.append(read);
+                if (addLineSeparator)
+                    sb.append(System.lineSeparator());
+                read = br.readLine();
+            }
+            return sb.toString();
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
-        return sb.toString();
     }
 
-    public static String readStream(InputStream in, String encoding) throws IOException {
+    public static String readStream(InputStream in, String encoding) {
         return readStream(in, encoding, true);
     }
 
-    public static String readStream(InputStream in) throws IOException {
+    public static String readStream(InputStream in) {
         return readStream(in, "UTF-8");
     }
 
@@ -144,14 +152,18 @@ public class Utl {
      * @return
      * @throws JAXBException
      */
-    public static <T> T unmarshalXml(Class<T> clazz, InputStream in) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        Object obj = jaxbUnmarshaller.unmarshal(in);
-        if (obj == null) return null;
-        if (obj.getClass() == clazz)
-            return (T) obj;
-        return null;
+    public static <T> T unmarshalXml(Class<T> clazz, InputStream in) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            Object obj = jaxbUnmarshaller.unmarshal(in);
+            if (obj == null) return null;
+            if (obj.getClass() == clazz)
+                return (T) obj;
+            return null;
+        }catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -405,7 +417,7 @@ public class Utl {
             boolean skip = !vals.containsKey(fldName) ||
                     (!Strings.isNullOrEmpty(inclideAttrs) && !Strings.containsIgnoreCase(inclideAttrs, ",", fldName)) ||
                     (!Strings.isNullOrEmpty(excludeAttrs) && Strings.containsIgnoreCase(excludeAttrs, ",", fldName));
-            if(skip) continue;
+            if (skip) continue;
 
             Object valObj = vals.get(fldName);
             if (valObj != null) {
@@ -487,7 +499,7 @@ public class Utl {
         return null;
     }
 
-    public static boolean applyValuesToBeanFromBean(Object srcBean, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromBean(Object srcBean, Object bean) {
         boolean result = false;
         if (srcBean == null)
             throw new IllegalArgumentException("Argument \"srcBean\" cannot be null!");
@@ -533,19 +545,27 @@ public class Utl {
         return (a == null) ? b : a;
     }
 
-    public static Object cloneBean(Object bean) throws Exception {
+    public static <T> T newInstance(Class<T> type) {
+        try {
+            return type.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Object cloneBean(Object bean) {
         if (bean != null && !bean.getClass().isPrimitive()) {
             Class<?> type = bean.getClass();
-            Object newBean = type.newInstance();
+            Object newBean = newInstance(type);
             applyValuesToBeanFromBean(bean, newBean);
             return newBean;
         }
         return null;
     }
 
-    public static <T> T cloneBean1(T bean, Class<T> clazz) throws Exception {
+    public static <T> T cloneBean1(T bean, Class<T> clazz) {
         if (bean != null && !clazz.isPrimitive()) {
-            T newBean = clazz.newInstance();
+            T newBean = newInstance(clazz);
             applyValuesToBeanFromBean(bean, newBean);
             return newBean;
         }
@@ -700,64 +720,84 @@ public class Utl {
     }
 
 
-    public static String md5(String fileName) throws IOException {
+    public static String md5(String fileName) {
         String md5 = null;
-        try (FileInputStream fis = new FileInputStream(new File(fileName))) {
-            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+        try {
+            try (FileInputStream fis = new FileInputStream(new File(fileName))) {
+                md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+            }
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
         return md5;
     }
 
-    public static int storeInputStream(InputStream inputStream, Path path) throws IOException {
-        int len = 0;
-        Files.createDirectories(path.getParent());
-        try (OutputStream out = new FileOutputStream(new File(path.toString()))) {
-            int read = 0;
-            final byte[] bytes = new byte[1024];
-            while ((read = inputStream.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-                len += read;
+    public static int storeInputStream(InputStream inputStream, Path path) {
+        try {
+            int len = 0;
+            Files.createDirectories(path.getParent());
+            try (OutputStream out = new FileOutputStream(new File(path.toString()))) {
+                int read = 0;
+                final byte[] bytes = new byte[1024];
+                while ((read = inputStream.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                    len += read;
+                }
             }
+            return len;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return len;
     }
 
-    public static Path storeBlob(byte[] blob, Path path) throws IOException {
-        Files.createDirectories(path.getParent());
-        try (OutputStream out = new FileOutputStream(new File(path.toString()))) {
-            out.write(blob);
+    public static Path storeBlob(byte[] blob, Path path) {
+        try {
+            Files.createDirectories(path.getParent());
+            try (OutputStream out = new FileOutputStream(new File(path.toString()))) {
+                out.write(blob);
+            }
+            return path;
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
-        return path;
     }
 
-    public static Path storeBlob(byte[] blob, String path) throws IOException {
+    public static Path storeBlob(byte[] blob, String path) {
         return storeBlob(blob, Paths.get(path));
     }
 
-    public static int storeInputStream(InputStream inputStream, String path) throws IOException {
+    public static int storeInputStream(InputStream inputStream, String path) {
         return storeInputStream(inputStream, Paths.get(path));
     }
 
 
-    public static void storeString(String text, String path, String encoding) throws IOException {
-        try (PrintStream out = new PrintStream(new FileOutputStream(path), true, encoding)) {
-            out.print(text);
+    public static void storeString(String text, String path, String encoding) {
+        try {
+            try (PrintStream out = new PrintStream(new FileOutputStream(path), true, encoding)) {
+                out.print(text);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static void storeString(String text, String path) throws IOException {
+    public static void storeString(String text, String path) {
         storeString(text, path, "utf-8");
     }
 
-    public static InputStream openFile(String filePath) throws IOException {
-        File file = new File(filePath);
-        if (file.exists()) {
-            InputStream inputStream = new FileInputStream(file);
-            return inputStream;
-        } else
-            throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
+    public static InputStream openFile(String filePath) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                InputStream inputStream = new FileInputStream(file);
+                return inputStream;
+            } else
+                throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-    public static InputStream openFile(Path filePath) throws IOException {
+    public static InputStream openFile(Path filePath) {
         return openFile(filePath.toString());
     }
 
@@ -765,52 +805,64 @@ public class Utl {
         return Files.exists(Paths.get(filePath));
     }
 
-    public static String readFile(String filePath, String encoding) throws Exception {
-        String rslt = null;
-        Path p = Paths.get(filePath);
-        if (Files.exists(p))
-            try (InputStream is = Utl.openFile(filePath)) {
-                rslt = Utl.readStream(is, encoding);
-            }
-        else
-            throw new Exception(String.format("Файл %s не наден!", filePath));
-        return rslt;
+    public static String readFile(String filePath, String encoding) {
+        try {
+            String rslt = null;
+            Path p = Paths.get(filePath);
+            if (Files.exists(p))
+                try (InputStream is = Utl.openFile(filePath)) {
+                    rslt = Utl.readStream(is, encoding);
+                }
+            else
+                throw new FileNotFoundException(String.format("Файл %s не наден!", filePath));
+            return rslt;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static String readFile(String filePath) throws Exception {
+    public static String readFile(String filePath) {
         return readFile(filePath, "utf-8");
     }
 
-    public static List<String> readFileAsList(String filePath, String encoding) throws IOException {
-        List<String> rslt = new ArrayList<>();
-        Path path = Paths.get(filePath);
-        if(Files.exists(path)) {
-            Charset charset = Charset.forName(encoding);
-            try (BufferedReader br = Files.newBufferedReader(path, charset)) {
-                String line = br.readLine();
-                while (line != null) {
-                    rslt.add(line);
-                    line = br.readLine();
+    public static List<String> readFileAsList(String filePath, String encoding) {
+        try {
+            List<String> rslt = new ArrayList<>();
+            Path path = Paths.get(filePath);
+            if (Files.exists(path)) {
+                Charset charset = Charset.forName(encoding);
+                try (BufferedReader br = Files.newBufferedReader(path, charset)) {
+                    String line = br.readLine();
+                    while (line != null) {
+                        rslt.add(line);
+                        line = br.readLine();
+                    }
                 }
             }
+            return rslt;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return rslt;
     }
 
-    public static List<String> readFileAsList(String filePath) throws IOException {
+    public static List<String> readFileAsList(String filePath) {
         return readFileAsList(filePath, StandardCharsets.UTF_8.displayName());
     }
 
-    public static void storeListToFile(List<String> list, String filePath, String encoding) throws IOException {
-        Path path = Paths.get(filePath);
-        Charset charset = Charset.forName(encoding);
-        try (BufferedWriter bw = Files.newBufferedWriter(path, charset)) {
-            for(String line : list)
-                bw.write(line + System.lineSeparator());
+    public static void storeListToFile(List<String> list, String filePath, String encoding) {
+        try {
+            Path path = Paths.get(filePath);
+            Charset charset = Charset.forName(encoding);
+            try (BufferedWriter bw = Files.newBufferedWriter(path, charset)) {
+                for (String line : list)
+                    bw.write(line + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static void storeListToFile(List<String> list, String filePath) throws IOException {
+    public static void storeListToFile(List<String> list, String filePath) {
         storeListToFile(list, filePath, StandardCharsets.UTF_8.displayName());
     }
 
@@ -820,7 +872,23 @@ public class Utl {
         return hex;
     }
 
-    public static List<Param> beanToParams(Object bean) throws Exception {
+    public static Object getFieldValue(java.lang.reflect.Field fld, Object bean) {
+        try {
+            return fld.get(bean);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void setFieldValue(java.lang.reflect.Field fld, Object bean, Object value) {
+        try {
+            fld.set(bean, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Param> beanToParams(Object bean) {
         List<Param> result = new ArrayList<>();
         if(bean == null)
             return result;
@@ -831,7 +899,7 @@ public class Utl {
             if(!paramName.toLowerCase().startsWith("p_"))
                 paramName = "p_" + paramName.toLowerCase();
             fld.setAccessible(true);
-            Object valObj = fld.get(bean);
+            Object valObj = getFieldValue(fld, bean);
             Param.Direction direction = Param.Direction.UNDEFINED;
             Prop prp = fld.getAnnotation(Prop.class);
             MetaType metaType = MetaTypeConverter.read(fld.getType());
@@ -852,7 +920,7 @@ public class Utl {
         return result;
     }
 
-    public static List<Param> abeanToParams(ABean bean) throws Exception {
+    public static List<Param> abeanToParams(ABean bean) {
         List<Param> result = new ArrayList<>();
         if(bean == null)
             return result;
@@ -867,7 +935,7 @@ public class Utl {
         return result;
     }
 
-    public static List<Param> hashmapToParams(HashMap<String, Object> bean) throws Exception {
+    public static List<Param> hashmapToParams(HashMap<String, Object> bean) {
         List<Param> result = new ArrayList<>();
         if(bean == null)
             return result;
@@ -882,7 +950,7 @@ public class Utl {
         return result;
     }
 
-    public static List<Param> anjsonToParams(String anjson) throws Exception {
+    public static List<Param> anjsonToParams(String anjson) {
         List<Param> result = new ArrayList<>();
         if(Strings.isNullOrEmpty(anjson))
             return result;
@@ -910,52 +978,68 @@ public class Utl {
         return (double) tmp / factor;
     }
 
-    public static Document loadXmlDocument(InputStream inputStream) throws Exception {
-        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-        f.setValidating(false);
-        DocumentBuilder builder = f.newDocumentBuilder();
-        return builder.parse(inputStream);
-    }
-
-    public static Document loadXmlDocument(String fileName) throws Exception {
-        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-        f.setValidating(false);
-        DocumentBuilder builder = f.newDocumentBuilder();
-        InputStream inputStream = openFile(fileName);
-        return builder.parse(inputStream);
-    }
-
-    public static void writeInputToOutput(InputStream input, OutputStream output) throws Exception {
-        BufferedInputStream buf = null;
+    public static Document loadXmlDocument(InputStream inputStream) {
         try {
-            buf = new BufferedInputStream(input);
-            int readBytes = 0;
-            while ((readBytes = buf.read()) != -1)
-                output.write(readBytes);
-        } finally {
-            if (output != null)
-                output.flush();
-            output.close();
-            if (buf != null)
-                buf.close();
+            DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+            f.setValidating(false);
+            DocumentBuilder builder = f.newDocumentBuilder();
+            return builder.parse(inputStream);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Document loadXmlDocument(String fileName) {
+        try {
+            DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+            f.setValidating(false);
+            DocumentBuilder builder = f.newDocumentBuilder();
+            InputStream inputStream = openFile(fileName);
+            return builder.parse(inputStream);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void writeInputToOutput(InputStream input, OutputStream output) {
+        try {
+            BufferedInputStream buf = null;
+            try {
+                buf = new BufferedInputStream(input);
+                int readBytes = 0;
+                while ((readBytes = buf.read()) != -1)
+                    output.write(readBytes);
+            } finally {
+                if (output != null)
+                    output.flush();
+                output.close();
+                if (buf != null)
+                    buf.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
 
-    public static void writeFileToOutput(File file, OutputStream output) throws Exception {
-        writeInputToOutput(new FileInputStream(file), output);
+    public static void writeFileToOutput(File file, OutputStream output) {
+        try {
+            writeInputToOutput(new FileInputStream(file), output);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void deleteFile(Path filePath, Boolean silent) throws Exception {
+    public static void deleteFile(Path filePath, Boolean silent) {
         try {
             Files.delete(filePath);
         } catch(Exception e){
             if(!silent)
-                throw e;
+                throw new RuntimeException(e);
         }
     }
 
-    public static void deleteFile(String filePath, Boolean silent) throws Exception {
+    public static void deleteFile(String filePath, Boolean silent) {
         deleteFile(Paths.get(filePath), silent);
     }
 
@@ -1043,26 +1127,38 @@ public class Utl {
         return rslt;
     }
 
-    public static Properties loadProperties(InputStream inputStream) throws IOException {
-        Properties prop = new Properties();
-        prop.load(inputStream);
-        return prop;
-    }
-
-    public static Properties loadProperties(String filePath) throws IOException {
-        try (InputStream input = new FileInputStream(filePath)) {
-            return loadProperties(input);
+    public static Properties loadProperties(InputStream inputStream) {
+        try {
+            Properties prop = new Properties();
+            prop.load(inputStream);
+            return prop;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static long fileSize(String filePath) throws Exception {
-        long rslt = 0;
-        Path p = Paths.get(filePath);
-        if (Files.exists(p))
-            rslt = p.toFile().length();
-        else
-            throw new Exception(String.format("Файл %s не наден!", filePath));
-        return rslt;
+    public static Properties loadProperties(String filePath) {
+        try {
+            try (InputStream input = new FileInputStream(filePath)) {
+                return loadProperties(input);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static long fileSize(String filePath) {
+        try {
+            long rslt = 0;
+            Path p = Paths.get(filePath);
+            if (Files.exists(p))
+                rslt = p.toFile().length();
+            else
+                throw new FileNotFoundException(String.format("Файл %s не наден!", filePath));
+            return rslt;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static int generateIndxByProb(double[] prob) {

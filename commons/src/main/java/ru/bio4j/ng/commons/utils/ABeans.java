@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ABeans {
 
-    public static HashMap<String, Object> extractBean(final HashMap<String, Object> bean, final String attrName) throws Exception {
+    public static HashMap<String, Object> extractBean(final HashMap<String, Object> bean, final String attrName) {
         if(bean != null) {
             for (String key : bean.keySet()) {
                 if (Strings.compare(key, attrName, true)) {
@@ -32,7 +32,7 @@ public class ABeans {
         return null;
     }
 
-    public static <T> T extractAttrFromBean(final HashMap<String, Object> bean, final String path, Class<T> clazz, T defauldValue) throws Exception {
+    public static <T> T extractAttrFromBean(final HashMap<String, Object> bean, final String path, Class<T> clazz, T defauldValue) {
         if(bean != null) {
             if(Strings.isNullOrEmpty(path))
                 return defauldValue;

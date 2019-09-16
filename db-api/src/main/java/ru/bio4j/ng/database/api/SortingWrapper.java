@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface SortingWrapper {
 
-    String wrap(String sql, List<Sort> sort, List<Field> fields) throws Exception;
+    String wrap(String sql, List<Sort> sort, List<Field> fields);
 }

@@ -16,10 +16,7 @@ import ru.bio4j.ng.database.api.SelectSQLDef;
 import ru.bio4j.ng.database.api.UpdelexSQLDef;
 
 import java.lang.reflect.Field;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,13 +72,13 @@ public class DbUtils {
         return converter.read(param.getType(), stringSize, isCallable);
     }
 
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) throws Exception {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride) {
         if(rdbmsUtils == null)
             throw new IllegalArgumentException(String.format(INIT_ERRORS_TEMPL, RDBMSUtils.class.getSimpleName()));
         return rdbmsUtils.detectStoredProcParamsAuto(storedProcName, conn, fixedParamsOverride);
     }
 
-    public static void processExec(final User usr, final Object params, final SQLContext ctx, final SQLDefinition cursor) throws Exception {
+    public static void processExec(final User usr, final Object params, final SQLContext ctx, final SQLDefinition cursor) {
         final SQLStoredProc cmd = ctx.createStoredProc();
         final UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if(sqlDef == null)
@@ -92,7 +89,7 @@ public class DbUtils {
         }, usr);
     }
 
-    public static void processSelect(final User usr, final Object params, final SQLContext ctx, final SQLDefinition cursor, final DelegateSQLFetch action) throws Exception {
+    public static void processSelect(final User usr, final Object params, final SQLContext ctx, final SQLDefinition cursor, final DelegateSQLFetch action) {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = cursor.getSelectSqlDef();
         int r = ctx.execBatch((context) -> {
@@ -103,32 +100,32 @@ public class DbUtils {
         }, usr);
     }
 
-    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         final SelectSQLDef sqlDef = sqlDefinition.getSelectSqlDef();
         return context.createCursor()
                     .init(context.getCurrentConnection(), sqlDef).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
-    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final SQLDefinition sqlDefinition, Class<T> clazz, T defaultValue) {
         return ctx.execBatch((context) -> {
             return processSelectScalar0(params, ctx, sqlDefinition, clazz, defaultValue);
         }, usr);
     }
 
-    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar0(final Object params, final SQLContext context, final String sql, Class<T> clazz, T defaultValue) {
         final List<Param> prms = params != null ? decodeParams(params) : new ArrayList<>();
         return context.createCursor()
                     .init(context.getCurrentConnection(), sql).scalar(prms, context.getCurrentUser(), clazz, defaultValue);
     }
 
-    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) throws Exception {
+    public static <T> T processSelectScalar(final User usr, final Object params, final SQLContext ctx, final String sql, Class<T> clazz, T defaultValue) {
         return ctx.execBatch((SQLActionScalar0<T>) (context) -> {
             return processSelectScalar0(params, ctx, sql, clazz, defaultValue);
         }, usr);
     }
 
-    public static ABean createABeanFromReader0(SQLReader reader) throws Exception {
+    public static ABean createABeanFromReader0(SQLReader reader) {
         ABean bean = new ABean();
         for (DBField dbField : reader.getFields()) {
             String attrName = dbField.getName();
@@ -138,7 +135,7 @@ public class DbUtils {
         return bean;
     }
 
-    public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) throws Exception {
+    public static ABean createABeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader) {
         if(metaData != null && metaData.size() > 0) {
             ABean bean = new ABean();
             for (ru.bio4j.ng.model.transport.jstore.Field field : metaData) {
@@ -167,12 +164,12 @@ public class DbUtils {
         return null;
     }
 
-    public static <T> T createBeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader, Class<T> clazz) throws Exception {
+    public static <T> T createBeanFromReader(List<ru.bio4j.ng.model.transport.jstore.Field> metaData, SQLReader reader, Class<T> clazz) {
         if(reader == null)
             throw new IllegalArgumentException("Argument \"reader\" cannot be null!");
         if(clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
-        T result = clazz.newInstance();
+        T result = Utl.newInstance(clazz);
         for(java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
             String attrName = fld.getName();
             Prop p = Utl.findAnnotation(Prop.class, fld);
@@ -199,11 +196,11 @@ public class DbUtils {
         return result;
     }
 
-    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) throws Exception {
+    public static <T> T createBeanFromReader(SQLReader reader, Class<T> clazz) {
         return createBeanFromReader(null, reader, clazz);
     }
 
-    public static List<Param> decodeParams(Object params) throws Exception {
+    public static List<Param> decodeParams(Object params) {
         List<Param> rslt = null;
         if(params != null){
             if(params instanceof List)
@@ -219,7 +216,7 @@ public class DbUtils {
     }
 
 
-    public static String generateSignature(String procName, List<Param> params) throws Exception {
+    public static String generateSignature(String procName, List<Param> params) {
         StringBuilder args = new StringBuilder();
         try(Paramus pp = Paramus.set(params)) {
             for(Param p : pp.get()){
@@ -300,7 +297,7 @@ public class DbUtils {
         return null;
     }
 
-    private static void applyParamsToParams0(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+    private static void applyParamsToParams0(List<Param> src, List<Param> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) {
         if(src != null && dst != null) {
             for(Param p : src){
                 Param exists = findParamIgnorePrefix(p.getName(), dst);
@@ -328,7 +325,7 @@ public class DbUtils {
         }
     }
 
-    private static void applyParamsToABean(List<Param> src, ABean dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+    private static void applyParamsToABean(List<Param> src, ABean dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) {
         if(src != null && dst != null) {
             for(Param p : src){
                 String existsKey = findKeyIgnorePrefix(p.getName(), dst);
@@ -352,7 +349,7 @@ public class DbUtils {
         }
     }
 
-    private static void applyParamsToHashMap(List<Param> src, HashMap<String, Object> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+    private static void applyParamsToHashMap(List<Param> src, HashMap<String, Object> dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) {
         if(src != null && dst != null) {
             for(Param p : src){
                 String existsKey = findKeyIgnorePrefix(p.getName(), dst);
@@ -376,7 +373,7 @@ public class DbUtils {
         }
     }
 
-    public static void applyParamsToObject(List<Param> src, Object dst) throws Exception {
+    public static void applyParamsToObject(List<Param> src, Object dst) {
         if (src == null || src.size() == 0 || dst == null)
             return;
         Class<?> dstType = dst.getClass();
@@ -389,7 +386,7 @@ public class DbUtils {
             if (param != null) {
                 fld.setAccessible(true);
                 Object valObj = Converter.toType(param.getValue(), fld.getType());
-                fld.set(dst, valObj);
+                Utl.setFieldValue(fld, dst, valObj);
             }
 
         }
@@ -404,7 +401,7 @@ public class DbUtils {
         return rslt;
     }
 
-    public static void applyParamsToParams(List<Param> src, Object dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) throws Exception {
+    public static void applyParamsToParams(List<Param> src, Object dst, boolean normalizeName, boolean addIfNotExists, boolean overwriteTypes) {
         if(src != null && dst != null) {
 
             if(dst instanceof List) {
@@ -457,12 +454,16 @@ public class DbUtils {
 
     }
 
-    public static boolean execSQL(Connection conn, String sql, List<Param> params) throws SQLException {
-        try(CallableStatement cs = conn.prepareCall(sql)) {
-            return cs.execute();
+    public static boolean execSQL(Connection conn, String sql, List<Param> params) {
+        try {
+            try (CallableStatement cs = conn.prepareCall(sql)) {
+                return cs.execute();
+            }
+        } catch(SQLException e) {
+            throw new SQLExceptionExt(e);
         }
     }
-    public static boolean execSQL(Connection conn, String sql) throws SQLException {
+    public static boolean execSQL(Connection conn, String sql) {
         return execSQL(conn, sql, null);
     }
 
@@ -492,7 +493,7 @@ public class DbUtils {
 
     private static final String CS_CUTEMPTY_PLACEHOLDER_BGN = "/*@{cutempty}*/";
     private static final String CS_CUTEMPTY_PLACEHOLDER_END = "/*{cutempty}@*/";
-    private static String cutEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+    private static String cutEmptyFilterConditions(String sql, List<Param> prms) {
         return Strings.findRoundedStr(sql, CS_CUTEMPTY_PLACEHOLDER_BGN, CS_CUTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
             @Override
             public String process(String found) throws Exception {
@@ -507,7 +508,7 @@ public class DbUtils {
     private static final String CS_CUTNOTEMPTY_PLACEHOLDER_BGN = "/*@{cutnotempty}*/";
     private static final String CS_CUTNOTEMPTY_PLACEHOLDER_END = "/*{cutnotempty}@*/";
 
-    private static String cutNotEmptyFilterConditions(String sql, List<Param> prms) throws Exception {
+    private static String cutNotEmptyFilterConditions(String sql, List<Param> prms) {
         return Strings.findRoundedStr(sql, CS_CUTNOTEMPTY_PLACEHOLDER_BGN, CS_CUTNOTEMPTY_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
             @Override
             public String process(String found) throws Exception {
@@ -523,7 +524,7 @@ public class DbUtils {
     private static final String CS_CUTIIF_PLACEHOLDER_END = "/*{cutiif}@*/";
     private static final String CS_CUTIIF_REGEX1 = "(?<=\\/\\*\\[).*(?=\\]\\*\\/)";
 
-    private static String cutIIFConditions(final String sql, final List<Param> prms) throws Exception {
+    private static String cutIIFConditions(final String sql, final List<Param> prms) {
         return Strings.findRoundedStr(sql, CS_CUTIIF_PLACEHOLDER_BGN, CS_CUTIIF_PLACEHOLDER_END, new Strings.IRoundedStrProcessor() {
             @Override
             public String process(String found) throws Exception {
@@ -536,7 +537,7 @@ public class DbUtils {
         });
     }
 
-    public static String cutFilterConditions(String sql, List<Param> prms) throws Exception {
+    public static String cutFilterConditions(String sql, List<Param> prms) {
         String rslt = cutEmptyFilterConditions( sql, prms);
         rslt = cutNotEmptyFilterConditions( rslt, prms);
         //rslt = cutIIFConditions( rslt, prms);
@@ -546,5 +547,13 @@ public class DbUtils {
     public String extractStoredProcAppError(Exception e) {
         return rdbmsUtils.extractStoredProcAppError(e);
     }
+
+//    public static void setStatmentTimeout(Statement statment, int seconds) {
+//        try{
+//            statment.setQueryTimeout(seconds);
+//        } catch (SQLException e) {
+//            throw new SQLExceptionExt(e);
+//        }
+//    }
 
 }

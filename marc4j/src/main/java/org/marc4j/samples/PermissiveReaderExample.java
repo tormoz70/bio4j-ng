@@ -104,7 +104,7 @@ public class PermissiveReaderExample
         catch (FileNotFoundException e)
         {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         if (args.length > 1)
         {
@@ -116,7 +116,7 @@ public class PermissiveReaderExample
             catch (FileNotFoundException e)
             {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         while (readerNormal.hasNext() && readerPermissive.hasNext())

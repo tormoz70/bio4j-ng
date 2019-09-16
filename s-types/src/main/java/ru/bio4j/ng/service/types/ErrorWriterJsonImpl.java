@@ -8,6 +8,7 @@ import ru.bio4j.ng.model.transport.User;
 import ru.bio4j.ng.service.api.ErrorWriter;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 public class ErrorWriterJsonImpl implements ErrorWriter {
@@ -20,7 +21,7 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
     }
 
     @Override
-    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
+    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) {
         ABean result = null;
         int resultCode;
         BioError error = BioError.wrap(exception);
@@ -36,8 +37,12 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
 //            result = buildError(error);
 //        }
         response.setStatus(resultCode);
-        PrintWriter writer = response.getWriter();
-        writer.append(Jecksons.getInstance().encode(result));
-        return false;
+        try {
+            PrintWriter writer = response.getWriter();
+            writer.append(Jecksons.getInstance().encode(result));
+            return false;
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

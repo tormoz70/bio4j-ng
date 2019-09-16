@@ -18,9 +18,7 @@ public class GetrowWrapperBaseImpl extends AbstractWrapper implements GetrowWrap
         this.template = template;
     }
 
-    public String wrap(String sql, String pkFieldName) throws Exception {
-//        if(Strings.isNullOrEmpty(pkFieldName))
-//            throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", sqlDef.getBioCode()));
+    public String wrap(String sql, String pkFieldName) {
         String whereclause = "(" + pkFieldName + " = :" + RestParamNames.GETROW_PARAM_PKVAL + ")";
         String rslt = template.replace(QUERY, sql);
         return rslt.replace(WHERE_CLAUSE, whereclause);

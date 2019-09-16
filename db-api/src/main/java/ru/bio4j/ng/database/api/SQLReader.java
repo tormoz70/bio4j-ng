@@ -8,7 +8,7 @@ import java.util.List;
  */
 public interface SQLReader {
 
-    boolean next(final ResultSet resultSet) throws Exception;
+    boolean next(final ResultSet resultSet);
 
     List<DBField> getFields();
 
@@ -22,8 +22,8 @@ public interface SQLReader {
     boolean isDBNull(String fieldName);
     boolean isDBNull(int fieldId);
 
-    <T> T getValue(String fieldName, Class<T> type) throws Exception;
-    <T> T getValue(int fieldId, Class<T> type) throws Exception;
+    <T> T getValue(String fieldName, Class<T> type);
+    <T> T getValue(int fieldId, Class<T> type);
 
     Object getValue(String fieldName);
     Object getValue(int fieldId);

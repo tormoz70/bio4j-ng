@@ -73,7 +73,6 @@ public class Types {
                 return ((Long)vval).doubleValue();
             return null;
         } catch (ParseException e) {
-            //e.printStackTrace();
             return null;
         }
     }

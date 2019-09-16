@@ -38,7 +38,7 @@ public class SortingWrapperBaseImpl extends AbstractWrapper implements SortingWr
         querySuffix = template.substring(queryEnd, orderbyStart - 1);
     }
 
-    public String wrap(String sql, List<Sort> sort, List<Field> fields) throws Exception {
+    public String wrap(String sql, List<Sort> sort, List<Field> fields) {
         if (sort != null && sort.size() > 0) {
             List<Sort> notFound = new ArrayList<>();
             for (Sort s : sort) {

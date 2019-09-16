@@ -9,6 +9,7 @@ import ru.bio4j.ng.database.api.WrapQueryType;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.Map;
@@ -18,16 +19,27 @@ import static java.util.Collections.unmodifiableMap;
 public class WrapperLoader {
     private static final Logger LOG = LoggerFactory.getLogger(WrapperLoader.class);
 
-    public static Map<WrapQueryType, String> loadQueries(final InputStream is, final String dbmsName) throws Exception {
+    private static DocumentBuilder createDocumentBuilder() {
+        try {
+            return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Document loadDocument(final InputStream is) {
+        try {
+            final DocumentBuilder db = createDocumentBuilder();
+            return db.parse(is);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Map<WrapQueryType, String> loadQueries(final InputStream is, final String dbmsName) {
         final Map<WrapQueryType, String> map = new EnumMap<>(WrapQueryType.class);
         //загрузка запрсоов из XML
-        final DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-//        final String templFileName = "/cursor/wrapper/templates/" + dbmsName + ".xml";
-//        final InputStream is = AbstractWrapper.class.getResourceAsStream(templFileName);
-//        final InputStream is = classLoader.getResourceAsStream(templFileName);
-//        if(is == null)
-//            throw new IllegalArgumentException(String.format("Resource %s not found!", templFileName));
-        final Document doc = db.parse(is);
+        final Document doc = loadDocument(is);
         final NodeList nl = doc.getElementsByTagName("template");
         int len = nl.getLength();
         for (int i = 0; i < len; ++i) {

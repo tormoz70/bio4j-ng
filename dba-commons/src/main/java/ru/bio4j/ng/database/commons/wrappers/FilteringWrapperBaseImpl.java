@@ -33,7 +33,7 @@ public class FilteringWrapperBaseImpl extends AbstractWrapper implements Filteri
         querySuffix = template.substring(queryEnd, whereStart - 1);
     }
 
-    public String wrap(String sql, Filter filter, List<Field> fields) throws Exception {
+    public String wrap(String sql, Filter filter, List<Field> fields) {
         if(filter != null) {
             String whereSql = wrapperInterpreter.filterToSQL("fltrng$wrpr", filter, fields);
             return queryPrefix + sql + querySuffix + (Strings.isNullOrEmpty(whereSql) ? "" : " WHERE " + whereSql);

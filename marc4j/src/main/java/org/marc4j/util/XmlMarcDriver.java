@@ -148,7 +148,7 @@ public class XmlMarcDriver {
         try {
             in = new FileInputStream(new File(input));
         } catch (final FileNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         MarcXmlReader reader = null;
         if (stylesheet == null) {
@@ -163,7 +163,7 @@ public class XmlMarcDriver {
             try {
                 out = new FileOutputStream(output);
             } catch (final FileNotFoundException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else {
             out = System.out;

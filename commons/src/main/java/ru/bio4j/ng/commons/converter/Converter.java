@@ -8,7 +8,7 @@ public class Converter {
 
 
 
-    public static <T> T toType(Object value, Class<T> type, String format, Boolean silent) throws ConvertValueException {
+    public static <T> T toType(Object value, Class<T> type, String format, Boolean silent) {
         if(type == null)
             throw new IllegalArgumentException("type");
         if(type == Object.class) {
@@ -53,15 +53,15 @@ public class Converter {
         }
     }
 
-    public static <T> T toType(Object value, Class<T> type, String format) throws ConvertValueException {
+    public static <T> T toType(Object value, Class<T> type, String format) {
         return toType(value, type, format, false);
     }
 
-    public static <T> T toType(Object value, Class<T> type) throws ConvertValueException {
+    public static <T> T toType(Object value, Class<T> type) {
         return toType(value, type, null, false);
     }
 
-    public static <T> T toType(Object value, Class<T> type, Boolean silent) throws ConvertValueException {
+    public static <T> T toType(Object value, Class<T> type, Boolean silent) {
         return toType(value, type, null, silent);
     }
 

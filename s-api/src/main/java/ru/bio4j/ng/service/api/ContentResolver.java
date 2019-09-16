@@ -1,7 +1,6 @@
 package ru.bio4j.ng.service.api;
 
 import ru.bio4j.ng.database.api.SQLDefinition;
-import ru.bio4j.ng.model.transport.BioRequest;
 
 public interface ContentResolver {
 
@@ -9,6 +8,6 @@ public interface ContentResolver {
 
 //    BioSQLDefinition getCursor(String moduleKey, String bioCode, User usr) throws Exception;
     SQLDefinition getCursor(String moduleKey, String bioCode) throws Exception;
-    SQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception;
+//    SQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception;
 
 }

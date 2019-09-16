@@ -13,6 +13,7 @@ import ru.bio4j.ng.model.transport.User;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
     private static final Logger LOG = LoggerFactory.getLogger(DbDynamicCursor.class);
 
     @Override
-	protected void prepareStatement() throws Exception {
+	protected void prepareStatement() {
 	}
 
     @Override
@@ -37,32 +38,32 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
 	}
 
     @Override
-    public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) throws Exception {
+    public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) {
         boolean rslt = false;
 //        Exception lastError = null;
-        try {
-            List<Param> prms = params != null ? params : new ArrayList<>();
-            SrvcUtils.applyCurrentUserParams(usr, prms);
+        List<Param> prms = params != null ? params : new ArrayList<>();
+        SrvcUtils.applyCurrentUserParams(usr, prms);
 //            try {
-                this.resetCommand(); // Сбрасываем состояние
+        this.resetCommand(); // Сбрасываем состояние
 
-                if (this.params == null)
-                    this.params = new ArrayList<>();
+        if (this.params == null)
+            this.params = new ArrayList<>();
 
-                applyInParamsToStatmentParams(params, false);
+        applyInParamsToStatmentParams(params, false);
 
-                if (!doBeforeStatement(this.params)) // Обрабатываем события
-                    return rslt;
+        if (!doBeforeStatement(this.params)) // Обрабатываем события
+            return rslt;
 
-                this.preparedSQL = this.sql;
-                // Удаляем из SQL условия #cut#
-                this.preparedSQL = DbUtils.cutFilterConditions(this.sql, this.params);
-                this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
-                this.preparedStatement.setQueryTimeout(this.timeout);
+        this.preparedSQL = this.sql;
+        // Удаляем из SQL условия #cut#
+        this.preparedSQL = DbUtils.cutFilterConditions(this.sql, this.params);
+        this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
+        preparedStatement.setQueryTimeout(this.timeout);
 
-                setParamsToStatement(); // Применяем параметры
+        setParamsToStatement(); // Применяем параметры
+        try {
 
-            if(LOG.isDebugEnabled())
+            if (LOG.isDebugEnabled())
                 LOG.debug("Try to execute: {}", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()));
             try (ResultSet result = this.preparedStatement.executeQuery()) {
                 this.isActive = true;
@@ -74,7 +75,8 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
                     }
                 }
             }
-
+        } catch (SQLException e) {
+            throw new SQLExceptionExt(e);
 //            } catch (Exception e) {
 //                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
 //            }

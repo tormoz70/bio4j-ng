@@ -5,6 +5,7 @@ import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -63,7 +64,7 @@ public class SQLDefinitionImpl implements SQLDefinition {
             return owner.getFields();
         }
 
-        public Field findPk() throws Exception {
+        public Field findPk() {
             return owner.findPk();
         }
 
@@ -178,11 +179,11 @@ public class SQLDefinitionImpl implements SQLDefinition {
         this.bioCode = bioCode;
     }
 
-    public Field findField(final String name) throws Exception {
+    public Field findField(final String name) {
         return Lists.first(fields, item -> Strings.compare(name, item.getName(), true));
     }
 
-    public Field findPk() throws Exception {
+    public Field findPk() {
         Field pkField = Lists.first(fields, new DelegateCheck<Field>() {
             @Override
             public Boolean callback(Field item) {
@@ -190,7 +191,7 @@ public class SQLDefinitionImpl implements SQLDefinition {
             }
         });
         if(pkField == null)
-            throw new Exception(String.format("PK field not found in bio defenition \"%s\"", this.bioCode));
+            throw new SQLExceptionExt(String.format("PK field not found in bio defenition \"%s\"", this.bioCode));
         return pkField;
     }
 

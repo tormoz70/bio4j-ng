@@ -38,7 +38,7 @@ public class FileFinderUtil {
             try {
                 fullPathNameToReturn = file.toURI().toURL().toExternalForm();
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else if (directoryPaths != null && directoryPaths.length != 0) {
             for (String pathPrefix : directoryPaths) {
@@ -56,7 +56,7 @@ public class FileFinderUtil {
                 fullPathNameToReturn = fileToReturn.toURI().toURL().toExternalForm();
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         if (numFound == 0) {

@@ -17,10 +17,7 @@ public class TotalsWrapperBaseImpl extends AbstractWrapper implements TotalsWrap
         this.template = template;
     }
 
-    public String wrap(String sql) throws Exception {
-//        String sql = template.replace(QUERY, sqlDef.getPreparedSql());
-//        sqlDef.setTotalsSql(sql);
-//        return sqlDef;
+    public String wrap(String sql) {
         return template.replace(QUERY, sql);
     }
 }

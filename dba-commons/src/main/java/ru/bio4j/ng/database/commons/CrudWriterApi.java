@@ -94,7 +94,7 @@ public class CrudWriterApi {
                         cmd.execSQL(params, user, true);
                         r++;
                     } else
-                        throw new Exception(String.format("ID Param not found in Delete sql of \"%s\"!", cursor.getBioCode()));
+                        throw new SQLExceptionExt(String.format("ID Param not found in Delete sql of \"%s\"!", cursor.getBioCode()));
                 }
             } finally {
                 cmd.close();
@@ -107,13 +107,13 @@ public class CrudWriterApi {
     public static void execSQL0(
             final Object params,
             final SQLContext context,
-            final SQLDefinition cursor) throws Exception {
+            final SQLDefinition cursor) {
         UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if (sqlDef == null)
-            throw new Exception(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
+            throw new SQLExceptionExt(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new Exception(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         SQLStoredProc cmd = context.createStoredProc();
         cmd.init(context.getCurrentConnection(), sqlDef);

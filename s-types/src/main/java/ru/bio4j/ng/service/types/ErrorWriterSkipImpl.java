@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ErrorWriterSkipImpl implements ErrorWriter {
 
     @Override
-    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) throws Exception {
+    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) {
         return true;
     }
 }

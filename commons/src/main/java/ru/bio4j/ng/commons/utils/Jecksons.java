@@ -66,30 +66,50 @@ public class Jecksons {
         return objectMapper;
     }
 
-    public String encode(Object object) throws JsonProcessingException {
-        return getObjectMapper().writeValueAsString(object);
+    public String encode(Object object) {
+        try {
+            return getObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-    public <T> T decode(String json, Class<T> targetType) throws Exception {
-        return getObjectMapper().readValue(json, targetType);
+    public <T> T decode(String json, Class<T> targetType) {
+        try {
+            return getObjectMapper().readValue(json, targetType);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public <T> T decode(String json, TypeReference<T> typeReference) throws Exception {
-        return getObjectMapper().readValue(json, typeReference);
+    public <T> T decode(String json, TypeReference<T> typeReference) {
+        try {
+            return getObjectMapper().readValue(json, typeReference);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public ABean decodeABean(final String json) throws Exception {
-        return getObjectMapper().readValue(json, new TypeReference<ABean>() {
-        });
-    }
-
-    public List<ABean> decodeABeans(String json) throws Exception {
-        if (json.trim().startsWith("[")) {
-            return getObjectMapper().readValue(json, new TypeReference<List<ABean>>() {
+    public ABean decodeABean(final String json) {
+        try {
+            return getObjectMapper().readValue(json, new TypeReference<ABean>() {
             });
-        } else {
-            return Arrays.asList(decodeABean(json));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<ABean> decodeABeans(String json) {
+        try {
+            if (json.trim().startsWith("[")) {
+                return getObjectMapper().readValue(json, new TypeReference<List<ABean>>() {
+                });
+            } else {
+                return Arrays.asList(decodeABean(json));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -220,12 +240,12 @@ public class Jecksons {
 //        return filter;
 //    }
 
-    public Expression decodeFilter(String json) throws Exception {
+    public Expression decodeFilter(String json) {
         HashMap<String, Object> filterJsonObj = decodeABean(json);
         return parsExprationLevel(filterJsonObj).get(0);
     }
 
-    public FilterAndSorter decodeFilterAndSorter(String json) throws Exception {
+    public FilterAndSorter decodeFilterAndSorter(String json) {
         HashMap<String, Object> filterAndSorterJsonObj = decodeABean(json);
         FilterAndSorter filterAndSorter = new FilterAndSorter();
         filterAndSorter.setFilter(new Filter());
@@ -263,7 +283,7 @@ public class Jecksons {
 
         @Override
         public Param deserialize(JsonParser jsonParser,
-                                 DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+                                 DeserializationContext deserializationContext) throws IOException {
 
             Param deserializedParam = jsonParser.readValuesAs(ParamPOJO.class).next();
             if (Arrays.asList(MetaType.DATE, MetaType.UNDEFINED).contains(Utl.nvl(deserializedParam.getType(), MetaType.UNDEFINED)) && deserializedParam.getValue() != null && deserializedParam.getValue() instanceof String) {

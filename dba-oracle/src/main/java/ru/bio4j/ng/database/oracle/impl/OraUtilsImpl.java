@@ -10,11 +10,13 @@ import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.database.commons.DbUtils;
+import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -106,45 +108,49 @@ public class OraUtilsImpl implements RDBMSUtils {
             " and (:package_name is null or a.package_name = upper(:package_name))" +
             " and a.object_name = upper(:method_name)" +
             " order by position";
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
-        OraUtilsImpl.PackageName pkg = this.parsStoredProcName(storedProcName);
-        List<Param> params = new ArrayList<>();
-        try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
-            st.setStringAtName("schema_name", pkg.schemaName);
-            st.setStringAtName("package_name", pkg.pkgName);
-            st.setStringAtName("method_name", pkg.methodName);
-            try (ResultSet rs = st.executeQuery()) {
-                try(Paramus p = Paramus.set(params)) {
-                    int i = 0;
-                    while (rs.next()) {
-                        String parName = rs.getString("argument_name");
-                        if(!Strings.isNullOrEmpty(parName)) {
-                            String parType = rs.getString("data_type");
-                            String parDir = rs.getString("in_out");
-                            Param newParam = Param.builder()
-                                    .name(parName.toLowerCase())
-                                    .type(decodeType(parType))
-                                    .direction(decodeDirection(parDir))
-                                    .build();
-                            Param overrideParam = null;
-                            if (paramsOverride != null && paramsOverride.size() > i)
-                                overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
-                            if (overrideParam != null) {
-                                if (overrideParam.getOverride())
-                                    newParam.setName(DbUtils.normalizeParamName(overrideParam.getName()));
-                                if (overrideParam.getValue() != null)
-                                    newParam.setValue(Converter.toType(overrideParam.getValue(), MetaTypeConverter.write(newParam.getType())));
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) {
+        try {
+            OraUtilsImpl.PackageName pkg = this.parsStoredProcName(storedProcName);
+            List<Param> params = new ArrayList<>();
+            try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
+                st.setStringAtName("schema_name", pkg.schemaName);
+                st.setStringAtName("package_name", pkg.pkgName);
+                st.setStringAtName("method_name", pkg.methodName);
+                try (ResultSet rs = st.executeQuery()) {
+                    try (Paramus p = Paramus.set(params)) {
+                        int i = 0;
+                        while (rs.next()) {
+                            String parName = rs.getString("argument_name");
+                            if (!Strings.isNullOrEmpty(parName)) {
+                                String parType = rs.getString("data_type");
+                                String parDir = rs.getString("in_out");
+                                Param newParam = Param.builder()
+                                        .name(parName.toLowerCase())
+                                        .type(decodeType(parType))
+                                        .direction(decodeDirection(parDir))
+                                        .build();
+                                Param overrideParam = null;
+                                if (paramsOverride != null && paramsOverride.size() > i)
+                                    overrideParam = paramsOverride.get(i).getOverride() ? paramsOverride.get(i) : null;
+                                if (overrideParam != null) {
+                                    if (overrideParam.getOverride())
+                                        newParam.setName(DbUtils.normalizeParamName(overrideParam.getName()));
+                                    if (overrideParam.getValue() != null)
+                                        newParam.setValue(Converter.toType(overrideParam.getValue(), MetaTypeConverter.write(newParam.getType())));
+                                }
+                                DbUtils.checkParamName(newParam.getName());
+                                p.add(newParam);
+                                i++;
                             }
-                            DbUtils.checkParamName(newParam.getName());
-                            p.add(newParam);
-                            i++;
                         }
                     }
                 }
             }
+            String newExec = DbUtils.generateSignature(storedProcName, params);
+            return new StoredProgMetadata(newExec, params);
+        } catch(SQLException e) {
+            throw new SQLExceptionExt(e);
         }
-        String newExec = DbUtils.generateSignature(storedProcName, params);
-        return new StoredProgMetadata(newExec, params);
     }
 
     @Override

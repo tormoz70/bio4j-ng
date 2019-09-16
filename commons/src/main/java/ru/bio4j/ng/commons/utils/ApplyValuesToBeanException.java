@@ -1,6 +1,6 @@
 package ru.bio4j.ng.commons.utils;
 
-public class ApplyValuesToBeanException extends Exception {
+public class ApplyValuesToBeanException extends RuntimeException {
     public ApplyValuesToBeanException() {
         super();
         field = null;

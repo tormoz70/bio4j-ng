@@ -3,7 +3,7 @@ package ru.bio4j.ng.commons.converter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class ConvertValueException extends Exception {
+public class ConvertValueException extends RuntimeException {
     private final static ResourceBundle resourceBundle = ResourceBundle.getBundle("commons",
             Locale.ROOT, ConvertValueException.class.getClassLoader());
 

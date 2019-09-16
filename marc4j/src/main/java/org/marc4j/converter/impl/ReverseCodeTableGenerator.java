@@ -61,8 +61,7 @@ public class ReverseCodeTableGenerator {
             dumpTablesAsSwitchStatement(combining, charsets, System.out);
 
         } catch (final Exception details) {
-            details.printStackTrace(System.out);
-            System.err.println("Exception: " + details);
+            throw new RuntimeException(details);
         }
     }
 
@@ -210,7 +209,7 @@ public class ReverseCodeTableGenerator {
     /**
      * Utility function for translating an array of characters to a two character hex string of the character values.
      *
-     * @param aValArray The array of characters to encode
+     * @param valarray The array of characters to encode
      * @return A string representation of the hex code
      */
     private static String hexify(final char[] valarray) {

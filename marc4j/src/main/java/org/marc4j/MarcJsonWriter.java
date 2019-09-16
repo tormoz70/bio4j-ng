@@ -480,10 +480,10 @@ public class MarcJsonWriter implements MarcWriter {
             os.flush();
         } catch (final UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (final IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

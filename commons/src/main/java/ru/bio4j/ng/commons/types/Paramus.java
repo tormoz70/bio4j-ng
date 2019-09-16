@@ -100,8 +100,7 @@ public class Paramus implements Closeable {
             });
             return result.isEmpty() ? null : result.get(0);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+            throw new RuntimeException(ex);
         }
 	}
 
@@ -127,7 +126,7 @@ public class Paramus implements Closeable {
 		return get().indexOf(this.getParam(name, true));
 	}
 
-	public List<Param> process(DelegateCheck<Param> check) throws Exception {
+	public List<Param> process(DelegateCheck<Param> check) {
         return Lists.select(get(), check);
 	}
 
@@ -210,9 +209,8 @@ public class Paramus implements Closeable {
      * Если есть параметр с таким именем, то обновляет его поля, иначе просто добавляет
      * @param item
      * @return
-     * @throws Exception
      */
-    public Paramus apply(Param item) throws Exception {
+    public Paramus apply(Param item) {
         apply(Arrays.asList(item));
         return this;
     }
@@ -308,7 +306,7 @@ public class Paramus implements Closeable {
         return null;
     }
 
-	public Map<String, String> toMap() throws Exception {
+	public Map<String, String> toMap() {
 		Map<String, String> rslt = new HashMap<String, String>();
 		for (Param prm : get()) {
 			String val = null;
@@ -344,7 +342,7 @@ public class Paramus implements Closeable {
 			return rslt;
 	}
 
-	public String encode() throws Exception {
+	public String encode() {
 		return Jecksons.getInstance().encode(this);
 	}
 
@@ -395,7 +393,7 @@ public class Paramus implements Closeable {
 		return setList(names, values, csDefaultDelimiter);
 	}
 
-	public static String extractDateFormat(String fmt){
+	public static String extractDateFormat(String fmt) {
 		String rslt = Regexs.find(fmt, "(?<=to_date\\(').*(?='\\);)", Pattern.CASE_INSENSITIVE);
 		return Strings.isNullOrEmpty(rslt) ? "yyyy.MM.dd HH:mm:ss" : rslt;
 	}
@@ -478,7 +476,7 @@ public class Paramus implements Closeable {
 		return removeList(names, csDefaultDelimiter);
 	}
 
-    public static List<Param> clone(List<Param> params) throws Exception {
+    public static List<Param> clone(List<Param> params) {
 	    if(params == null)
 	        return null;
         List<Param> rslt = new ArrayList<>();
@@ -491,13 +489,13 @@ public class Paramus implements Closeable {
 	    return new ArrayList<>();
     }
 
-    public static List<Param> createParams(HashMap<String, Object> params) throws Exception {
+    public static List<Param> createParams(HashMap<String, Object> params) {
         List<Param> rslt = createParams();
         Paramus.applyParams(rslt, params, false, true);
         return rslt;
     }
 
-    private static List<Param> _createParams(List<String> keys, List<Object> vals) throws Exception {
+    private static List<Param> _createParams(List<String> keys, List<Object> vals) {
         List<Param> rslt = createParams();
         Object val;
         for(int i=0; i<keys.size(); i++) {
@@ -509,7 +507,7 @@ public class Paramus implements Closeable {
         return rslt;
     }
 
-    public static List<Param> createParams(Object ... params) throws Exception {
+    public static List<Param> createParams(Object ... params) {
         List<String> keys = new ArrayList<>();
         List<Object> vals = new ArrayList<>();
         for(int i=0; i<params.length; i++) {
@@ -521,7 +519,7 @@ public class Paramus implements Closeable {
         return _createParams(keys, vals);
     }
 
-    public <T> T getParamValue(String paramName, Class<T> type, boolean silent) throws ConvertValueException {
+    public <T> T getParamValue(String paramName, Class<T> type, boolean silent) {
         Param param = this.getParam(paramName, true);
         if (param != null)
             return paramValue(param, type);
@@ -531,11 +529,11 @@ public class Paramus implements Closeable {
             return null;
     }
 
-    public <T> T getParamValue(String paramName, Class<T> type) throws ConvertValueException {
+    public <T> T getParamValue(String paramName, Class<T> type) {
 	    return getParamValue(paramName, type, false);
     }
 
-    public Object getParamValue(String paramName, boolean silent) throws ConvertValueException {
+    public Object getParamValue(String paramName, boolean silent) {
         Param param = this.getParam(paramName, true);
         if (param != null)
             return param.getValue();
@@ -545,16 +543,16 @@ public class Paramus implements Closeable {
             return null;
     }
 
-    public Object getParamValue(String paramName) throws ConvertValueException {
+    public Object getParamValue(String paramName) {
 	    return getParamValue(paramName, false);
     }
 
-    public boolean paramIsEmpty(String paramName) throws ConvertValueException {
+    public boolean paramIsEmpty(String paramName) {
         Param param = this.getParam(paramName, true);
         return (param == null) || param.isEmpty();
     }
 
-    public static <T> T paramValue(Param param, Class<T> type) throws ConvertValueException {
+    public static <T> T paramValue(Param param, Class<T> type) {
         return Converter.toType(param.getValue(), type);
     }
 
@@ -566,7 +564,7 @@ public class Paramus implements Closeable {
         }
 	}
 
-    public static <T> T paramValue(List<Param> params, String paramName, Class<T> type, T defaultValue) throws Exception {
+    public static <T> T paramValue(List<Param> params, String paramName, Class<T> type, T defaultValue) {
         T rslt = null;
         try (Paramus paramus = Paramus.set(params)) {
             rslt = Utl.nvl(paramus.getParamValue(paramName, type, true), defaultValue);
@@ -574,7 +572,7 @@ public class Paramus implements Closeable {
         return rslt;
     }
 
-    public static Param removeParam(List<Param> params, String paramName) throws Exception {
+    public static Param removeParam(List<Param> params, String paramName) {
 	    Param rslt = null;
         try (Paramus paramus = Paramus.set(params)) {
             rslt = paramus.getParam(paramName, true);
@@ -583,19 +581,19 @@ public class Paramus implements Closeable {
         return rslt;
     }
 
-    public static Object paramValue(List<Param> params, String paramName) throws Exception {
+    public static Object paramValue(List<Param> params, String paramName) {
         try (Paramus paramus = Paramus.set(params)) {
             return paramus.getParamValue(paramName);
         }
     }
 
-    public static boolean paramIsEmpty(List<Param> params, String paramName) throws Exception {
+    public static boolean paramIsEmpty(List<Param> params, String paramName) {
         try (Paramus paramus = Paramus.set(params)) {
             return paramus.paramIsEmpty(paramName);
         }
     }
 
-    public static String paramValueAsString(List<Param> params, String paramName, String defaultValue) throws Exception {
+    public static String paramValueAsString(List<Param> params, String paramName, String defaultValue) {
         String rslt = null;
         try (Paramus paramus = Paramus.set(params)) {
             rslt = Utl.nvl(paramus.getParamValue(paramName, String.class, true), defaultValue);
@@ -603,66 +601,66 @@ public class Paramus implements Closeable {
         return rslt;
     }
 
-    public static String paramValueAsString(List<Param> params, String paramName) throws Exception {
+    public static String paramValueAsString(List<Param> params, String paramName) {
         return paramValueAsString(params, paramName, null);
     }
 
-    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType, Param.Direction direction) throws Exception {
+    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType, Param.Direction direction) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.setValue(paramName, value, forceType, direction, true);
         }
     }
 
-    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType) throws Exception {
+    public static void setParamValue(List<Param> params, String paramName, Object value, MetaType forceType) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.setValue(paramName, value, forceType);
         }
     }
 
-    public static void setParamValue(List<Param> params, String paramName, Object value) throws Exception {
+    public static void setParamValue(List<Param> params, String paramName, Object value) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.setValue(paramName, value);
         }
     }
 
-    public static Param getParam(List<Param> params, String paramName) throws Exception {
+    public static Param getParam(List<Param> params, String paramName) {
         try (Paramus paramus = Paramus.set(params)) {
             return paramus.getParam(paramName);
         }
     }
 
-    public static int indexOf(List<Param> params, String paramName) throws Exception {
+    public static int indexOf(List<Param> params, String paramName) {
         try (Paramus paramus = Paramus.set(params)) {
             return paramus.getIndexOf(paramName);
         }
     }
 
-    public static void setParam(List<Param> params, Param param, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
+    public static void setParam(List<Param> params, Param param, boolean applyOnlyExists, boolean replaceIfExists) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.apply(Arrays.asList(param), applyOnlyExists, replaceIfExists);
         }
     }
 
-    public static void setParam(List<Param> params, Param param, boolean replaceIfExists) throws Exception {
+    public static void setParam(List<Param> params, Param param, boolean replaceIfExists) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.apply(Arrays.asList(param), false, replaceIfExists);
         }
     }
 
-    public static void setParams(List<Param> params, List<Param> paramsFrom) throws Exception {
+    public static void setParams(List<Param> params, List<Param> paramsFrom) {
         try (Paramus paramus = Paramus.set(paramsFrom)) {
             for (Param p : paramus.get())
                 Paramus.setParamValue(params, p.getName(), p.getValue());
         }
     }
 
-    public static void applyParams(List<Param> params, List<Param> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
+    public static void applyParams(List<Param> params, List<Param> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.apply(paramsFrom, applyOnlyExists, replaceIfExists);
         }
     }
 
-    public static void applyParams(List<Param> params, HashMap<String, Object> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) throws Exception {
+    public static void applyParams(List<Param> params, HashMap<String, Object> paramsFrom, boolean applyOnlyExists, boolean replaceIfExists) {
         try (Paramus paramus = Paramus.set(params)) {
             paramus.apply(paramsFrom, applyOnlyExists, replaceIfExists);
         }
@@ -708,7 +706,7 @@ public class Paramus implements Closeable {
         return sb.toString();
     }
 
-    public static void setQueryParamsToBioParams(BioQueryParams qprms) throws Exception {
+    public static void setQueryParamsToBioParams(BioQueryParams qprms) {
         if(qprms.bioParams == null)
             qprms.bioParams = new ArrayList<>();
         Paramus.setParamValue(qprms.bioParams, RestParamNames.PAGINATION_PARAM_PAGE, qprms.page, MetaType.INTEGER);

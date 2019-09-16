@@ -20,7 +20,7 @@ public class DbSelectableParamSetter implements SQLParamSetter {
 //    }
 
     @Override
-    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) throws Exception {
+    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) {
 //        SQLNamedParametersStatement selectable = command.getStatement();
         final String sql = statment.getOrigQuery();
 //        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);

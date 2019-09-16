@@ -55,12 +55,12 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     /**
      * Присваивает значения входящим параметрам
      */
-    protected void setParamsToStatement() throws Exception {
+    protected void setParamsToStatement() {
         if(this.paramSetter != null)
             this.paramSetter.setParamsToStatement(this.preparedStatement, this.params);
     }
 
-    protected void getParamsFromStatement() throws SQLException {
+    protected void getParamsFromStatement() {
         if(this.paramGetter != null)
             this.paramGetter.getParamsFromStatement(this.preparedStatement, this.params);
     }
@@ -73,7 +73,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         this.paramGetter = paramGetter;
     }
 
-	public T init(Connection conn, SQLDef sqlDef, int timeout) throws Exception {
+	public T init(Connection conn, SQLDef sqlDef, int timeout) {
 		this.connection = conn;
 		this.timeout = timeout;
 		if(sqlDef != null)
@@ -81,13 +81,13 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         this.prepareStatement();
 		return (T)this;
 	}
-    public T init(Connection conn, SQLDef sqlDef) throws Exception {
+    public T init(Connection conn, SQLDef sqlDef) {
         return this.init(conn, sqlDef, 60);
     }
 
-	protected abstract void prepareStatement() throws Exception;
+	protected abstract void prepareStatement();
 
-    protected boolean doBeforeStatement(List<Param> params) throws SQLException {
+    protected boolean doBeforeStatement(List<Param> params) {
         boolean locCancel = false;
         if(this.beforeEvents.size() > 0) {
             for(SQLCommandBeforeEvent e : this.beforeEvents){
@@ -97,7 +97,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
             }
         }
         if(locCancel)
-            throw new SQLException("Command has been canceled!");
+            throw new SQLExceptionExt("Command has been canceled!");
         return !locCancel;
 	}
 
@@ -128,13 +128,13 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return String.format("preparedSQL: %s;\n - %s", sql, sb.toString());
     }
 
-    protected abstract void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception;
+    protected abstract void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType);
 
-    protected void resetCommand() throws SQLException {
+    protected void resetCommand() {
     }
 
 	@Override
-	public void cancel() throws SQLException {
+	public void cancel() {
         final SQLNamedParametersStatement stmnt = this.getStatement();
         if(stmnt != null) {
             try {
@@ -165,7 +165,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
         return this.preparedSQL;
     }
 
-    public <T> T getParamValue(String paramName, Class<T> type, T defaultValue) throws Exception {
+    public <T> T getParamValue(String paramName, Class<T> type, T defaultValue) {
         return Paramus.paramValue(this.getParams(), paramName, type, defaultValue);
     }
 

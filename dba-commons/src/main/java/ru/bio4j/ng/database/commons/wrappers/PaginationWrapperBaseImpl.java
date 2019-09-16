@@ -17,11 +17,7 @@ public class PaginationWrapperBaseImpl extends AbstractWrapper implements Pagina
         this.template = template;
     }
 
-    public String wrap(String sql) throws Exception {
-//        if((sqlDef.getWrapMode() & BioSQLDefinitionImpl.WrapMode.PAGINATION.code()) == BioSQLDefinitionImpl.WrapMode.PAGINATION.code()) {
-            return template.replace(QUERY, sql);
-//            sqlDef.setPreparedSql(sql);
-//        }
-//        return sqlDef;
+    public String wrap(String sql) {
+        return template.replace(QUERY, sql);
     }
 }

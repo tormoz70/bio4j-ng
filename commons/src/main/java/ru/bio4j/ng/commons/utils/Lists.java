@@ -6,16 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lists {
-    public static <T> List<T> select(List<T> list, DelegateCheck<T> check) throws Exception {
+    public static <T> List<T> select(List<T> list, DelegateCheck<T> check) {
         List<T> result = new ArrayList<>();
         if (list != null && check != null) {
             for (T item : list)
-                if (check.callback(item))
-                    result.add(item);
+                try {
+                    if (check.callback(item))
+                        result.add(item);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
         }
         return result;
     }
-    public static <T> T first(List<T> list, DelegateCheck<T> check) throws Exception {
+    public static <T> T first(List<T> list, DelegateCheck<T> check) {
         if(check != null)
             list = select(list, check);
         if (list != null && list.size() > 0) {

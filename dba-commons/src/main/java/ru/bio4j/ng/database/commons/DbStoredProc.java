@@ -24,29 +24,29 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
     private String storedProcName;
 
 	@Override
-	public SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef, int timeout) throws Exception {
+	public SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef, int timeout) {
 	    if(sqlDef != null)
             this.storedProcName = sqlDef.getPreparedSql();
         return super.init(conn, sqlDef, timeout);
 	}
     @Override
-    public SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef) throws Exception {
+    public SQLStoredProc init(Connection conn, UpdelexSQLDef sqlDef) {
         return this.init(conn, sqlDef, 60);
     }
     @Override
-    public SQLStoredProc init(Connection conn, String storedProcName) throws Exception {
+    public SQLStoredProc init(Connection conn, String storedProcName) {
         this.storedProcName = storedProcName;
         return this.init(conn, null, 60);
     }
 
     @Override
-    public SQLStoredProc init(Connection conn, String storedProcName, List<Param> paramDeclaration) throws Exception {
+    public SQLStoredProc init(Connection conn, String storedProcName, List<Param> paramDeclaration) {
         this.params = Paramus.clone(paramDeclaration);
         return this.init(conn, storedProcName);
     }
 
     @Override
-	protected void prepareStatement() throws Exception {
+	protected void prepareStatement() {
         if (this.params == null) {
             StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
             try (Paramus p = Paramus.set(sp.getParamDeclaration())) {
@@ -62,11 +62,11 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 	
     @Override
-	public void execSQL(Object params, User usr, boolean stayOpened) throws Exception {
+	public void execSQL(Object params, User usr, boolean stayOpened) {
         List<Param> prms = params != null ? DbUtils.decodeParams(params) : new ArrayList<>();
         SrvcUtils.applyCurrentUserParams(usr, prms);
 
-        Exception lastError = null;
+        SQLExceptionExt lastError = null;
         try {
             try {
                 try {
@@ -104,7 +104,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
                     lastError = new SQLExceptionExt(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString())), e);
                     throw lastError;
                 } catch (Exception e) {
-                    lastError = new Exception(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
+                    lastError = new SQLExceptionExt(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
                     throw lastError;
                 }
             } finally {
@@ -120,27 +120,27 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 	}
 
     @Override
-    public void execSQL(Object params, User usr) throws Exception {
+    public void execSQL(Object params, User usr) {
         this.execSQL(params, usr, false);
     }
 
     @Override
-    public void execSQL(User usr) throws Exception {
+    public void execSQL(User usr) {
         this.execSQL(null, usr);
     }
 
     @Override
-    protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception {
+    protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) {
         DbUtils.applyParamsToParams(params, this.params, false, false, overwriteType);
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         Statement statement = getStatement();
         if(statement != null)
             try {
                 statement.close();
-            }catch (Exception ignore) {}
+            } catch (SQLException ignore) {}
     }
 
 }

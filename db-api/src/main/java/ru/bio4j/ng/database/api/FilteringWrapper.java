@@ -7,5 +7,5 @@ import java.util.List;
 
 
 public interface FilteringWrapper {
-    String wrap(String sql, Filter filter, List<Field> fields) throws Exception;
+    String wrap(String sql, Filter filter, List<Field> fields) ;
 }

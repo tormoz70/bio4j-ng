@@ -76,7 +76,7 @@ public class SQLFactoryTest {
                 DbUtils.execSQL(context.getCurrentConnection(), sql);
                 return null;
             }, null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -87,7 +87,7 @@ public class SQLFactoryTest {
         try {
             context.execBatch(new SQLActionScalar0<Object>() {
                 @Override
-                public Object exec(SQLContext context) throws Exception {
+                public Object exec(SQLContext context) {
                     DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_prop");
                     DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_error");
                     DbUtils.execSQL(context.getCurrentConnection(), "drop procedure test_stored_cursor");
@@ -96,7 +96,7 @@ public class SQLFactoryTest {
                     return null;
                 }
             }, null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -106,7 +106,7 @@ public class SQLFactoryTest {
 //        LOG.debug(Utl.buildBeanStateInfo(context.getStat(), null, null));
         context.execBatch(new SQLActionScalar0<Object>() {
             @Override
-            public Object exec(SQLContext context) throws Exception {
+            public Object exec(SQLContext context) {
                 Assert.assertNotNull(context.getCurrentConnection());
                 return null;
             }
@@ -119,7 +119,7 @@ public class SQLFactoryTest {
         try {
             Double dummysum = context.execBatch(new SQLActionScalar0<Double>() {
                 @Override
-                public Double exec(SQLContext context) throws Exception {
+                public Double exec(SQLContext context) {
                     Var var = new Var();
                     String sql = "select user as curuser, :dummy as dm, :dummy1 as dm1 from dual";
                     List<Param> prms = Paramus.set(new ArrayList<Param>()).add("dummy", 101).pop();
@@ -146,7 +146,7 @@ public class SQLFactoryTest {
         try {
             byte[] schema = context.execBatch(new SQLActionScalar0<byte[]>() {
                 @Override
-                public byte[] exec(SQLContext context) throws Exception {
+                public byte[] exec(SQLContext context) {
                     Var var = new Var();
                     String sql = "select * from table(givcapi.upld.get_schemas)";
                     context.createCursor()
@@ -172,7 +172,7 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context) throws Exception {
+                public Integer exec(SQLContext context) throws SQLException {
                     int leng = 0;
                     LOG.debug("conn: " + context.getCurrentConnection());
 
@@ -197,7 +197,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -206,7 +206,7 @@ public class SQLFactoryTest {
     public void execSQLCommandExecSQLLong() throws Exception {
         context.execBatch(new SQLActionVoid0 () {
             @Override
-            public void exec(SQLContext context) throws Exception {
+            public void exec(SQLContext context) throws SQLException {
 
                 SQLStoredProc cmd = context.createStoredProc();
                 String storedProgName = "test_stored_long";
@@ -245,7 +245,7 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context) throws Exception {
+                public Integer exec(SQLContext context) throws SQLException {
                     int leng = 0;
                     LOG.debug("conn: " + context.getCurrentConnection());
 
@@ -267,7 +267,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -278,7 +278,7 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext context) throws Exception {
+                public Integer exec(SQLContext context) throws SQLException {
                     int leng = 0;
                     LOG.debug("conn: " + context.getCurrentConnection());
 
@@ -300,13 +300,13 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
     }
 
-    private String creXML() throws Exception {
+    private String creXML() {
         XLRCfg xlrCfg = new XLRCfg();
 
         XLRCfg.DataSource ds = new XLRCfg.DataSource();
@@ -360,7 +360,7 @@ public class SQLFactoryTest {
                 cmd.execSQL(prms, ctx.getCurrentUser());
 
             }, null);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -383,7 +383,7 @@ public class SQLFactoryTest {
                 cmd.execSQL(prms, ctx.getCurrentUser());
 
             }, null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -394,7 +394,7 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext ctx) throws Exception {
+                public Integer exec(SQLContext ctx) throws SQLException {
                     int leng = 0;
                     LOG.debug("conn: " + ctx.getCurrentConnection());
 
@@ -416,7 +416,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -427,7 +427,7 @@ public class SQLFactoryTest {
         try {
             context.execBatch(new SQLActionVoid1() {
                 @Override
-                public void exec(SQLContext ctx, Object param) throws Exception {
+                public void exec(SQLContext ctx, Object param) {
                     LOG.debug("conn: " + ctx.getCurrentConnection() + "; param: " + param);
 
                     SQLStoredProc cmd = ctx.createStoredProc();
@@ -444,7 +444,7 @@ public class SQLFactoryTest {
                     cmd.execSQL(prms, ctx.getCurrentUser());
                 }
             }, "AnContext", null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
         }
@@ -455,7 +455,7 @@ public class SQLFactoryTest {
         try {
             int leng = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext ctx) throws Exception {
+                public Integer exec(SQLContext ctx) {
                     int leng = 0;
                     LOG.debug("conn: " + ctx.getCurrentConnection());
 
@@ -513,7 +513,7 @@ public class SQLFactoryTest {
 
             LOG.debug(String.format("Login: OK; uid: %s", uid));
             Assert.assertEquals(uid, "FTW");
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!!!", ex);
         }
     }
@@ -523,7 +523,7 @@ public class SQLFactoryTest {
         try {
             int c = context.execBatch(new SQLActionScalar0<Integer>() {
                 @Override
-                public Integer exec(SQLContext ctx) throws Exception {
+                public Integer exec(SQLContext ctx) throws SQLException {
                     ResultSet resultSet = null;
                     LOG.debug("conn: " + ctx.getCurrentConnection());
 
@@ -607,7 +607,7 @@ public class SQLFactoryTest {
 
             String rslt = contextLocal.execBatch(new SQLActionScalar0<String>() {
                 @Override
-                public String exec(SQLContext ctx) throws Exception {
+                public String exec(SQLContext ctx) {
                     String sql = "SELECT * FROM (\n" +
                             "        SELECT pgng$wrpr0.*, ROWNUM rnum$pgng\n" +
                             "          FROM ( with \n" +
@@ -772,7 +772,7 @@ public class SQLFactoryTest {
 
             String rslt = contextLocal.execBatch(new SQLActionScalar0<String>() {
                 @Override
-                public String exec(SQLContext ctx) throws Exception {
+                public String exec(SQLContext ctx) {
                     String sql = Utl.readStream(Thread.currentThread().getContextClassLoader().getResourceAsStream("111.sql"));
 
                     int cnt = 0;

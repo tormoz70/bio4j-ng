@@ -81,7 +81,7 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String filterToSQL(String alias, Filter filter, List<Field> fields) throws Exception {
+    public String filterToSQL(String alias, Filter filter, List<Field> fields) {
         if(filter != null && !filter.getChildren().isEmpty()) {
             Expression e = filter.getChildren().get(0);
             return _filterToSQL(alias, e);
@@ -90,7 +90,7 @@ public class OraWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String sortToSQL(String alias, List<Sort> sort, List<Field> fields) throws Exception {
+    public String sortToSQL(String alias, List<Sort> sort, List<Field> fields) {
         if(sort != null) {
             StringBuilder result = new StringBuilder();
             char comma; Sort.Direction direction; String nullsPos = null;

@@ -14,5 +14,5 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface SQLParamSetter {
-    void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) throws Exception;
+    void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params);
 }

@@ -122,30 +122,34 @@ public abstract class DbContextAbstract implements SQLContext {
      * иначе транзакция откатывается.
      */
     @Override
-    public <P, R> R execBatch (final SQLActionScalar1<P, R> batch, final P param, final User usr) throws Exception {
-        R result = null;
-        try(Connection conn = this.getConnection(usr)){
-            conn.setAutoCommit(false);
-            setCurrentContext(usr, conn);
-            try {
-                if (batch != null)
-                    result = batch.exec(this, param);
-                getCurrentConnection().commit();
-            } catch (Exception e) {
-                if (getCurrentConnection() != null)
-                    try {
-                        getCurrentConnection().rollback();
-                    } catch (Exception e1) {}
-                throw e;
-            } finally {
-                closeCurrentContext();
+    public <P, R> R execBatch (final SQLActionScalar1<P, R> batch, final P param, final User usr) {
+        try {
+            R result = null;
+            try (Connection conn = this.getConnection(usr)) {
+                conn.setAutoCommit(false);
+                setCurrentContext(usr, conn);
+                try {
+                    if (batch != null)
+                        result = batch.exec(this, param);
+                    getCurrentConnection().commit();
+                } catch (SQLException e) {
+                    if (getCurrentConnection() != null)
+                        try {
+                            getCurrentConnection().rollback();
+                        } catch (SQLException e1) {}
+                    throw e;
+                } finally {
+                    closeCurrentContext();
+                }
             }
+            return result;
+        } catch (SQLException e) {
+            throw new SQLExceptionExt(e);
         }
-        return result;
     }
 
     @Override
-    public void execBatch (final SQLActionVoid0 batch, final User usr) throws Exception {
+    public void execBatch (final SQLActionVoid0 batch, final User usr) {
         execBatch((context, param) -> {
             if (batch != null)
                 batch.exec(context);
@@ -154,7 +158,7 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
-    public <P> void execBatch (final SQLActionVoid1 batch, final P param, final User usr) throws Exception {
+    public <P> void execBatch (final SQLActionVoid1 batch, final P param, final User usr) {
         execBatch((context, prm) -> {
             if (batch != null)
                 batch.exec(context, prm);
@@ -163,7 +167,7 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
-    public <R> R execBatch (final SQLActionScalar0<R> batch, final User usr) throws Exception {
+    public <R> R execBatch (final SQLActionScalar0<R> batch, final User usr) {
         return execBatch((context, p) -> {
             if (batch != null)
                 return batch.exec(context);
@@ -203,7 +207,7 @@ public abstract class DbContextAbstract implements SQLContext {
     }
 
     @Override
-    public StoredProgMetadata prepareStoredProc(String sql, Connection conn, List<Param> paramsDeclaration) throws Exception {
+    public StoredProgMetadata prepareStoredProc(String sql, Connection conn, List<Param> paramsDeclaration) {
         return DbUtils.getInstance().detectStoredProcParamsAuto(sql, conn, paramsDeclaration);
     }
 

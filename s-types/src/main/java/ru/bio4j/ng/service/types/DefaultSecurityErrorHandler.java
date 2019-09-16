@@ -23,7 +23,7 @@ public class DefaultSecurityErrorHandler implements SecurityErrorHandler {
     }
 
     @Override
-    public boolean writeError(BioError.Login exception, HttpServletResponse response) throws Exception {
+    public boolean writeError(BioError.Login exception, HttpServletResponse response) {
         if(exception instanceof BioError.Login) {
             LOG.error("Authentication error (Level-0)!", exception);
         } else {

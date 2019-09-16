@@ -4,6 +4,11 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.model.transport.ABean;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ayrat
@@ -143,6 +148,68 @@ public class eeeTest {
     @Test(enabled = true)
     public void testException() throws Exception {
         ABean bean = Jecksons.getInstance().decodeABean("{\"dummy\": 1,}");
+    }
+
+    @Test(enabled = true)
+    public void testException1() throws Exception {
+        try{
+            throw new RuntimeException("FTW");
+        } catch (Exception e) {
+            //System.out.println(e.toString());
+        }
+    }
+
+    @Test(enabled = true)
+    public void testExin0() throws Exception {
+        try{
+            //System.exit(1);
+        } finally {
+            System.out.println("finally!");
+        }
+    }
+
+    @Test(enabled = true)
+    public void testInt() throws Exception {
+        Integer i1 = 128;
+        Integer i2 = 128;
+        System.out.println(i1);
+        System.out.println(i2);
+        System.out.println(i1 == i2);
+        Integer i3 = 127;
+        Integer i4 = 127;
+        System.out.println(i3 == i4);
+    }
+
+    @Test(enabled = true)
+    public void testIterator() throws Exception {
+        List<String> r = new ArrayList<>();
+        r.add("111");
+        r.add("222");
+        r.add("333");
+        r.add("444");
+        r.add("555");
+        String current = null;
+        Iterator<String> it = r.iterator();
+        while (it.hasNext()) {
+            current = it.next();
+            System.out.println(current);
+            if (current.equals("333"))
+                it.remove();
+        }
+
+        System.out.println("************************************");
+
+        it = r.iterator();
+        while (it.hasNext()) {
+            current = it.next();
+            System.out.println(current);
+        }
+
+        System.out.println("************************************");
+        System.out.println(r);
+        System.out.println("************************************");
+        ListIterator<String> lit = r.listIterator();
+
     }
 
 }

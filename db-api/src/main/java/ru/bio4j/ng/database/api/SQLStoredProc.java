@@ -14,12 +14,12 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface SQLStoredProc extends SQLCommand {
-    SQLStoredProc init(final Connection conn, final UpdelexSQLDef sqlDef, final int timeout) throws Exception;
-    SQLStoredProc init(final Connection conn, final UpdelexSQLDef sqlDef) throws Exception;
-    SQLStoredProc init(final Connection conn, final String storedProcName, final List<Param> paramDeclaration) throws Exception;
-    SQLStoredProc init(final Connection conn, final String storedProcName) throws Exception;
-    void execSQL(final Object params, final User usr, final boolean stayOpened) throws Exception;
-    void execSQL(final Object params, final User usr) throws Exception;
-    void execSQL(final User usr) throws Exception;
-    void close() throws Exception;
+    SQLStoredProc init(final Connection conn, final UpdelexSQLDef sqlDef, final int timeout);
+    SQLStoredProc init(final Connection conn, final UpdelexSQLDef sqlDef);
+    SQLStoredProc init(final Connection conn, final String storedProcName, final List<Param> paramDeclaration);
+    SQLStoredProc init(final Connection conn, final String storedProcName);
+    void execSQL(final Object params, final User usr, final boolean stayOpened);
+    void execSQL(final Object params, final User usr);
+    void execSQL(final User usr);
+    void close();
 }

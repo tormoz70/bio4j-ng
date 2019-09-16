@@ -32,7 +32,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
 	@Override
-	public SQLCursor init(Connection conn, SelectSQLDef sqlDef, int timeout) throws Exception {
+	public SQLCursor init(Connection conn, SelectSQLDef sqlDef, int timeout) {
         if(sqlDef == null)
             throw new IllegalArgumentException("Parameter \"sqlDef\" cannon be null!!!");
         if(Strings.isNullOrEmpty(sqlDef.getPreparedSql()))
@@ -42,12 +42,12 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 	}
 
     @Override
-    public SQLCursor init(Connection conn, SelectSQLDef sqlDef) throws Exception {
+    public SQLCursor init(Connection conn, SelectSQLDef sqlDef) {
         return this.init(conn, sqlDef, 60);
     }
 
     @Override
-    public SQLCursor init(Connection conn, String sql, int timeout) throws Exception {
+    public SQLCursor init(Connection conn, String sql, int timeout) {
         if(Strings.isNullOrEmpty(sql))
             throw new IllegalArgumentException("Parameter \"sql\" cannon be empty!!!");
         this.sql = sql;
@@ -55,22 +55,22 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
     @Override
-    public SQLCursor init(final Connection conn, final String sql, final List<Param> paramDeclaration) throws Exception {
+    public SQLCursor init(final Connection conn, final String sql, final List<Param> paramDeclaration) {
         this.params = Paramus.clone(paramDeclaration);
         return this.init(conn, sql, 60);
     }
 
     @Override
-    public SQLCursor init(Connection conn, String sql) throws Exception {
+    public SQLCursor init(Connection conn, String sql) {
         return this.init(conn, sql, 60);
     }
 
     @Override
-	protected void prepareStatement() throws Exception {
+	protected void prepareStatement() {
         this.preparedSQL = this.sql;
         this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
-        this.preparedStatement.setQueryTimeout(this.timeout);
-	}
+        preparedStatement.setQueryTimeout(this.timeout);
+    }
 
     @Override
     public SQLReader createReader() {
@@ -83,9 +83,9 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 	}
 
     @Override
-    public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) throws Exception {
+    public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) {
         boolean rslt = false;
-        Exception lastError = null;
+        SQLExceptionExt lastError = null;
         try {
             List<Param> prms = params != null ? params : new ArrayList<>();
             SrvcUtils.applyCurrentUserParams(usr, prms);
@@ -115,11 +115,8 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
                     }
                 }
 
-            //} catch (SQLException e) {
-            //    lastError = new SQLExceptionExt(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString()), e.getMessage()), e);
-            //    throw lastError;
-            } catch (Exception e) {
-                lastError = new Exception(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
+            } catch (SQLException e) {
+                lastError = new SQLExceptionExt(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
             }
         } finally {
             if (this.preparedStatement != null)
@@ -134,7 +131,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
     @Override
-    public boolean fetch(User usr, DelegateSQLFetch onrecord) throws Exception {
+    public boolean fetch(User usr, DelegateSQLFetch onrecord) {
         return this.fetch(null, usr, onrecord);
     }
 
@@ -143,7 +140,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
     @Override
-    public <T> T scalar(final List<Param> params, final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception {
+    public <T> T scalar(final List<Param> params, final User usr, final String fieldName, final Class<T> clazz, T defaultValue) {
         final ScalarResult<T> rslt = new ScalarResult();
         if(this.fetch(params, usr, (rs -> {
             if(rs.getFields().size() > 0) {
@@ -159,22 +156,22 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
     @Override
-    public <T> T scalar(final List<Param> params, final User usr, final Class<T> clazz, T defaultValue) throws Exception {
+    public <T> T scalar(final List<Param> params, final User usr, final Class<T> clazz, T defaultValue) {
         return scalar(params, usr, null, clazz, defaultValue);
     }
 
     @Override
-    public <T> T scalar(final User usr, final String fieldName, final Class<T> clazz, T defaultValue) throws Exception {
+    public <T> T scalar(final User usr, final String fieldName, final Class<T> clazz, T defaultValue) {
         return scalar(null, usr, fieldName, clazz, defaultValue);
     }
 
     @Override
-    public <T> T scalar(final User usr, final Class<T> clazz, T defaultValue) throws Exception {
+    public <T> T scalar(final User usr, final Class<T> clazz, T defaultValue) {
         return scalar(null, usr, null, clazz, defaultValue);
     }
 
     @Override
-    public <T> List<T> beans(final List<Param> params, final User usr, final Class<T> clazz) throws Exception {
+    public <T> List<T> beans(final List<Param> params, final User usr, final Class<T> clazz) {
         final List<T> rslt = new ArrayList<>();
         this.fetch(null, usr, (rs -> {
             rslt.add(DbUtils.createBeanFromReader(rs, clazz));
@@ -184,12 +181,12 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
     @Override
-    public <T> List<T> beans(final User usr, final Class<T> clazz) throws Exception {
+    public <T> List<T> beans(final User usr, final Class<T> clazz) {
         return beans(null, usr, clazz);
     }
 
     @Override
-    public <T> T firstBean(final List<Param> params, final User usr, final Class<T> clazz) throws Exception {
+    public <T> T firstBean(final List<Param> params, final User usr, final Class<T> clazz) {
         final List<T> rslt = new ArrayList<>();
         this.fetch(params, usr, (rs -> {
             rslt.add(DbUtils.createBeanFromReader(rs, clazz));
@@ -199,12 +196,12 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     }
 
     @Override
-    public <T> T firstBean(final User usr, final Class<T> clazz) throws Exception {
+    public <T> T firstBean(final User usr, final Class<T> clazz) {
         return firstBean(null, usr, clazz);
     }
 
     @Override
-    protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) throws Exception {
+    protected void applyInParamsToStatmentParams(List<Param> params, boolean overwriteType) {
         DbUtils.applyParamsToParams(params, this.params, false, true, overwriteType);
     }
 

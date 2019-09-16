@@ -43,120 +43,106 @@ import org.osgi.util.tracker.ServiceTracker;
  * <p>
  * Listen for Bundles to be activated, and deploy those that represent webapps/ContextHandlers to one of the known Server instances.
  */
-public class JettyBootstrapActivator implements BundleActivator
-{
+public class JettyBootstrapActivator implements BundleActivator {
     private static final Logger LOG = Log.getLogger(JettyBootstrapActivator.class);
-    
+
     private static JettyBootstrapActivator INSTANCE = null;
 
-    public static JettyBootstrapActivator getInstance()
-    {
+    public static JettyBootstrapActivator getInstance() {
         return INSTANCE;
     }
 
     private ServiceRegistration _registeredServer;
 
     private ServiceTracker _contextHandlerTracker;
-    
+
     private PackageAdminServiceTracker _packageAdminServiceTracker;
 
     private BundleTracker _webBundleTracker;
 
     private JettyServerServiceTracker _jettyServerServiceTracker;
-    
-    
-    
+
+
+
     /* ------------------------------------------------------------ */
+
     /**
      * Setup a new jetty Server, registers it as a service. Setup the Service
      * tracker for the jetty ContextHandlers that are in charge of deploying the
      * webapps. Setup the BundleListener that supports the extender pattern for
      * the jetty ContextHandler.
-     * 
+     *
      * @param context the bundle context
      */
-    public void start(final BundleContext context) throws Exception
-    {
+    public void start(final BundleContext context) {
         try {
-        INSTANCE = this;
+            INSTANCE = this;
 
-        // track other bundles and fragments attached to this bundle that we
-        // should activate.
-        _packageAdminServiceTracker = new PackageAdminServiceTracker(context);
+            // track other bundles and fragments attached to this bundle that we
+            // should activate.
+            _packageAdminServiceTracker = new PackageAdminServiceTracker(context);
 
-        // track jetty Server instances that we should support as deployment targets
-        _jettyServerServiceTracker = new JettyServerServiceTracker();
-        context.addServiceListener(_jettyServerServiceTracker, "(objectclass=" + Server.class.getName() + ")");
+            // track jetty Server instances that we should support as deployment targets
+            _jettyServerServiceTracker = new JettyServerServiceTracker();
+            context.addServiceListener(_jettyServerServiceTracker, "(objectclass=" + Server.class.getName() + ")");
 
-        // Create a default jetty instance right now.
-        Server defaultServer = DefaultJettyAtJettyHomeHelper.startJettyAtJettyHome(context);
-        
-        // track ContextHandler class instances and deploy them to one of the known Servers
-        _contextHandlerTracker = new ServiceTracker(context, context.createFilter("(objectclass=" + ContextHandler.class.getName() + ")"), new ServiceWatcher());
-        _contextHandlerTracker.open();
+            // Create a default jetty instance right now.
+            Server defaultServer = DefaultJettyAtJettyHomeHelper.startJettyAtJettyHome(context);
 
-        //Create a bundle tracker to help deploy webapps and ContextHandlers
-        BundleWatcher bundleTrackerCustomizer = new BundleWatcher();
-        bundleTrackerCustomizer.setWaitForDefaultServer(defaultServer != null);
-        _webBundleTracker =  new BundleTracker(context, Bundle.ACTIVE | Bundle.STOPPING, bundleTrackerCustomizer);
-        bundleTrackerCustomizer.setBundleTracker(_webBundleTracker);
-        bundleTrackerCustomizer.open();
-        } catch (Exception e) { e.printStackTrace();}
+            // track ContextHandler class instances and deploy them to one of the known Servers
+            _contextHandlerTracker = new ServiceTracker(context, context.createFilter("(objectclass=" + ContextHandler.class.getName() + ")"), new ServiceWatcher());
+            _contextHandlerTracker.open();
+
+            //Create a bundle tracker to help deploy webapps and ContextHandlers
+            BundleWatcher bundleTrackerCustomizer = new BundleWatcher();
+            bundleTrackerCustomizer.setWaitForDefaultServer(defaultServer != null);
+            _webBundleTracker = new BundleTracker(context, Bundle.ACTIVE | Bundle.STOPPING, bundleTrackerCustomizer);
+            bundleTrackerCustomizer.setBundleTracker(_webBundleTracker);
+            bundleTrackerCustomizer.open();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
-    
-    
-    
+
+
+
     /* ------------------------------------------------------------ */
+
     /**
      * Stop the activator.
-     * 
-     * @see
-     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     *
+     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop(BundleContext context) throws Exception
-    {
-        try
-        {
-            if (_webBundleTracker != null)
-            {
+    public void stop(BundleContext context) throws Exception {
+        try {
+            if (_webBundleTracker != null) {
                 _webBundleTracker.close();
                 _webBundleTracker = null;
             }
-            if (_contextHandlerTracker != null)
-            {
+            if (_contextHandlerTracker != null) {
                 _contextHandlerTracker.close();
                 _contextHandlerTracker = null;
             }
-            if (_jettyServerServiceTracker != null)
-            {
+            if (_jettyServerServiceTracker != null) {
                 _jettyServerServiceTracker.stop();
                 context.removeServiceListener(_jettyServerServiceTracker);
                 _jettyServerServiceTracker = null;
             }
-            if (_packageAdminServiceTracker != null)
-            {
+            if (_packageAdminServiceTracker != null) {
                 _packageAdminServiceTracker.stop();
                 context.removeServiceListener(_packageAdminServiceTracker);
                 _packageAdminServiceTracker = null;
             }
-            if (_registeredServer != null)
-            {
-                try
-                {
+            if (_registeredServer != null) {
+                try {
                     _registeredServer.unregister();
-                }
-                catch (IllegalArgumentException ill)
-                {
+                } catch (IllegalArgumentException ill) {
                     // already unregistered.
-                }
-                finally
-                {
+                } finally {
                     _registeredServer = null;
                 }
             }
-        }
-        finally
-        {
+        } finally {
             INSTANCE = null;
         }
     }

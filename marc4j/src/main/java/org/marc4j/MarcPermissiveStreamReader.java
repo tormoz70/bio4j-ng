@@ -600,7 +600,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 }
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else if (permissive && encoding.equals("UTF8")) {
             try {
@@ -638,7 +638,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 }
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else if (permissive && !encoding.equals("UTF8") && convertToUTF8) {
             try {
@@ -669,7 +669,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 }
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
@@ -1439,7 +1439,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 dataElement3 = new String(bytes, "ISO-8859-1");
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
             if (dataElement1.equals(dataElement2) && dataElement1.equals(dataElement3)) {
                 dataElement = dataElement1;
@@ -1455,7 +1455,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 dataElement = new String(bytes, "ISO-8859-1");
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
 
             String newdataElement = dataElement.replaceAll("&lt;", "<");
@@ -1487,7 +1487,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 dataElement = getMarc8Conversion(dataElement.getBytes("ISO-8859-1"));
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else if (encoding.equals("ISO-8859-1") || encoding.equals("ISO8859_1")) {
             try {
@@ -1581,7 +1581,7 @@ public class MarcPermissiveStreamReader implements MarcReader {
                 dataElement = conv.convert(dataElement);
             } catch (final UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         } else {
             dataElement = conv.convert(bytes);

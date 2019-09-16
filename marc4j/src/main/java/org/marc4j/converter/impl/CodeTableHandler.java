@@ -223,7 +223,7 @@ public class CodeTableHandler extends DefaultHandler {
             System.out.println(saxUms.getCombiningChars());
 
         } catch (final Exception exc) {
-            exc.printStackTrace(System.out);
+            throw new RuntimeException(exc);
             // System.err.println( "Exception: " + exc );
         }
     }

@@ -179,7 +179,6 @@ public class RawRecordReader {
         } catch (final EOFException e) {
             // Done Reading input, Be happy
         } catch (final IOException e) {
-            // e.printStackTrace();
             // logger.error(e.getMessage());
         }
 

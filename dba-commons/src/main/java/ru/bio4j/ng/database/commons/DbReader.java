@@ -26,7 +26,7 @@ public class DbReader implements SQLReader {
     protected final List<DBField> fields = new ArrayList<>();
     protected final List<Object> rowValues = new ArrayList<>();
 
-    protected String readClob(Clob clob) throws Exception {
+    protected String readClob(Clob clob) throws SQLException {
         String result = null;
         if(clob != null) {
             Reader is = clob.getCharacterStream();
@@ -46,63 +46,66 @@ public class DbReader implements SQLReader {
         return result;
     }
 
-    protected byte[] readBlob(InputStream inputStream) throws Exception {
-        byte[] bFile = new byte[inputStream.available()];
+    protected byte[] readBlob(InputStream inputStream) throws SQLException {
+        byte[] bFile = new byte[0];
         try {
+            bFile = new byte[inputStream.available()];
             inputStream.read(bFile);
             inputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new SQLException(e);
         }
         return bFile;
     }
 
     @Override
-    public boolean next(final ResultSet resultSet) throws Exception {
+    public boolean next(final ResultSet resultSet) {
         if(resultSet == null)
             throw new IllegalArgumentException("ResultSet must be defined!");
-        if(resultSet.next()){
-            currentFetchedRowPosition++;
-            fields.clear();
-            rowValues.clear();
-            ResultSetMetaData metadata = resultSet.getMetaData();
-            for (int i = 1; i <= metadata.getColumnCount(); i++) {
-                Class<?> type = null;
-                int sqlType = metadata.getColumnType(i);
-//                String sqlTypeName = DbUtils.getInstance().getSqlTypeName(sqlType);
-                try {
-                    String className = metadata.getColumnClassName(i);
-                    if((sqlType == Types.BLOB) || (sqlType == Types.BINARY))
-                        type = Byte[].class;
-                    else if(sqlType == Types.CLOB)
-                        type = String.class;
-                    else
-                        type = getClass().getClassLoader().loadClass(className);
-                } catch (ClassNotFoundException ex) {
-                    throw new SQLException(ex);
+        try {
+            if (resultSet.next()) {
+                currentFetchedRowPosition++;
+                fields.clear();
+                rowValues.clear();
+                ResultSetMetaData metadata = resultSet.getMetaData();
+                for (int i = 1; i <= metadata.getColumnCount(); i++) {
+                    Class<?> type = null;
+                    int sqlType = metadata.getColumnType(i);
+                    try {
+                        String className = metadata.getColumnClassName(i);
+                        if ((sqlType == Types.BLOB) || (sqlType == Types.BINARY))
+                            type = Byte[].class;
+                        else if (sqlType == Types.CLOB)
+                            type = String.class;
+                        else
+                            type = getClass().getClassLoader().loadClass(className);
+                    } catch (ClassNotFoundException ex) {
+                        throw new SQLException(ex);
+                    }
+                    String fieldName = metadata.getColumnName(i);
+                    DBField field = new DBFieldImpl(type, i, fieldName, sqlType);
+                    fields.add(field);
                 }
-                String fieldName =  metadata.getColumnName(i);
-                DBField field = new DBFieldImpl(type, i, fieldName, sqlType);
-                fields.add(field);
+                for (int i = 0; i < fields.size(); i++)
+                    rowValues.add(null);
+                for (DBField field : fields) {
+                    int valueIndex = field.getId() - 1;
+                    Object value;
+                    int sqlType = field.getSqlType();
+                    if (sqlType == Types.CLOB) {
+                        value = readClob(resultSet.getClob(field.getId()));
+                    } else if (Arrays.asList(Types.BLOB, Types.BINARY).contains(sqlType)) {
+                        value = readBlob(resultSet.getBinaryStream(field.getId()));
+                    } else
+                        value = resultSet.getObject(field.getId());
+                    rowValues.set(valueIndex, value);
+                }
+                return true;
             }
-            for (int i = 0; i < fields.size(); i++)
-                rowValues.add(null);
-            for (DBField field : fields) {
-                int valueIndex = field.getId() - 1;
-                Object value;
-                int sqlType = field.getSqlType();
-//                String sqlTypeName = DbUtils.getInstance().getSqlTypeName(sqlType);
-                if(sqlType == Types.CLOB) {
-                    value = readClob(resultSet.getClob(field.getId()));
-                } else if(Arrays.asList(Types.BLOB, Types.BINARY).contains(sqlType)){
-                    value = readBlob(resultSet.getBinaryStream(field.getId()));
-                } else
-                    value = resultSet.getObject(field.getId());
-                rowValues.set(valueIndex, value);
-            }
-            return true;
+            return false;
+        } catch (SQLException e) {
+            throw new SQLExceptionExt(e);
         }
-        return false;
     }
 
     @Override
@@ -151,19 +154,15 @@ public class DbReader implements SQLReader {
     }
 
     @Override
-    public <T> T getValue(int fieldId, Class<T> type) throws SQLException {
+    public <T> T getValue(int fieldId, Class<T> type) {
         if((fieldId > 0) && (fieldId <= this.rowValues.size())) {
-            try {
-                return Converter.toType(this.rowValues.get(fieldId - 1), type);
-            } catch (ConvertValueException e) {
-                throw new SQLException(e);
-            }
+            return Converter.toType(this.rowValues.get(fieldId - 1), type);
         }
         throw new IllegalArgumentException(String.format(EXMSG_IndexOutOfBounds, fieldId));
     }
 
     @Override
-    public <T> T getValue(String fieldName, Class<T> type) throws SQLException {
+    public <T> T getValue(String fieldName, Class<T> type) {
         if(Strings.isNullOrEmpty(fieldName))
             throw new IllegalArgumentException(String.format(EXMSG_ParamIsNull, fieldName));
 

@@ -18,11 +18,15 @@ import java.util.List;
  */
 public class Doms {
 
-    public static Document loadDocument(InputStream inputStream) throws Exception {
+    public static Document loadDocument(InputStream inputStream) {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setValidating(false);
-        DocumentBuilder builder = f.newDocumentBuilder();
-        return builder.parse(inputStream);
+        try {
+            DocumentBuilder builder = f.newDocumentBuilder();
+            return builder.parse(inputStream);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Element findElem(Element from, String path) {
@@ -79,7 +83,7 @@ public class Doms {
         return findElem(from.getDocumentElement(), path);
     }
 
-    public static <T> T getAttribute(Element elem, String attrName, T defaultVal, Class<T> type) throws ConvertValueException {
+    public static <T> T getAttribute(Element elem, String attrName, T defaultVal, Class<T> type) {
         if (elem.hasAttribute(attrName)) {
             String strVal = elem.getAttribute(attrName);
             return Converter.toType(strVal, type);

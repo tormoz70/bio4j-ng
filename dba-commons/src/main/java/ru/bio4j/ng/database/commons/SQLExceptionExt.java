@@ -1,13 +1,44 @@
 package ru.bio4j.ng.database.commons;
 
-public class SQLExceptionExt extends java.sql.SQLException {
-    private int sqlErrorCode;
-    public SQLExceptionExt(String msg, java.sql.SQLException parentException){
+import java.sql.SQLException;
+
+public class SQLExceptionExt extends RuntimeException {
+    private int sqlErrorCode = 0;
+    private SQLExceptionExt(String msg, Exception parentException){
         super(msg, parentException);
-        this.sqlErrorCode = parentException.getErrorCode();
+        if(parentException instanceof java.sql.SQLException)
+            this.sqlErrorCode = ((java.sql.SQLException)parentException).getErrorCode();
     }
 
-    @Override
+    private SQLExceptionExt(Exception parentException){
+        super(parentException);
+        if(parentException instanceof java.sql.SQLException)
+            this.sqlErrorCode = ((java.sql.SQLException)parentException).getErrorCode();
+    }
+
+    public static SQLExceptionExt create(Exception parentException){
+        if(parentException instanceof SQLExceptionExt)
+            return (SQLExceptionExt)parentException;
+        else
+            return new SQLExceptionExt(parentException);
+    }
+
+    public static SQLExceptionExt create(String msg, Exception parentException){
+        if(parentException instanceof SQLExceptionExt)
+            return (SQLExceptionExt)parentException;
+        else
+            return new SQLExceptionExt(msg, parentException);
+    }
+
+    public SQLExceptionExt(String msg, int errorCode){
+        super(msg);
+        this.sqlErrorCode = errorCode;
+    }
+
+    public SQLExceptionExt(String msg){
+        super(msg);
+    }
+
     public int getErrorCode() {
         return sqlErrorCode;
     }

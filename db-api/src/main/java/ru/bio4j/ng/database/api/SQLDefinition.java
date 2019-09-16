@@ -18,9 +18,9 @@ public interface SQLDefinition extends Serializable {
     Boolean getReadOnly();
     void setReadOnly(Boolean readOnly);
 
-    Field findField(final String name) throws Exception;
+    Field findField(final String name);
 
-    Field findPk() throws Exception;
+    Field findPk();
 
     String getBioCode();
 
