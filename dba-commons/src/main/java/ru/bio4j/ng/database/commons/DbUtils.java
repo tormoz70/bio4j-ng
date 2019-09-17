@@ -192,7 +192,7 @@ public class DbUtils {
                     fld.setAccessible(true);
                     fld.set(result, val);
                 } catch (Exception e) {
-                    throw new ApplyValuesToBeanException(attrName, String.format("Can't set value %s to field. Msg: %s", valObj, e.getMessage()));
+                    throw new ApplyValuesToBeanException(attrName, String.format("Can't set value %s to field %s(%s). Msg: %s", valObj, fld.getName(), fld.getType(), e.getMessage()));
                 }
             }
         }
