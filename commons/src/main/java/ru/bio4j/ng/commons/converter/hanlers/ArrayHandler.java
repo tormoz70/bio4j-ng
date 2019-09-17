@@ -19,9 +19,20 @@ public class ArrayHandler extends TypeHandlerBase implements TypeHandler<Object>
     public <T> T write(Object value, Class<T> targetType) throws ConvertValueException {
         Class<?> targetTypeWrapped = Types.wrapPrimitiveType(targetType);
         if(targetType.isArray()) {
-            Class<?> targetArrayType = targetType.getComponentType();
-            if(targetArrayType == String.class)
+            if(targetType.getComponentType() == Array.get(value, 0).getClass())
                 return (T)value;
+            T targetArray = (T) Array.newInstance(targetType.getComponentType(), Array.getLength(value));
+            if(Array.getLength(targetArray) == 0)
+                return targetArray;
+            for (int i=0; i<Array.getLength(targetArray); i++) {
+                Object val = Converter.toType(Array.get(value, i), targetType.getComponentType());
+                try {
+                    Array.set(targetArray, i, val);
+                } catch (IllegalArgumentException e) {
+                    throw new ConvertValueException(val, val != null ? val.getClass() : null, targetType.getComponentType());
+                }
+            }
+            return targetArray;
         } else {
             if (targetTypeWrapped == String.class) {
                 StringBuilder rslt = new StringBuilder();

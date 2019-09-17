@@ -5,7 +5,7 @@ import ru.bio4j.ng.commons.converter.hanlers.*;
 public class TypeHandlerMapper {
     private static final TypeHandler[] handlerMap = {
             new ArrayHandler(),
-            new StringArrayHandler(),
+            //new StringArrayHandler(),
             new ByteArrayHandler(),
             new BytePArrayHandler(),
             new DateHandler(),

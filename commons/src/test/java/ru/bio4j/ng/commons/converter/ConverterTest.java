@@ -231,6 +231,7 @@ public class ConverterTest {
             int[] dir = Converter.toType(instr, int[].class);
             Assert.fail("This conversion must fail!");
         } catch (ConvertValueException e) {
+            e.printStackTrace();
             Assert.assertTrue(true);
         }
     }
@@ -240,6 +241,13 @@ public class ConverterTest {
         Byte[] instr = {1,2,3};
         Byte[] dir = Converter.toType(instr, Byte[].class);
         Assert.assertEquals(dir[0], instr[0]);
+    }
+
+    @Test(enabled=true)
+    public void array31() throws Exception {
+        Byte[] instr = {1,2,3};
+        double[] dir = Converter.toType(instr, double[].class);
+        Assert.assertEquals(dir[0], (double)instr[0]);
     }
 
     @Test(enabled=true)
