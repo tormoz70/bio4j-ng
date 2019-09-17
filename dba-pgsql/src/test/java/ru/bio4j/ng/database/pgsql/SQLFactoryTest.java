@@ -79,7 +79,7 @@ public class SQLFactoryTest {
                     cs.execute(sql);
                 }
             }, null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -97,7 +97,7 @@ public class SQLFactoryTest {
                 cs.execute("drop table test_tbl");
                 return null;
             }, null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -107,7 +107,7 @@ public class SQLFactoryTest {
 //        LOG.debug(Utl.buildBeanStateInfo(context.getStat(), null, null));
         context.execBatch(new SQLActionScalar0<Object>() {
             @Override
-            public Object exec(SQLContext context) throws Exception {
+            public Object exec(SQLContext context) {
                 Assert.assertNotNull(context.getCurrentConnection());
                 return null;
             }
@@ -224,7 +224,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -256,7 +256,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -288,7 +288,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -312,7 +312,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 4);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -351,7 +351,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -386,7 +386,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -399,7 +399,7 @@ public class SQLFactoryTest {
             context.execBatch((SQLActionVoid1<String>) (context, param) -> {
                 StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto("test_stored_error", context.getCurrentConnection(), null);
             }, "AnContext", null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
         }
@@ -426,7 +426,7 @@ public class SQLFactoryTest {
                     cmd.execSQL(paramus.get(), context.getCurrentUser());
                 }
             }, "AnContext", null);
-        } catch (SQLException ex) {
+        } catch (SQLExceptionExt ex) {
             LOG.error("Error!", ex);
             Boolean errMsgOk = ex.getCause().getMessage().indexOf(": FTW") >= 0;
             Assert.assertTrue(errMsgOk);
@@ -571,7 +571,7 @@ public class SQLFactoryTest {
         sb.append("}}");
 
         SQLException e = new SQLException("QWE-TEST");
-        SQLExceptionExt r = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
+        SQLExceptionExt r = SQLExceptionExt.create(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
         String msg = r.getMessage();
         if(LOG.isDebugEnabled())
             LOG.debug(msg);

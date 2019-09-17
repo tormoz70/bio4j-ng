@@ -217,7 +217,8 @@ public class OSGiWebappClassLoader extends WebAppClassLoader implements BundleRe
     
     /* ------------------------------------------------------------ */
     /**
-     * @param lib
+     * @param file
+     * @param pathToClassFiles
      * @return true if the lib should be included in the webapp classloader.
      */
     private boolean isAcceptableLibrary(File file, Set<String> pathToClassFiles)

@@ -28,7 +28,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         put(Contains.class, "%s %s %s");
     }};
 
-    private static Object detectDateTime(Object value, Expression e) throws Exception {
+    private static Object detectDateTime(Object value, Expression e) {
         if(value instanceof String) {
             String strValue = (String) value;
             Date detectedValue = null;
@@ -51,7 +51,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         return value;
     }
 
-    private static String decodeCompare(String alias, Expression e) throws Exception {
+    private static String decodeCompare(String alias, Expression e) {
         String column = appendAlias(alias, e.getColumn());
         Object value = detectDateTime(e.getValue(), e);
         String templ = compareTemplates.get(e.getClass());
@@ -86,7 +86,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
         return (Strings.isNullOrEmpty(alias) ? ""  : alias+".")+column;
     }
 
-    private String _filterToSQL(String alias, Expression e) throws Exception {
+    private String _filterToSQL(String alias, Expression e) {
         if(e instanceof Logical){
             String logicalOp = (e instanceof And) ? " and " : (
                     (e instanceof Or) ? " or " : " unknown-logical "
@@ -111,7 +111,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String filterToSQL(String alias, Filter filter, List<Field> fields) throws Exception {
+    public String filterToSQL(String alias, Filter filter, List<Field> fields) {
         if(filter != null && !filter.getChildren().isEmpty()) {
             Expression e = filter.getChildren().get(0);
             return _filterToSQL(alias, e);
@@ -120,7 +120,7 @@ public class PgSQLWrapperInterpreter implements WrapperInterpreter {
     }
 
     @Override
-    public String sortToSQL(String alias, List<Sort> sort, List<Field> fields) throws Exception {
+    public String sortToSQL(String alias, List<Sort> sort, List<Field> fields) {
         if(sort != null) {
             StringBuilder result = new StringBuilder();
             char comma; String fieldName; Sort.Direction direction;

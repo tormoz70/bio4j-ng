@@ -149,7 +149,7 @@ public class OraUtilsImpl implements RDBMSUtils {
             String newExec = DbUtils.generateSignature(storedProcName, params);
             return new StoredProgMetadata(newExec, params);
         } catch(SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 

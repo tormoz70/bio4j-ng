@@ -101,10 +101,10 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
                         }
                     }
                 } catch (SQLException e) {
-                    lastError = new SQLExceptionExt(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString())), e);
+                    lastError = SQLExceptionExt.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString())), e);
                     throw lastError;
                 } catch (Exception e) {
-                    lastError = new SQLExceptionExt(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
+                    lastError = SQLExceptionExt.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
                     throw lastError;
                 }
             } finally {

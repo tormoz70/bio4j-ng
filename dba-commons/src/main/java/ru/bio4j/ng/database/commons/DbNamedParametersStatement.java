@@ -74,7 +74,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
             sttmnt.statement = connection.prepareStatement(sttmnt.parsedQuery);
             return sttmnt;
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
             sttmnt.statement = connection.prepareCall(sttmnt.parsedQuery);
             return sttmnt;
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -178,7 +178,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 }
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -193,7 +193,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setString(indexes[i], value);
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -208,7 +208,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setInt(indexes[i], value);
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -223,7 +223,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setLong(indexes[i], value);
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -238,7 +238,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setTimestamp(indexes[i], value);
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -253,7 +253,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setDate(indexes[i], value);
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -269,7 +269,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 statement.setNull(indexes[i], Types.VARCHAR);
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -285,7 +285,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
                 }
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -300,7 +300,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
             }
             return null;
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -315,7 +315,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.execute();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -325,7 +325,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeQuery();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -334,7 +334,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeUpdate();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -343,7 +343,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeQuery(sql);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -352,7 +352,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeUpdate(sql);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -361,7 +361,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.close();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -370,7 +370,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getMaxFieldSize();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -379,7 +379,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setMaxFieldSize(max);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -388,7 +388,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getMaxRows();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -397,7 +397,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setMaxRows(max);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -406,7 +406,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setEscapeProcessing(enable);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -415,7 +415,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getQueryTimeout();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -424,7 +424,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try{
             statement.setQueryTimeout(seconds);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -433,7 +433,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.cancel();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -442,7 +442,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getWarnings();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -451,7 +451,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.clearWarnings();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -460,7 +460,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setCursorName(name);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -469,7 +469,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.execute();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -478,7 +478,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getResultSet();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -487,7 +487,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getUpdateCount();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -496,7 +496,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getMoreResults();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -505,7 +505,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setFetchDirection(direction);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -514,7 +514,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getFetchDirection();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -523,7 +523,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setFetchSize(rows);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -532,7 +532,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getFetchSize();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -541,7 +541,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getResultSetConcurrency();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -550,7 +550,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getResultSetType();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -559,7 +559,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.addBatch(sql);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -568,7 +568,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.clearBatch();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -577,7 +577,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.addBatch();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -586,7 +586,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeBatch();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -595,7 +595,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getConnection();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -604,7 +604,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getMoreResults(current);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -613,7 +613,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getGeneratedKeys();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -622,7 +622,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeUpdate(sql, autoGeneratedKeys);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -631,7 +631,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeUpdate(sql, columnIndexes);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -640,7 +640,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.executeUpdate(sql, columnNames);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -649,7 +649,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.execute(sql, autoGeneratedKeys);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -658,7 +658,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.execute(sql, columnIndexes);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -667,7 +667,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.execute(sql, columnNames);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -676,7 +676,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.getResultSetHoldability();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -685,7 +685,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.isClosed();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -694,7 +694,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.setPoolable(poolable);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -703,7 +703,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.isPoolable();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -712,7 +712,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             statement.closeOnCompletion();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -721,7 +721,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.isCloseOnCompletion();
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -730,7 +730,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.unwrap(iface);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 
@@ -739,7 +739,7 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         try {
             return statement.isWrapperFor(iface);
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 

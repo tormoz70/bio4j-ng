@@ -104,7 +104,7 @@ public class DbReader implements SQLReader {
             }
             return false;
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
 

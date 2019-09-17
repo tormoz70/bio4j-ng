@@ -116,7 +116,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
                 }
 
             } catch (SQLException e) {
-                lastError = new SQLExceptionExt(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
+                lastError = SQLExceptionExt.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
             }
         } finally {
             if (this.preparedStatement != null)

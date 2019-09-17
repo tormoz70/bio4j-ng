@@ -136,7 +136,7 @@ public class JettyServerServiceTracker implements ServiceListener
     /**
      * Returns the ContextHandler to stop.
      * 
-     * @param reg
+     * @param sr
      * @return the ContextHandler to stop.
      */
     private ServerInstanceWrapper unregisterInIndex(ServiceReference sr)

@@ -76,7 +76,7 @@ public class DbDynamicCursor extends DbCursor implements SQLCursor {
                 }
             }
         } catch (SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
 //            } catch (Exception e) {
 //                lastError = new Exception(String.format("%s:\n - %s;\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params), e.getMessage()), e);
 //            }

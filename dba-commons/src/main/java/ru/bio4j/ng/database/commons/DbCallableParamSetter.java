@@ -59,7 +59,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             try {
                                 val = (val != null) ? Converter.toType(val, targetValType, true) : val;
                             } catch (ConvertValueException e) {
-                                throw new SQLExceptionExt(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\". Message: %s",
+                                throw SQLExceptionExt.create(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\". Message: %s",
                                         paramName, val, (valType != null ? valType.getSimpleName() : null),
                                         (targetValType != null ? targetValType.getSimpleName() : null), e.getMessage()), e);
                             }
@@ -67,7 +67,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             sqlType = (sqlType == 0 ? sqlTypeConverter.read(targetValType, charSize, false) : sqlType);
                             statment.setObjectAtName(paramName, val, sqlType);
                         } catch (Exception e) {
-                            throw new SQLExceptionExt(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s). Message: %s",
+                            throw SQLExceptionExt.create(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s). Message: %s",
                                     paramName, sqlTypeName, val, (valType != null ? valType.getSimpleName() : null), e.getMessage()), e);
                         }
                     }

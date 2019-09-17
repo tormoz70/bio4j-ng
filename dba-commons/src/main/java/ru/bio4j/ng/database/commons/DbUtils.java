@@ -460,7 +460,7 @@ public class DbUtils {
                 return cs.execute();
             }
         } catch(SQLException e) {
-            throw new SQLExceptionExt(e);
+            throw SQLExceptionExt.create(e);
         }
     }
     public static boolean execSQL(Connection conn, String sql) {
@@ -552,7 +552,7 @@ public class DbUtils {
 //        try{
 //            statment.setQueryTimeout(seconds);
 //        } catch (SQLException e) {
-//            throw new SQLExceptionExt(e);
+//            throw SQLExceptionExt.create(e);
 //        }
 //    }
 

@@ -1,6 +1,6 @@
 package ru.bio4j.ng.commons.converter;
 
-public class DateParseException extends Exception {
+public class DateParseException extends RuntimeException {
 
 	/**
 	 * 

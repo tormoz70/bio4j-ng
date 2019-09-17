@@ -10,7 +10,6 @@ import ru.bio4j.ng.content.io.FileListener;
 import ru.bio4j.ng.content.io.FileWatcher;
 import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.service.types.CursorParser;
-import ru.bio4j.ng.model.transport.BioRequest;
 import ru.bio4j.ng.service.api.*;
 import ru.bio4j.ng.service.types.ServiceBase;
 
@@ -75,16 +74,16 @@ public class ContentResolverImpl extends ServiceBase implements ContentResolver,
     }
 
 
-    @Override
-    public SQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
-        String bioCode = bioRequest.getBioCode();
-        SQLDefinition cursor = getCursor(moduleKey, bioCode);
-
-//        if(cursor != null)
-//            applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
-
-        return cursor;
-    }
+//    @Override
+//    public SQLDefinition getCursor(String moduleKey, BioRequest bioRequest) throws Exception {
+//        String bioCode = bioRequest.getBioCode();
+//        SQLDefinition cursor = getCursor(moduleKey, bioCode);
+//
+////        if(cursor != null)
+////            applyBioParams(bioRequest.getBioParams(), cursor.sqlDefs());
+//
+//        return cursor;
+//    }
 
 //    @Override
 //    public SQLContext getSQLContext(String moduleKey) throws Exception {

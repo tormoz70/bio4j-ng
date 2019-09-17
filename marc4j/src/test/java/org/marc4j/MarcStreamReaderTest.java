@@ -20,10 +20,6 @@ import org.marc4j.MarcStreamReader;
  */
 public class MarcStreamReaderTest {
 
-    /**
-     * Tests private {@link MarcStreamReader#getDataAsString()} when an explicit non-(UTF-8, Ansel, or ISO-8859-1)
-     * character set is used.
-     */
     @Test
     public void testGetDataAsStringWithExplicitCharset() {
         final InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("cyrillic_capital_e.mrc");

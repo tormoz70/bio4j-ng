@@ -71,7 +71,7 @@ public class DateTimeParser {
 		return null;
 	}
 
-	public Date pars(String value, String format) throws DateParseException {
+	public Date pars(String value, String format) {
 		if (!Strings.isNullOrEmpty(value)) {
 			if (value.toUpperCase().equals("NOW"))
 				return new Date();
@@ -88,7 +88,7 @@ public class DateTimeParser {
 		return Types.minValue();
 	}
 
-	public Date pars(String value) throws DateParseException {
+	public Date pars(String value) {
 		String datetimeFormat = detectFormat(value);
 		if (Strings.isNullOrEmpty(datetimeFormat))
 			throw new DateParseException("Не верная дата: [" + value + "]. Невозможно определить формат даты.");

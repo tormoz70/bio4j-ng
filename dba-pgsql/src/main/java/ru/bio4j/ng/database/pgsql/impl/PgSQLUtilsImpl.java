@@ -10,6 +10,7 @@ import ru.bio4j.ng.database.api.RDBMSUtils;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.database.commons.DbUtils;
+import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -135,16 +136,20 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
             "select data_type from information_schema.domains a\n" +
                     "where a.domain_schema = 'public'\n" +
                     "and a.domain_name = :domain_name";
-    private static String detectDomineType(String type, Connection conn) throws SQLException {
-        try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_DOMINE_TYPE_DBMS)) {
-            st.setStringAtName("domain_name", type);
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString(1);
+    private static String detectDomineType(String type, Connection conn) {
+        try {
+            try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_DOMINE_TYPE_DBMS)) {
+                st.setStringAtName("domain_name", type);
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getString(1);
+                    }
                 }
             }
+            return null;
+        } catch (SQLException e) {
+            throw SQLExceptionExt.create(e);
         }
-        return null;
     }
 
     private static Param parsParamDesc(String paramDesc) {
@@ -165,7 +170,7 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
     }
 
     //"p_param1 character varying, OUT p_param2 integer"
-    public static void parsParams(String paramsList, List<Param> params, List<Param> paramsOverride) throws Exception {
+    public static void parsParams(String paramsList, List<Param> params, List<Param> paramsOverride) {
         String[] substrs = Strings.split(paramsList, ",");
         int i = 0;
         for (String prmDesc : substrs) {
@@ -188,17 +193,21 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
     private static final String SQL_GET_PARAMS_FROM_DBMS = "SELECT pg_get_function_identity_arguments(:method_name::regproc) as rslt";
 
     private static final String[] DEFAULT_PARAM_PREFIX = {"P_", "V_"};
-    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) throws Exception {
+    public StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> paramsOverride) {
         PgSQLUtilsImpl.PackageName pkg = this.parsStoredProcName(storedProcName);
         List<Param> params = new ArrayList<>();
-        try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
-            st.setStringAtName("method_name", pkg.methodName);
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    String parsList = rs.getString("rslt");
-                    parsParams(parsList, params, paramsOverride);
+        try {
+            try (SQLNamedParametersStatement st = DbNamedParametersStatement.prepareStatement(conn, SQL_GET_PARAMS_FROM_DBMS)) {
+                st.setStringAtName("method_name", pkg.methodName);
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        String parsList = rs.getString("rslt");
+                        parsParams(parsList, params, paramsOverride);
+                    }
                 }
             }
+        }catch(SQLException e) {
+            throw SQLExceptionExt.create(e);
         }
         try(Paramus pp = Paramus.set(params)) {
             for(Param p : pp.get()){

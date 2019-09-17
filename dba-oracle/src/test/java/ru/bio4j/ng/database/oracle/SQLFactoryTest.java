@@ -586,7 +586,7 @@ public class SQLFactoryTest {
         sb.append("}}");
 
         SQLException e = new SQLException("QWE-TEST");
-        SQLExceptionExt r = new SQLExceptionExt(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
+        SQLExceptionExt r = SQLExceptionExt.create(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
         String msg = r.getMessage();
         LOG.debug(msg);
     }

@@ -23,6 +23,6 @@ public interface SQLCommand {
 
     String getPreparedSQL();
 
-    <T> T getParamValue(String paramName, Class<T> type, T defaultValue) throws Exception;
+    <T> T getParamValue(String paramName, Class<T> type, T defaultValue);
 
 }
