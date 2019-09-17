@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ArrayHandler extends TypeHandlerBase implements TypeHandler<String[]> {
+public class StringArrayHandler extends TypeHandlerBase implements TypeHandler<String[]> {
 
     @Override
     public boolean isHandler(Class<?> type) {

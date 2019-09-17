@@ -11,7 +11,9 @@ public interface TypeHandler <H> {
      * @param value
      * @return
      */
-    H read(Object value, Class<?> targetType) throws ConvertValueException;
+    default H read(Object value, Class<?> targetType) throws ConvertValueException {
+        return null;
+    }
 
     /**
      * Конвертирует входящее значение типа обработчика H в значение целевого типа T

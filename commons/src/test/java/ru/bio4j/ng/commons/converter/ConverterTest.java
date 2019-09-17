@@ -242,6 +242,27 @@ public class ConverterTest {
         Assert.assertEquals(dir[0], instr[0]);
     }
 
+    @Test(enabled=true)
+    public void array4() throws Exception {
+        int[] indir = {1,3,6};
+        String dir = Converter.toType(indir, String.class);
+        Assert.assertEquals(dir, "1,3,6");
+    }
+
+    @Test(enabled=true)
+    public void array5() throws Exception {
+        String instr = "1, 2, 3";
+        int[] dir = Converter.toType(instr, int[].class);
+        Assert.assertEquals(dir[0], 1);
+    }
+
+    @Test(enabled=true)
+    public void array6() throws Exception {
+        String instr = "1, 2, 3";
+        long[] dir = Converter.toType(instr, long[].class);
+        Assert.assertEquals(dir[0], 1L);
+    }
+
     @Test
     public void ConvertNumber2Boolean() {
         try {
