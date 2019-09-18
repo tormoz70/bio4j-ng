@@ -47,18 +47,22 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
 
     @Override
 	protected void prepareStatement() {
-        if (this.params == null) {
-            StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
-            try (Paramus p = Paramus.set(sp.getParamDeclaration())) {
-                p.apply(params, true);
-                params = p.get();
+	    try {
+            if (this.params == null) {
+                StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto(this.storedProcName, this.connection, this.params);
+                try (Paramus p = Paramus.set(sp.getParamDeclaration())) {
+                    p.apply(params, true);
+                    params = p.get();
+                }
             }
-        }
 
-        String signature = DbUtils.generateSignature(storedProcName, params);
-        preparedSQL = String.format("{call %s}", signature);
-        preparedStatement = DbNamedParametersStatement.prepareCall(this.connection, this.preparedSQL);
-        preparedStatement.setQueryTimeout(this.timeout);
+            String signature = DbUtils.generateSignature(storedProcName, params);
+            preparedSQL = String.format("{call %s}", signature);
+            preparedStatement = DbNamedParametersStatement.prepareCall(this.connection, this.preparedSQL);
+            preparedStatement.setQueryTimeout(this.timeout);
+        } catch (SQLException e) {
+	        throw BioSQLException.create(e);
+        }
 	}
 	
     @Override
@@ -66,7 +70,7 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
         List<Param> prms = params != null ? DbUtils.decodeParams(params) : new ArrayList<>();
         SrvcUtils.applyCurrentUserParams(usr, prms);
 
-        SQLExceptionExt lastError = null;
+        BioSQLException lastError = null;
         try {
             try {
                 try {
@@ -101,10 +105,14 @@ public class DbStoredProc extends DbCommand<SQLStoredProc> implements SQLStoredP
                         }
                     }
                 } catch (SQLException e) {
-                    lastError = SQLExceptionExt.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString())), e);
+                    lastError = DbUtils.getInstance().extractStoredProcAppErrorMessage(e);
+                    if(lastError == null)
+                        lastError = BioSQLException.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.preparedStatement.getParamsAsString())), e);
                     throw lastError;
                 } catch (Exception e) {
-                    lastError = SQLExceptionExt.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
+                    lastError = DbUtils.getInstance().extractStoredProcAppErrorMessage(e);
+                    if(lastError == null)
+                        lastError = BioSQLException.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
                     throw lastError;
                 }
             } finally {

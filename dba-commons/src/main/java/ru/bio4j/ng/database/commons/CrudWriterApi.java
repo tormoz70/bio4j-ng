@@ -4,13 +4,10 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.ABeans;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLStoredProc;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
-import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.RestParamNames;
-import ru.bio4j.ng.database.api.UpdelexSQLDef;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -94,7 +91,7 @@ public class CrudWriterApi {
                         cmd.execSQL(params, user, true);
                         r++;
                     } else
-                        throw new SQLExceptionExt(String.format("ID Param not found in Delete sql of \"%s\"!", cursor.getBioCode()));
+                        throw new BioSQLException(String.format("ID Param not found in Delete sql of \"%s\"!", cursor.getBioCode()));
                 }
             } finally {
                 cmd.close();
@@ -110,10 +107,10 @@ public class CrudWriterApi {
             final SQLDefinition cursor) {
         UpdelexSQLDef sqlDef = cursor.getExecSqlDef();
         if (sqlDef == null)
-            throw new SQLExceptionExt(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("For bio \"%s\" must be defined \"exec\" sql!", cursor.getBioCode()));
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         SQLStoredProc cmd = context.createStoredProc();
         cmd.init(context.getCurrentConnection(), sqlDef);

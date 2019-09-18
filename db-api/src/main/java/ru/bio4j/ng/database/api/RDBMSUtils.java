@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface RDBMSUtils {
     StoredProgMetadata detectStoredProcParamsAuto(String storedProcName, Connection conn, List<Param> fixedParamsOverride);
-    String extractStoredProcAppError(Exception c);
+    BioSQLApplicationError extractStoredProcAppError(Exception c);
 }

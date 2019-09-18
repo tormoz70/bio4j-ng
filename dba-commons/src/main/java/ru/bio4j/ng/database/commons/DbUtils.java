@@ -460,7 +460,7 @@ public class DbUtils {
                 return cs.execute();
             }
         } catch(SQLException e) {
-            throw SQLExceptionExt.create(e);
+            throw BioSQLException.create(e);
         }
     }
     public static boolean execSQL(Connection conn, String sql) {
@@ -544,16 +544,15 @@ public class DbUtils {
         return rslt;
     }
 
-    public String extractStoredProcAppError(Exception e) {
+    public BioSQLApplicationError extractStoredProcAppErrorMessage(Exception e) {
         return rdbmsUtils.extractStoredProcAppError(e);
     }
 
-//    public static void setStatmentTimeout(Statement statment, int seconds) {
-//        try{
-//            statment.setQueryTimeout(seconds);
-//        } catch (SQLException e) {
-//            throw SQLExceptionExt.create(e);
-//        }
-//    }
+    public void tryForwardSQLAsApplicationError(SQLException e) {
+        BioSQLApplicationError appError = DbUtils.getInstance().extractStoredProcAppErrorMessage(e);
+        if(appError != null)
+            throw appError;
+        throw BioSQLException.create(e);
+    }
 
 }

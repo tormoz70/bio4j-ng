@@ -55,12 +55,12 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
     /**
      * Присваивает значения входящим параметрам
      */
-    protected void setParamsToStatement() {
+    protected void setParamsToStatement() throws SQLException {
         if(this.paramSetter != null)
             this.paramSetter.setParamsToStatement(this.preparedStatement, this.params);
     }
 
-    protected void getParamsFromStatement() {
+    protected void getParamsFromStatement() throws SQLException {
         if(this.paramGetter != null)
             this.paramGetter.getParamsFromStatement(this.preparedStatement, this.params);
     }
@@ -97,7 +97,7 @@ public abstract class DbCommand<T extends SQLCommand> implements SQLCommand {
             }
         }
         if(locCancel)
-            throw new SQLExceptionExt("Command has been canceled!");
+            throw new BioSQLException("Command has been canceled!");
         return !locCancel;
 	}
 

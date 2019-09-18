@@ -6,10 +6,7 @@ import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Sqls;
-import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
-import ru.bio4j.ng.database.api.SQLCommand;
-import ru.bio4j.ng.database.api.SQLParamSetter;
-import ru.bio4j.ng.database.api.SqlTypeConverter;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.Param;
 
 import java.io.InputStream;
@@ -32,7 +29,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
 //    }
 
     @Override
-    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) {
+    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) throws SQLException {
         final String sql = statment.getOrigQuery();
         final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);
         final List<Param> outParams = new ArrayList<>();
@@ -59,7 +56,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             try {
                                 val = (val != null) ? Converter.toType(val, targetValType, true) : val;
                             } catch (ConvertValueException e) {
-                                throw SQLExceptionExt.create(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\". Message: %s",
+                                throw BioSQLException.create(String.format("Error cast parameter \"%s\", value \"%s\" from type: \"%s\" to type: \"%s\". Message: %s",
                                         paramName, val, (valType != null ? valType.getSimpleName() : null),
                                         (targetValType != null ? targetValType.getSimpleName() : null), e.getMessage()), e);
                             }
@@ -67,7 +64,7 @@ public class DbCallableParamSetter implements SQLParamSetter {
                             sqlType = (sqlType == 0 ? sqlTypeConverter.read(targetValType, charSize, false) : sqlType);
                             statment.setObjectAtName(paramName, val, sqlType);
                         } catch (Exception e) {
-                            throw SQLExceptionExt.create(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s). Message: %s",
+                            throw BioSQLException.create(String.format("Error on setting parameter \"%s\"(sqlType: %s) to value \"%s\"(type: %s). Message: %s",
                                     paramName, sqlTypeName, val, (valType != null ? valType.getSimpleName() : null), e.getMessage()), e);
                         }
                     }

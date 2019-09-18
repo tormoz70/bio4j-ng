@@ -68,24 +68,16 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
         return parsedQuery;
     }
 
-    public static SQLNamedParametersStatement prepareStatement(Connection connection, String query) {
-        try {
-            DbNamedParametersStatement sttmnt = new DbNamedParametersStatement(query);
-            sttmnt.statement = connection.prepareStatement(sttmnt.parsedQuery);
-            return sttmnt;
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public static SQLNamedParametersStatement prepareStatement(Connection connection, String query) throws SQLException {
+        DbNamedParametersStatement sttmnt = new DbNamedParametersStatement(query);
+        sttmnt.statement = connection.prepareStatement(sttmnt.parsedQuery);
+        return sttmnt;
     }
 
-    public static SQLNamedParametersStatement prepareCall(Connection connection, String query) {
-        try {
-            DbNamedParametersStatement sttmnt = new DbNamedParametersStatement(query);
-            sttmnt.statement = connection.prepareCall(sttmnt.parsedQuery);
-            return sttmnt;
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public static SQLNamedParametersStatement prepareCall(Connection connection, String query) throws SQLException {
+        DbNamedParametersStatement sttmnt = new DbNamedParametersStatement(query);
+        sttmnt.statement = connection.prepareCall(sttmnt.parsedQuery);
+        return sttmnt;
     }
 
     public static final String parse(String query, List paramNames, Map paramMap) {
@@ -150,158 +142,122 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
     }
 
     @Override
-    public void setObjectAtName(String name, Object value) {
+    public void setObjectAtName(String name, Object value) throws SQLException {
         setObjectAtName(name, value, -999);
     }
 
     @Override
-    public void setObjectAtName(String name, Object value, int targetSqlType) {
-        try {
-            paramValues.put(name.toLowerCase(), value);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(targetSqlType));
+    public void setObjectAtName(String name, Object value, int targetSqlType) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(targetSqlType));
 
-            int[] indexes = getIndexes(name);
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            int indx = indexes[i];
+            if (targetSqlType == -999)
+                statement.setObject(indx, value);
+            else if (value instanceof InputStream && targetSqlType == Types.BLOB)
+                statement.setBinaryStream(indx, (InputStream) value);
+            else if (targetSqlType == Types.CLOB) {
+                Clob clob = statement.getConnection().createClob();
+                clob.setString(1, "" + value);
+                statement.setClob(indx, clob);
+            } else {
+                if (value != null && value.getClass() == java.util.Date.class)
+                    value = new java.sql.Date(((java.util.Date) value).getTime());
+                statement.setObject(indx, value, targetSqlType);
+            }
+        }
+    }
+
+    @Override
+    public void setStringAtName(String name, String value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.VARCHAR));
+
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            statement.setString(indexes[i], value);
+        }
+    }
+
+    @Override
+    public void setIntAtName(String name, int value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.INTEGER));
+
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            statement.setInt(indexes[i], value);
+        }
+    }
+
+    @Override
+    public void setLongAtName(String name, long value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.BIGINT));
+
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            statement.setLong(indexes[i], value);
+        }
+    }
+
+    @Override
+    public void setTimestampAtName(String name, Timestamp value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.TIMESTAMP));
+
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            statement.setTimestamp(indexes[i], value);
+        }
+    }
+
+    @Override
+    public void setDateAtName(String name, Date value) throws SQLException {
+        paramValues.put(name.toLowerCase(), value);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.DATE));
+
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            statement.setDate(indexes[i], value);
+        }
+    }
+
+
+    @Override
+    public void setNullAtName(String name) throws SQLException {
+        paramValues.put(name.toLowerCase(), null);
+        paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.NULL));
+
+        int[] indexes = getIndexes(name);
+        for (int i = 0; i < indexes.length; i++) {
+            statement.setNull(indexes[i], Types.VARCHAR);
+        }
+    }
+
+    @Override
+    public void registerOutParameter(String paramName, int sqlType) throws SQLException {
+        outParamTypes.put(paramName.toLowerCase(), DbUtils.getInstance().getSqlTypeName(sqlType));
+
+        if (statement instanceof CallableStatement) {
+            int[] indexes = getIndexes(paramName);
             for (int i = 0; i < indexes.length; i++) {
-                int indx = indexes[i];
-                if (targetSqlType == -999)
-                    statement.setObject(indx, value);
-                else if (value instanceof InputStream && targetSqlType == Types.BLOB)
-                    statement.setBinaryStream(indx, (InputStream) value);
-                else if (targetSqlType == Types.CLOB) {
-                    Clob clob = statement.getConnection().createClob();
-                    clob.setString(1, "" + value);
-                    statement.setClob(indx, clob);
-                } else {
-                    if (value != null && value.getClass() == java.util.Date.class)
-                        value = new java.sql.Date(((java.util.Date) value).getTime());
-                    statement.setObject(indx, value, targetSqlType);
-                }
+                ((CallableStatement) statement).registerOutParameter(indexes[i], sqlType);
             }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
         }
     }
 
     @Override
-    public void setStringAtName(String name, String value) {
-        try {
-            paramValues.put(name.toLowerCase(), value);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.VARCHAR));
-
-            int[] indexes = getIndexes(name);
+    public Object getObject(String paramName) throws SQLException {
+        if (statement instanceof CallableStatement) {
+            int[] indexes = getIndexes(paramName);
             for (int i = 0; i < indexes.length; i++) {
-                statement.setString(indexes[i], value);
+                return ((CallableStatement) statement).getObject(indexes[i]);
             }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
         }
-    }
-
-    @Override
-    public void setIntAtName(String name, int value) {
-        try {
-            paramValues.put(name.toLowerCase(), value);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.INTEGER));
-
-            int[] indexes = getIndexes(name);
-            for (int i = 0; i < indexes.length; i++) {
-                statement.setInt(indexes[i], value);
-            }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
-    }
-
-    @Override
-    public void setLongAtName(String name, long value) {
-        try {
-            paramValues.put(name.toLowerCase(), value);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.BIGINT));
-
-            int[] indexes = getIndexes(name);
-            for (int i = 0; i < indexes.length; i++) {
-                statement.setLong(indexes[i], value);
-            }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
-    }
-
-    @Override
-    public void setTimestampAtName(String name, Timestamp value) {
-        try {
-            paramValues.put(name.toLowerCase(), value);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.TIMESTAMP));
-
-            int[] indexes = getIndexes(name);
-            for (int i = 0; i < indexes.length; i++) {
-                statement.setTimestamp(indexes[i], value);
-            }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
-    }
-
-    @Override
-    public void setDateAtName(String name, Date value) {
-        try {
-            paramValues.put(name.toLowerCase(), value);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.DATE));
-
-            int[] indexes = getIndexes(name);
-            for (int i = 0; i < indexes.length; i++) {
-                statement.setDate(indexes[i], value);
-            }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
-    }
-
-
-    @Override
-    public void setNullAtName(String name) {
-        try {
-            paramValues.put(name.toLowerCase(), null);
-            paramTypes.put(name.toLowerCase(), DbUtils.getInstance().getSqlTypeName(Types.NULL));
-
-            int[] indexes = getIndexes(name);
-            for (int i = 0; i < indexes.length; i++) {
-                statement.setNull(indexes[i], Types.VARCHAR);
-            }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
-    }
-
-    @Override
-    public void registerOutParameter(String paramName, int sqlType) {
-        try {
-            outParamTypes.put(paramName.toLowerCase(), DbUtils.getInstance().getSqlTypeName(sqlType));
-
-            if (statement instanceof CallableStatement) {
-                int[] indexes = getIndexes(paramName);
-                for (int i = 0; i < indexes.length; i++) {
-                    ((CallableStatement) statement).registerOutParameter(indexes[i], sqlType);
-                }
-            }
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
-    }
-
-    @Override
-    public Object getObject(String paramName) {
-        try {
-            if (statement instanceof CallableStatement) {
-                int[] indexes = getIndexes(paramName);
-                for (int i = 0; i < indexes.length; i++) {
-                    return ((CallableStatement) statement).getObject(indexes[i]);
-                }
-            }
-            return null;
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+        return null;
     }
 
     @Override
@@ -311,436 +267,244 @@ public class DbNamedParametersStatement implements SQLNamedParametersStatement {
 
 
     @Override
-    public boolean execute() {
-        try {
-            return statement.execute();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean execute() throws SQLException {
+        return statement.execute();
     }
 
 
     @Override
-    public ResultSet executeQuery() {
-        try {
-            return statement.executeQuery();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public ResultSet executeQuery() throws SQLException {
+        return statement.executeQuery();
     }
 
     @Override
-    public int executeUpdate() {
-        try {
-            return statement.executeUpdate();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int executeUpdate() throws SQLException {
+        return statement.executeUpdate();
     }
 
     @Override
-    public ResultSet executeQuery(String sql) {
-        try {
-            return statement.executeQuery(sql);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public ResultSet executeQuery(String sql) throws SQLException {
+        return statement.executeQuery(sql);
     }
 
     @Override
-    public int executeUpdate(String sql) {
-        try {
-            return statement.executeUpdate(sql);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int executeUpdate(String sql) throws SQLException {
+        return statement.executeUpdate(sql);
     }
 
     @Override
-    public void close() {
-        try {
-            statement.close();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void close() throws SQLException {
+        statement.close();
     }
 
     @Override
-    public int getMaxFieldSize() {
-        try {
-            return statement.getMaxFieldSize();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getMaxFieldSize() throws SQLException {
+        return statement.getMaxFieldSize();
     }
 
     @Override
-    public void setMaxFieldSize(int max) {
-        try {
-            statement.setMaxFieldSize(max);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setMaxFieldSize(int max) throws SQLException {
+        statement.setMaxFieldSize(max);
     }
 
     @Override
-    public int getMaxRows() {
-        try {
-            return statement.getMaxRows();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getMaxRows() throws SQLException {
+        return statement.getMaxRows();
     }
 
     @Override
-    public void setMaxRows(int max) {
-        try {
-            statement.setMaxRows(max);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setMaxRows(int max) throws SQLException {
+        statement.setMaxRows(max);
     }
 
     @Override
-    public void setEscapeProcessing(boolean enable) {
-        try {
-            statement.setEscapeProcessing(enable);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setEscapeProcessing(boolean enable) throws SQLException {
+        statement.setEscapeProcessing(enable);
     }
 
     @Override
-    public int getQueryTimeout() {
-        try {
-            return statement.getQueryTimeout();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getQueryTimeout() throws SQLException {
+        return statement.getQueryTimeout();
     }
 
     @Override
-    public void setQueryTimeout(int seconds) {
-        try{
-            statement.setQueryTimeout(seconds);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setQueryTimeout(int seconds) throws SQLException {
+        statement.setQueryTimeout(seconds);
     }
 
     @Override
-    public void cancel() {
-        try {
-            statement.cancel();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void cancel() throws SQLException {
+        statement.cancel();
     }
 
     @Override
-    public SQLWarning getWarnings() {
-        try {
-            return statement.getWarnings();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public SQLWarning getWarnings() throws SQLException {
+        return statement.getWarnings();
     }
 
     @Override
-    public void clearWarnings() {
-        try {
-            statement.clearWarnings();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void clearWarnings() throws SQLException {
+        statement.clearWarnings();
     }
 
     @Override
-    public void setCursorName(String name) {
-        try {
-            statement.setCursorName(name);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setCursorName(String name) throws SQLException {
+        statement.setCursorName(name);
     }
 
     @Override
-    public boolean execute(String sql) {
-        try {
-            return statement.execute();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean execute(String sql) throws SQLException {
+        return statement.execute();
     }
 
     @Override
-    public ResultSet getResultSet() {
-        try {
-            return statement.getResultSet();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public ResultSet getResultSet() throws SQLException {
+        return statement.getResultSet();
     }
 
     @Override
-    public int getUpdateCount() {
-        try {
-            return statement.getUpdateCount();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getUpdateCount() throws SQLException {
+        return statement.getUpdateCount();
     }
 
     @Override
-    public boolean getMoreResults() {
-        try {
-            return statement.getMoreResults();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean getMoreResults() throws SQLException {
+        return statement.getMoreResults();
     }
 
     @Override
-    public void setFetchDirection(int direction) {
-        try {
-            statement.setFetchDirection(direction);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setFetchDirection(int direction) throws SQLException {
+        statement.setFetchDirection(direction);
     }
 
     @Override
-    public int getFetchDirection() {
-        try {
-            return statement.getFetchDirection();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getFetchDirection() throws SQLException {
+        return statement.getFetchDirection();
     }
 
     @Override
-    public void setFetchSize(int rows) {
-        try {
-            statement.setFetchSize(rows);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setFetchSize(int rows) throws SQLException {
+        statement.setFetchSize(rows);
     }
 
     @Override
-    public int getFetchSize() {
-        try {
-            return statement.getFetchSize();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getFetchSize() throws SQLException {
+        return statement.getFetchSize();
     }
 
     @Override
-    public int getResultSetConcurrency() {
-        try {
-            return statement.getResultSetConcurrency();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getResultSetConcurrency() throws SQLException {
+        return statement.getResultSetConcurrency();
     }
 
     @Override
-    public int getResultSetType() {
-        try {
-            return statement.getResultSetType();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getResultSetType() throws SQLException {
+        return statement.getResultSetType();
     }
 
     @Override
-    public void addBatch(String sql) {
-        try {
-            statement.addBatch(sql);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void addBatch(String sql) throws SQLException {
+        statement.addBatch(sql);
     }
 
     @Override
-    public void clearBatch() {
-        try {
-            statement.clearBatch();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void clearBatch() throws SQLException {
+        statement.clearBatch();
     }
 
 
-    public void addBatch() {
-        try {
-            statement.addBatch();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void addBatch() throws SQLException {
+        statement.addBatch();
     }
 
 
-    public int[] executeBatch() {
-        try {
-            return statement.executeBatch();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int[] executeBatch() throws SQLException {
+        return statement.executeBatch();
     }
 
     @Override
-    public Connection getConnection() {
-        try {
-            return statement.getConnection();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public Connection getConnection() throws SQLException {
+        return statement.getConnection();
     }
 
     @Override
-    public boolean getMoreResults(int current) {
-        try {
-            return statement.getMoreResults(current);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean getMoreResults(int current) throws SQLException {
+        return statement.getMoreResults(current);
     }
 
     @Override
-    public ResultSet getGeneratedKeys() {
-        try {
-            return statement.getGeneratedKeys();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public ResultSet getGeneratedKeys() throws SQLException {
+        return statement.getGeneratedKeys();
     }
 
     @Override
-    public int executeUpdate(String sql, int autoGeneratedKeys) {
-        try {
-            return statement.executeUpdate(sql, autoGeneratedKeys);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
+        return statement.executeUpdate(sql, autoGeneratedKeys);
     }
 
     @Override
-    public int executeUpdate(String sql, int[] columnIndexes) {
-        try {
-            return statement.executeUpdate(sql, columnIndexes);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
+        return statement.executeUpdate(sql, columnIndexes);
     }
 
     @Override
-    public int executeUpdate(String sql, String[] columnNames) {
-        try {
-            return statement.executeUpdate(sql, columnNames);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int executeUpdate(String sql, String[] columnNames) throws SQLException {
+        return statement.executeUpdate(sql, columnNames);
     }
 
     @Override
-    public boolean execute(String sql, int autoGeneratedKeys) {
-        try {
-            return statement.execute(sql, autoGeneratedKeys);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
+        return statement.execute(sql, autoGeneratedKeys);
     }
 
     @Override
-    public boolean execute(String sql, int[] columnIndexes) {
-        try {
-            return statement.execute(sql, columnIndexes);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean execute(String sql, int[] columnIndexes) throws SQLException {
+        return statement.execute(sql, columnIndexes);
     }
 
     @Override
-    public boolean execute(String sql, String[] columnNames) {
-        try {
-            return statement.execute(sql, columnNames);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean execute(String sql, String[] columnNames) throws SQLException {
+        return statement.execute(sql, columnNames);
     }
 
     @Override
-    public int getResultSetHoldability() {
-        try {
-            return statement.getResultSetHoldability();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public int getResultSetHoldability() throws SQLException {
+        return statement.getResultSetHoldability();
     }
 
     @Override
-    public boolean isClosed() {
-        try {
-            return statement.isClosed();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean isClosed() throws SQLException {
+        return statement.isClosed();
     }
 
     @Override
-    public void setPoolable(boolean poolable) {
-        try {
-            statement.setPoolable(poolable);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void setPoolable(boolean poolable) throws SQLException {
+        statement.setPoolable(poolable);
     }
 
     @Override
-    public boolean isPoolable() {
-        try {
-            return statement.isPoolable();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean isPoolable() throws SQLException {
+        return statement.isPoolable();
     }
 
     @Override
-    public void closeOnCompletion() {
-        try {
-            statement.closeOnCompletion();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public void closeOnCompletion() throws SQLException {
+        statement.closeOnCompletion();
     }
 
     @Override
-    public boolean isCloseOnCompletion() {
-        try {
-            return statement.isCloseOnCompletion();
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean isCloseOnCompletion() throws SQLException {
+        return statement.isCloseOnCompletion();
     }
 
     @Override
-    public <T> T unwrap(Class<T> iface) {
-        try {
-            return statement.unwrap(iface);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return statement.unwrap(iface);
     }
 
     @Override
-    public boolean isWrapperFor(Class<?> iface) {
-        try {
-            return statement.isWrapperFor(iface);
-        } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
-        }
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return statement.isWrapperFor(iface);
     }
 
     public List<String> getParamNames() {

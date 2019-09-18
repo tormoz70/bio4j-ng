@@ -11,6 +11,7 @@ import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamSetter;
 import ru.bio4j.ng.model.transport.Param;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class DbSelectableParamSetter implements SQLParamSetter {
@@ -20,7 +21,7 @@ public class DbSelectableParamSetter implements SQLParamSetter {
 //    }
 
     @Override
-    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) {
+    public void setParamsToStatement(SQLNamedParametersStatement statment, List<Param> params) throws SQLException {
 //        SQLNamedParametersStatement selectable = command.getStatement();
         final String sql = statment.getOrigQuery();
 //        final List<String> paramsNames = Sqls.extractParamNamesFromSQL(sql);

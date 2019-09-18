@@ -14,7 +14,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.commons.DbUtils;
-import ru.bio4j.ng.database.commons.SQLExceptionExt;
+import ru.bio4j.ng.database.api.BioSQLException;
 import ru.bio4j.ng.database.oracle.impl.OraContext;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 
@@ -76,7 +76,7 @@ public class SQLFactoryTest {
                 DbUtils.execSQL(context.getCurrentConnection(), sql);
                 return null;
             }, null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -96,7 +96,7 @@ public class SQLFactoryTest {
                     return null;
                 }
             }, null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -197,7 +197,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -267,7 +267,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -300,7 +300,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -383,7 +383,7 @@ public class SQLFactoryTest {
                 cmd.execSQL(prms, ctx.getCurrentUser());
 
             }, null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -416,7 +416,7 @@ public class SQLFactoryTest {
             }, null);
             LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -444,7 +444,7 @@ public class SQLFactoryTest {
                     cmd.execSQL(prms, ctx.getCurrentUser());
                 }
             }, "AnContext", null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
         }
@@ -513,7 +513,7 @@ public class SQLFactoryTest {
 
             LOG.debug(String.format("Login: OK; uid: %s", uid));
             Assert.assertEquals(uid, "FTW");
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!!!", ex);
         }
     }
@@ -586,7 +586,7 @@ public class SQLFactoryTest {
         sb.append("}}");
 
         SQLException e = new SQLException("QWE-TEST");
-        SQLExceptionExt r = SQLExceptionExt.create(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
+        BioSQLException r = BioSQLException.create(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
         String msg = r.getMessage();
         LOG.debug(msg);
     }
@@ -1008,6 +1008,29 @@ public class SQLFactoryTest {
 
         }, null);
         Assert.assertNotEquals(rrr, 0);
+    }
+
+    @Test(enabled = true)
+    public void testExtractAppError() throws Exception {
+        SQLException e = new SQLException("ORA-20001: Не верное имя или пароль пользователя!\n" +
+                "ORA-06512: на  \"GIVCAPI.GACC\", line 316\n" +
+                "ORA-06512: на  \"GIVCAPI.GACC\", line 331\n" +
+                "ORA-06512: на  line 1");
+        BioSQLApplicationError er = DbUtils.getInstance().extractStoredProcAppErrorMessage(e);
+        Assert.assertTrue(er.getErrorCode() == 20001);
+
+    }
+
+    @Test(enabled = true)
+    public void testExtractAppError1() throws Exception {
+        SQLException e = new SQLException("ORA-20401: \n" +
+                "ORA-06512: на  \"GIVCADMIN.BIO_LOGIN3\", line 408\n" +
+                "ORA-20001: Не верное имя или пароль пользователя!\n" +
+                "ORA-06512: на  line 1");
+        BioSQLApplicationError er = DbUtils.getInstance().extractStoredProcAppErrorMessage(e);
+        Assert.assertTrue(er.getErrorCode() == 20401);
+        Assert.assertTrue(er.getMessage().equals("Не верное имя или пароль пользователя!"));
+
     }
 
 }

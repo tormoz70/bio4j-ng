@@ -1,12 +1,10 @@
 package ru.bio4j.ng.database.commons;
 
-import ru.bio4j.ng.commons.converter.ConvertValueException;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.database.api.DBField;
-import ru.bio4j.ng.database.api.DelegateSQLFetch;
+import ru.bio4j.ng.database.api.BioSQLException;
 import ru.bio4j.ng.database.api.SQLReader;
-import ru.bio4j.ng.model.transport.Param;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,7 +102,7 @@ public class DbReader implements SQLReader {
             }
             return false;
         } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
+            throw BioSQLException.create(e);
         }
     }
 

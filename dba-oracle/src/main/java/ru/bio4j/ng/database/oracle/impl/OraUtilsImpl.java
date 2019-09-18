@@ -5,12 +5,9 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.RDBMSUtils;
-import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
-import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.database.commons.DbUtils;
-import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -149,16 +146,20 @@ public class OraUtilsImpl implements RDBMSUtils {
             String newExec = DbUtils.generateSignature(storedProcName, params);
             return new StoredProgMetadata(newExec, params);
         } catch(SQLException e) {
-            throw SQLExceptionExt.create(e);
+            throw BioSQLException.create(e);
         }
     }
 
     @Override
-    public String extractStoredProcAppError(Exception e) {
-        Matcher m = Regexs.match(e.getMessage(), "(?<=ORA-2\\d{4}:).+", Pattern.CASE_INSENSITIVE);
-        if(m.find()) {
-            String fnd = m.group();
-            return fnd.trim();
+    public BioSQLApplicationError extractStoredProcAppError(Exception e) {
+        if(e instanceof BioSQLApplicationError)
+            return (BioSQLApplicationError)e;
+        String appErrorCodeStr = Regexs.find(e.getMessage(), "ORA-2\\d{4}", Pattern.CASE_INSENSITIVE);
+        List<String> appErrorMessages = Regexs.findAll(e.getMessage(), "(?<=ORA-2\\d{4}:).+", Pattern.CASE_INSENSITIVE);
+        String appErrorMessage = appErrorMessages != null && appErrorMessages.size() > 0 ? appErrorMessages.get(appErrorMessages.size()-1).trim() : null;
+        if (!Strings.isNullOrEmpty(appErrorMessage) && !Strings.isNullOrEmpty(appErrorCodeStr)) {
+            int code = Converter.toType(appErrorCodeStr.substring(4), int.class);
+            return new BioSQLApplicationError(code, appErrorMessage);
         }
         return null;
     }

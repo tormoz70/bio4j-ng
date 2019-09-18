@@ -144,7 +144,7 @@ public abstract class DbContextAbstract implements SQLContext {
             }
             return result;
         } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
+            throw BioSQLException.create(e);
         }
     }
 

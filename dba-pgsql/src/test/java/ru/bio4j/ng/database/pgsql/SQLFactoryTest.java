@@ -12,12 +12,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.database.commons.DbContextFactory;
 import ru.bio4j.ng.database.commons.DbUtils;
-import ru.bio4j.ng.database.commons.SQLExceptionExt;
+import ru.bio4j.ng.database.api.BioSQLException;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLContext;
 import ru.bio4j.ng.database.pgsql.impl.PgSQLUtilsImpl;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
-import ru.bio4j.ng.model.transport.User;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -79,7 +78,7 @@ public class SQLFactoryTest {
                     cs.execute(sql);
                 }
             }, null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -97,7 +96,7 @@ public class SQLFactoryTest {
                 cs.execute("drop table test_tbl");
                 return null;
             }, null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
         }
     }
@@ -224,7 +223,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -256,7 +255,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -288,7 +287,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -312,7 +311,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 4);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -351,7 +350,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -386,7 +385,7 @@ public class SQLFactoryTest {
             if(LOG.isDebugEnabled())
                 LOG.debug("leng: " + leng);
             Assert.assertEquals(leng, 3);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.fail();
         }
@@ -399,7 +398,7 @@ public class SQLFactoryTest {
             context.execBatch((SQLActionVoid1<String>) (context, param) -> {
                 StoredProgMetadata sp = DbUtils.getInstance().detectStoredProcParamsAuto("test_stored_error", context.getCurrentConnection(), null);
             }, "AnContext", null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Assert.assertEquals(ex.getErrorCode(), 20000);
         }
@@ -426,7 +425,7 @@ public class SQLFactoryTest {
                     cmd.execSQL(paramus.get(), context.getCurrentUser());
                 }
             }, "AnContext", null);
-        } catch (SQLExceptionExt ex) {
+        } catch (BioSQLException ex) {
             LOG.error("Error!", ex);
             Boolean errMsgOk = ex.getCause().getMessage().indexOf(": FTW") >= 0;
             Assert.assertTrue(errMsgOk);
@@ -571,7 +570,7 @@ public class SQLFactoryTest {
         sb.append("}}");
 
         SQLException e = new SQLException("QWE-TEST");
-        SQLExceptionExt r = SQLExceptionExt.create(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
+        BioSQLException r = BioSQLException.create(String.format("%s:\n - sql: %s;\n - %s", "Error on execute command.", "select * from dual", sb.toString()), e);
         String msg = r.getMessage();
         if(LOG.isDebugEnabled())
             LOG.debug(msg);

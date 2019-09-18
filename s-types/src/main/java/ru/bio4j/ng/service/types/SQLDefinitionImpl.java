@@ -5,7 +5,7 @@ import ru.bio4j.ng.commons.utils.Lists;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
-import ru.bio4j.ng.database.commons.SQLExceptionExt;
+import ru.bio4j.ng.database.api.BioSQLException;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Field;
 import ru.bio4j.ng.model.transport.jstore.Sort;
@@ -191,7 +191,7 @@ public class SQLDefinitionImpl implements SQLDefinition {
             }
         });
         if(pkField == null)
-            throw new SQLExceptionExt(String.format("PK field not found in bio defenition \"%s\"", this.bioCode));
+            throw new BioSQLException(String.format("PK field not found in bio defenition \"%s\"", this.bioCode));
         return pkField;
     }
 

@@ -5,12 +5,9 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.Regexs;
 import ru.bio4j.ng.commons.utils.Strings;
-import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
-import ru.bio4j.ng.database.api.RDBMSUtils;
-import ru.bio4j.ng.database.api.StoredProgMetadata;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.database.commons.DbNamedParametersStatement;
 import ru.bio4j.ng.database.commons.DbUtils;
-import ru.bio4j.ng.database.commons.SQLExceptionExt;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -148,7 +145,7 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
             }
             return null;
         } catch (SQLException e) {
-            throw SQLExceptionExt.create(e);
+            throw BioSQLException.create(e);
         }
     }
 
@@ -207,7 +204,7 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
                 }
             }
         }catch(SQLException e) {
-            throw SQLExceptionExt.create(e);
+            throw BioSQLException.create(e);
         }
         try(Paramus pp = Paramus.set(params)) {
             for(Param p : pp.get()){
@@ -223,7 +220,7 @@ public class PgSQLUtilsImpl implements RDBMSUtils {
     }
 
     @Override
-    public String extractStoredProcAppError(Exception e) {
+    public BioSQLApplicationError extractStoredProcAppError(Exception e) {
         return null;
     }
 

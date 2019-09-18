@@ -13,14 +13,11 @@ import ru.bio4j.ng.commons.utils.ABeans;
 import ru.bio4j.ng.commons.utils.Sqls;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
-import ru.bio4j.ng.database.api.SQLContext;
-import ru.bio4j.ng.database.api.SQLCursor;
+import ru.bio4j.ng.database.api.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.*;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.database.api.SQLDefinition;
 import ru.bio4j.ng.model.transport.RestParamNames;
-import ru.bio4j.ng.database.api.SelectSQLDef;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -138,7 +135,7 @@ public class CrudReaderApi {
 
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
         final int paginationOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0);
@@ -156,7 +153,7 @@ public class CrudReaderApi {
         if(location != null) {
             Field pkField = cursor.getSelectSqlDef().findPk();
             if(pkField == null)
-                throw new SQLExceptionExt(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
+                throw new BioSQLException(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
             cursor.getSelectSqlDef().setLocateSql(context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef().getPreparedSql(), pkField.getName()));
             preparePkParamValue(params, pkField);
         }
@@ -234,7 +231,7 @@ public class CrudReaderApi {
     public static ABeanPage loadAll0(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor) {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
@@ -335,7 +332,7 @@ public class CrudReaderApi {
     public static HSSFWorkbook toExcel(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor) {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This method can be used only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This method can be used only in SQLAction of execBatch!", cursor.getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();
         if(localSort.size() == 0 && cursor.getSelectSqlDef() != null && cursor.getSelectSqlDef().getDefaultSort() != null)
@@ -395,11 +392,11 @@ public class CrudReaderApi {
     public static ABeanPage loadRecord0(final List<Param> params, final SQLContext context, final SQLDefinition cursor) {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This method can be used only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This method can be used only in SQLAction of execBatch!", cursor.getBioCode()));
 
         Field pkField = cursor.getSelectSqlDef().findPk();
         if(pkField == null)
-            throw new SQLExceptionExt(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
+            throw new BioSQLException(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getGetrowWrapper().wrap(cursor.getSelectSqlDef().getSql(), pkField.getName()));
         preparePkParamValue(params, pkField);
         return readStoreData(params, context, cursor, context.getCurrentUser());
@@ -412,7 +409,7 @@ public class CrudReaderApi {
             final Class<T> beanType) {
 
         if (context.getCurrentConnection() == null)
-            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursorDef.getBioCode()));
+            throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursorDef.getBioCode()));
 
         if(LOG.isDebugEnabled())
             LOG.debug("Opening Cursor \"{}\"...", cursorDef.getBioCode());
@@ -464,7 +461,7 @@ public class CrudReaderApi {
             final Class<T> beanType) {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         final Object location = Paramus.paramValue(params, RestParamNames.LOCATE_PARAM_PKVAL, java.lang.Object.class, null);
         final int paginationOffset = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_OFFSET, int.class, 0);
@@ -482,7 +479,7 @@ public class CrudReaderApi {
         if (location != null) {
             Field pkField = cursor.getSelectSqlDef().findPk();
             if (pkField == null)
-                throw new SQLExceptionExt(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
+                throw new BioSQLException(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
             cursor.getSelectSqlDef().setLocateSql(context.getWrappers().getLocateWrapper().wrap(cursor.getSelectSqlDef().getSql(), pkField.getName()));
             preparePkParamValue(params, pkField);
         }
@@ -568,7 +565,7 @@ public class CrudReaderApi {
             final Class<T> beanType) {
         Connection connTest = context.getCurrentConnection();
         if (connTest == null)
-            throw new SQLExceptionExt(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
+            throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursor.getBioCode()));
 
         cursor.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(cursor.getSelectSqlDef().getSql(), filter, cursor.getSelectSqlDef().getFields()));
         List<Sort> localSort = sort != null ? sort : new ArrayList<>();

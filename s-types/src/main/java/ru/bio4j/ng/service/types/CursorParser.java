@@ -11,7 +11,7 @@ import ru.bio4j.ng.commons.converter.MetaTypeConverter;
 import ru.bio4j.ng.commons.types.DelegateCheck;
 import ru.bio4j.ng.commons.types.Paramus;
 import ru.bio4j.ng.commons.utils.*;
-import ru.bio4j.ng.database.commons.SQLExceptionExt;
+import ru.bio4j.ng.database.api.BioSQLException;
 import ru.bio4j.ng.model.transport.MetaType;
 import ru.bio4j.ng.model.transport.Param;
 import ru.bio4j.ng.model.transport.jstore.Alignment;
@@ -367,14 +367,14 @@ public class CursorParser {
     public static SQLDefinitionImpl pars(final BundleContext context, final String bioCode) {
         Document document = loadXmlDocumentFromRes(context, bioCode);
         if (document == null)
-            throw new SQLExceptionExt(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
+            throw new BioSQLException(String.format("Описание информационного объекта %s не найдено в системе!", bioCode));
         return pars(context, document, bioCode);
     }
 
     public static SQLDefinitionImpl pars(final InputStream stream, final String bioCode) {
         Document document = loadXmlDocumentFromInputStream(stream);
         if (document == null)
-            throw new SQLExceptionExt(String.format("Ошибка при загрузке информационного объекта %s!", bioCode));
+            throw new BioSQLException(String.format("Ошибка при загрузке информационного объекта %s!", bioCode));
         return pars(null, document, bioCode);
     }
 

@@ -67,9 +67,13 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
 
     @Override
 	protected void prepareStatement() {
-        this.preparedSQL = this.sql;
-        this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
-        preparedStatement.setQueryTimeout(this.timeout);
+        try {
+            this.preparedSQL = this.sql;
+            this.preparedStatement = DbNamedParametersStatement.prepareStatement(this.connection, this.preparedSQL);
+            preparedStatement.setQueryTimeout(this.timeout);
+        } catch(SQLException e) {
+            throw BioSQLException.create(e);
+        }
     }
 
     @Override
@@ -85,7 +89,7 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
     @Override
     public boolean fetch(List<Param> params, User usr, DelegateSQLFetch onrecord) {
         boolean rslt = false;
-        SQLExceptionExt lastError = null;
+        BioSQLException lastError = null;
         try {
             List<Param> prms = params != null ? params : new ArrayList<>();
             SrvcUtils.applyCurrentUserParams(usr, prms);
@@ -116,7 +120,9 @@ public class DbCursor extends DbCommand<SQLCursor> implements SQLCursor {
                 }
 
             } catch (SQLException e) {
-                lastError = SQLExceptionExt.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
+                lastError = DbUtils.getInstance().extractStoredProcAppErrorMessage(e);
+                if(lastError == null)
+                    lastError = BioSQLException.create(String.format("%s:\n - %s", "Error on execute command.", getSQL2Execute(this.preparedSQL, this.params)), e);
             }
         } finally {
             if (this.preparedStatement != null)

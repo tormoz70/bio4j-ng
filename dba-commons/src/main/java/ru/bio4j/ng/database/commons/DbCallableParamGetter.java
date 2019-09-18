@@ -1,8 +1,8 @@
 package ru.bio4j.ng.database.commons;
 
 import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.database.api.BioSQLException;
 import ru.bio4j.ng.database.api.SQLNamedParametersStatement;
-import ru.bio4j.ng.database.api.SQLCommand;
 import ru.bio4j.ng.database.api.SQLParamGetter;
 import ru.bio4j.ng.model.transport.Param;
 
@@ -18,12 +18,12 @@ public class DbCallableParamGetter implements SQLParamGetter {
 //        this.owner = owner;
 //    }
 
-    public void getParamsFromStatement(SQLNamedParametersStatement statment, List<Param> params) {
+    public void getParamsFromStatement(SQLNamedParametersStatement statment, List<Param> params) throws SQLException {
 //        CallableStatement callable = (command.getStatement() instanceof CallableStatement) ? (CallableStatement)command.getStatement() : null;
 //        SQLNamedParametersStatement callable = command.getStatement();
         if(params != null && params.size() > 0) {
             if (statment == null)
-                throw new SQLExceptionExt("Parameter [statement] mast be instance of CallableStatement!");
+                throw new BioSQLException("Parameter [statement] mast be instance of CallableStatement!");
             for (Param param : params) {
                 if (Utl.arrayContains(new Param.Direction[]{Param.Direction.INOUT, Param.Direction.OUT}, param.getDirection())) {
                     String paramName = param.getName();
