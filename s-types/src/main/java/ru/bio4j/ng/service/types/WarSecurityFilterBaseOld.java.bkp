@@ -5,16 +5,18 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.service.api.*;
+import ru.bio4j.ng.service.api.ConfigProvider;
+import ru.bio4j.ng.service.api.ErrorWriter;
+import ru.bio4j.ng.service.api.SecurityService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
 
-public class WarSecurityFilterBase {
+public class WarSecurityFilterBaseOld {
     private Logger LOG;
 
     private boolean bioDebug = false;
@@ -52,8 +54,8 @@ public class WarSecurityFilterBase {
 
     protected volatile ConfigProvider configProvider;
     protected volatile SecurityService securityService;
-    protected volatile boolean restHelperInited = false;
-    protected synchronized void initSecurityHandler(ServletContext servletContext) {
+    protected volatile boolean restHelperEnited = false;
+    protected void initSecurityHandler(ServletContext servletContext) throws Exception {
 
         if(configProvider == null) {
             try {
@@ -78,23 +80,51 @@ public class WarSecurityFilterBase {
         }
 
 
-        if(!restHelperInited) {
-            restHelperInited = true;
-            if(RestHelper.getLogginProcessorInstance() != null)
-                RestHelper.getLogginProcessorInstance().init(securityService);
+        if(!restHelperEnited) {
+            restHelperEnited = true;
+            RestHelper.getLogginProcessorInstance().init(securityService);
         }
     }
 
-    private static String[] AVAMETHODS = {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"};
+    public void doSequrityFilter(final WrappedRequest request, final ServletResponse response, final FilterChain chain) throws Exception {
+        final FilterChain chn = chain;
+        final HttpServletResponse resp = (HttpServletResponse) response;
+        resp.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        final String servletPath = request.getServletPath();
+        final HttpSession session = request.getSession();
 
-    public void doSequrityFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        initSecurityHandler(request.getServletContext());
         //GET,POST,PUT,DELETE,PATCH,HEAD
-        if(Arrays.asList(AVAMETHODS).contains(((HttpServletRequest)request).getMethod())) {
-            if(RestHelper.getLogginProcessorInstance() != null)
-                RestHelper.getLogginProcessorInstance().processLogin(request, response, chain);
-            else
-                chain.doFilter(request, response);
+        if(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD").contains(request.getMethod())) {
+            try {
+                debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, request);
+                initSecurityHandler(request.getServletContext());
+                String pathInfo = request.getPathInfo();
+                if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/login", false)) {
+                    if(RestHelper.getLogginProcessorInstance().doLogin(request, resp))
+                        chn.doFilter(request, resp);
+                } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/curusr", false)) {
+                    if(RestHelper.getLogginProcessorInstance().doGetUser(request, resp))
+                        chn.doFilter(request, resp);
+                } else if (!Strings.isNullOrEmpty(pathInfo) && Strings.compare(pathInfo, "/logoff", false)) {
+                    if(RestHelper.getLogginProcessorInstance().doLogoff(request, resp))
+                        chn.doFilter(request, resp);
+                } else {
+                    if(RestHelper.getLogginProcessorInstance().doOthers(request, resp))
+                        chn.doFilter(request, resp);
+                }
+            } catch (BioError.Login e) {
+                log_error("Authentication error (Level-0)!", e);
+
+                if(RestHelper.getLoginErrorHandlerInstance().writeError(e, resp)) {
+                    // Ignore login error if securityErrorHandler returns true!
+                    chn.doFilter(request, resp);
+                }
+            } catch (Exception e) {
+                log_error("Unexpected error while filtering (Level-1)!", e);
+                ErrorWriter errorWriter = ErrorWriterType.Skip.createImpl();
+                errorWriter.write(e, resp);
+            }
         }
     }
 

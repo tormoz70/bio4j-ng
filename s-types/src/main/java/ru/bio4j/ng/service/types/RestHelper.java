@@ -2,7 +2,7 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.bio4j.ng.commons.utils.Bundles;
+import ru.bio4j.ng.commons.utils.Bundles4WAR;
 import ru.bio4j.ng.service.api.*;
 
 public class RestHelper {
@@ -22,26 +22,28 @@ public class RestHelper {
         return SingletonContainer.HTTPPARAMMAP;
     }
 
-    public static LoginProcessor getLPInstance() {
+    public static LoginProcessor getLogginProcessorInstance() {
         return SingletonContainer.LOGINPROCESSOR;
     }
-    public static SecurityErrorHandler getSEHInstance() {
-        return SingletonContainer.SECURITYERRORHANDLER;
+    public static LoginErrorHandler getLoginErrorHandlerInstance() {
+        return SingletonContainer.LOGINERRORHANDLER;
     }
 
     private static class SingletonContainer {
+        public static final ConfigProvider CONFIG;
         public static final AppServiceTypeGetters SRVTYPES;
         public static final RestHelperMethods INSTANCE;
         public static final HttpParamMap HTTPPARAMMAP;
         public static final LoginProcessor LOGINPROCESSOR;
-        public static final SecurityErrorHandler SECURITYERRORHANDLER;
+        public static final LoginErrorHandler LOGINERRORHANDLER;
 
         static {
-            INSTANCE = Bundles.createServiceImplInWAR(RestHelperMethods.class, DefaultRestHelperMethods.class);
-            SRVTYPES = Bundles.createServiceImplInWAR(AppServiceTypeGetters.class, DefaultAppServiceTypes.class);
-            HTTPPARAMMAP = Bundles.createServiceImplInWAR(HttpParamMap.class, DefaultHttpParamMap.class);
-            LOGINPROCESSOR = Bundles.createServiceImplInWAR(LoginProcessor.class, DefaultLoginProcessor.class);
-            SECURITYERRORHANDLER = Bundles.createServiceImplInWAR(SecurityErrorHandler.class, DefaultSecurityErrorHandler.class);
+            CONFIG = Bundles4WAR.findBundleByInterface(ConfigProvider.class);
+            SRVTYPES = AppServiceTypesImpl.builder().build(CONFIG.getConfig());
+            INSTANCE = Bundles4WAR.createLocalServiceImpl(RestHelperMethods.class, DefaultRestHelperMethods.class);
+            HTTPPARAMMAP = Bundles4WAR.createLocalServiceImpl(HttpParamMap.class, DefaultHttpParamMap.class);
+            LOGINPROCESSOR = Bundles4WAR.createServiceByName(CONFIG.getConfig().getLoginProcessingHandler());
+            LOGINERRORHANDLER = Bundles4WAR.createServiceByName(CONFIG.getConfig().getLoginErrorHandler());
         }
     }
 }

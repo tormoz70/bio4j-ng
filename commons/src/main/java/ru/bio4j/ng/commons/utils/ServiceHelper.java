@@ -9,7 +9,7 @@ import ru.bio4j.ng.service.api.BioService;
 public class ServiceHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceHelper.class);
 
-    public static <T extends BioService> T lookupService(BundleContext context, Class<T> clazz) throws Exception {
+    public static <T> T lookupService(BundleContext context, Class<T> clazz) throws Exception {
         if(LOG.isDebugEnabled())
             LOG.debug("Looking for service of type:{}", clazz.getName());
         ServiceReference[] references;

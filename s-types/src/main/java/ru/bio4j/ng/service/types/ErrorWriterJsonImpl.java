@@ -21,7 +21,7 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
     }
 
     @Override
-    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) {
+    public boolean write(Exception exception, HttpServletResponse response) {
         ABean result = null;
         int resultCode;
         BioError error = BioError.wrap(exception);

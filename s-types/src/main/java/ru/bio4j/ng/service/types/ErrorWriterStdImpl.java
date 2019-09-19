@@ -16,7 +16,7 @@ public class ErrorWriterStdImpl implements ErrorWriter {
 //5XX Серверные ошибки, не связанные с присылаемыми данными
 
     @Override
-    public boolean write(Exception exception, HttpServletResponse response, Boolean debugMode) {
+    public boolean write(Exception exception, HttpServletResponse response) {
         try {
             if (exception != null) {
                 if (exception instanceof BioError.Login.Unauthorized)

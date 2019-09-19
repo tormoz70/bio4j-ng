@@ -2,77 +2,75 @@ package ru.bio4j.ng.model.transport;
 
 
 public class BioConfig extends AnConfig {
-    @Prop(name = "bio.debug")
-    private boolean bioDebug = false;
 
-    @Prop(name = "bio.error.handler")
-    private String errorHandler = "std";
+    @Prop(name = "bio.login.error.handler")
+    private String loginErrorHandler = "ru.bio4j.ng.service.types.DefaultLoginErrorHandler";
+    @Prop(name = "bio.login.processing.handler")
+    private String loginProcessingHandler = "ru.bio4j.ng.service.types.DefaultLoginProcessor";
+    @Prop(name = "bio.service.odac")
+    private String serviceNameOdac = "ru.bio4j.ng.service.api.AppService";
+    @Prop(name = "bio.service.fcloud")
+    private String serviceNameFCloud = "ru.bio4j.ng.service.api.FCloudApi";
+    @Prop(name = "bio.service.security")
+    private String serviceNameSecurity = "ru.bio4j.ng.service.api.SecurityService";
+    @Prop(name = "bio.service.cache")
+    private String serviceNameCache = "ru.bio4j.ng.service.api.CacheService";
+    @Prop(name = "bio.service.fcloud.api")
+    private String serviceFCloudApi = "fcloud-h2registry";
 
-    @Prop(name = "bio.fcloud.api")
-    private String fcloudApi = "fcloud-h2registry";
+
 
     @Prop(name = "ehcache.persistent.path")
     private String cachePersistentPath = "./ehcache-persistent";
-
     @Prop(name = "content.resolver.path")
     private String contentResolverPath = "./bio-content";
-
     @Prop(name = "tmp.path")
     private String tmpPath = "./bio-tmp";
-
     @Prop(name = "global.live-bio.content.path")
     private String liveBioContentPath = null;
 
 
-    public boolean isBioDebug() {
-        return bioDebug;
-    }
-
     public String getLiveBioContentPath() {
         return liveBioContentPath;
-    }
-
-    public void setLiveBioContentPath(String liveBioContentPath) {
-        this.liveBioContentPath = liveBioContentPath;
     }
 
     public String getCachePersistentPath() {
         return cachePersistentPath;
     }
 
-    public void setCachePersistentPath(String cachePersistentPath) {
-        this.cachePersistentPath = cachePersistentPath;
-    }
-
     public String getContentResolverPath() {
         return contentResolverPath;
-    }
-
-    public void setContentResolverPath(String contentResolverPath) {
-        this.contentResolverPath = contentResolverPath;
     }
 
     public String getTmpPath() {
         return tmpPath;
     }
 
-    public void setTmpPath(String tmpPath) {
-        this.tmpPath = tmpPath;
+    public String getLoginErrorHandler() {
+        return loginErrorHandler;
     }
 
-    public String getErrorHandler() {
-        return errorHandler;
+    public String getLoginProcessingHandler() {
+        return loginProcessingHandler;
     }
 
-    public void setErrorHandler(String errorHandler) {
-        this.errorHandler = errorHandler;
+    public String getServiceNameOdac() {
+        return serviceNameOdac;
     }
 
-    public String getFcloudApi() {
-        return fcloudApi;
+    public String getServiceNameFCloud() {
+        return serviceNameFCloud;
     }
 
-    public void setFcloudApi(String fcloudApi) {
-        this.fcloudApi = fcloudApi;
+    public String getServiceNameSecurity() {
+        return serviceNameSecurity;
+    }
+
+    public String getServiceNameCache() {
+        return serviceNameCache;
+    }
+
+    public String getServiceFCloudApi() {
+        return serviceFCloudApi;
     }
 }

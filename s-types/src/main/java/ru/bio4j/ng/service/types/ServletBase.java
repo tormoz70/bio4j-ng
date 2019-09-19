@@ -16,8 +16,6 @@ public class ServletBase extends HttpServlet {
 
     protected Logger LOG;
 
-    protected boolean bioDebug = false;
-
 //    protected SecurityProvider securityProvider;
     protected ConfigProvider configProvider;
 
@@ -44,7 +42,6 @@ public class ServletBase extends HttpServlet {
 //            throw new IllegalArgumentException("SecurityHandler not defined!");
         if(configProvider == null)
             throw new IllegalArgumentException("ConfigProvider not defined!");
-        bioDebug = configProvider.getConfig().isBioDebug();
     }
 
 //    private static void writeResponse(String brespJson, HttpServletResponse response) throws IOException {

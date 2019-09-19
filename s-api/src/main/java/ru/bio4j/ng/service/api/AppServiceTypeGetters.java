@@ -1,13 +1,9 @@
 package ru.bio4j.ng.service.api;
 
-import ru.bio4j.ng.service.api.AppService;
-import ru.bio4j.ng.service.api.CacheService;
-import ru.bio4j.ng.service.api.FCloudApi;
-import ru.bio4j.ng.service.api.SecurityService;
-
 public interface AppServiceTypeGetters {
-    Class<? extends AppService> getAppServiceClass();
+    Class<? extends OdacService> getOdacServiceClass();
     Class<? extends FCloudApi> getFCloudApiClass();
     Class<? extends SecurityService> getSecurityServiceClass();
     Class<? extends CacheService> getCacheServiceClass();
+
 }
