@@ -110,7 +110,7 @@ public class Utl {
             int readed = in.read(buff);
             return buff;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -132,8 +132,8 @@ public class Utl {
                 read = br.readLine();
             }
             return sb.toString();
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -161,8 +161,8 @@ public class Utl {
             if (obj.getClass() == clazz)
                 return (T) obj;
             return null;
-        }catch (JAXBException e) {
-            throw new RuntimeException(e);
+        } catch (JAXBException e) {
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -549,7 +549,7 @@ public class Utl {
         try {
             return type.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -726,8 +726,8 @@ public class Utl {
             try (FileInputStream fis = new FileInputStream(new File(fileName))) {
                 md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
             }
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
         return md5;
     }
@@ -746,7 +746,7 @@ public class Utl {
             }
             return len;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -757,8 +757,8 @@ public class Utl {
                 out.write(blob);
             }
             return path;
-        } catch(IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -777,7 +777,7 @@ public class Utl {
                 out.print(text);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -794,9 +794,10 @@ public class Utl {
             } else
                 throw new FileNotFoundException(String.format("File \"%s\" not found!", filePath));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
+
     public static InputStream openFile(Path filePath) {
         return openFile(filePath.toString());
     }
@@ -817,7 +818,7 @@ public class Utl {
                 throw new FileNotFoundException(String.format("Файл %s не наден!", filePath));
             return rslt;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -841,7 +842,7 @@ public class Utl {
             }
             return rslt;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -858,7 +859,7 @@ public class Utl {
                     bw.write(line + System.lineSeparator());
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -866,7 +867,7 @@ public class Utl {
         storeListToFile(list, filePath, StandardCharsets.UTF_8.displayName());
     }
 
-    public static String generateUUID(){
+    public static String generateUUID() {
         UUID uuid = UUID.randomUUID();
         String hex = uuid.toString().replace("-", "").toLowerCase();
         return hex;
@@ -876,7 +877,7 @@ public class Utl {
         try {
             return fld.get(bean);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -884,29 +885,29 @@ public class Utl {
         try {
             fld.set(bean, value);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
     public static List<Param> beanToParams(Object bean) {
         List<Param> result = new ArrayList<>();
-        if(bean == null)
+        if (bean == null)
             return result;
         Class<?> srcType = bean.getClass();
-        for(java.lang.reflect.Field fld : getAllObjectFields(srcType)) {
+        for (java.lang.reflect.Field fld : getAllObjectFields(srcType)) {
             String paramName = fld.getName();
-            if(paramName.equals("this$1")) continue;
-            if(!paramName.toLowerCase().startsWith("p_"))
+            if (paramName.equals("this$1")) continue;
+            if (!paramName.toLowerCase().startsWith("p_"))
                 paramName = "p_" + paramName.toLowerCase();
             fld.setAccessible(true);
             Object valObj = getFieldValue(fld, bean);
             Param.Direction direction = Param.Direction.UNDEFINED;
             Prop prp = fld.getAnnotation(Prop.class);
             MetaType metaType = MetaTypeConverter.read(fld.getType());
-            if(prp != null) {
-                if(!Strings.isNullOrEmpty(prp.name()))
+            if (prp != null) {
+                if (!Strings.isNullOrEmpty(prp.name()))
                     paramName = prp.name().toLowerCase();
-                if(prp.metaType() != MetaType.UNDEFINED)
+                if (prp.metaType() != MetaType.UNDEFINED)
                     metaType = prp.metaType();
                 direction = prp.direction();
             }
@@ -922,12 +923,12 @@ public class Utl {
 
     public static List<Param> abeanToParams(ABean bean) {
         List<Param> result = new ArrayList<>();
-        if(bean == null)
+        if (bean == null)
             return result;
-        for(String key : bean.keySet()) {
+        for (String key : bean.keySet()) {
             String paramName = key;
-            if(paramName.equals("this$1")) continue;
-            if(!paramName.toLowerCase().startsWith("p_"))
+            if (paramName.equals("this$1")) continue;
+            if (!paramName.toLowerCase().startsWith("p_"))
                 paramName = "p_" + paramName.toLowerCase();
             Object valObj = bean.get(key);
             result.add(Param.builder().name(paramName).value(valObj).build());
@@ -937,12 +938,12 @@ public class Utl {
 
     public static List<Param> hashmapToParams(HashMap<String, Object> bean) {
         List<Param> result = new ArrayList<>();
-        if(bean == null)
+        if (bean == null)
             return result;
-        for(String key : bean.keySet()) {
+        for (String key : bean.keySet()) {
             String paramName = key;
-            if(paramName.equals("this$1")) continue;
-            if(!paramName.toLowerCase().startsWith("p_"))
+            if (paramName.equals("this$1")) continue;
+            if (!paramName.toLowerCase().startsWith("p_"))
                 paramName = "p_" + paramName.toLowerCase();
             Object valObj = bean.get(key);
             result.add(Param.builder().name(paramName).value(valObj).build());
@@ -952,14 +953,14 @@ public class Utl {
 
     public static List<Param> anjsonToParams(String anjson) {
         List<Param> result = new ArrayList<>();
-        if(Strings.isNullOrEmpty(anjson))
+        if (Strings.isNullOrEmpty(anjson))
             return result;
 
         ABean bioParamsContainer = Jecksons.getInstance().decodeABean(anjson);
-        if(bioParamsContainer.containsKey("bioParams")) {
-            List<HashMap<String, Object>> bioParamsArray = (List)bioParamsContainer.get("bioParams");
+        if (bioParamsContainer.containsKey("bioParams")) {
+            List<HashMap<String, Object>> bioParamsArray = (List) bioParamsContainer.get("bioParams");
             for (HashMap<String, Object> prm : bioParamsArray) {
-                String paramName = (String)prm.get("name");
+                String paramName = (String) prm.get("name");
                 if (!paramName.toLowerCase().startsWith("p_"))
                     paramName = "p_" + paramName.toLowerCase();
                 Object valObj = prm.get("value");
@@ -985,7 +986,7 @@ public class Utl {
             DocumentBuilder builder = f.newDocumentBuilder();
             return builder.parse(inputStream);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -997,7 +998,7 @@ public class Utl {
             InputStream inputStream = openFile(fileName);
             return builder.parse(inputStream);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -1017,7 +1018,7 @@ public class Utl {
                     buf.close();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -1026,16 +1027,16 @@ public class Utl {
         try {
             writeInputToOutput(new FileInputStream(file), output);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
     public static void deleteFile(Path filePath, Boolean silent) {
         try {
             Files.delete(filePath);
-        } catch(Exception e){
-            if(!silent)
-                throw new RuntimeException(e);
+        } catch (Exception e) {
+            if (!silent)
+                throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -1046,9 +1047,9 @@ public class Utl {
     public static LoginRec parsLogin(String login) {
         LoginRec rslt = new LoginRec();
         String[] loginParts = Strings.split(login, "/");
-        if(loginParts.length > 0)
+        if (loginParts.length > 0)
             rslt.setUsername(loginParts[0]);
-        if(loginParts.length > 1)
+        if (loginParts.length > 1)
             rslt.setPassword(loginParts[1]);
         return rslt;
     }
@@ -1062,7 +1063,7 @@ public class Utl {
             }
         }
 
-        if(defaultVal != null)
+        if (defaultVal != null)
             return defaultVal;
         throw new IllegalArgumentException(String.format(
                 "There is no value with name '%s' in Enum %s",
@@ -1070,11 +1071,11 @@ public class Utl {
         ));
     }
 
-    public static Filter restoreSimpleFilter(String simpleFilter){
+    public static Filter restoreSimpleFilter(String simpleFilter) {
         try {
             if (simpleFilter.length() == 0 || !simpleFilter.startsWith("{") || !simpleFilter.endsWith("}"))
                 throw new Exception(String.format("Error in structure of filter \"%s\"!", simpleFilter));
-            simpleFilter = simpleFilter.substring(1, simpleFilter.length()-1);
+            simpleFilter = simpleFilter.substring(1, simpleFilter.length() - 1);
             Filter rslt = new Filter();
             String[] items = Strings.split(simpleFilter, ",");
 
@@ -1090,8 +1091,8 @@ public class Utl {
                 if (fieldValues.length == 0 || !fildvalItems[1].startsWith("\"") || !fildvalItems[1].endsWith("\""))
                     throw new Exception(String.format("Error in fieldValue of item \"%s\"!", item));
                 fieldValues[0] = fieldValues[0].substring(1);
-                fieldValues[fieldValues.length-1] = fieldValues[fieldValues.length-1].substring(0, fieldValues[fieldValues.length-1].length()-1);
-                if(fieldValues.length > 1) {
+                fieldValues[fieldValues.length - 1] = fieldValues[fieldValues.length - 1].substring(0, fieldValues[fieldValues.length - 1].length() - 1);
+                if (fieldValues.length > 1) {
                     Expression itemOr = or();
                     for (String fieldValue : fieldValues)
                         itemOr.add(contains(checkedFieldName, fieldValue, true));
@@ -1102,11 +1103,13 @@ public class Utl {
             rslt.add(rootAnd);
             return rslt;
         } catch (Exception e) {
-            if(LOG.isDebugEnabled())LOG.error("Error parsing simple filter \"{}\". Msg: {}", simpleFilter, e.getMessage());
+            if (LOG.isDebugEnabled())
+                LOG.error("Error parsing simple filter \"{}\". Msg: {}", simpleFilter, e.getMessage());
             return null;
         }
     }
-    public static List<Sort> restoreSimpleSort(String simpleSort){
+
+    public static List<Sort> restoreSimpleSort(String simpleSort) {
         List<Sort> rslt = new ArrayList<>();
         try {
             Sort sort;
@@ -1122,7 +1125,8 @@ public class Utl {
                     return null;
             }
         } catch (Exception e) {
-            if(LOG.isDebugEnabled())LOG.error("Error parsing simple sort \"{}\". Msg: {}", simpleSort, e.getMessage());
+            if (LOG.isDebugEnabled())
+                LOG.error("Error parsing simple sort \"{}\". Msg: {}", simpleSort, e.getMessage());
         }
         return rslt;
     }
@@ -1133,7 +1137,7 @@ public class Utl {
             prop.load(inputStream);
             return prop;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -1143,7 +1147,7 @@ public class Utl {
                 return loadProperties(input);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -1157,7 +1161,7 @@ public class Utl {
                 throw new FileNotFoundException(String.format("Файл %s не наден!", filePath));
             return rslt;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -1165,9 +1169,9 @@ public class Utl {
         double indxD = Math.random();
         int indxI = 0;
         double curLow = 0;
-        for(int i=0; i<prob.length; i++){
+        for (int i = 0; i < prob.length; i++) {
             curLow += prob[i];
-            if(indxD >= curLow - prob[i] && indxD < curLow) {
+            if (indxD >= curLow - prob[i] && indxD < curLow) {
                 indxI = i;
                 break;
             }
@@ -1175,5 +1179,24 @@ public class Utl {
         return indxI;
     }
 
-}
+    public static RuntimeException wrapErrorAsRuntimeException(String msg, Exception e) {
+        if (e != null && e instanceof RuntimeException)
+            throw (RuntimeException) e;
+        else {
+            if (Strings.isNullOrEmpty(msg))
+                return new RuntimeException(e);
+            else if (e == null)
+                return new RuntimeException(msg);
+            else
+                return new RuntimeException(msg, e);
+        }
+    }
 
+    public static RuntimeException wrapErrorAsRuntimeException(Exception e) {
+        return wrapErrorAsRuntimeException(null, e);
+    }
+
+    public static RuntimeException wrapErrorAsRuntimeException(String msg) {
+        return wrapErrorAsRuntimeException(msg, null);
+    }
+}

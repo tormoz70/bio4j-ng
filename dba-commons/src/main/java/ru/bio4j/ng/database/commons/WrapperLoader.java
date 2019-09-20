@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.WrapQueryType;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -23,7 +24,7 @@ public class WrapperLoader {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -32,7 +33,7 @@ public class WrapperLoader {
             final DocumentBuilder db = createDocumentBuilder();
             return db.parse(is);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 

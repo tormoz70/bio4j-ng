@@ -295,7 +295,7 @@ public class Strings {
             }
             return rslt;
         } catch(Exception e) {
-	        throw new RuntimeException(e);
+	        throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 

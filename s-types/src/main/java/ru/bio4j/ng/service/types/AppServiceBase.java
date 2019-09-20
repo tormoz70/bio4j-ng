@@ -2,6 +2,7 @@ package ru.bio4j.ng.service.types;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.StoredProgMetadata;
 import ru.bio4j.ng.database.api.UpdelexSQLDef;
@@ -10,7 +11,7 @@ import ru.bio4j.ng.model.transport.AnConfig;
 public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AppServiceBase.class);
 
-    private void prepareSQL(SQLDefinitionImpl sqlDefinition) throws Exception {
+    private void prepareSQL(SQLDefinitionImpl sqlDefinition) {
         SQLContext context = this.getSQLContext();
         context.execBatch((ctx) -> {
             UpdelexSQLDef def = sqlDefinition.getUpdateSqlDef();
@@ -34,22 +35,26 @@ public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> 
         }, null);
     }
 
-    public SQLDefinitionImpl getSQLDefinition(String bioCode) throws Exception {
+    public SQLDefinitionImpl getSQLDefinition(String bioCode) {
         SQLDefinitionImpl cursor = CursorParser.pars(bundleContext(), bioCode);
         if(cursor == null)
-            throw new Exception(String.format("Cursor \"%s\" not found in service \"%s\"!", bioCode, this.getClass().getName()));
+            throw Utl.wrapErrorAsRuntimeException(String.format("Cursor \"%s\" not found in service \"%s\"!", bioCode, this.getClass().getName()));
         prepareSQL(cursor);
         return cursor;
     }
 
     private volatile SQLContext sqlContext = null;
     private volatile boolean localSQLContextIsInited = false;
-    protected synchronized void initSqlContext() throws Exception {
+    protected synchronized void initSqlContext() {
         if(sqlContext == null && !localSQLContextIsInited) {
             LOG.debug("Start initSqlContext for service \"{}\"...", this.getClass().getName());
             localSQLContextIsInited = true;
             LOG.debug("Try to create SQLContext for service \"{}\"...", this.getClass().getName());
-            sqlContext = createSQLContext();
+            try {
+                sqlContext = createSQLContext();
+            } catch(Exception e) {
+                Utl.wrapErrorAsRuntimeException(e);
+            }
             if(sqlContext != null)
                 LOG.debug("SQLContext for service \"{}\" CREATED!", this.getClass().getName());
             else
@@ -58,7 +63,7 @@ public abstract class AppServiceBase<T extends AnConfig> extends ServiceBase<T> 
         }
     }
 
-    public SQLContext getSQLContext() throws Exception {
+    public SQLContext getSQLContext() {
         initSqlContext();
         return sqlContext;
     }

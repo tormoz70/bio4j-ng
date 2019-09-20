@@ -100,7 +100,7 @@ public class Paramus implements Closeable {
             });
             return result.isEmpty() ? null : result.get(0);
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw Utl.wrapErrorAsRuntimeException(ex);
         }
 	}
 

@@ -70,7 +70,7 @@ public class Jecksons {
         try {
             return getObjectMapper().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -79,7 +79,7 @@ public class Jecksons {
         try {
             return getObjectMapper().readValue(json, targetType);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -87,7 +87,7 @@ public class Jecksons {
         try {
             return getObjectMapper().readValue(json, typeReference);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class Jecksons {
             return getObjectMapper().readValue(json, new TypeReference<ABean>() {
             });
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -109,7 +109,7 @@ public class Jecksons {
                 return Arrays.asList(decodeABean(json));
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -293,7 +293,7 @@ public class Jecksons {
                         Date val = DateTimeParser.getInstance().pars((String) deserializedParam.getValue(), Jecksons.getInstance().defaultDateTimeFormat);
                         deserializedParam.setValue(val);
                     } catch (DateParseException e) {
-                        throw new RuntimeException(e);
+                        throw Utl.wrapErrorAsRuntimeException(e);
                     }
                 }
             }

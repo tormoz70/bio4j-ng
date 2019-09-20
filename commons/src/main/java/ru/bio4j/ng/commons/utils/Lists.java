@@ -14,7 +14,7 @@ public class Lists {
                     if (check.callback(item))
                         result.add(item);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    throw Utl.wrapErrorAsRuntimeException(e);
                 }
         }
         return result;

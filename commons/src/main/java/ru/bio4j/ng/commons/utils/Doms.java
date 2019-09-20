@@ -25,7 +25,7 @@ public class Doms {
             DocumentBuilder builder = f.newDocumentBuilder();
             return builder.parse(inputStream);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 

@@ -80,8 +80,8 @@ public class WarSecurityFilterBase {
 
         if(!restHelperInited) {
             restHelperInited = true;
-            if(RestHelper.getLogginProcessorInstance() != null)
-                RestHelper.getLogginProcessorInstance().init(securityService);
+            if(RestHelper.loginProcessor() != null)
+                RestHelper.loginProcessor();
         }
     }
 
@@ -91,10 +91,10 @@ public class WarSecurityFilterBase {
         initSecurityHandler(request.getServletContext());
         //GET,POST,PUT,DELETE,PATCH,HEAD
         if(Arrays.asList(AVAMETHODS).contains(((HttpServletRequest)request).getMethod())) {
-            if(RestHelper.getLogginProcessorInstance() != null)
-                RestHelper.getLogginProcessorInstance().processLogin(request, response, chain);
-            else
-                chain.doFilter(request, response);
+            //if(RestHelper.getLogginProcessorInstance() != null)
+            //    RestHelper.getLogginProcessorInstance().processLogin(request, response, chain);
+            //else
+            chain.doFilter(request, response);
         }
     }
 
@@ -105,14 +105,14 @@ public class WarSecurityFilterBase {
         else
             rereq = new WrappedRequest((HttpServletRequest)request);
         rereq.putHeader("Access-Control-Allow-Origin", "*");
-        rereq.putHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+        rereq.putHeader("Access-Control-Allow-Methods", Strings.combineArray(AVAMETHODS, ","));
         return rereq;
     }
 
     public void prepareResponse(final ServletResponse response) {
         ((HttpServletResponse) response).setHeader("Access-Control-Allow-Origin", "*");
         ((HttpServletResponse) response).setHeader("Access-Control-Allow-Credentials", "true");
-        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
+        ((HttpServletResponse) response).setHeader("Access-Control-Allow-Methods", Strings.combineArray(AVAMETHODS, ","));
         ((HttpServletResponse) response).setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Credentials, Origin, X-Requested-With, Content-Type, Accept, X-SToken, X-Pagination-Current-Page, X-Pagination-Per-Page, Authorization");
         ((HttpServletResponse) response).setHeader("Access-Control-Expose-Headers", "Content-Disposition, X-Suggested-Filename");
     }

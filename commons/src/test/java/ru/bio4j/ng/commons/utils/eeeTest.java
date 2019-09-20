@@ -3,11 +3,9 @@ package ru.bio4j.ng.commons.utils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import ru.bio4j.ng.model.transport.ABean;
+import ru.bio4j.ng.model.transport.Param;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -136,7 +134,7 @@ public class eeeTest {
         try {
             ABean bean = Jecksons.getInstance().decodeABean("{\"dummy\": 1,}");
         } catch(Exception e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 
@@ -153,7 +151,7 @@ public class eeeTest {
     @Test(enabled = true)
     public void testException1() throws Exception {
         try{
-            throw new RuntimeException("FTW");
+            throw Utl.wrapErrorAsRuntimeException("FTW");
         } catch (Exception e) {
             //System.out.println(e.toString());
         }

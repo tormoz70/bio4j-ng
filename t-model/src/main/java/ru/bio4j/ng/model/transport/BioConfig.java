@@ -3,10 +3,10 @@ package ru.bio4j.ng.model.transport;
 
 public class BioConfig extends AnConfig {
 
-    @Prop(name = "bio.login.error.handler")
-    private String loginErrorHandler = "ru.bio4j.ng.service.types.DefaultLoginErrorHandler";
-    @Prop(name = "bio.login.processing.handler")
-    private String loginProcessingHandler = "ru.bio4j.ng.service.types.DefaultLoginProcessor";
+    @Prop(name = "bio.login.error.handler") // json | std
+    private String useLoginErrorHandler = "json";
+    @Prop(name = "bio.login.processing.handler") // true | false
+    private Boolean useLoginProcessingHandler = true;
     @Prop(name = "bio.service.odac")
     private String serviceNameOdac = "ru.bio4j.ng.service.api.AppService";
     @Prop(name = "bio.service.fcloud")
@@ -46,14 +46,6 @@ public class BioConfig extends AnConfig {
         return tmpPath;
     }
 
-    public String getLoginErrorHandler() {
-        return loginErrorHandler;
-    }
-
-    public String getLoginProcessingHandler() {
-        return loginProcessingHandler;
-    }
-
     public String getServiceNameOdac() {
         return serviceNameOdac;
     }
@@ -72,5 +64,13 @@ public class BioConfig extends AnConfig {
 
     public String getServiceFCloudApi() {
         return serviceFCloudApi;
+    }
+
+    public String getUseLoginErrorHandler() {
+        return useLoginErrorHandler;
+    }
+
+    public Boolean getUseLoginProcessingHandler() {
+        return useLoginProcessingHandler;
     }
 }

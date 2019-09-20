@@ -2,6 +2,7 @@ package ru.bio4j.ng.service.types;
 
 //import ru.bio4j.ng.commons.utils.Jsons;
 import ru.bio4j.ng.commons.utils.Jecksons;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.User;
@@ -42,7 +43,7 @@ public class ErrorWriterJsonImpl implements ErrorWriter {
             writer.append(Jecksons.getInstance().encode(result));
             return false;
         } catch(IOException e) {
-            throw new RuntimeException(e);
+            throw Utl.wrapErrorAsRuntimeException(e);
         }
     }
 }

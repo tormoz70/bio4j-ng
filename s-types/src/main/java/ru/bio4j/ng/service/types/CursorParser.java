@@ -284,10 +284,10 @@ public class CursorParser {
                         sqlText = Utl.readStream(inputStream);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw Utl.wrapErrorAsRuntimeException(e);
                 }
             else
-                throw new RuntimeException(String.format("Файл %s, на который ссылается объект %s не наден в ресурсах!", sqlFileName, bioCode));
+                throw Utl.wrapErrorAsRuntimeException(String.format("Файл %s, на который ссылается объект %s не наден в ресурсах!", sqlFileName, bioCode));
         }
         return sqlText;
     }
@@ -305,7 +305,7 @@ public class CursorParser {
                 else
                     throw new IOException(String.format("Файл %s, на который ссылается объект %s не наден в ресурсах!", sqlFileName, bioCode));
             } catch(IOException e) {
-                throw new RuntimeException(e);
+                throw Utl.wrapErrorAsRuntimeException(e);
             }
         }
         return sqlText;
@@ -326,7 +326,7 @@ public class CursorParser {
                     return document;
                 }
             } catch(IOException e) {
-                throw new RuntimeException(e);
+                throw Utl.wrapErrorAsRuntimeException(e);
             }
         }
         return null;

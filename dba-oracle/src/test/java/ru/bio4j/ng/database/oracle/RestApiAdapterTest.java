@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.SQLConnectionPoolConfig;
 import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.commons.CrudReaderApi;
@@ -107,7 +108,7 @@ public class RestApiAdapterTest {
                 FileOutputStream out = new FileOutputStream("d:\\test.xls");
                 wb.write(out);
             } catch(IOException e) {
-                throw new RuntimeException(e);
+                throw Utl.wrapErrorAsRuntimeException(e);
             }
         }, null);
         Assert.assertEquals("qwe", "qwe");
