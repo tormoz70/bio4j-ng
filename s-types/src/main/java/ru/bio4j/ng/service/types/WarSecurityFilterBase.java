@@ -91,9 +91,9 @@ public class WarSecurityFilterBase {
         initSecurityHandler(request.getServletContext());
         //GET,POST,PUT,DELETE,PATCH,HEAD
         if(Arrays.asList(AVAMETHODS).contains(((HttpServletRequest)request).getMethod())) {
-            //if(RestHelper.getLogginProcessorInstance() != null)
-            //    RestHelper.getLogginProcessorInstance().processLogin(request, response, chain);
-            //else
+            if(RestHelper.loginProcessor() != null)
+                RestHelper.loginProcessor().process(request, response, chain);
+            else
             chain.doFilter(request, response);
         }
     }

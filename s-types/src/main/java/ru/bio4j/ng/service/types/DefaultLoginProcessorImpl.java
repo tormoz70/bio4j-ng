@@ -22,7 +22,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
     public void init(BioConfig config, SecurityApi securityApi) {
         this.config = config;
         this.securityApi = securityApi;
-        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, config.getUseLoginErrorHandler(), ErrorWriterType.Json);
+        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, config.getUseDefaultLoginErrorHandler(), ErrorWriterType.Json);
         errorWriter = errorWriterType.createImpl();
     }
 
@@ -69,7 +69,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
     }
 
     public void process(final ServletRequest request, final ServletResponse response, final FilterChain chain) {
-        if(config.getUseLoginProcessingHandler()) {
+        if(config.getUseDefaultLoginProcessing()) {
             final HttpServletRequest reqs = (HttpServletRequest) request;
             final HttpServletResponse resp = (HttpServletResponse) response;
             resp.setCharacterEncoding("UTF-8");
