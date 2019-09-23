@@ -3,8 +3,8 @@ package ru.bio4j.ng.model.transport;
 
 public class BioConfig extends AnConfig {
 
-    @Prop(name = "bio.use.default.login.handler") // json | std
-    private String useDefaultLoginErrorHandler = "json";
+    @Prop(name = "bio.use.default.login.error.writer") // json | std
+    private String useDefaultLoginErrorWriter = "json";
     @Prop(name = "bio.use.default.login.processing") // true | false
     private Boolean useDefaultLoginProcessing = true;
     @Prop(name = "bio.service.odac")
@@ -66,8 +66,8 @@ public class BioConfig extends AnConfig {
         return serviceFCloudApi;
     }
 
-    public String getUseDefaultLoginErrorHandler() {
-        return useDefaultLoginErrorHandler;
+    public String getUseDefaultLoginErrorWriter() {
+        return useDefaultLoginErrorWriter;
     }
 
     public Boolean getUseDefaultLoginProcessing() {

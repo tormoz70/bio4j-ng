@@ -22,7 +22,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
     public void init(BioConfig config, SecurityApi securityApi) {
         this.config = config;
         this.securityApi = securityApi;
-        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, config.getUseDefaultLoginErrorHandler(), ErrorWriterType.Json);
+        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, config.getUseDefaultLoginErrorWriter(), ErrorWriterType.Json);
         errorWriter = errorWriterType.createImpl();
     }
 
