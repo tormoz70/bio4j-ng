@@ -1,7 +1,5 @@
 package ru.bio4j.ng.model.transport;
 
-//import flexjson.JSON;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.security.Principal;
