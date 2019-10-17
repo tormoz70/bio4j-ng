@@ -51,6 +51,7 @@ public class BioError extends RuntimeException {
 
     //********************************************************************************
 
+    
     public static class BadRequestType extends BioError {
 
         public BadRequestType() {
