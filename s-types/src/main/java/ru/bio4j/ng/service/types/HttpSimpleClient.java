@@ -2,6 +2,7 @@ package ru.bio4j.ng.service.types;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -14,12 +15,16 @@ import ru.bio4j.ng.commons.utils.LoginRec;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.ABean;
+import ru.bio4j.ng.model.transport.BioError;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class HttpSimpleClient {
     private HttpClient client = HttpClientBuilder.create().build();
 
     private static final int CONNECTION_TIMEOUT_MS = 300 * 1000; // 300 secs.
-    public HttpResponse requestPost(String url, String loginOrSToken, String json, String forwardIP, String forwardClient) throws Exception {
+    public HttpResponse requestPost(String url, String loginOrSToken, String json, String forwardIP, String forwardClient) {
         String body;
         String login = null;
         String stoken = null;
@@ -51,13 +56,21 @@ public class HttpSimpleClient {
             body = json;
         }
         if(!Strings.isNullOrEmpty(body)) {
-            HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
-            request.setEntity(entity);
+            try {
+                HttpEntity entity = new ByteArrayEntity(body.getBytes("UTF-8"));
+                request.setEntity(entity);
+            } catch (UnsupportedEncodingException e) {
+                throw BioError.wrap(e);
+            }
         }
-        return client.execute(request);
+        try {
+            return client.execute(request);
+        } catch (IOException e) {
+            throw BioError.wrap(e);
+        }
     }
 
-    public HttpResponse requestGet(String url, String stoken, String forwardIP, String forwardClient) throws Exception {
+    public HttpResponse requestGet(String url, String stoken, String forwardIP, String forwardClient) {
         if (!Strings.isNullOrEmpty(stoken)) {
             HttpGet request = new HttpGet(url);
             RequestConfig requestConfig = RequestConfig.custom()
@@ -70,7 +83,11 @@ public class HttpSimpleClient {
             request.setHeader("X-ForwardClient", forwardClient);
             request.setHeader("X-SToken", stoken);
             HttpClient client = HttpClientBuilder.create().build();
-            return client.execute(request);
+            try {
+                return client.execute(request);
+            } catch (IOException e) {
+                throw BioError.wrap(e);
+            }
         }
         return null;
     }

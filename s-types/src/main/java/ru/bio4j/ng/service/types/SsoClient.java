@@ -11,6 +11,8 @@ import ru.bio4j.ng.model.transport.BioQueryParams;
 import ru.bio4j.ng.model.transport.SsoResponse;
 import ru.bio4j.ng.model.transport.User;
 
+import java.io.IOException;
+
 import static ru.bio4j.ng.commons.utils.Strings.isNullOrEmpty;
 
 public class SsoClient {
@@ -20,7 +22,7 @@ public class SsoClient {
     private final HttpSimpleClient httpSimpleClient;
 
     private SsoClient(final String ssoServiceUrl) {
-        this.ssoServiceUrl = ssoServiceUrl;
+        this.ssoServiceUrl = String.format("%s/sso", ssoServiceUrl);
         httpSimpleClient = new HttpSimpleClient();
     }
 
@@ -28,13 +30,18 @@ public class SsoClient {
         return new SsoClient(ssoServiceUrl);
     }
 
-    private SsoResponse restoreResponseObject(HttpResponse response) throws Exception {
+    private SsoResponse restoreResponseObject(HttpResponse response) {
         HttpEntity entity = response.getEntity();
-        String responseString = EntityUtils.toString(entity, "UTF-8");
+        String responseString = null;
+        try {
+            responseString = EntityUtils.toString(entity, "UTF-8");
+        } catch(IOException e) {
+            throw BioError.wrap(e);
+        }
         return Jecksons.getInstance().decode(responseString, SsoResponse.class);
     }
 
-    public User login(final BioQueryParams qprms) throws Exception {
+    public User login(final BioQueryParams qprms) {
         final String login = qprms.login;
         final String remoteIP = qprms.remoteIP;
         final String remoteClient = qprms.remoteClient;
@@ -49,29 +56,29 @@ public class SsoClient {
             if (lrsp.success && lrsp.user != null)
                 return lrsp.user;
             if (lrsp.success && lrsp.user == null)
-                throw new Exception("Unexpected error with code 11!");
+                throw new BioError("Unexpected error with code 11!");
             if (!lrsp.success && lrsp.exception != null)
-                throw lrsp.exception;
+                throw BioError.wrap(lrsp.exception);
         }
-        throw new Exception("Unexpected error with code 22!");
+        throw new BioError("Unexpected error with code 22!");
     }
 
-    public User restoreUser(final String stokenOrUsrUid, final String remoteIP, final String remoteClient) throws Exception {
-        String requestUrl = String.format("%s/restoreUser/%s", ssoServiceUrl, stokenOrUsrUid);
+    public User restoreUser(final String stokenOrUsrUid, final String remoteIP, final String remoteClient) {
+        String requestUrl = String.format("%s/api/restoreUser/%s", ssoServiceUrl, stokenOrUsrUid);
         HttpResponse response = httpSimpleClient.requestGet(requestUrl, stokenOrUsrUid, remoteIP, remoteClient);
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
             if (lrsp.success && lrsp.user != null)
                 return lrsp.user;
             if (lrsp.success && lrsp.user == null)
-                throw new Exception("Unexpected error with code 11!");
+                throw new BioError("Unexpected error with code 11!");
             if (!lrsp.success && lrsp.exception != null)
-                throw lrsp.exception;
+                throw BioError.wrap(lrsp.exception);
         }
-        throw new Exception("Unexpected error with code 22!");
+        throw new BioError("Unexpected error with code 22!");
     }
 
-    public User curUser(final BioQueryParams qprms) throws Exception {
+    public User curUser(final BioQueryParams qprms) {
         final String stoken = qprms.stoken;
         final String remoteIP = qprms.remoteIP;
         final String remoteClient = qprms.remoteClient;
@@ -82,14 +89,14 @@ public class SsoClient {
             if (lrsp.success && lrsp.user != null)
                 return lrsp.user;
             if (lrsp.success && lrsp.user == null)
-                throw new Exception("Unexpected error with code 11!");
+                throw new BioError("Unexpected error with code 11!");
             if (!lrsp.success && lrsp.exception != null)
-                throw lrsp.exception;
+                throw BioError.wrap(lrsp.exception);
         }
-        throw new Exception("Unexpected error with code 22!");
+        throw new BioError("Unexpected error with code 22!");
     }
 
-    public void logoff(final BioQueryParams qprms) throws Exception {
+    public void logoff(final BioQueryParams qprms) {
         final String remoteIP = qprms.remoteIP;
         final String remoteClient = qprms.remoteClient;
         final String stoken = qprms.stoken;
@@ -98,12 +105,12 @@ public class SsoClient {
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
             if (!lrsp.success && lrsp.exception != null)
-                throw lrsp.exception;
+                throw BioError.wrap(lrsp.exception);
         }
-        throw new Exception("Unexpected error with code 22!");
+        throw new BioError("Unexpected error with code 22!");
     }
 
-    public Boolean loggedin(final BioQueryParams qprms) throws Exception {
+    public Boolean loggedin(final BioQueryParams qprms) {
         final String stoken = qprms.stoken;
         final String remoteIP = qprms.remoteIP;
         final String remoteClient = qprms.remoteClient;
@@ -114,9 +121,9 @@ public class SsoClient {
             if (lrsp.success)
                 return true;
             if (!lrsp.success)
-                throw lrsp.exception;
+                throw BioError.wrap(lrsp.exception);
         }
-        throw new Exception("Unexpected error with code 22!");
+        throw new BioError("Unexpected error with code 22!");
     }
 
 

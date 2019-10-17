@@ -60,18 +60,23 @@ public class Bundles4WAR {
         }
     }
 
-    public static <T> T createServiceByName(String serviceName) {
+    public static <T> Class<T> findServiceTypeByName(String serviceTypeName) {
         BundleContext bundleContext = Utl.getBundleContext(ServletContextHolder.getServletContext());
         Class<T> resultClazz = null;
         try {
-            resultClazz = (Class<T>)bundleContext.getBundle().loadClass(serviceName);
+            resultClazz = (Class<T>) bundleContext.getBundle().loadClass(serviceTypeName);
         } catch (ClassNotFoundException e) {
-            if(LOG.isDebugEnabled())LOG.debug(String.format("Class not found by name %s!", serviceName), e);
+            if (LOG.isDebugEnabled()) LOG.debug(String.format("Class not found by name %s!", serviceTypeName), e);
             resultClazz = null;
         } catch (Exception e) {
-            LOG.error(String.format("Unexpected error while finding class by name %s!", serviceName), e);
+            LOG.error(String.format("Unexpected error while finding class by name %s!", serviceTypeName), e);
             resultClazz = null;
         }
+        return resultClazz;
+    }
+
+    public static <T> T findServiceByName(String serviceTypeName) {
+        Class<T> resultClazz = findServiceTypeByName(serviceTypeName);
         try {
             return resultClazz != null ? resultClazz.newInstance() : null;
         } catch (InstantiationException | IllegalAccessException e) {

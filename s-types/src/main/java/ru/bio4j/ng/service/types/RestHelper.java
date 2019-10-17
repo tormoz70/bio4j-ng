@@ -31,6 +31,10 @@ public class RestHelper {
         return SingletonContainer.LOGINPROCESSOR;
     }
 
+    public static ConfigProvider configProvider() {
+        return SingletonContainer.CONFIG;
+    }
+
     private static class SingletonContainer {
         public static final ConfigProvider CONFIG;
         public static final AppServiceTypeGetters SRVTYPES;

@@ -1,5 +1,6 @@
 package ru.bio4j.ng.database.commons;
 
+import com.zaxxer.hikari.HikariConfig;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,11 @@ import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.utils.Strings;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.database.api.*;
+import ru.bio4j.ng.model.transport.BioError;
+
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
+import java.util.Properties;
 
 public class DbContextFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DbContextFactory.class);
@@ -19,7 +23,7 @@ public class DbContextFactory {
         return Converter.toType(str, type);
     }
 
-    public static <T extends DbContextAbstract> SQLContext createApache(SQLConnectionPoolConfig config, Class<T> clazz) throws Exception {
+    public static <T extends DbContextAbstract> SQLContext createApache(SQLConnectionPoolConfig config, Class<T> clazz) {
         if(LOG.isDebugEnabled())
             LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
         final PoolProperties properties = new PoolProperties();
@@ -47,8 +51,41 @@ public class DbContextFactory {
                         + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
                         + "org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer");
         DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(properties);
-        Constructor<T> constructor = clazz.getConstructor(DataSource.class, SQLConnectionPoolConfig.class);
-        return constructor.newInstance(new Object[]{dataSource, config});
+        try {
+            Constructor<T> constructor = clazz.getConstructor(DataSource.class, SQLConnectionPoolConfig.class);
+            return constructor.newInstance(new Object[]{dataSource, config});
+        } catch (Exception e) {
+            throw BioError.wrap(e);
+        }
+    }
+
+
+    public static <T extends DbContextAbstract> SQLContext createHikariCP(SQLConnectionPoolConfig config, Class<T> clazz) {
+        if(LOG.isDebugEnabled())
+            LOG.debug("Creating SQLContext with:\n" + Utl.buildBeanStateInfo(config, null, "\t"));
+        final Properties properties = new Properties();
+        properties.setProperty("dataSource.cachePrepStmts", "true");
+        properties.setProperty("dataSource.prepStmtCacheSize", "250");
+        properties.setProperty("dataSource.prepStmtCacheSqlLimit", "2048");
+
+        HikariConfig cfg = new HikariConfig();
+        cfg.setPoolName(config.getPoolName());
+        cfg.setAutoCommit(false);
+        cfg.setDriverClassName(config.getDbDriverName());
+        cfg.setJdbcUrl(config.getDbConnectionUrl());
+        cfg.setUsername(config.getDbConnectionUsr());
+        cfg.setPassword(config.getDbConnectionPwd());
+        cfg.setMaximumPoolSize(getValFromCfg(config.getMaxPoolSize(), "10", int.class));
+        cfg.setMinimumIdle(getValFromCfg(config.getMinIdle(), "2", int.class));
+        cfg.setDataSourceProperties(properties);
+
+        DataSource dataSource = new com.zaxxer.hikari.HikariDataSource(cfg);
+        try {
+            Constructor<T> constructor = clazz.getConstructor(DataSource.class, SQLConnectionPoolConfig.class);
+            return constructor.newInstance(new Object[]{dataSource, config});
+        } catch (Exception e) {
+            throw BioError.wrap(e);
+        }
     }
 
 }

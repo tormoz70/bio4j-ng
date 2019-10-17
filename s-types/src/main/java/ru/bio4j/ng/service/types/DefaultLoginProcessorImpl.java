@@ -1,6 +1,8 @@
 package ru.bio4j.ng.service.types;
 
 //import ru.bio4j.ng.commons.utils.Jsons;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.*;
 import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.*;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class DefaultLoginProcessorImpl implements LoginProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultLoginProcessorImpl.class);
 
     private SecurityApi securityApi;
     private ErrorWriter errorWriter;
@@ -90,6 +93,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
                     chain.doFilter(request, resp);
                 }
             } catch (Exception e) {
+                LOG.error(null, e);
                 errorWriter.write(e, resp);
             }
         }

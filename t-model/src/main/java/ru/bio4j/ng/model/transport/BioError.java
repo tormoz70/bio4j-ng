@@ -1,10 +1,8 @@
 package ru.bio4j.ng.model.transport;
 
-import javax.servlet.ServletException;
-
 public class BioError extends RuntimeException {
 
-    private int errCode = 6000;
+    protected int errorCode = 6000;
 
     public BioError() {
         super();
@@ -12,29 +10,29 @@ public class BioError extends RuntimeException {
 
     public BioError(int code) {
         super();
-        errCode = code;
+        errorCode = code;
     }
 
     public BioError(int code, String message) {
         super(message);
-        errCode = code;
+        errorCode = code;
     }
     public BioError(String message) {
         super(message);
     }
     public BioError(int code, String message, Exception e) {
         super(message, e);
-        errCode = code;
+        errorCode = code;
     }
     public BioError(String message, Exception e) {
         super(message, e);
     }
 
-    private BioError(int code, Exception e) {
+    public BioError(int code, Exception e) {
         super(e);
-        errCode = code;
+        errorCode = code;
     }
-    private BioError(Exception e) {
+    public BioError(Exception e) {
         super(e);
     }
 
@@ -47,32 +45,32 @@ public class BioError extends RuntimeException {
         return null;
     }
 
-    public int getErrCode() {
-        return errCode;
+    public int getErrorCode() {
+        return errorCode;
     }
 
     //********************************************************************************
 
-    public static abstract class SysError extends BioError {
-        public SysError() {
-            super(6500);
-        }
-        public SysError(int code) {
-            super(code);
-        }
-        public SysError(String message) {
-            super(6500, message);
-        }
-    }
-
-    public static abstract class AppError extends BioError {
-        public AppError() {
-            super(6200);
-        }
-        public AppError(String message) {
-            super(6200, message);
-        }
-    }
+//    public static abstract class SysError extends BioError {
+//        public SysError() {
+//            super(6500);
+//        }
+//        public SysError(int code) {
+//            super(code);
+//        }
+//        public SysError(String message) {
+//            super(6500, message);
+//        }
+//    }
+//
+//    public static abstract class AppError extends BioError {
+//        public AppError() {
+//            super(6200);
+//        }
+//        public AppError(String message) {
+//            super(6200, message);
+//        }
+//    }
 
     public static class BadRequestType extends BioError {
 
@@ -93,16 +91,16 @@ public class BioError extends RuntimeException {
         }
     }
 
-    public static class LocationFail extends SysError {
-        public LocationFail() {
-            super();
-        }
-        public LocationFail(Object locationId) {
-            super(String.format("Cursor fail location to [%s] record by pk!!!", locationId));
-        }
-    }
-
-
+//    public static class LocationFail extends SysError {
+//        public LocationFail() {
+//            super();
+//        }
+//        public LocationFail(Object locationId) {
+//            super(String.format("Cursor fail location to [%s] record by pk!!!", locationId));
+//        }
+//    }
+//
+//
     public static abstract class Login extends BioError {
         public Login(int code) {
             super(code);
@@ -149,7 +147,7 @@ public class BioError extends RuntimeException {
 
     }
 
-    public static class BadIODescriptor extends SysError {
+    public static class BadIODescriptor extends BioError {
         public BadIODescriptor() {
             super();
         }

@@ -1,17 +1,18 @@
 package ru.bio4j.ng.database.api;
 
-public class BioSQLException extends RuntimeException {
-    private int sqlErrorCode = 0;
+import ru.bio4j.ng.model.transport.BioError;
+
+public class BioSQLException extends BioError {
     public BioSQLException(String msg, Exception parentException){
         super(msg, parentException);
         if(parentException instanceof java.sql.SQLException)
-            this.sqlErrorCode = ((java.sql.SQLException)parentException).getErrorCode();
+            this.errorCode = ((java.sql.SQLException)parentException).getErrorCode();
     }
 
     public BioSQLException(Exception parentException){
         super(parentException);
         if(parentException instanceof java.sql.SQLException)
-            this.sqlErrorCode = ((java.sql.SQLException)parentException).getErrorCode();
+            this.errorCode = ((java.sql.SQLException)parentException).getErrorCode();
     }
 
     public static BioSQLException create(Exception parentException){
@@ -30,7 +31,7 @@ public class BioSQLException extends RuntimeException {
 
     public BioSQLException(int errorCode, String msg){
         super(msg);
-        this.sqlErrorCode = errorCode;
+        this.errorCode = errorCode;
     }
 
     public BioSQLException(String msg){
@@ -38,7 +39,7 @@ public class BioSQLException extends RuntimeException {
     }
 
     public int getErrorCode() {
-        return sqlErrorCode;
+        return errorCode;
     }
 
     @Override
