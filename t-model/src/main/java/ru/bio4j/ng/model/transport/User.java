@@ -8,8 +8,6 @@ import java.security.Principal;
 
 public class User implements Principal {
 
-    //public static final String BIO_ANONYMOUS_STOKEN = "$bio-anonymous$";
-
     private String innerUid;
     private String stoken;
     private String login;
