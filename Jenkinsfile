@@ -32,18 +32,14 @@ pipeline {
 		
 		stage('Pull') {
 			steps {
-				git(url: 'http://192.168.70.200/bio4j-ng/bio4j-ng-framework.git', branch: 'master', credentialsId: 'jenkins')
+				git(url: 'http://192.168.70.200/bio4j-ng/bio4j-ng-framework.git', branch: 'master-v1.5.0', credentialsId: 'jenkins')
+				git(url: 'http://192.168.70.200/bio4j-ng/bio4j-ng-framework.git', branch: 'master-v2.1.0', credentialsId: 'jenkins')
+				git(url: 'http://192.168.70.200/bio4j-ng/bio4j-ng-framework.git', branch: 'master-v2.5.0', credentialsId: 'jenkins')
 			}
 		}
 
 		stage('Build') {
 			steps {
-/*
-				configFileProvider([configFile(fileId: 'oracle-maven-settings', variable: 'MAVEN_SETTINGS'),
-					configFile(fileId: 'oracle-settings-security', variable: 'ORACLE_MAVEN_SECURITY')]) {
-					sh 'mvn -s $MAVEN_SETTINGS -Dsettings.security=$ORACLE_MAVEN_SECURITY -Dmaven.test.skip=true clean install'
-				}
-*/
 				sh 'mvn -Dmaven.test.skip=true clean install'
 			}
 		}
