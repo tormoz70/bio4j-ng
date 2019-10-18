@@ -46,6 +46,8 @@ public class AppServiceTypesImpl implements AppServiceTypeGetters {
 
     public static class Builder {
         public AppServiceTypeGetters build(BioConfig config) {
+            if (config == null)
+                throw new IllegalArgumentException("Parameter config is null!");
             Class<? extends OdacService> odacServiceType = Bundles4WAR.findServiceTypeByName(config.getServiceNameOdac());
             Class<? extends FCloudApi> fcloudApiType = Bundles4WAR.findServiceTypeByName(config.getServiceNameFCloud());
             Class<? extends SecurityService> securityServiceType = Bundles4WAR.findServiceTypeByName(config.getServiceNameSecurity());

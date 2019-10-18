@@ -7,13 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import ru.bio4j.ng.commons.converter.Converter;
 import ru.bio4j.ng.commons.converter.MetaTypeConverter;
-import ru.bio4j.ng.model.transport.ABean;
-import ru.bio4j.ng.model.transport.MetaType;
-import ru.bio4j.ng.model.transport.Param;
+import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.model.transport.jstore.Sort;
 import ru.bio4j.ng.model.transport.jstore.filter.Expression;
 import ru.bio4j.ng.model.transport.jstore.filter.Filter;
-import ru.bio4j.ng.model.transport.Prop;
 
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
@@ -279,7 +276,7 @@ public class Utl {
             field.setAccessible(true);
             val = field.get(bean);
         } catch (IllegalAccessException ex) {
-            val = ex.toString();
+            throw new AccessToBeanFieldException(ex);
         }
         String valStr = (val instanceof String) ? ((String) val).trim() : null;
         if (!Strings.isNullOrEmpty(valStr) && valStr.indexOf("\n") >= 0) {
@@ -294,7 +291,7 @@ public class Utl {
             field.setAccessible(true);
             val = field.get(bean);
         } catch (IllegalAccessException ex) {
-            val = ex.toString();
+            throw new AccessToBeanFieldException(ex);
         }
         return val;
     }
@@ -308,13 +305,28 @@ public class Utl {
                     field.setAccessible(true);
                     val = field.get(bean);
                 } catch (IllegalAccessException ex) {
-                    val = ex.toString();
+                    throw new AccessToBeanFieldException(ex);
                 }
             }
         }
         return val;
     }
 
+    public static <T> T fieldValue(Object bean, String fieldName, Class<T> clazz) {
+        T val = null;
+        if (bean != null) {
+            java.lang.reflect.Field field = findFieldOfBean(bean.getClass(), fieldName);
+            if (field != null) {
+                try {
+                    field.setAccessible(true);
+                    val = Converter.toType(field.get(bean), clazz);
+                } catch (IllegalAccessException ex) {
+                    throw new AccessToBeanFieldException(ex);
+                }
+            }
+        }
+        return val;
+    }
 
     private static Boolean checkFilter(String fieldName, String excludeFields) {
         String[] fields2exclude = Strings.split(excludeFields, ";");
@@ -374,7 +386,7 @@ public class Utl {
         return out.toString();
     }
 
-    public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromDict(Dictionary vals, Object bean) {
         boolean result = false;
         if (vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
@@ -401,7 +413,7 @@ public class Utl {
         return result;
     }
 
-    public static boolean applyValuesToBeanFromHashMap(HashMap vals, Object bean, String inclideAttrs, String excludeAttrs) throws ApplyValuesToBeanException {
+    public static boolean applyValuesToBeanFromMap(Map vals, Object bean, String inclideAttrs, String excludeAttrs) {
         boolean result = false;
         if (vals == null)
             throw new IllegalArgumentException("Argument \"vals\" cannot be null!");
@@ -434,12 +446,12 @@ public class Utl {
         return result;
     }
 
-    public static boolean applyValuesToBeanFromHashMap(HashMap vals, Object bean) throws ApplyValuesToBeanException {
-        return applyValuesToBeanFromHashMap(vals, bean, null, null);
+    public static boolean applyValuesToBeanFromMap(Map vals, Object bean) {
+        return applyValuesToBeanFromMap(vals, bean, null, null);
     }
 
-    public static boolean applyValuesToBeanFromABean(ABean vals, Object bean) throws ApplyValuesToBeanException {
-        return applyValuesToBeanFromHashMap(vals, bean);
+    public static boolean applyValuesToBeanFromABean(ABean vals, Object bean) {
+        return applyValuesToBeanFromMap(vals, bean);
     }
 
     public static void applyValuesToABeanFromABean(ABean srcBean, ABean dstBean, boolean addIfNotExists) {
@@ -476,7 +488,12 @@ public class Utl {
 
     private static Field findFieldOfBean(Class<?> type, String fieldName) {
         for (java.lang.reflect.Field fld : getAllObjectFields(type)) {
-            if (fld.getName().equals(fieldName))
+            Prop p = findAnnotation(Prop.class, fld);
+            String annotatedFieldName = null;
+            if (p != null)
+                annotatedFieldName = p.name();
+            if (Strings.compare(fld.getName(), fieldName, true) ||
+                    (!Strings.isNullOrEmpty(annotatedFieldName) && Strings.compare(annotatedFieldName, fieldName, true)))
                 return fld;
         }
         return null;

@@ -4,6 +4,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.types.DelegateAction1;
+import ru.bio4j.ng.model.transport.BioError;
 
 import java.lang.annotation.Annotation;
 import java.util.Enumeration;
@@ -60,19 +61,22 @@ public class Bundles4WAR {
         }
     }
 
-    public static <T> Class<T> findServiceTypeByName(String serviceTypeName) {
+    public static <T> Class<T> findServiceTypeByName(String serviceTypeName, boolean silent) {
         BundleContext bundleContext = Utl.getBundleContext(ServletContextHolder.getServletContext());
-        Class<T> resultClazz = null;
+        Class<T> resultClazz;
         try {
             resultClazz = (Class<T>) bundleContext.getBundle().loadClass(serviceTypeName);
         } catch (ClassNotFoundException e) {
-            if (LOG.isDebugEnabled()) LOG.debug(String.format("Class not found by name %s!", serviceTypeName), e);
             resultClazz = null;
+            if (!silent)
+                throw new BioError(String.format("Class not found by name \"%s\"!", serviceTypeName), e);
         } catch (Exception e) {
-            LOG.error(String.format("Unexpected error while finding class by name %s!", serviceTypeName), e);
-            resultClazz = null;
+            throw BioError.wrap(e);
         }
         return resultClazz;
+    }
+    public static <T> Class<T> findServiceTypeByName(String serviceTypeName) {
+        return findServiceTypeByName(serviceTypeName, true);
     }
 
     public static <T> T findServiceByName(String serviceTypeName) {

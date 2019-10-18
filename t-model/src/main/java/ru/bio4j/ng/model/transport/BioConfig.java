@@ -6,7 +6,7 @@ public class BioConfig extends AnConfig {
     @Prop(name = "bio.use.default.login.error.writer") // json | std
     private String useDefaultLoginErrorWriter = "json";
     @Prop(name = "bio.use.default.login.processing") // true | false
-    private Boolean useDefaultLoginProcessing = true;
+    private boolean useDefaultLoginProcessing = true;
     @Prop(name = "bio.service.odac")
     private String serviceNameOdac = "ru.bio4j.ng.service.api.AppService";
     @Prop(name = "bio.service.fcloud")
@@ -29,6 +29,19 @@ public class BioConfig extends AnConfig {
     @Prop(name = "global.live-bio.content.path")
     private String liveBioContentPath = null;
 
+//    public BioConfig() {
+//        useDefaultLoginErrorWriter = "json";
+//        useDefaultLoginProcessing = true;
+//        serviceNameOdac = "ru.bio4j.ng.service.api.AppService";
+//        serviceNameFCloud = "ru.bio4j.ng.service.api.FCloudApi";
+//        serviceNameSecurity = "ru.bio4j.ng.service.api.SecurityService";
+//        serviceNameCache = "ru.bio4j.ng.service.api.CacheService";
+//        serviceFCloudApi = "fcloud-h2registry";
+//        cachePersistentPath = "./ehcache-persistent";
+//        contentResolverPath = "./bio-content";
+//        tmpPath = "./bio-tmp";
+//        liveBioContentPath = null;
+//    }
 
     public String getLiveBioContentPath() {
         return liveBioContentPath;

@@ -6,10 +6,8 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jecksons;
-import ru.bio4j.ng.model.transport.BioError;
-import ru.bio4j.ng.model.transport.BioQueryParams;
-import ru.bio4j.ng.model.transport.SsoResponse;
-import ru.bio4j.ng.model.transport.User;
+import ru.bio4j.ng.commons.utils.Utl;
+import ru.bio4j.ng.model.transport.*;
 
 import java.io.IOException;
 
@@ -28,6 +26,12 @@ public class SsoClient {
 
     public static SsoClient create(final String ssoServiceUrl) {
         return new SsoClient(ssoServiceUrl);
+    }
+
+    private static User extractUserFromRsp(SsoResponse lrsp) {
+        User rslt = new User();
+        Utl.applyValuesToBeanFromBean(lrsp.user, rslt);
+        return rslt;
     }
 
     private SsoResponse restoreResponseObject(HttpResponse response) {
@@ -54,7 +58,7 @@ public class SsoClient {
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
             if (lrsp.success && lrsp.user != null)
-                return lrsp.user;
+                return extractUserFromRsp(lrsp);
             if (lrsp.success && lrsp.user == null)
                 throw new BioError("Unexpected error with code 11!");
             if (!lrsp.success && lrsp.exception != null)
@@ -68,8 +72,9 @@ public class SsoClient {
         HttpResponse response = httpSimpleClient.requestGet(requestUrl, stokenOrUsrUid, remoteIP, remoteClient);
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
-            if (lrsp.success && lrsp.user != null)
-                return lrsp.user;
+            if (lrsp.success && lrsp.user != null) {
+                return extractUserFromRsp(lrsp);
+            }
             if (lrsp.success && lrsp.user == null)
                 throw new BioError("Unexpected error with code 11!");
             if (!lrsp.success && lrsp.exception != null)
@@ -87,7 +92,7 @@ public class SsoClient {
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
             if (lrsp.success && lrsp.user != null)
-                return lrsp.user;
+                return extractUserFromRsp(lrsp);
             if (lrsp.success && lrsp.user == null)
                 throw new BioError("Unexpected error with code 11!");
             if (!lrsp.success && lrsp.exception != null)

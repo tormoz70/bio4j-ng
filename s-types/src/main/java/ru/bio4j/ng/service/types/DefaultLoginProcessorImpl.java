@@ -8,6 +8,7 @@ import ru.bio4j.ng.model.transport.*;
 import ru.bio4j.ng.service.api.*;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -72,13 +73,14 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
     }
 
     public void process(final ServletRequest request, final ServletResponse response, final FilterChain chain) {
+        RestHelper.getInstance();
         if(config.getUseDefaultLoginProcessing()) {
             final HttpServletRequest reqs = (HttpServletRequest) request;
             final HttpServletResponse resp = (HttpServletResponse) response;
             resp.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
-            final String servletPath = reqs.getServletPath();
-            final HttpSession session = reqs.getSession();
+//            final String servletPath = reqs.getServletPath();
+//            final HttpSession session = reqs.getSession();
             try {
                 //debug("Do filter for sessionId, servletPath, request: {}, {}, {}", session.getId(), servletPath, request);
                 String pathInfo = reqs.getPathInfo();
@@ -95,6 +97,12 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
             } catch (Exception e) {
                 LOG.error(null, e);
                 errorWriter.write(e, resp);
+            }
+        } else {
+            try {
+                chain.doFilter(request, response);
+            } catch (ServletException | IOException e) {
+                throw BioError.wrap(e);
             }
         }
     }

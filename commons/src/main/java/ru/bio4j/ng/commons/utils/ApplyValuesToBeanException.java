@@ -1,6 +1,8 @@
 package ru.bio4j.ng.commons.utils;
 
-public class ApplyValuesToBeanException extends RuntimeException {
+import ru.bio4j.ng.model.transport.BioError;
+
+public class ApplyValuesToBeanException extends BioError {
     public ApplyValuesToBeanException() {
         super();
         field = null;

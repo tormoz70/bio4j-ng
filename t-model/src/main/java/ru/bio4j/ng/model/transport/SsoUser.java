@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.security.Principal;
 
-public class User implements Principal {
+public class SsoUser implements Principal {
 
     private String innerUid;
     private String stoken;
@@ -116,7 +116,6 @@ public class User implements Principal {
         this.remoteIP = remoteIP;
     }
 
-    @JsonIgnore
     public String getInnerUid() {
         return innerUid;
     }

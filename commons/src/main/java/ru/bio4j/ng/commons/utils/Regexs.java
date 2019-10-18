@@ -21,19 +21,25 @@ public class Regexs {
         List<String> rslt = new ArrayList<>();
         final Pattern pattern = Pattern.compile(regex, flags);
         final Matcher matcher = pattern.matcher(line);
-        while (matcher.find())
-            rslt.add(matcher.group());
+        if(matcher != null) {
+            while (matcher.find())
+                rslt.add(matcher.group());
+        }
         return rslt;
     }
 
     public static int pos(String line, String regex, int flags) {
         Matcher m = match(line, regex, flags);
-        return m.find() ? m.start() : -1;
+        if(m != null)
+            return m.find() ? m.start() : -1;
+        return -1;
     }
 
     public static String replace(String line, String regex, String replacement, int flags) {
         Matcher m = match(line, regex, flags);
-        return m.replaceAll(replacement);
+        if(m != null)
+            return m.replaceAll(replacement);
+        return line;
     }
 
 }
