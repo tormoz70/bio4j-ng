@@ -1,4 +1,4 @@
-package ru.bio4j.ng.service.types;
+package ru.bio4j.ng.sso.client;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jecksons;
 import ru.bio4j.ng.commons.utils.Utl;
 import ru.bio4j.ng.model.transport.*;
+import ru.bio4j.ng.service.types.HttpSimpleClient;
 
 import java.io.IOException;
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v11.xsd"
+        multiselection="false">
+	<SQL action="execute">
+		<text>${bio_login.vesion}.logoff</text>
+        <param name="p_stoken" type="string"/>
+        <param name="p_remote_ip" type="string"/>
+	</SQL>
+ 	<fields/>
+</cursor>
+

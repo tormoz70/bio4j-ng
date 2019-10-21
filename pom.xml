@@ -651,6 +651,7 @@
         <module>dba-pgsql</module>
         <!--<module>sql-context</module>-->
         <module>ehcache</module>
+        <module>sso-client</module>
         <module>content-resolver</module>
         <!--<module>security-provider</module>-->
         <module>config</module>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cursor xmlns="http://bio4j.ru/biodef-repo/store"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://bio4j.ru/biodef-repo/store http://bio4j.ru/biodef-repo/store/store-v11.xsd"
+        multiselection="false">
+	<SQL action="select">
+		<text><![CDATA[
+select
+    usr_uid as innerUid,
+    usr_login as login,
+    fio as fio,
+    email_addr as email,
+    usr_phone as phone,
+    org_id as orgId,
+    org_name as orgName,
+    org_desc as orgDesc,
+    usr_roles as roles,
+    usr_grants as grants,
+    stoken as stoken,
+    0 as anonymous
+from table(${bio_login.vesion}.get_usr(:p_stoken))
+		]]></text>
+	</SQL>
+ 	<fields>
+        <field name="innerUid" type="string" pk="true"/>
+        <field name="login" type="string"/>
+        <field name="fio" type="string"/>
+        <field name="email" type="string"/>
+        <field name="phone" type="string"/>
+        <field name="orgId" type="string"/>
+        <field name="orgName" type="string"/>
+        <field name="orgDesc" type="string"/>
+        <field name="roles" type="string"/>
+        <field name="grants" type="string"/>
+        <field name="stoken" type="string"/>
+        <field name="anonymous" type="boolean"/>
+    </fields>
+</cursor>
+
