@@ -20,7 +20,7 @@ public class SsoClient {
     private final HttpSimpleClient httpSimpleClient;
 
     private SsoClient(final String ssoServiceUrl) {
-        this.ssoServiceUrl = String.format("%s/sso", ssoServiceUrl);
+        this.ssoServiceUrl = String.format("%s/api", ssoServiceUrl);
         httpSimpleClient = new HttpSimpleClient();
     }
 
@@ -68,7 +68,7 @@ public class SsoClient {
     }
 
     public User restoreUser(final String stokenOrUsrUid, final String remoteIP, final String remoteClient) {
-        String requestUrl = String.format("%s/api/restoreUser/%s", ssoServiceUrl, stokenOrUsrUid);
+        String requestUrl = String.format("%s/restoreUser/%s", ssoServiceUrl, stokenOrUsrUid);
         HttpResponse response = httpSimpleClient.requestGet(requestUrl, stokenOrUsrUid, remoteIP, remoteClient);
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
@@ -119,7 +119,7 @@ public class SsoClient {
         final String stoken = qprms.stoken;
         final String remoteIP = qprms.remoteIP;
         final String remoteClient = qprms.remoteClient;
-        String requestUrl = String.format("%s/api/test", ssoServiceUrl);
+        String requestUrl = String.format("%s/test", ssoServiceUrl);
         HttpResponse response = httpSimpleClient.requestGet(requestUrl, stoken, remoteIP, remoteClient);
         SsoResponse lrsp = restoreResponseObject(response);
         if(lrsp != null) {
