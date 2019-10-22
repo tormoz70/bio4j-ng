@@ -47,7 +47,7 @@ public class SQLFactoryTest {
 
     @BeforeTest
     public static void setUpClass() throws Exception {
-        context = DbContextFactory.createApache(
+        context = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)
@@ -595,7 +595,7 @@ public class SQLFactoryTest {
     public void testSQLCommandOpenCursor2() {
         try {
 
-            SQLContext contextLocal = DbContextFactory.createApache(
+            SQLContext contextLocal = DbContextFactory.createHikariCP(
                     SQLConnectionPoolConfig.builder()
                             .poolName("TEST-CONN-POOL-123")
                             .dbDriverName(testDBDriverName)
@@ -760,7 +760,7 @@ public class SQLFactoryTest {
     public void testSQLCommandOpenCursor3() {
         try {
 
-            SQLContext contextLocal = DbContextFactory.createApache(
+            SQLContext contextLocal = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                     .poolName("TEST-CONN-POOL-123")
                     .dbDriverName(testDBDriverName)
@@ -825,7 +825,7 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandOpenCursor4() throws Exception {
 
-        SQLContext context = DbContextFactory.createApache(
+        SQLContext context = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -886,7 +886,7 @@ public class SQLFactoryTest {
     @Test(enabled = false)
     public void testSQLCommandOpenCursor5() throws Exception {
 
-        SQLContext context = DbContextFactory.createApache(
+        SQLContext context = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -922,7 +922,7 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void test67() throws Exception {
 
-        SQLContext ctx = DbContextFactory.createApache(
+        SQLContext ctx = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)
@@ -949,7 +949,7 @@ public class SQLFactoryTest {
     @Test(enabled = true)
     public void testSQLCommandOpenCursor888() throws Exception {
 
-        SQLContext context = DbContextFactory.createApache(
+        SQLContext context = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)

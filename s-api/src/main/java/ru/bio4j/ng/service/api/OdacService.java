@@ -4,6 +4,6 @@ import ru.bio4j.ng.database.api.SQLContext;
 import ru.bio4j.ng.database.api.SQLDefinition;
 
 public interface OdacService {
-    SQLDefinition getSQLDefinition(String bioCode) throws Exception;
-    SQLContext getSQLContext() throws Exception;
+    SQLDefinition getSQLDefinition(String bioCode);
+    SQLContext getSQLContext();
 }

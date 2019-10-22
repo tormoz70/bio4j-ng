@@ -22,10 +22,10 @@ public class CrudWriterApi {
             final List<ABean> rows,
             final SQLContext context,
             final SQLDefinition cursor,
-            final User user) throws Exception {
+            final User user) {
         UpdelexSQLDef sqlDef = cursor.getUpdateSqlDef();
         if(sqlDef == null)
-            throw new Exception(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
+            throw new BioError(String.format("For bio \"%s\" must be defined \"create/update\" sql!", cursor.getBioCode()));
         context.execBatch((ctx) -> {
             SQLStoredProc cmd = ctx.createStoredProc();
             try {
@@ -73,10 +73,10 @@ public class CrudWriterApi {
             final List<Object> ids,
             final SQLContext context,
             final SQLDefinition cursor,
-            final User user) throws Exception {
+            final User user) {
         UpdelexSQLDef sqlDef = cursor.getDeleteSqlDef();
         if (sqlDef == null)
-            throw new Exception(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
+            throw new BioError(String.format("For bio \"%s\" must be defined \"delete\" sql!", cursor.getBioCode()));
         int affected = context.execBatch((ctx) -> {
             int r = 0;
             SQLStoredProc cmd = ctx.createStoredProc();
@@ -121,7 +121,7 @@ public class CrudWriterApi {
             final Object params,
             final SQLContext context,
             final SQLDefinition cursor,
-            final User user) throws Exception {
+            final User user) {
         context.execBatch((ctx) -> {
             execSQL0(params, ctx, cursor);
         }, user);

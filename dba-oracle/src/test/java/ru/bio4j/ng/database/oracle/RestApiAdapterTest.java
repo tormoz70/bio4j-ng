@@ -33,7 +33,7 @@ public class RestApiAdapterTest {
 
 //    @BeforeTest
     public static void setUpClass() throws Exception {
-        context = DbContextFactory.createApache(
+        context = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)
@@ -89,7 +89,7 @@ public class RestApiAdapterTest {
     @Test(enabled = true)
     public void testExport() throws Exception {
 
-        SQLContext ctx = DbContextFactory.createApache(
+        SQLContext ctx = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL-123")
                         .dbDriverName(testDBDriverName)

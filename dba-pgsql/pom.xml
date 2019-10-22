@@ -61,9 +61,15 @@
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
+<!--        <dependency>-->
+<!--            <groupId>${project.groupId}</groupId>-->
+<!--            <artifactId>bio4j-jdbc-osgi</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>bio4j-jdbc-osgi</artifactId>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>provided</scope>
         </dependency>
 

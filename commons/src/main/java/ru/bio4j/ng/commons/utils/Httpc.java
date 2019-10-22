@@ -2,6 +2,7 @@ package ru.bio4j.ng.commons.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.Prop;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,15 +20,18 @@ public class Httpc {
         void process(InputStream inputStream) throws Exception;
     }
 
-    public static void readDataFromRequest(HttpServletRequest request, StringBuilder jd) throws IOException {
+    public static void readDataFromRequest(HttpServletRequest request, StringBuilder jd) {
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));) {
             String line;
             while ((line = reader.readLine()) != null)
                 jd.append(line);
+        } catch (IOException e) {
+            throw BioError.wrap(e);
         }
     }
 
-    private static String readJsonDataFromRequestParams(HttpServletRequest request, String jsonDataParam) throws IOException {
+    private static String readJsonDataFromRequestParams(HttpServletRequest request, String jsonDataParam) {
         final String jsonDataAsQueryParam = request.getParameter(jsonDataParam);
         StringBuilder jd = new StringBuilder();
         if (!Strings.isNullOrEmpty(jsonDataAsQueryParam))
@@ -37,23 +41,28 @@ public class Httpc {
         return jd.toString();
     }
 
-    public static <T> T createBeanFromHttpRequest(HttpServletRequest request, Class<T> clazz) throws Exception {
+    public static <T> T createBeanFromHttpRequest(HttpServletRequest request, Class<T> clazz) {
         if (request == null)
             throw new IllegalArgumentException("Argument \"request\" cannot be null!");
         if (clazz == null)
             throw new IllegalArgumentException("Argument \"bean\" cannot be null!");
-        T result = (T) clazz.newInstance();
-        for (java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
-            String fldName = fld.getName();
-            Prop p = Utl.findAnnotation(Prop.class, fld);
-            if (p != null) {
-                fldName = p.name();
-                String val = request.getParameter(fldName);
-                fld.setAccessible(true);
-                fld.set(result, val);
+        try {
+            T result;
+            result = (T) clazz.newInstance();
+            for (java.lang.reflect.Field fld : Utl.getAllObjectFields(clazz)) {
+                String fldName = fld.getName();
+                Prop p = Utl.findAnnotation(Prop.class, fld);
+                if (p != null) {
+                    fldName = p.name();
+                    String val = request.getParameter(fldName);
+                    fld.setAccessible(true);
+                    fld.set(result, val);
+                }
             }
+            return result;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw BioError.wrap(e);
         }
-        return result;
     }
 
 

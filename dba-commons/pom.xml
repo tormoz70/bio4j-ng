@@ -20,11 +20,11 @@
     </build>
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.tomcat</groupId>-->
+<!--            <artifactId>tomcat-jdbc</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
 
         <!--<dependency>-->
             <!--<groupId>${project.groupId}</groupId>-->
@@ -40,6 +40,12 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -72,15 +78,10 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ext-libs</artifactId>
+            <artifactId>bio4j-ng-ext-libs</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>${project.groupId}</groupId>-->

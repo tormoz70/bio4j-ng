@@ -7,7 +7,7 @@
         <version>2.5.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>marc4j</artifactId>
+    <artifactId>bio4j-ng-marc4j</artifactId>
     <packaging>bundle</packaging>
 
     <build>

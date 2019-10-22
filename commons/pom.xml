@@ -42,12 +42,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>XStreamExts</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>xpp3</groupId>
             <artifactId>xpp3</artifactId>
             <scope>test</scope>
@@ -83,7 +77,14 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ext-libs</artifactId>
+            <artifactId>bio4j-ng-XStreamExts</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bio4j-ng-ext-libs</artifactId>
             <scope>provided</scope>
         </dependency>
 

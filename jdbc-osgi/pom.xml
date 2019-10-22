@@ -9,7 +9,7 @@
     <version>2.5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>bio4j-jdbc-osgi</artifactId>
+  <artifactId>bio4j-ng-jdbc-osgi</artifactId>
   <packaging>bundle</packaging>
 
   <build>
@@ -51,18 +51,18 @@
       <!--<version>${ojdbc.version}</version>-->
       <!--<optional>true</optional>-->
     <!--</dependency>-->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jdbc</artifactId>
-      <version>${tomcat-jdbc.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-juli</artifactId>
-      <version>${tomcat-juli.version}</version>
-      <optional>true</optional>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.apache.tomcat</groupId>-->
+<!--      <artifactId>tomcat-jdbc</artifactId>-->
+<!--      <version>${tomcat-jdbc.version}</version>-->
+<!--      <optional>true</optional>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.apache.tomcat</groupId>-->
+<!--      <artifactId>tomcat-juli</artifactId>-->
+<!--      <version>${tomcat-juli.version}</version>-->
+<!--      <optional>true</optional>-->
+<!--    </dependency>-->
 
     <dependency>
       <groupId>com.oracle</groupId>

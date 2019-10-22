@@ -8,7 +8,7 @@ import ru.bio4j.ng.database.pgsql.impl.PgSQLContext;
 
 public class SQLContextFactory {
     public static SQLContext create(SQLConnectionPoolConfig config) throws Exception {
-        return DbContextFactory.createApache(config, PgSQLContext.class);
+        return DbContextFactory.createHikariCP(config, PgSQLContext.class);
     }
     public static SQLContext create(SQLContextConfig config) throws Exception {
         return create(SQLConnectionPoolConfig.builder()

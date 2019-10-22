@@ -67,7 +67,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         return rslt;
     }
 
-    private static void extractBioParamsFromQuery(BioQueryParams qparams) throws Exception {
+    private static void extractBioParamsFromQuery(BioQueryParams qparams) {
         List<String> sysParamNames = extractSysParamNames();
         qparams.bioParams = new ArrayList<>();
         Enumeration<String> paramNames = qparams.request.getParameterNames();
@@ -120,7 +120,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
     }
 
 
-    public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) throws Exception {
+    public static BioQueryParams decodeBioQueryParams(HttpServletRequest request) {
         if(request.getMethod() == "OPTIONS") return null;
         StringBuilder sb = new StringBuilder();
 
@@ -296,7 +296,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         return result;
     }
 
-    public WrappedRequest(final HttpServletRequest request) throws Exception {
+    public WrappedRequest(final HttpServletRequest request) {
         super(request);
         ServletContextHolder.setServletContext(request.getServletContext());
         modParameters = new TreeMap<>();
@@ -347,16 +347,16 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         return headerValue;
     }
 
-    public <T> T getBioQueryParam(String paramName, Class<T> paramType, T defaultValue) throws Exception {
+    public <T> T getBioQueryParam(String paramName, Class<T> paramType, T defaultValue) {
         final BioQueryParams queryParams = this.getBioQueryParams();
         return Paramus.paramValue(queryParams.bioParams, paramName, paramType, defaultValue);
     }
 
-    protected <T> T getBioQueryParam(String paramName, HttpServletRequest request, Class<T> paramType) throws Exception {
+    protected <T> T getBioQueryParam(String paramName, HttpServletRequest request, Class<T> paramType) {
         return getBioQueryParam(paramName, paramType, null);
     }
 
-    public boolean bioQueryParamExists(String paramName) throws Exception {
+    public boolean bioQueryParamExists(String paramName) {
         final BioQueryParams queryParams = this.getBioQueryParams();
         return !Paramus.paramIsEmpty(queryParams.bioParams, paramName);
     }

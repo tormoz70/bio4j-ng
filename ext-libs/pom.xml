@@ -6,7 +6,7 @@
         <artifactId>bio4j-ng-framework</artifactId>
         <version>2.5.0-SNAPSHOT</version>
     </parent>
-    <artifactId>ext-libs</artifactId>
+    <artifactId>bio4j-ng-ext-libs</artifactId>
     <packaging>bundle</packaging>
 
     <build>

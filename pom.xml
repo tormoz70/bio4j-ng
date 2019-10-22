@@ -359,11 +359,11 @@
                 <version>${ehcache.version}</version>
             </dependency>
 
-            <!--<dependency>-->
-                <!--<groupId>postgresql</groupId>-->
-                <!--<artifactId>postgresql</artifactId>-->
-                <!--<version>${postgresql-jdbc.version}</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql-jdbc.version}</version>
+            </dependency>
 
             <!--jersey-->
             <dependency>
@@ -440,11 +440,11 @@
             </dependency>
 
             <!--jdbc-->
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-jdbc</artifactId>
-                <version>${tomcat-jdbc.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tomcat</groupId>-->
+<!--                <artifactId>tomcat-jdbc</artifactId>-->
+<!--                <version>${tomcat-jdbc.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.zaxxer</groupId>
@@ -466,10 +466,16 @@
 <!--            </dependency>-->
 
             <!--bio4j-->
+<!--            <dependency>-->
+<!--                <groupId>ru.bio4j.ng</groupId>-->
+<!--                <artifactId>bio4j-ng-jdbc-osgi</artifactId>-->
+<!--                <version>${bio4j-ng.version}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>ru.bio4j.ng</groupId>
-                <artifactId>bio4j-jdbc-osgi</artifactId>
-                <version>${bio4j-ng.version}</version>
+                <groupId>com.oracle</groupId>
+                <artifactId>bio4j-ng-ojdbc8-osgi</artifactId>
+                <version>${ojdbc.version}</version>
             </dependency>
 
             <!--<dependency>-->
@@ -487,7 +493,7 @@
             <!--</dependency>-->
             <dependency>
                 <groupId>ru.bio4j.ng</groupId>
-                <artifactId>ext-libs</artifactId>
+                <artifactId>bio4j-ng-ext-libs</artifactId>
                 <version>${bio4j-ng.version}</version>
             </dependency>
 

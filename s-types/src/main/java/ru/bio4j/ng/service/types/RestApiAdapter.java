@@ -30,12 +30,12 @@ import java.util.List;
 public class RestApiAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(RestApiAdapter.class);
 
-    private static List<Param>_extractBioParams(final BioQueryParams queryParams) throws Exception {
+    private static List<Param>_extractBioParams(final BioQueryParams queryParams) {
         Paramus.setQueryParamsToBioParams(queryParams);
         return queryParams.bioParams;
     }
 
-    private static List<Param>_extractBioParams(final HttpServletRequest request) throws Exception {
+    private static List<Param>_extractBioParams(final HttpServletRequest request) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         return _extractBioParams(queryParams);
     }
@@ -47,7 +47,7 @@ public class RestApiAdapter {
             final User user,
             final FilterAndSorter filterAndSorter,
             final boolean forceCalcCount
-            ) throws Exception {
+            ) {
         final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -64,7 +64,7 @@ public class RestApiAdapter {
             final User user,
             final FilterAndSorter filterAndSorter,
             final boolean forceCalcCount
-    ) throws Exception {
+    ) {
         final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -75,21 +75,21 @@ public class RestApiAdapter {
             final OdacService module,
             final String bioCode,
             final Object params,
-            final User user) throws Exception {
+            final User user) {
         return loadPage(module, bioCode, params, user, null, false);
     }
     public static ABeanPage loadAll(
             final OdacService module,
             final String bioCode,
             final Object params,
-            final User user) throws Exception {
+            final User user) {
         return loadAll(module, bioCode, params, user, null, false);
     }
 
     public static ABeanPage loadPage(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
@@ -112,7 +112,7 @@ public class RestApiAdapter {
     public static ABeanPage loadAll(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
@@ -136,7 +136,7 @@ public class RestApiAdapter {
     public static ABean calcTotalCount(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final SQLContext context = module.getSQLContext();
@@ -166,7 +166,7 @@ public class RestApiAdapter {
             final Object params,
             final User user,
             final Class<T> beanType,
-            final FilterAndSorter filterAndSorter) throws Exception {
+            final FilterAndSorter filterAndSorter) {
         final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -182,7 +182,7 @@ public class RestApiAdapter {
             final Object params,
             final User user,
             final Class<T> beanType,
-            final FilterAndSorter filterAndSorter) throws Exception {
+            final FilterAndSorter filterAndSorter) {
         final List<Param> prms = DbUtils.decodeParams(params);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -194,7 +194,7 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final Class<T> beanType,
-            final FilterAndSorter filterAndSorter) throws Exception {
+            final FilterAndSorter filterAndSorter) {
         final List<Param> prms = DbUtils.decodeParams(params);
         User user = null;
         Param usrParam  = Paramus.getParam(prms, "p_userbean");
@@ -208,7 +208,7 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final Class<T> beanType,
-            final FilterAndSorter filterAndSorter) throws Exception {
+            final FilterAndSorter filterAndSorter) {
         final List<Param> prms = DbUtils.decodeParams(params);
         User user = null;
         Param usrParam  = Paramus.getParam(prms, "p_userbean");
@@ -223,7 +223,7 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final User user,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         return loadPageExt(module, bioCode, params, user, beanType, null);
     }
     public static <T> List<T> loadAllExt(
@@ -231,7 +231,7 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final User user,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         return loadAllExt(module, bioCode, params, user, beanType, null);
     }
 
@@ -239,21 +239,21 @@ public class RestApiAdapter {
             final OdacService module,
             final String bioCode,
             final Object params,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         return loadPageExt(module, bioCode, params, beanType, null);
     }
     public static <T> List<T> loadAllExt(
             final OdacService module,
             final String bioCode,
             final Object params,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         return loadAllExt(module, bioCode, params, beanType, null);
     }
 
     public static HSSFWorkbook loadToExcel(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final SQLContext context = module.getSQLContext();
@@ -277,7 +277,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final OdacService module,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
@@ -295,7 +295,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final OdacService module,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
@@ -312,7 +312,7 @@ public class RestApiAdapter {
 
     public static ABean getMetadata(
             final String bioCode,
-            OdacService module) throws Exception {
+            OdacService module) {
         ABean rslt = new ABean();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         StoreMetadata metadata = new StoreMetadata();
@@ -333,7 +333,7 @@ public class RestApiAdapter {
 
     public static StoreMetadata getMetadataOld(
             final String bioCode,
-            OdacService module) throws Exception {
+            OdacService module) {
 
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         StoreMetadata metadata = new StoreMetadata();
@@ -348,7 +348,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final OdacService module,
-            final Object id) throws Exception {
+            final Object id) {
         final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -365,7 +365,7 @@ public class RestApiAdapter {
     public static StringBuilder loadJson(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -378,7 +378,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final OdacService module,
-            final List<ABean> rows) throws Exception {
+            final List<ABean> rows) {
         final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -390,7 +390,7 @@ public class RestApiAdapter {
             final String bioCode,
             final HttpServletRequest request,
             final OdacService module,
-            final List<Object> ids) throws Exception {
+            final List<Object> ids) {
         final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -404,7 +404,7 @@ public class RestApiAdapter {
     public static void exec(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
@@ -416,7 +416,7 @@ public class RestApiAdapter {
             final String bioCode,
             final Object params,
             final OdacService module,
-            final User user) throws Exception {
+            final User user) {
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         CrudWriterApi.execSQL(params, context, sqlDefinition, user);
@@ -427,7 +427,7 @@ public class RestApiAdapter {
             final HttpServletRequest request,
             final OdacService module,
             final Class<T> clazz,
-            final T defaultValue) throws Exception {
+            final T defaultValue) {
         final List<Param> params = _extractBioParams(request);
         final User user = ((WrappedRequest)request).getUser();
         final SQLContext context = module.getSQLContext();
@@ -441,28 +441,28 @@ public class RestApiAdapter {
             final OdacService module,
             final Class<T> clazz,
             final T defaultValue,
-            final User user) throws Exception {
+            final User user) {
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         return CrudReaderApi.selectScalar(params, context, sqlDefinition, clazz, defaultValue, user);
     }
 
-    public static void execBatch(final SQLContext context, final SQLActionVoid0 action, final User user) throws Exception {
+    public static void execBatch(final SQLContext context, final SQLActionVoid0 action, final User user) {
         context.execBatch(action, user);
     }
 
-    public static <T> T execBatch(final SQLContext context, final SQLActionScalar0<T> action, final User user) throws Exception {
+    public static <T> T execBatch(final SQLContext context, final SQLActionScalar0<T> action, final User user) {
         return context.execBatch(action, user);
     }
 
-    public static <P, T> T execBatch(final SQLContext context, final SQLActionScalar1<P, T> action, P param, final User user) throws Exception {
+    public static <P, T> T execBatch(final SQLContext context, final SQLActionScalar1<P, T> action, P param, final User user) {
         return context.execBatch(action, param, user);
     }
 
     public static void execLocal(
             final SQLDefinition sqlDefinition,
             final Object params,
-            final SQLContext context) throws Exception {
+            final SQLContext context) {
         CrudWriterApi.execSQL0(params, context, sqlDefinition);
     }
 
@@ -471,7 +471,7 @@ public class RestApiAdapter {
             final SQLContext context,
             final Object params,
             final Class<T> beanType,
-            final FilterAndSorter filterAndSorter) throws Exception {
+            final FilterAndSorter filterAndSorter) {
         final List<Param> prms = DbUtils.decodeParams(params);
         int pageSize = Paramus.paramValue(prms, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
         if(pageSize == 0)
@@ -484,7 +484,7 @@ public class RestApiAdapter {
             final SQLContext context,
             final Object params,
             final Class<T> beanType,
-            final FilterAndSorter filterAndSorter) throws Exception {
+            final FilterAndSorter filterAndSorter) {
         final List<Param> prms = DbUtils.decodeParams(params);
         return CrudReaderApi.loadAll0Ext(prms, filterAndSorter != null ? filterAndSorter.getFilter() : null, filterAndSorter != null ? filterAndSorter.getSorter() : null, context, sqlDefinition, beanType);
     }
@@ -493,7 +493,7 @@ public class RestApiAdapter {
     public static void execForEach(
             final String bioCode,
             final HttpServletRequest request,
-            final OdacService module) throws Exception {
+            final OdacService module) {
         final List<Param> params = _extractBioParams(request);
         final SQLContext context = module.getSQLContext();
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);

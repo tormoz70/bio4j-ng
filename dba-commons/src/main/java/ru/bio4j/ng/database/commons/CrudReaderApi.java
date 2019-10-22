@@ -123,7 +123,7 @@ public class CrudReaderApi {
      * @param cursor
      * @param forceCalcCount
      * @return возвращает страницу
-     * @throws Exception
+     *
      */
     public static ABeanPage loadPage0(
             final List<Param> params,
@@ -202,7 +202,7 @@ public class CrudReaderApi {
      * @param forceCalcCount
      * @param user
      * @return возвращает страницу
-     * @throws Exception
+     *
      */
     public static ABeanPage loadPage(
             final List<Param> params,
@@ -211,7 +211,7 @@ public class CrudReaderApi {
             final SQLContext context,
             final SQLDefinition cursor,
             final boolean forceCalcCount,
-            final User user) throws Exception {
+            final User user) {
         final ABeanPage result = context.execBatch((ctx) -> {
             return loadPage0(params, filter, sort, ctx, cursor, forceCalcCount);
         }, user);
@@ -226,7 +226,7 @@ public class CrudReaderApi {
      * @param context
      * @param cursor
      * @return все записи
-     * @throws Exception
+     *
      */
     public static ABeanPage loadAll0(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor) {
         Connection connTest = context.getCurrentConnection();
@@ -364,9 +364,9 @@ public class CrudReaderApi {
      * @param cursor
      * @param user
      * @return все записи
-     * @throws Exception
+     *
      */
-    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor, User user) throws Exception {
+    public static ABeanPage loadAll(final List<Param> params, final Filter filter, final List<Sort> sort, final SQLContext context, final SQLDefinition cursor, User user) {
         ABeanPage result = context.execBatch((ctx) -> {
             return loadAll0(params, filter, sort, ctx, cursor);
         }, user);
@@ -374,7 +374,7 @@ public class CrudReaderApi {
     }
 
 
-    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final SQLDefinition cursor, final User user) throws Exception {
+    public static ABeanPage loadRecord(final List<Param> params, final SQLContext context, final SQLDefinition cursor, final User user) {
         ABeanPage result = context.execBatch((ctx) -> {
             return loadRecord0(params, ctx, cursor);
         }, user);
@@ -387,7 +387,7 @@ public class CrudReaderApi {
      * @param context
      * @param cursor
      * @return первую запись
-     * @throws Exception
+     *
      */
     public static ABeanPage loadRecord0(final List<Param> params, final SQLContext context, final SQLDefinition cursor) {
         Connection connTest = context.getCurrentConnection();
@@ -450,7 +450,7 @@ public class CrudReaderApi {
      * @param beanType
      * @param <T>
      * @return страницу
-     * @throws Exception
+     *
      */
     public static <T> List<T> loadPage0Ext(
             final List<Param> params,
@@ -528,7 +528,7 @@ public class CrudReaderApi {
      * @param beanType
      * @param <T>
      * @return страницу
-     * @throws Exception
+     *
      */
     public static <T> List<T> loadPageExt(
             final List<Param> params,
@@ -554,7 +554,7 @@ public class CrudReaderApi {
      * @param beanType
      * @param <T>
      * @return все записи
-     * @throws Exception
+     *
      */
     public static <T> List<T> loadAll0Ext(
             final List<Param> params,
@@ -586,7 +586,7 @@ public class CrudReaderApi {
      * @param beanType
      * @param <T>
      * @return все записи
-     * @throws Exception
+     *
      */
     public static <T> List<T> loadAllExt(
             final List<Param> params,
@@ -595,7 +595,7 @@ public class CrudReaderApi {
             final SQLContext context,
             final SQLDefinition cursor,
             final User user,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         List<T> result = context.execBatch((ctx) -> {
             return loadAll0Ext(params, filter, sort, ctx, cursor, beanType);
         }, user);
@@ -606,7 +606,7 @@ public class CrudReaderApi {
             final List<Param> params,
             final SQLContext context, final SQLDefinition cursor,
             final User user,
-            final Class<T> beanType) throws Exception {
+            final Class<T> beanType) {
         Field pkField = cursor.getSelectSqlDef().findPk();
         if(pkField == null)
             throw new BioError.BadIODescriptor(String.format("PK column not fount in \"%s\" object!", cursor.getSelectSqlDef().getBioCode()));
@@ -622,7 +622,7 @@ public class CrudReaderApi {
             final List<Param> params,
             final SQLContext context,
             final SQLDefinition cursor,
-            final User user) throws Exception {
+            final User user) {
         StringBuilder result = context.execBatch((ctx) -> {
             final StringBuilder r = new StringBuilder();
 
@@ -644,7 +644,7 @@ public class CrudReaderApi {
             final SQLContext context,
             final SQLDefinition sqlDefinition,
             final Class<T> clazz,
-            final T defaultValue) throws Exception {
+            final T defaultValue) {
         return DbUtils.processSelectScalar0(params, context, sqlDefinition, clazz, defaultValue);
     }
 
@@ -654,7 +654,7 @@ public class CrudReaderApi {
             final SQLDefinition sqlDefinition,
             final Class<T> clazz,
             final T defaultValue,
-            final User user) throws Exception {
+            final User user) {
         return DbUtils.processSelectScalar(user, params, context, sqlDefinition, clazz, defaultValue);
     }
 

@@ -10,7 +10,7 @@
   </parent>
 
   <groupId>com.oracle</groupId>
-  <artifactId>ojdbc8-osgi</artifactId>
+  <artifactId>bio4j-ng-ojdbc8-osgi</artifactId>
   <version>${ojdbc.version}</version>
   <packaging>bundle</packaging>
   <name>ojdbc8-osgi</name>

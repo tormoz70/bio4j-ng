@@ -53,7 +53,7 @@ public class SQLFactoryTest {
 
     @BeforeTest
     public static void setUpClass() throws Exception {
-        context = DbContextFactory.createApache(
+        context = DbContextFactory.createHikariCP(
                 SQLConnectionPoolConfig.builder()
                         .poolName("TEST-CONN-POOL")
                         .dbDriverName(testDBDriverName)
