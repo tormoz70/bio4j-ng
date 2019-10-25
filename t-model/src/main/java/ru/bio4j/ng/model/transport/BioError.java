@@ -1,5 +1,8 @@
 package ru.bio4j.ng.model.transport;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 public class BioError extends RuntimeException {
 
     protected int errorCode = 6000;
@@ -52,6 +55,7 @@ public class BioError extends RuntimeException {
     //********************************************************************************
 
 
+    @JsonTypeInfo(use = Id.CLASS, property = "@class")
     public static class BadRequestType extends BioError {
 
         public BadRequestType() {
@@ -65,12 +69,21 @@ public class BioError extends RuntimeException {
         }
     }
 
+    @JsonTypeInfo(use = Id.CLASS, property = "@class")
     public static class MethodNotAllowed extends BioError {
         public MethodNotAllowed() {
-            super(6405);
+            super(6405, "Метод не доступен!");
         }
     }
 
+    @JsonTypeInfo(use = Id.CLASS, property = "@class")
+    public static class MethodNotImplemented extends BioError {
+        public MethodNotImplemented() {
+            super(6501, "Метод не реализован!");
+        }
+    }
+
+    @JsonTypeInfo(use = Id.CLASS, property = "@class")
     public static abstract class Login extends BioError {
         public Login(int code) {
             super(code);
@@ -79,12 +92,14 @@ public class BioError extends RuntimeException {
             super(code, message);
         }
 
+        @JsonTypeInfo(use = Id.CLASS, property = "@class")
         public static class Unauthorized extends BioError.Login {
             public Unauthorized() {
                 super(6401, "Не верное имя или пароль пользователя!");
             }
         }
 
+        @JsonTypeInfo(use = Id.CLASS, property = "@class")
         public static class Forbidden extends BioError.Login {
             public Forbidden() {
                 super(6403, "Доступ запрещен!");
@@ -93,6 +108,7 @@ public class BioError extends RuntimeException {
 
     }
 
+    @JsonTypeInfo(use = Id.CLASS, property = "@class")
     public static class BadIODescriptor extends BioError {
         public BadIODescriptor() {
             super();

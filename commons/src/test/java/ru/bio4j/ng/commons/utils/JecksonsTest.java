@@ -1,6 +1,5 @@
 package ru.bio4j.ng.commons.utils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -208,6 +207,31 @@ public class JecksonsTest {
         List<Param> bioParams = Utl.anjsonToParams(cs_json0001);
         Assert.assertNotNull(bioParams);
         Assert.assertNotNull(Paramus.getParam(bioParams, "p_company_id"));
+    }
+
+
+    @Test(enabled = true)
+    public void testPolymorphingErrors() throws Exception {
+        LoginResult src = LoginResult.Builder.error(new BioError.Login.Unauthorized());
+        String json = Jecksons.getInstance().encode(src);
+        LoginResult restored = Jecksons.getInstance().decode(json, LoginResult.class);
+        Assert.assertTrue(restored.getException() instanceof BioError.Login);
+    }
+
+    @Test(enabled = true)
+    public void testPolymorphingUser1() throws Exception {
+        LoginResult src = LoginResult.Builder.success(new User());
+        String json = Jecksons.getInstance().encode(src);
+        LoginResult restored = Jecksons.getInstance().decode(json, LoginResult.class);
+        Assert.assertTrue(restored.getUser() instanceof User);
+    }
+
+    @Test(enabled = true)
+    public void testPolymorphingUserSso() throws Exception {
+        LoginResult src = LoginResult.Builder.success(new SsoUser());
+        String json = Jecksons.getInstance().encode(src);
+        LoginResult restored = Jecksons.getInstance().decode(json, LoginResult.class);
+        Assert.assertTrue(restored.getUser() instanceof SsoUser);
     }
 
 }

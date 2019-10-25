@@ -35,20 +35,4 @@ public class SrvcUtils {
         }
     }
 
-    public static <T> ABean buildSuccess(T user) {
-        ABean rslt = new ABean();
-        rslt.put("success", true);
-        if(user != null)
-            rslt.put("user", user);
-        return rslt;
-    }
-
-    public static <T extends BioError> ABean buildError(T error) {
-        ABean rslt = new ABean();
-        rslt.put("success", false);
-        if(error != null)
-            rslt.put("error", error);
-        return rslt;
-    }
-
 }

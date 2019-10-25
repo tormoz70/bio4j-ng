@@ -20,19 +20,19 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLoginProcessorImpl.class);
 
     private SecurityApi securityApi;
-    private ErrorWriter errorWriter;
+//    private ErrorWriter errorWriter;
     private BioConfig config;
 
     public void init(BioConfig config, SecurityApi securityApi) {
         this.config = config;
         this.securityApi = securityApi;
-        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, config.getUseDefaultLoginErrorWriter(), ErrorWriterType.Json);
-        errorWriter = errorWriterType.createImpl();
+//        ErrorWriterType errorWriterType = Utl.enumValueOf(ErrorWriterType.class, config.getUseDefaultLoginErrorWriter(), ErrorWriterType.Json);
+//        errorWriter = errorWriterType.createImpl();
     }
 
     private void _doGetUser(final HttpServletRequest request, final HttpServletResponse response) {
         User user = securityApi.doGetUser(request);
-        ABean result = SrvcUtils.buildSuccess(user);
+        LoginResult result = LoginResult.Builder.success(user);
         try {
             response.getWriter().append(Jecksons.getInstance().encode(result));
         } catch (IOException e) {
@@ -42,7 +42,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
 
     private void _doLogin(final HttpServletRequest request, final HttpServletResponse response) {
         User user = securityApi.doLogin(request);
-        ABean result = SrvcUtils.buildSuccess(user);
+        LoginResult result = LoginResult.Builder.success(user);
         try {
             response.getWriter().append(Jecksons.getInstance().encode(result));
         } catch (IOException e) {
@@ -52,7 +52,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
 
     private void _doLogoff(final HttpServletRequest request, final HttpServletResponse response) {
         securityApi.doLogoff(request);
-        ABean result = SrvcUtils.buildSuccess(null);
+        LoginResult result = LoginResult.Builder.success();
         try {
             response.getWriter().append(Jecksons.getInstance().encode(result));
         } catch (IOException e) {
@@ -96,7 +96,7 @@ public class DefaultLoginProcessorImpl implements LoginProcessor {
                 }
             } catch (Exception e) {
                 LOG.error(null, e);
-                errorWriter.write(e, resp);
+                ErrorProcessor.doResponse(e, resp);
             }
         } else {
             try {

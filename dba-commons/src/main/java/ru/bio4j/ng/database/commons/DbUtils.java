@@ -545,7 +545,9 @@ public class DbUtils {
     }
 
     public BioSQLApplicationError extractStoredProcAppErrorMessage(Exception e) {
-        return rdbmsUtils.extractStoredProcAppError(e);
+        if(rdbmsUtils != null)
+            return rdbmsUtils.extractStoredProcAppError(e);
+        return null;
     }
 
     public void tryForwardSQLAsApplicationError(SQLException e) {
