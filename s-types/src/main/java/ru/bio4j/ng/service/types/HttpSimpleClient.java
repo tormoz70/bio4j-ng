@@ -71,25 +71,22 @@ public class HttpSimpleClient {
     }
 
     public HttpResponse requestGet(String url, String stoken, String forwardIP, String forwardClient) {
-        if (!Strings.isNullOrEmpty(stoken)) {
-            HttpGet request = new HttpGet(url);
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
-                    .setConnectTimeout(CONNECTION_TIMEOUT_MS)
-                    .setSocketTimeout(CONNECTION_TIMEOUT_MS)
-                    .build();
-            request.setConfig(requestConfig);
-            request.setHeader("X-ForwardIP", forwardIP);
-            request.setHeader("X-ForwardClient", forwardClient);
-            request.setHeader("X-SToken", stoken);
-            HttpClient client = HttpClientBuilder.create().build();
-            try {
-                return client.execute(request);
-            } catch (IOException e) {
-                throw BioError.wrap(e);
-            }
+        HttpGet request = new HttpGet(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
+                .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+                .setSocketTimeout(CONNECTION_TIMEOUT_MS)
+                .build();
+        request.setConfig(requestConfig);
+        request.setHeader("X-ForwardIP", forwardIP);
+        request.setHeader("X-ForwardClient", forwardClient);
+        request.setHeader("X-SToken", stoken);
+        HttpClient client = HttpClientBuilder.create().build();
+        try {
+            return client.execute(request);
+        } catch (IOException e) {
+            throw BioError.wrap(e);
         }
-        return null;
     }
 
 
