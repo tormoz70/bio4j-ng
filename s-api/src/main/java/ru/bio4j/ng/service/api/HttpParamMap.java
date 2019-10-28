@@ -9,10 +9,12 @@ public interface HttpParamMap {
     String offset();
 
     String securityToken();
+    String deviceuuid();
 
     String pageSizeHeader();
     String pageHeader();
     String offsetHeader();
+    String deviceuuidHeader();
     String securityTokenHeader();
     String clientHeader();
     String clientVerHeader();

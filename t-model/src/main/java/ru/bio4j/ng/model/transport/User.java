@@ -24,7 +24,9 @@ public class User implements Principal {
     private String remoteIP;
     private String remoteClient;
 
-    private Boolean anonymous;
+    private Boolean anonymouse;
+
+    private String deviceuuid;
 
     public String getStoken() {
         return stoken;
@@ -64,10 +66,6 @@ public class User implements Principal {
 
     public void setGrants(String grants) {
         this.grants = grants;
-    }
-
-    public Boolean isAnonymous() {
-        return (this.anonymous != null) ? this.anonymous : false;
     }
 
     public String getEmail() {
@@ -127,10 +125,6 @@ public class User implements Principal {
         this.innerUid = innerUid;
     }
 
-    public void setAnonymous(Boolean anonymous) {
-        this.anonymous = anonymous;
-    }
-
     @Override
     public String getName() {
         return login;
@@ -142,5 +136,21 @@ public class User implements Principal {
 
     public void setRemoteClient(String remoteClient) {
         this.remoteClient = remoteClient;
+    }
+
+    public String getDeviceuuid() {
+        return deviceuuid;
+    }
+
+    public void setDeviceuuid(String deviceuuid) {
+        this.deviceuuid = deviceuuid;
+    }
+
+    public Boolean getAnonymouse() {
+        return anonymouse;
+    }
+
+    public void setAnonymouse(Boolean anonymouse) {
+        this.anonymouse = anonymouse;
     }
 }

@@ -250,6 +250,17 @@ public class RestApiAdapter {
         return loadAllExt(module, bioCode, params, beanType, null);
     }
 
+    public static <T> T loadFirstBean(
+            final String bioCode,
+            final List<Param> params,
+            final OdacService module,
+            final User usr,
+            final Class<T> beanType) {
+        final SQLContext context = module.getSQLContext();
+        final SQLDefinition cursorDef = module.getSQLDefinition(bioCode);
+        return CrudReaderApi.loadFirstRecordExt(params, context, cursorDef, usr, beanType);
+    }
+
     public static HSSFWorkbook loadToExcel(
             final String bioCode,
             final HttpServletRequest request,

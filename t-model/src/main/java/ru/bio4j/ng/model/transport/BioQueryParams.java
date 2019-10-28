@@ -16,6 +16,8 @@ public class BioQueryParams {
     public String remoteClient;
     public String remoteClientVersion;
 
+    @Prop(name = "deviceuuid")
+    public String deviceuuid;
     @Prop(name = "stoken")
     public String stoken;
     @Prop(name = "jsonData")

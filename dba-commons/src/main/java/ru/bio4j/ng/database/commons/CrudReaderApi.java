@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.LongSupplier;
 
 public class CrudReaderApi {
     protected final static Logger LOG = LoggerFactory.getLogger(CrudReaderApi.class);
@@ -406,7 +407,8 @@ public class CrudReaderApi {
             final List<Param> params,
             final SQLContext context,
             final SQLDefinition cursorDef,
-            final Class<T> beanType) {
+            final Class<T> beanType,
+            final int recordsLimit) {
 
         if (context.getCurrentConnection() == null)
             throw new BioSQLException(String.format("This methon can be useded only in SQLAction of execBatch!", cursorDef.getBioCode()));
@@ -417,6 +419,12 @@ public class CrudReaderApi {
 
         long startTime = System.currentTimeMillis();
         List<Param> prms = params;
+        final LongSupplier limitRecordsToRead = () -> {
+            if (recordsLimit > 0)
+                return recordsLimit;
+            return MAX_RECORDS_FETCH_LIMIT;
+        };
+
         context.createDynamicCursor()
                 .init(context.getCurrentConnection(), cursorDef.getSelectSqlDef())
                 .fetch(prms, context.getCurrentUser(), rs -> {
@@ -431,13 +439,21 @@ public class CrudReaderApi {
                     else
                         bean = DbUtils.createBeanFromReader(cursorDef.getFields(), rs, beanType);
                     result.add(bean);
-                    if (result.size() >= MAX_RECORDS_FETCH_LIMIT)
+                    if (result.size() >= limitRecordsToRead.getAsLong())
                         return false;
                     return true;
                 });
         if(LOG.isDebugEnabled())
             LOG.debug("Cursor \"{}\" fetched! {} - records loaded.", cursorDef.getBioCode(), result.size());
         return result;
+    }
+
+    private static <T> List<T> readStoreDataExt(
+            final List<Param> params,
+            final SQLContext context,
+            final SQLDefinition cursorDef,
+            final Class<T> beanType) {
+        return readStoreDataExt(params, context, cursorDef, beanType, 0);
     }
 
     /***
@@ -616,6 +632,18 @@ public class CrudReaderApi {
             return readStoreDataExt(params, ctx, cursor, beanType);
         }, user);
         return result;
+    }
+
+    public static <T> T loadFirstRecordExt(
+            final List<Param> params,
+            final SQLContext context, final SQLDefinition cursor,
+            final User user,
+            final Class<T> beanType) {
+        cursor.getSelectSqlDef().setPreparedSql(cursor.getSelectSqlDef().getSql());
+        List<T> result = context.execBatch((ctx) -> {
+            return readStoreDataExt(params, ctx, cursor, beanType, 1);
+        }, user);
+        return result.stream().findFirst().get();
     }
 
     public static StringBuilder loadJson(

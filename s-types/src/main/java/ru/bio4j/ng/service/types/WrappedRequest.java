@@ -155,6 +155,19 @@ public class WrappedRequest extends HttpServletRequestWrapper {
             if (!Strings.isNullOrEmpty(bioHeaderClientVersion))
                 result.remoteClientVersion = bioHeaderClientVersion;
         }
+
+        if(Strings.isNullOrEmpty(result.deviceuuid)) {
+            final String deviceuuidHeader = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.deviceuuidHeader()) ? httpParamMap.deviceuuidHeader() : "X-DEVICEUUID";
+            final String bioHeaderDeviceUUID = request.getHeader(deviceuuidHeader);
+            if (!Strings.isNullOrEmpty(bioHeaderDeviceUUID))
+                result.deviceuuid = bioHeaderDeviceUUID;
+            final String deviceuuidParam = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.deviceuuid()) ? httpParamMap.deviceuuid() : "deviceuuid";
+            if(Strings.isNullOrEmpty(result.deviceuuid) && !Strings.isNullOrEmpty(deviceuuidParam)){
+                result.deviceuuid = request.getParameter(deviceuuidParam);
+            }
+
+        }
+
         if(Strings.isNullOrEmpty(result.stoken)) {
             final String securityTokenHeader = httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.securityTokenHeader()) ? httpParamMap.securityTokenHeader() : "X-SToken";
             final String bioHeaderSToken = request.getHeader(securityTokenHeader);
