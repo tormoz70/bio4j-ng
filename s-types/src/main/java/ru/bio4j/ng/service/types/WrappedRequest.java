@@ -141,11 +141,6 @@ public class WrappedRequest extends HttpServletRequestWrapper {
         result.remoteIP = Httpc.extractRealRemoteAddr(request);
         result.remoteClient = Httpc.extractRealRemoteClient(request);
 
-//        if(Strings.isNullOrEmpty(result.moduleKey)) {
-//            final String bioHeaderModuleKey = request.getHeader("X-Module");
-//            if (!Strings.isNullOrEmpty(bioHeaderModuleKey))
-//                result.moduleKey = bioHeaderModuleKey;
-//        }
         final String bioHeaderClientName = request.getHeader(httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.clientHeader()) ? httpParamMap.clientHeader() : "X-Client");
         if(!Strings.isNullOrEmpty(bioHeaderClientName)) {
             result.remoteClient = bioHeaderClientName;
@@ -179,7 +174,7 @@ public class WrappedRequest extends HttpServletRequestWrapper {
             }
 
         }
-//        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
+        if(Strings.isNullOrEmpty(result.stoken)) result.stoken = "anonymouse";
 
         if(Strings.isNullOrEmpty(result.pageOrig) && httpParamMap != null && !Strings.isNullOrEmpty(httpParamMap.page())) {
             result.pageOrig = request.getParameter(httpParamMap.page());

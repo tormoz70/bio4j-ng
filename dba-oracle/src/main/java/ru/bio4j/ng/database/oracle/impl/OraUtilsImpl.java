@@ -152,6 +152,8 @@ public class OraUtilsImpl implements RDBMSUtils {
 
     @Override
     public BioSQLApplicationError extractStoredProcAppError(Exception e) {
+        if(e == null)
+            return null;
         if(e instanceof BioSQLApplicationError)
             return (BioSQLApplicationError)e;
         String appErrorCodeStr = Regexs.find(e.getMessage(), "ORA-2\\d{4}", Pattern.CASE_INSENSITIVE);

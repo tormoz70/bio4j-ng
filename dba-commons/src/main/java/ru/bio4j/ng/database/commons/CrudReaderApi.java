@@ -20,10 +20,7 @@ import ru.bio4j.ng.model.transport.jstore.filter.Filter;
 import ru.bio4j.ng.model.transport.RestParamNames;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.LongSupplier;
 
 public class CrudReaderApi {
@@ -643,7 +640,7 @@ public class CrudReaderApi {
         List<T> result = context.execBatch((ctx) -> {
             return readStoreDataExt(params, ctx, cursor, beanType, 1);
         }, user);
-        return result.stream().findFirst().get();
+        return result.size() > 0 ? result.get(0) : null;
     }
 
     public static StringBuilder loadJson(
