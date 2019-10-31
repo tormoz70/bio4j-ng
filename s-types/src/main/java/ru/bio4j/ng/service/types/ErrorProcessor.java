@@ -3,14 +3,13 @@ package ru.bio4j.ng.service.types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.bio4j.ng.commons.utils.Jecksons;
-import ru.bio4j.ng.commons.utils.SrvcUtils;
 import ru.bio4j.ng.database.api.BioSQLApplicationError;
 import ru.bio4j.ng.database.commons.DbUtils;
-import ru.bio4j.ng.model.transport.ABean;
 import ru.bio4j.ng.model.transport.BioError;
 import ru.bio4j.ng.model.transport.LoginResult;
 
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -19,7 +18,21 @@ import java.util.function.Function;
 public class ErrorProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ErrorProcessor.class);
 
-    public static Response process(Throwable exception, Function<Throwable, Response> builder) {
+    public static class ErrorResponseEntry {
+        public int code;
+        public String entry;
+        public String type;
+    }
+
+    public static ErrorResponseEntry createEntry(int code, String entry, String type) {
+        ErrorResponseEntry rslt = new ErrorResponseEntry();
+        rslt.code = code;
+        rslt.entry = entry;
+        rslt.type = type;
+        return rslt;
+    }
+
+    public static ErrorResponseEntry process(Throwable exception, Function<Throwable, ErrorResponseEntry> builder) {
         try {
             if(builder != null)
                 return builder.apply(exception);
@@ -27,8 +40,7 @@ public class ErrorProcessor {
             BioError.Login loginError = exception instanceof BioError.Login ? (BioError.Login) exception : null;
             if (loginError != null) {
                 LoginResult result = LoginResult.Builder.error(loginError);
-                return Response.status(Response.Status.UNAUTHORIZED).entity(Jecksons.getInstance().encode(result))
-                        .type(MediaType.APPLICATION_JSON).build();
+                return createEntry(Response.Status.UNAUTHORIZED.getStatusCode(), Jecksons.getInstance().encode(result), MediaType.APPLICATION_JSON);
             }
             BioError errorBean = exception instanceof BioError ? (BioError) exception : null;
             if (errorBean == null) {
@@ -39,36 +51,35 @@ public class ErrorProcessor {
             if (errorBean != null) {
                 LOG.error(null, exception);
                 LoginResult result = LoginResult.Builder.error(errorBean);
-                return Response.status(errorBean.getErrorCode()).entity(Jecksons.getInstance().encode(result))
-                        .type(MediaType.APPLICATION_JSON).build();
+                return createEntry(errorBean.getErrorCode(), Jecksons.getInstance().encode(result), MediaType.APPLICATION_JSON);
             } else if (exception instanceof javax.ws.rs.NotAllowedException) {
                 LOG.error(null, exception);
                 LoginResult result = LoginResult.Builder.error(new BioError.MethodNotAllowed());
-                return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity(Jecksons.getInstance().encode(result))
-                        .type(MediaType.APPLICATION_JSON).build();
+                return createEntry(Response.Status.METHOD_NOT_ALLOWED.getStatusCode(), Jecksons.getInstance().encode(result), MediaType.APPLICATION_JSON);
             } else if (exception instanceof javax.ws.rs.NotFoundException) {
                 LOG.error(null, exception);
                 LoginResult result = LoginResult.Builder.error(new BioError.MethodNotImplemented());
-                return Response.status(Response.Status.NOT_IMPLEMENTED).entity(Jecksons.getInstance().encode(result))
-                        .type(MediaType.APPLICATION_JSON).build();
+                return createEntry(Response.Status.NOT_IMPLEMENTED.getStatusCode(), Jecksons.getInstance().encode(result), MediaType.APPLICATION_JSON);
             }
             LOG.error(null, exception);
             LoginResult result = LoginResult.Builder.error(new BioError(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "Неизвестная ошибка на сервере"));
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Jecksons.getInstance().encode(result))
-                    .type(MediaType.APPLICATION_JSON).build();
+            return createEntry(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), Jecksons.getInstance().encode(result), MediaType.APPLICATION_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     public static Response process(Throwable exception) {
-        return process(exception, null);
+        ErrorResponseEntry entry = process(exception, null);
+        return Response.status(entry.code).entity(entry.entry).type(entry.type).build();
     }
 
     public static void doResponse(Throwable exception, ServletResponse response) {
         try {
-            Response rsp = ErrorProcessor.process(exception);
-            response.getWriter().print(rsp.getEntity());
+            ErrorResponseEntry rspEntry = process(exception, null);
+            ((HttpServletResponse)response).setStatus(rspEntry.code);
+            response.setContentType(rspEntry.type);
+            response.getWriter().print(rspEntry.entry);
         } catch(IOException e) {
             throw BioError.wrap(e);
         }
