@@ -35,7 +35,6 @@
     </distributionManagement>
 
     <properties>
-        <bioDebug>true</bioDebug>
 
         <!-- Main settings -->
         <project.Organization.Name>Bio4j Co</project.Organization.Name>
@@ -125,8 +124,6 @@
 
         <xstream.version>1.4.9</xstream.version>
 
-        <org.glassfish.jersey.core.version>2.23</org.glassfish.jersey.core.version>
-        <com.fasterxml.jackson.core.version>2.9.7</com.fasterxml.jackson.core.version>
         <org.apache.poi.version>4.1.0</org.apache.poi.version>
 
         <org.eclipse.jetty.version>9.3.8.v20160314</org.eclipse.jetty.version>
