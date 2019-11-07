@@ -2,49 +2,49 @@ package ru.bio4j.ng.service.api;
 
 public interface HttpParamMap {
     default String username() {
-        return null;
+        return "login";
     }
     default String password() {
-        return null;
+        return "passwd";
     }
 
     default String pageSize() {
-        return null;
+        return "limit";
     }
     default String page() {
-        return null;
+        return "page";
     }
     default String offset() {
-        return null;
+        return "offset";
     }
 
     default String securityToken() {
-        return null;
+        return "stoken";
     }
     default String deviceuuid() {
-        return null;
+        return "deviceuuid";
     }
 
     default String pageSizeHeader() {
-        return null;
+        return "X-Pagination-Pagesize";
     }
     default String pageHeader() {
-        return null;
+        return "X-Pagination-Page";
     }
     default String offsetHeader() {
-        return null;
+        return "X-Pagination-Offset";
     }
     default String deviceuuidHeader() {
-        return null;
+        return "X-DEVICEUUID";
     }
     default String securityTokenHeader() {
-        return null;
+        return "X-SToken";
     }
     default String clientHeader() {
-        return null;
+        return "X-Client";
     }
     default String clientVerHeader() {
-        return null;
+        return "X-Client-Ver";
     }
 
 }
