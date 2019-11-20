@@ -44,7 +44,7 @@
 <!--        </dependency>-->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>XStreamExts</artifactId>
+            <artifactId>bio4j-ng-XStreamExts</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
