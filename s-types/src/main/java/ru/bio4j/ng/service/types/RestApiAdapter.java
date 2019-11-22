@@ -271,8 +271,10 @@ public class RestApiAdapter {
         }
         if(fs == null) {
             fs = new FilterAndSorter();
-            fs.setSorter(new ArrayList<>());
-            fs.getSorter().addAll(queryParams.sort);
+            if(queryParams.sort != null) {
+                fs.setSorter(new ArrayList<>());
+                fs.getSorter().addAll(queryParams.sort);
+            }
             fs.setFilter(queryParams.filter);
         }
         return fs;
