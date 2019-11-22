@@ -25,6 +25,7 @@ import ru.bio4j.ng.model.transport.RestParamNames;
 import ru.bio4j.ng.model.transport.BioQueryParams;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestApiAdapter {
@@ -93,19 +94,7 @@ public class RestApiAdapter {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
-        FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
-            try {
-                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
-            } catch (Exception e) {
-                if(LOG.isDebugEnabled())LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
-            }
-        }
-        if(fs == null) {
-            fs = new FilterAndSorter();
-            fs.setSorter(queryParams.sort);
-            fs.setFilter(queryParams.filter);
-        }
+        FilterAndSorter fs = createFilterAndSorter(queryParams);
         boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
         return loadPage(module, bioCode, params, user, fs, forceCalcCount);
     }
@@ -116,19 +105,7 @@ public class RestApiAdapter {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
-        FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
-            try {
-                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
-            } catch (Exception e) {
-                if(LOG.isDebugEnabled())LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
-            }
-        }
-        if(fs == null) {
-            fs = new FilterAndSorter();
-            fs.setSorter(queryParams.sort);
-            fs.setFilter(queryParams.filter);
-        }
+        FilterAndSorter fs = createFilterAndSorter(queryParams);
         boolean forceCalcCount = Converter.toType(queryParams.gcount, boolean.class);
         return loadAll(module, bioCode, params, user, fs, forceCalcCount);
     }
@@ -143,14 +120,7 @@ public class RestApiAdapter {
         final SQLDefinition sqlDefinition = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
         int pageSize = Paramus.paramValue(params, RestParamNames.PAGINATION_PARAM_PAGESIZE, int.class, 0);
-        FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
-        if(fs == null) {
-            fs = new FilterAndSorter();
-            fs.setSorter(queryParams.sort);
-            fs.setFilter(queryParams.filter);
-        }
+        FilterAndSorter fs = createFilterAndSorter(queryParams);
         ABean rslt = new ABean();
         ru.bio4j.ng.model.transport.jstore.filter.Filter filter = fs != null ? fs.getFilter() : null;
         sqlDefinition.getSelectSqlDef().setPreparedSql(context.getWrappers().getFilteringWrapper().wrap(sqlDefinition.getSelectSqlDef().getPreparedSql(), filter, sqlDefinition.getSelectSqlDef().getFields()));
@@ -271,14 +241,7 @@ public class RestApiAdapter {
         final SQLDefinition sqlDef = module.getSQLDefinition(bioCode);
         final User user = ((WrappedRequest)request).getUser();
         return context.execBatch((ctx) -> {
-            FilterAndSorter fs = null;
-            if(!Strings.isNullOrEmpty(queryParams.jsonData))
-                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
-            if(fs == null) {
-                fs = new FilterAndSorter();
-                fs.setSorter(queryParams.sort);
-                fs.setFilter(queryParams.filter);
-            }
+            FilterAndSorter fs = createFilterAndSorter(queryParams);
             return CrudReaderApi.toExcel(params, fs.getFilter(), fs.getSorter(), ctx, sqlDef);
         }, user);
 
@@ -292,16 +255,29 @@ public class RestApiAdapter {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
-        FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
-        if(fs == null) {
-            fs = new FilterAndSorter();
-            fs.setSorter(queryParams.sort);
-            fs.setFilter(queryParams.filter);
-        }
+        FilterAndSorter fs = createFilterAndSorter(queryParams);
         return loadPageExt(module, bioCode, params, user, beanType, fs);
     }
+
+    public static FilterAndSorter createFilterAndSorter(final BioQueryParams queryParams) {
+        FilterAndSorter fs = null;
+        if(!Strings.isNullOrEmpty(queryParams.jsonData)) {
+            try {
+                fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled())
+                    LOG.warn(String.format("Ошибка при восстановлении объекта %s. Json: %s", FilterAndSorter.class.getSimpleName(), queryParams.jsonData), e);
+            }
+        }
+        if(fs == null) {
+            fs = new FilterAndSorter();
+            fs.setSorter(new ArrayList<>());
+            fs.getSorter().addAll(queryParams.sort);
+            fs.setFilter(queryParams.filter);
+        }
+        return fs;
+    }
+
     public static <T> List<T> loadAllExt(
             final String bioCode,
             final HttpServletRequest request,
@@ -310,14 +286,7 @@ public class RestApiAdapter {
         final BioQueryParams queryParams = ((WrappedRequest)request).getBioQueryParams();
         final List<Param> params = _extractBioParams(queryParams);
         final User user = ((WrappedRequest)request).getUser();
-        FilterAndSorter fs = null;
-        if(!Strings.isNullOrEmpty(queryParams.jsonData))
-            fs = Jecksons.getInstance().decodeFilterAndSorter(queryParams.jsonData);
-        if(fs == null) {
-            fs = new FilterAndSorter();
-            fs.setSorter(queryParams.sort);
-            fs.setFilter(queryParams.filter);
-        }
+        FilterAndSorter fs = createFilterAndSorter(queryParams);
         return loadAllExt(module, bioCode, params, user, beanType, fs);
     }
 
