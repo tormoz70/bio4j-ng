@@ -118,7 +118,7 @@
         <postgresql-jdbc.version>42.1.4</postgresql-jdbc.version>
 
         <!--<commons-codec.version>1.9</commons-codec.version>-->
-        <org.apache.httpcomponents.version>4.4.1</org.apache.httpcomponents.version>
+        <org.apache.httpcomponents.version>4.5.13</org.apache.httpcomponents.version>
 
         <ehcache.version>2.6.11</ehcache.version>
 
