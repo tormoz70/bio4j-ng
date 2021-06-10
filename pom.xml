@@ -104,7 +104,7 @@
 
         <!--<jersey-server.version>1.19</jersey-server.version>-->
         <!--<jersey-bundle.version>1.19</jersey-bundle.version>-->
-        <org.eclipse.jetty.version>9.3.8.v20160314</org.eclipse.jetty.version>
+        <org.eclipse.jetty.version>9.4.41.v20210516</org.eclipse.jetty.version>
 
 
         <tomcat-jdbc.version>9.0.8</tomcat-jdbc.version>
